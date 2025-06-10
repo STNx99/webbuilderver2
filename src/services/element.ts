@@ -33,4 +33,21 @@ export const elementService : IElementService = {
     }
     return response.json();
   },
+  
+  createElement: async (projectId: string, element: EditorElement): Promise<void> => {
+    const token = await getToken();
+
+    const response = await fetch(GetUrl(`/elements/${projectId}`), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(element),
+    });
+
+    if (!response.ok) {           
+      throw new Error("Failed to create element");
+    }
+  }
 };

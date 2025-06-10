@@ -1,13 +1,7 @@
 import GetUrl from "@/utils/geturl";
-import { Token } from "@clerk/nextjs/server";
 import getToken from "./token";
 import { IProjectService } from "@/interfaces/services";
-
-export interface Project {
-  id: string;
-  name: string;
-  description: string;
-}
+import { Project } from "@/interfaces/project";
 
 export const projectService : IProjectService= {
   getProjects: async (): Promise<Project[]> => {

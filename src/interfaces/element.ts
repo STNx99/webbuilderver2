@@ -1,10 +1,10 @@
 import { EditorElement } from "@/types/global.type";
 
-interface Element {
+// Interface from 
+interface DBElement {
   type: string;
   id: string;
   content: string;
-  isSelected: boolean;
   name?: string;
   styles?: React.CSSProperties;
   tailwindStyles?: string;
@@ -15,6 +15,13 @@ interface Element {
   parentId?: string;
   projectId?: string;
 }
+
+interface Element extends DBElement {
+  isSelected: boolean
+  isHovered: boolean
+  isDraggedOver: boolean
+}
+
 interface BaseElement extends Element {}
 
 interface FrameElement extends Element {

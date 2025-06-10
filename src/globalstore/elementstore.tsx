@@ -4,10 +4,8 @@ import { create } from "zustand";
 type ElementStore = {
   elements: EditorElement[];
   selectedElement: EditorElement | undefined;
-  hoveredElement: EditorElement | undefined;
   draggingElement: EditorElement | undefined;
   setDraggingElement: (element: EditorElement | undefined) => void;
-  setHoveredElement: (element: EditorElement | undefined) => void;
   setSelectedElement: (element: EditorElement | undefined) => void;
 
   loadElements: (elements: EditorElement[]) => void;
@@ -19,13 +17,12 @@ type ElementStore = {
 const useElementStore = create<ElementStore>((set, get) => ({
   elements: [],
   selectedElement: undefined,
-  hoveredElement: undefined,
   draggingElement: undefined,
 
   setDraggingElement: (element) => set({ draggingElement: element }),
-  setHoveredElement: (element) => set({ hoveredElement: element }),
   setSelectedElement: (element) => set({ selectedElement: element }),
   loadElements: (elements: EditorElement[]) => set({ elements }),
+
   updateElement: (id, updatedElement) => {
     const { elements } = get();
     const updateElement = (element: EditorElement): EditorElement => {
@@ -46,7 +43,9 @@ const useElementStore = create<ElementStore>((set, get) => ({
 
   deleteElement: (id) => {
     const { elements } = get();
-    const deleteElement = (element: EditorElement): EditorElement | undefined => {
+    const deleteElement = (
+      element: EditorElement
+    ): EditorElement | undefined => {
       if (element.id === id) {
         return undefined;
       }

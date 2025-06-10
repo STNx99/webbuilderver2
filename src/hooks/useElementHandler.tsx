@@ -1,13 +1,15 @@
 import useElementStore from "@/globalstore/elementstore";
 import { cn } from "@/lib/utils";
 import { EditorElement } from "@/types/global.type";
+import { createElements } from "@/utils/elements/createElements";
+import { handleSwap } from "@/utils/elements/handleSwap";
 
-function useElementHandler(element: EditorElement) {
+export function useElementHandler() {
   const {
+    draggingElement,
     addElement,
-    deleteElement,
     setSelectedElement,
-    setHoveredElement,
+    setDraggingElement,
     updateElement,
   } = useElementStore();
 
@@ -21,23 +23,77 @@ function useElementHandler(element: EditorElement) {
     updateElement(element.id, { isSelected: !element.isSelected });
   };
 
-  const handleMouseOver = (event: React.MouseEvent) => {
-    console.log("Mouse over element:", event.currentTarget);
+  const handleDrop = (
+    e: React.DragEvent,
+    parentId: string,
+    projectId: string
+  ) => {
+    e.stopPropagation();
+    const data = e.dataTransfer.getData("element/type");
+    if (data) {
+      addElement(createElements(data, 0, 0, projectId, "", parentId));
+    }
   };
-  
-  const tailwindStyles = cn("", element.tailwindStyles, {
-    "border-2 border-dashed border-gray-300": element.isSelected,
-  });
-  const commonProps = {
-    style: element.styles,
-    className: tailwindStyles,
-    onMouseOver: handleMouseOver,
-    onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
+
+  const handleDragStart = (e: React.DragEvent, element: EditorElement) => {
+    e.stopPropagation();
+    setDraggingElement(element);
+  };
+
+  const handleDragOver = (e: React.DragEvent, element: EditorElement) => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateElement(element.id, {
+      isDraggedOver: true,
+    });
+  };
+
+  const handleDragLeave = (e: React.DragEvent, element: EditorElement) => {
+    e.stopPropagation();
+    updateElement(element.id, {
+      isDraggedOver: false,
+    });
+  };
+
+  const handleDragEnd = (e: React.DragEvent, hoveredElement: EditorElement) => {
+    e.stopPropagation();
+    if (draggingElement && hoveredElement.isHovered) {
+      handleSwap(draggingElement, hoveredElement, updateElement);
+    }
+    setDraggingElement(undefined);
+  };
+
+  const getTailwindStyles = (element: EditorElement) => {
+    return cn("", element.tailwindStyles, {
+      "border-4 border-solid border-black": element.isSelected,
+      "border-2 border-solid border-black": element.isHovered,
+      "border-2 border-dashed border-blue-700":
+        element.id !== draggingElement?.id,
+    });
+  };
+
+  const getCommonProps = (element: EditorElement) => {
+    const tailwindStyles = getTailwindStyles(element);
+    return {
+      style: element.styles,
+      draggable: true,
+      className: tailwindStyles,
+      onDragStart: (e: React.DragEvent) => handleDragStart(e, element),
+      onDragOver: (e: React.DragEvent) => handleDragOver(e, element),
+      onDragLeave: (e: React.DragEvent) => handleDragLeave(e, element),
+      onDragEnd: (e: React.DragEvent) => handleDragEnd(e, element),
+      onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
+    };
   };
 
   return {
-    handleMouseOver,
-    tailwindStyles,
-    commonProps,
+    handleDoubleClick,
+    handleDrop,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    getTailwindStyles,
+    getCommonProps,
   };
 }

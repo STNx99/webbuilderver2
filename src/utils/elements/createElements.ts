@@ -6,13 +6,15 @@ const createElements = (
   x: number,
   y: number,
   projectId: string,
-  src: string,
-  parentId: string | null = null
+  src?: string,
+  parentId?: string
 ): EditorElement => {
   const baseProperties = {
     id: uuidv4(),
     content: "",
     isSelected: false,
+    isHovered: false,
+    isDraggedOver: false,
     x,
     y,
     projectId,
