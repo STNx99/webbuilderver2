@@ -18,7 +18,7 @@ import {
 import { ChevronDown, Settings } from "lucide-react";
 import Link from "next/link";
 
-export function EditorSideBar2() {
+export function EditorSideBar() {
   return (
     <Sidebar side="left">
       <SidebarContent>

@@ -2,6 +2,7 @@ import { EditorElement } from "@/types/global.type";
 import { createElements } from "./createElements";
 import { handleSwap } from "./handleSwap";
 import { findElement } from "./findElement";
+import { getElementSettings } from "./getElementSettings";
 
 interface ElementHelper {
   createElements: (
@@ -23,10 +24,15 @@ interface ElementHelper {
     element: EditorElement,
     id: string
   ) => EditorElement | undefined;
+
+  getElementSettings: (
+    element: EditorElement
+  ) => string | null;
 }
 
 export const elementHelper: ElementHelper = {
   createElements: createElements,
   handleSwap: handleSwap,
   findElement: findElement,
+  getElementSettings : getElementSettings
 };

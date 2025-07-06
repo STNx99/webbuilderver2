@@ -13,6 +13,7 @@ import {
   InputComponent,
   ListComponent,
   SelectComponent,
+  ImageComponent,
 } from "@/types/editor";
 import { EditorElement } from "@/types/global.type";
 
@@ -34,6 +35,8 @@ const renderChildElement = (element: EditorElement, props: any) => {
       return (
         <DataTableComponent key={element.id} element={element} {...props} />
       );
+    case "Image":
+      return <ImageComponent key={element.id} element={element} {...props} />;
     case "Input":
       return <InputComponent key={element.id} element={element} {...props} />;
     case "List":
