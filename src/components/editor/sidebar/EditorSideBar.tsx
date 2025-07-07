@@ -1,5 +1,11 @@
 "use client";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
@@ -10,60 +16,42 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { ChevronDown, Settings } from "lucide-react";
+import elementHolders from "@/constants/elements";
+import { Settings } from "lucide-react";
 import Link from "next/link";
+import ComponentHolder from "./ComponentHolder";
 
 export function EditorSideBar() {
   return (
     <Sidebar side="left">
       <SidebarContent>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="sidebar-components">
-                Components
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="sidebar-components">
-                Presets
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="imageupload-component">
-                Image uploads
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <Accordion
+          type="multiple"
+          className="w-full px-2"
+          defaultValue={["components", "imageupload"]}
+        >
+          <AccordionItem value="components">
+            <AccordionTrigger>Components</AccordionTrigger>
+            <AccordionContent >
+                <ul className="space-y-2 w-full">
+                  {elementHolders.map((element) => (
+                    <li key={element.type} className="w-full">
+                      <ComponentHolder
+                        icon={element.icon}
+                        type={element.type}
+                      />
+                    </li>
+                  ))}
+                </ul>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="imageupload">
+            <AccordionTrigger>Image Upload</AccordionTrigger>
+            <AccordionContent>
+              
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </SidebarContent>
       <SidebarFooter>
         <SidebarGroup>

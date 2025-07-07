@@ -4,9 +4,9 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="flex h-screen w-screen overflow-hidden">
       <EditorSideBar />
-      <main className="w-full h-full">
+      <main className="flex-1 relative h-screen overflow-hidden">
         <SidebarTrigger />
         {children}
       </main>

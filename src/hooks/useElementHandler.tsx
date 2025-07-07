@@ -68,7 +68,7 @@ export function useElementHandler() {
       "border-4 border-solid border-black": element.isSelected,
       "border-2 border-solid border-black": element.isHovered,
       "border-2 border-dashed border-blue-700":
-        element.id !== draggingElement?.id,
+        element.id !== draggingElement?.id && element.isDraggedOver,
     });
   };
 

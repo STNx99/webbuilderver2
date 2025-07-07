@@ -65,6 +65,14 @@ const useElementStore = create<ElementStore>((set, get) => ({
 
   addElement: (newElement) => {
     const { elements } = get();
+    
+    // If no parentId, add to root level
+    if (!newElement.parentId) {
+      set({ elements: [...elements, newElement] });
+      return;
+    }
+    
+    // If parentId exists, add to the parent element
     const addElementToParent = (element: EditorElement): EditorElement => {
       if (element.id === newElement.parentId) {
         return {

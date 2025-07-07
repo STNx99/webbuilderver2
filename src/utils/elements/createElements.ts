@@ -11,7 +11,7 @@ const createElements = (
 ): EditorElement => {
   const baseProperties = {
     id: uuidv4(),
-    content: "",
+    content: type,
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
@@ -20,28 +20,16 @@ const createElements = (
     projectId,
     parentId: parentId || undefined,
     src,
-    styles: {
-      position: "absolute" as const,
-      left: `${x}px`,
-      top: `${y}px`,
-    },
-    tailwindStyles: "border border-gray-300 rounded-md",
   };
 
-  switch (type) {
-    case "base":
-      return {
-        type: "base",
-        ...baseProperties,
-        styles: {
-          ...baseProperties.styles,
-          width: "200px",
-          height: "100px",
-          backgroundColor: "#f8f9fa",
-          padding: "16px",
-        },
-        tailwindStyles: "border border-gray-300 rounded-md bg-gray-50 p-4",
-      };
+  switch (type.toLowerCase()) {
+    case "text":
+        return {
+          type: "text",
+          ...baseProperties,
+          styles: {
+          },
+        };
 
     case "frame":
       return {
@@ -49,7 +37,7 @@ const createElements = (
         ...baseProperties,
         elements: [],
         styles: {
-          ...baseProperties.styles,
+          ...baseProperties,
           width: "400px",
           height: "300px",
           backgroundColor: "#ffffff",
@@ -66,7 +54,7 @@ const createElements = (
         content: "Click me",
         buttonType: "primary",
         styles: {
-          ...baseProperties.styles,
+          ...baseProperties,
           width: "120px",
           height: "40px",
           backgroundColor: "#3b82f6",
@@ -92,7 +80,6 @@ const createElements = (
           placeholder: "Enter text...",
         },
         styles: {
-          ...baseProperties.styles,
           width: "200px",
           height: "40px",
           padding: "8px 12px",
@@ -110,7 +97,6 @@ const createElements = (
         ...baseProperties,
         elements: [],
         styles: {
-          ...baseProperties.styles,
           width: "250px",
           height: "200px",
           backgroundColor: "#ffffff",
@@ -132,7 +118,6 @@ const createElements = (
         ],
         selectSettings: {},
         styles: {
-          ...baseProperties.styles,
           width: "180px",
           height: "40px",
           padding: "8px 12px",
@@ -176,7 +161,6 @@ const createElements = (
         },
         chartOptions: {},
         styles: {
-          ...baseProperties.styles,
           width: "400px",
           height: "300px",
           backgroundColor: "#ffffff",
@@ -207,7 +191,6 @@ const createElements = (
           hoverEffect: true,
         },
         styles: {
-          ...baseProperties.styles,
           width: "500px",
           height: "350px",
           backgroundColor: "#ffffff",
@@ -230,7 +213,6 @@ const createElements = (
           action: "",
         },
         styles: {
-          ...baseProperties.styles,
           width: "350px",
           height: "400px",
           backgroundColor: "#ffffff",
@@ -246,7 +228,6 @@ const createElements = (
         type: "base",
         ...baseProperties,
         styles: {
-          ...baseProperties.styles,
           width: "200px",
           height: "100px",
           backgroundColor: "#f8f9fa",

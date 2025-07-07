@@ -1,22 +1,12 @@
+import { ElementType } from "@/constants/elements";
 import React from "react";
 
-type ComponentType =
-  | "Button"
-  | "Form"
-  | "Carousel"
-  | "Chart"
-  | "DataTable"
-  | "Image"
-  | "Input"
-  | "List"
-  | "Select";
-
 type HolderProps = {
-  icons: React.ReactNode;
-  type: ComponentType;
+  icon: React.ReactNode;
+  type: ElementType;
 };
 
-const ComponentHolder = ({ icons, type }: HolderProps) => {
+const ComponentHolder = ({ icon, type }: HolderProps) => {
   const onDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     elementType: string
@@ -27,10 +17,10 @@ const ComponentHolder = ({ icons, type }: HolderProps) => {
     <div
       draggable
       onDragStart={(e) => onDragStart(e, type)}
-      className="flex flex-row justify-between items-center w-full"
+      className="flex flex-row justify-between items-center w-full px-2 hover:bg-secondary rounded-md cursor-grab active:cursor-grabbing transition-colors"
     >
-      <div>Button</div>
-      {icons}
+      <div>{type}</div>
+      {icon}
     </div>
   );
 };

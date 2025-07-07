@@ -3,38 +3,58 @@ import { elementService } from "@/services/element";
 import { EditorElement } from "@/types/global.type";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ElementLoader from "@/components/editor/ElementLoader";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";
 import { Monitor, Smartphone, Table, Tablet } from "lucide-react";
+import { viewportSizes } from "@/constants/viewports";
+import { createElements } from "@/utils/elements/createElements";
+import useElementStore from "@/globalstore/elementstore";
 
 export default function Editor() {
   const params = useParams();
   const id = params.id as string;
   // Responsive view state
+
   const [currentView, setCurrentView] = useState<
     "mobile" | "tablet" | "desktop"
   >("desktop");
+  
   const [contextMenuPosition, setContextMenuPosition] = useState<{
     x: number;
     y: number;
   }>({ x: 0, y: 0 });
+  const { addElement, loadElements, elements } = useElementStore();
+  
   const [showContextMenu, setShowContextMenu] = useState(false);
-  // Test elements state
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const { data, isLoading } = useQuery<EditorElement[]>({
     queryKey: ["elements", id],
     queryFn: () => elementService.getElements(id),
   });
 
+  useEffect(() => {
+    if (data && data.length > 0) {
+      loadElements(data);
+    }
+  }, [data, loadElements]);
+    
   // Define viewport dimensions for each device
-  const viewportSizes = {
-    mobile: { width: "375px", height: "667px" },
-    tablet: { width: "768px", height: "1024px" },
-    desktop: { width: "100%", height: "100%" },
-  };
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => { 
+    e.preventDefault();
+    setIsDraggingOver(false);
+    const elementType = e.dataTransfer.getData("elementType");
+
+    const newElement = createElements(elementType.toLowerCase(), 0, 0, id, "", undefined);
+    
+    addElement(newElement);
+  }
+  
+
+  
   return (
-    <div className="flex h-full w-full flex-col bg-background text-foreground">
+    <div className="flex h-screen w-full flex-col bg-background text-foreground relative">
       {/* Responsive View Controls */}
       <div className="flex items-center justify-between border-b border-border bg-card shadow-sm p-2">
         <div className="flex items-center space-x-4">
@@ -62,10 +82,10 @@ export default function Editor() {
             ))}
           </div>
         </div>
-      </div>{" "}
+      </div>
       {/* Preview Container */}
-      <div className="flex-1 overflow-auto bg-muted/20">
-        <div className="flex justify-center">
+      <div className="flex-1 overflow-auto bg-muted/20 p-4">
+        <div className="flex justify-center h-full">
           <div
             className={`transition-all duration-300 bg-card ${
               currentView === "desktop"
@@ -84,22 +104,27 @@ export default function Editor() {
                   : viewportSizes[currentView].height,
             }}
           >
-            <div className="h-full w-full overflow-auto">
+            <div 
+              className={`h-full w-full overflow-auto  ${isDraggingOver ? 'bg-primary/10' : ''}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(true);  
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                setIsDraggingOver(false);
+              }}
+              onDrop={handleDrop}
+            >
               {isLoading ? (
                 <ElementLoading count={6} variant="mixed" />
               ) : (
-                <div className="flex flex-col space-y-4">
-                  {data && data.length > 0 ? (
+                <div className="flex flex-col space-y-4 min-h-full">
                     <ElementLoader
-                      elements={data}
+                      elements={elements || []}
                       setContextMenuPosition={setContextMenuPosition}
                       setShowContextMenu={setShowContextMenu}
                     />
-                  ) : (
-                    <div className="text-center text-muted-foreground py-8">
-                      No elements found
-                    </div>
-                  )}
                 </div>
               )}
             </div>

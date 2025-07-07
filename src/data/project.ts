@@ -1,4 +1,5 @@
 import { Project } from "@/interfaces/project";
+import prisma from "@/lib/prisma";
 
 export const projectDAL = {
   createProject: async (project: Project, userId: string) => {

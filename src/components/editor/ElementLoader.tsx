@@ -13,6 +13,7 @@ import {
   SelectComponent,
   SectionComponent,
 } from "@/types/editor";
+import { useElementHandler } from "@/hooks/useElementHandler";
 
 type Props = {
   elements: EditorElement[];
@@ -27,6 +28,8 @@ const ElementLoader = ({
   setContextMenuPosition,
   setShowContextMenu,
 }: Props) => {
+  const { handleDoubleClick, getTailwindStyles } = useElementHandler();
+
   const renderElement = (element: EditorElement) => {
     const commonProps = {
       element,
@@ -54,12 +57,24 @@ const ElementLoader = ({
       case "Select":
         return <SelectComponent key={element.id} {...commonProps} />;
       case "Section":
-        return <SectionComponent  key={element.id} {...commonProps} />;
+        return <SectionComponent key={element.id} {...commonProps} />;
       default:
         return <BaseComponent key={element.id} {...commonProps} />;
     }
   };
-  return <>{elements.map((element) => renderElement(element))}</>;
+  return (
+    <>
+      {elements.map((element) => (
+        <div
+          className={getTailwindStyles(element)}
+          key={element.id}
+          onDoubleClick={(e) => handleDoubleClick(e, element)}
+        >
+          {renderElement(element)}
+        </div>
+      ))}
+    </>
+  );
 };
 
 export default ElementLoader;
