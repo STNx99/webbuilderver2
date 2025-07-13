@@ -9,13 +9,16 @@ import {
   ListElement,
   SectionElement,
   SelectElement,
+  TextElement,
+  CarouselElement,
 } from "@/interfaces/element";
 
 type ContainerElement =
   | FrameElement
   | SectionElement
   | FormElement
-  | ListElement;
+  | ListElement
+  | CarouselElement;
 
 type EditorElement =
   | BaseElement
@@ -26,7 +29,25 @@ type EditorElement =
   | SelectElement
   | ChartElement
   | DataTableElement
-  | FormElement;
+  | FormElement
+  | SectionElement
+  | TextElement
+  | CarouselElement;
 
-  
-export type { EditorElement, ContainerElement };
+type ElementType =
+  | "Frame"
+  | "Button"
+  | "List"
+  | "Input"
+  | "Select"
+  | "Chart"
+  | "DataTable"
+  | "Form"
+  | "Section"
+  | "Text"
+  | "Carousel"
+  | "Base";
+
+type ContainerType = "Frame" | "Form" | "List" | "Section" | "Carousel";
+
+export type { EditorElement, ContainerElement, ElementType, ContainerType };

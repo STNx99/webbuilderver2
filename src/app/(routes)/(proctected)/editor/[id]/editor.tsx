@@ -43,9 +43,9 @@ export default function Editor() {
   // Define viewport dimensions for each device
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => { 
     e.preventDefault();
+    e.stopPropagation();
     setIsDraggingOver(false);
     const elementType = e.dataTransfer.getData("elementType");
-
     const newElement = createElements(elementType.toLowerCase(), 0, 0, id, "", undefined);
     
     addElement(newElement);
@@ -119,7 +119,7 @@ export default function Editor() {
               {isLoading ? (
                 <ElementLoading count={6} variant="mixed" />
               ) : (
-                <div className="flex flex-col space-y-4 min-h-full">
+                <div className="flex flex-col min-h-full">
                     <ElementLoader
                       elements={elements || []}
                       setContextMenuPosition={setContextMenuPosition}

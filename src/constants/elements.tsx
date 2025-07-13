@@ -1,5 +1,4 @@
-import { Button } from "@/components/ui/button";
-import { FormInput, Image, TextSelection, Type, CardSim, MousePointerClick } from "lucide-react";
+import { FormInput, Image, TextSelection, Type, CardSim, MousePointerClick, Link } from "lucide-react";
 import React from "react";
 
 export type ElementType = "Text" | "Button" | "Image" | "Input" | "Select" | "Link" | "Form" | "Frame" | "Section";
@@ -33,6 +32,18 @@ export const elementHolders: ElementHolder[] = [
   {
     type: "Select",
     icon: <TextSelection className="w-4 h-4" />
+  },
+  {
+    type: "Link",
+    icon: <Link className="w-4 h-4" />
+  },
+  {
+    type: "Form",
+    icon: <FormInput className="w-4 h-4" />
+  },
+  {
+    type: "Frame",
+    icon: <CardSim className="w-4 h-4" />
   }
 ];
 

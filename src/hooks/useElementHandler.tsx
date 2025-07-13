@@ -1,7 +1,7 @@
 import useElementStore from "@/globalstore/elementstore";
 import { cn } from "@/lib/utils";
 import { EditorElement } from "@/types/global.type";
-import { createElements } from "@/utils/elements/createElements";
+import { elementHelper } from "@/utils/elements/elementhelper";
 import { handleSwap } from "@/utils/elements/handleSwap";
 
 export function useElementHandler() {
@@ -11,6 +11,7 @@ export function useElementHandler() {
     setSelectedElement,
     setDraggingElement,
     updateElement,
+    clearHoverStatesExcept,
   } = useElementStore();
 
   const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
@@ -25,14 +26,27 @@ export function useElementHandler() {
 
   const handleDrop = (
     e: React.DragEvent,
-    parentId: string,
-    projectId: string
+    projectId: string,
+    parentElement: EditorElement
   ) => {
     e.stopPropagation();
-    const data = e.dataTransfer.getData("element/type");
+    e.preventDefault();
+    
+    const data = e.dataTransfer.getData("elementType");
+    
     if (data) {
-      addElement(createElements(data, 0, 0, projectId, "", parentId));
+      const isContainer = elementHelper.isContainerElement(parentElement);
+      
+      if (!isContainer) {
+        return;
+      }
+      
+      const newElement = elementHelper.createElements(data, 0, 0, projectId, undefined, parentElement.id);
+      addElement(newElement);
     }
+    updateElement(parentElement.id, {
+      isDraggedOver: false,
+    });
   };
 
   const handleDragStart = (e: React.DragEvent, element: EditorElement) => {
@@ -64,18 +78,62 @@ export function useElementHandler() {
   };
 
   const getTailwindStyles = (element: EditorElement) => {
-    return cn("", element.tailwindStyles, {
-      "border-4 border-solid border-black": element.isSelected,
-      "border-2 border-solid border-black": element.isHovered,
-      "border-2 border-dashed border-blue-700":
-        element.id !== draggingElement?.id && element.isDraggedOver,
-    });
+    return cn("", element.tailwindStyles);
   };
-
+  
+  const handleMouseEnter = (e: React.MouseEvent, element: EditorElement) => {
+    e.stopPropagation();
+    e.preventDefault();
+    // Clear hover states from all other elements, then set this one as hovered
+    clearHoverStatesExcept(element.id);
+    updateElement(element.id, { isHovered: true });
+  }
+  
+  const handleMouseLeave = (e: React.MouseEvent, element: EditorElement) => { 
+    e.stopPropagation();
+    e.preventDefault();
+    updateElement(element.id, { isHovered: false });
+  }
+  
+  const getStyles = (element: EditorElement) => {
+    const { 
+      border, 
+      borderTop, 
+      borderRight, 
+      borderBottom, 
+      borderLeft,
+      borderWidth,
+      borderStyle,
+      borderColor,
+      ...cleanStyles 
+    } = element.styles || {};
+    
+    return {
+      ...cleanStyles,
+      ...(element.isSelected && {
+        borderWidth: '4px',
+        borderStyle: 'solid',
+        borderColor: 'black',
+      }),
+      ...(element.isHovered && !element.isSelected && {
+        borderWidth: '2px',
+        borderStyle: 'solid',
+        borderColor: 'black',
+      }),
+      ...(element.id !== draggingElement?.id && element.isDraggedOver && !element.isSelected && !element.isHovered && {
+        borderWidth: '2px',
+        borderStyle: 'dashed',
+        borderColor: '#1d4ed8',
+      }),
+    };
+    
+  }
   const getCommonProps = (element: EditorElement) => {
     const tailwindStyles = getTailwindStyles(element);
+    const mergedStyles = getStyles(element);    
+    
     return {
-      style: element.styles,
+      style: mergedStyles,
       draggable: true,
       className: tailwindStyles,
       onDragStart: (e: React.DragEvent) => handleDragStart(e, element),
@@ -83,6 +141,9 @@ export function useElementHandler() {
       onDragLeave: (e: React.DragEvent) => handleDragLeave(e, element),
       onDragEnd: (e: React.DragEvent) => handleDragEnd(e, element),
       onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
+      onDrop: (e: React.DragEvent) => handleDrop(e, element.projectId, element),
+      onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(e, element),
+      onMouseLeave: (e: React.MouseEvent) => handleMouseLeave(e, element),   
     };
   };
 
@@ -93,7 +154,10 @@ export function useElementHandler() {
     handleDragEnd,
     handleDragOver,
     handleDragLeave,
+    handleMouseEnter,
+    handleMouseLeave,
     getTailwindStyles,
     getCommonProps,
+    getStyles,
   };
 }

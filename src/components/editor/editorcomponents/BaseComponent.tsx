@@ -4,10 +4,8 @@ import DOMPurify from "dompurify";
 
 const BaseComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
-    
+  
   return (
     <div
       style={element.styles}

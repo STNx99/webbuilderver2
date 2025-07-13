@@ -1,5 +1,4 @@
 import React from "react";
-import { motion } from "framer-motion";
 import { EditorComponentProps } from "@/interfaces/editor";
 import { FrameElement } from "@/interfaces/element";
 import {
@@ -16,6 +15,7 @@ import {
   ImageComponent,
 } from "@/types/editor";
 import { EditorElement } from "@/types/global.type";
+import { useElementHandler } from "@/hooks/useElementHandler";
 
 const renderChildElement = (element: EditorElement, props: any) => {
   switch (element.type) {
@@ -54,17 +54,17 @@ const FrameComponent = ({
   setShowContextMenu,
 }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
+  const {getCommonProps} = useElementHandler();
   const childProps = { setContextMenuPosition, setShowContextMenu };
 
   return (
-    <motion.div
-      style={frameElement.styles}
-      className={frameElement.tailwindStyles}
+    <div
+      {...getCommonProps(frameElement)}
     >
       {frameElement.elements?.map((child) =>
-        renderChildElement(child, childProps)
+        renderChildElement(child, childProps),
       )}
-    </motion.div>
+    </div>
   );
 };
 

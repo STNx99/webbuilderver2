@@ -13,7 +13,7 @@ interface DBElement {
   src?: string;
   href?: string;
   parentId?: string;
-  projectId?: string;
+  projectId: string;
 }
 
 interface Element extends DBElement {
@@ -23,6 +23,10 @@ interface Element extends DBElement {
 }
 
 interface BaseElement extends Element {}
+
+interface TextElement extends Element {
+  type: "Text";
+}
 
 interface FrameElement extends Element {
   elements: EditorElement[];
@@ -34,10 +38,18 @@ interface SectionElement extends Element {
 interface SectionElement extends Element {
   elements: EditorElement[];
 }
-// interface CarouselElement extends Element {
-//   carouselSettings: SlickSettings;
-//   elements: CarouselElementChild[];
-// }
+interface CarouselElement extends Element {
+  elements: EditorElement[];
+  carouselSettings: {
+    autoplay?: boolean;
+    dots?: boolean;
+    arrows?: boolean;
+    infinite?: boolean;
+    speed?: number;
+    slidesToShow?: number;
+    slidesToScroll?: number;
+  };
+}
 interface ButtonElement extends Element {
   buttonType: string;
   element?: FrameElement;
@@ -92,6 +104,7 @@ interface FormElement extends Element {
 
 export type {
   BaseElement,
+  TextElement,
   SectionElement,
   FrameElement,
   ButtonElement,
@@ -101,4 +114,5 @@ export type {
   ChartElement,
   DataTableElement,
   FormElement,
+  CarouselElement,
 };

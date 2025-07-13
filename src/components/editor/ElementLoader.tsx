@@ -1,4 +1,4 @@
-import { EditorElement } from "@/types/global.type";
+import { EditorElement, ContainerElement } from "@/types/global.type";
 import React from "react";
 import {
   BaseComponent,
@@ -14,6 +14,8 @@ import {
   SectionComponent,
 } from "@/types/editor";
 import { useElementHandler } from "@/hooks/useElementHandler";
+import { useParams } from "next/navigation";
+import { elementHelper } from "@/utils/elements/elementhelper";
 
 type Props = {
   elements: EditorElement[];
@@ -28,8 +30,6 @@ const ElementLoader = ({
   setContextMenuPosition,
   setShowContextMenu,
 }: Props) => {
-  const { handleDoubleClick, getTailwindStyles } = useElementHandler();
-
   const renderElement = (element: EditorElement) => {
     const commonProps = {
       element,
@@ -38,7 +38,7 @@ const ElementLoader = ({
     };
 
     switch (element.type) {
-      case "Frame":
+    case "Frame":
         return <FrameComponent key={element.id} {...commonProps} />;
       case "Form":
         return <FormComponent key={element.id} {...commonProps} />;
@@ -65,13 +65,7 @@ const ElementLoader = ({
   return (
     <>
       {elements.map((element) => (
-        <div
-          className={getTailwindStyles(element)}
-          key={element.id}
-          onDoubleClick={(e) => handleDoubleClick(e, element)}
-        >
-          {renderElement(element)}
-        </div>
+        <div key={element.id}>{renderElement(element)}</div>
       ))}
     </>
   );

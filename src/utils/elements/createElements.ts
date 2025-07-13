@@ -25,7 +25,7 @@ const createElements = (
   switch (type.toLowerCase()) {
     case "text":
         return {
-          type: "text",
+          type: "Text",
           ...baseProperties,
           styles: {
           },
@@ -33,7 +33,7 @@ const createElements = (
 
     case "frame":
       return {
-        type: "frame",
+        type: "Frame",
         ...baseProperties,
         elements: [],
         styles: {
@@ -49,7 +49,7 @@ const createElements = (
       };
     case "button":
       return {
-        type: "button",
+        type: "Button",
         ...baseProperties,
         content: "Click me",
         buttonType: "primary",
@@ -72,7 +72,7 @@ const createElements = (
 
     case "input":
       return {
-        type: "input",
+        type: "Input",
         ...baseProperties,
         content: "",
         inputSettings: {
@@ -93,7 +93,7 @@ const createElements = (
       };
     case "list":
       return {
-        type: "list",
+        type: "List",
         ...baseProperties,
         elements: [],
         styles: {
@@ -110,7 +110,7 @@ const createElements = (
 
     case "select":
       return {
-        type: "select",
+        type: "Select",
         ...baseProperties,
         options: [
           { value: "option1", text: "Option 1" },
@@ -205,7 +205,7 @@ const createElements = (
 
     case "form":
       return {
-        type: "form",
+        type: "Form",
         ...baseProperties,
         elements: [],
         formSettings: {
@@ -223,9 +223,51 @@ const createElements = (
         tailwindStyles:
           "border border-gray-200 rounded-lg bg-white p-5 shadow-sm",
       };
+    case "section":
+      return {
+        type: "Section",
+        ...baseProperties,
+        elements: [],
+        styles: {
+          width: "100%",
+          minHeight: "200px",
+          backgroundColor: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          padding: "24px",
+        },
+        tailwindStyles:
+          "w-full min-h-[200px] border border-gray-200 rounded-lg bg-white p-6 shadow-sm",
+      };
+    case "carousel":
+      return {
+        type: "Carousel",
+        ...baseProperties,
+        elements: [],
+        carouselSettings: {
+          autoplay: true,
+          dots: true,
+          arrows: true,
+          infinite: true,
+          speed: 500,
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+        styles: {
+          width: "500px",
+          height: "300px",
+          backgroundColor: "#ffffff",
+          border: "1px solid #e5e7eb",
+          borderRadius: "8px",
+          padding: "16px",
+          overflow: "hidden",
+        },
+        tailwindStyles:
+          "w-[500px] h-[300px] border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-hidden",
+      };
     default:
       return {
-        type: "base",
+        type: "Base",
         ...baseProperties,
         styles: {
           width: "200px",

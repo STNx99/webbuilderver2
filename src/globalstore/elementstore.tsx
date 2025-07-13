@@ -12,6 +12,7 @@ type ElementStore = {
   updateElement: (id: string, updatedElement: Partial<EditorElement>) => void;
   deleteElement: (id: string) => void;
   addElement: (newElement: EditorElement) => void;
+  clearHoverStatesExcept: (excludeId: string) => void;
 };
 
 const useElementStore = create<ElementStore>((set, get) => ({
@@ -92,6 +93,22 @@ const useElementStore = create<ElementStore>((set, get) => ({
       return element;
     };
     const updatedElements = elements.map(addElementToParent);
+    set({ elements: updatedElements });
+  },
+
+  clearHoverStatesExcept: (excludeId: string) => {
+    const { elements } = get();
+    const clearHover = (element: EditorElement): EditorElement => {
+      const updated = { ...element, isHovered: false };
+      if ("elements" in element) {
+        return {
+          ...updated,
+          elements: element.elements.map(clearHover),
+        };
+      }
+      return updated;
+    };
+    const updatedElements = elements.map(clearHover);
     set({ elements: updatedElements });
   },
 }));
