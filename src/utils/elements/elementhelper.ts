@@ -3,6 +3,8 @@ import { createElements } from "./createElements";
 import { handleSwap } from "./handleSwap";
 import { findElement } from "./findElement";
 import { getElementSettings } from "./getElementSettings";
+import { renderChildElement } from "../renderElements";
+import React from "react";
 
 interface ElementHelper {
   createElements: (
@@ -30,6 +32,11 @@ interface ElementHelper {
   ) => string | null;
   
   isContainerElement: (element: EditorElement) => boolean;
+
+  renderChildElement: (
+    element: EditorElement,
+    props: any
+  ) => React.ReactNode;
 }
 
 export const elementHelper: ElementHelper = {
@@ -45,5 +52,6 @@ export const elementHelper: ElementHelper = {
       element.type === "Section" ||
       element.type === "Carousel"
     );
-  }
+  },
+  renderChildElement: renderChildElement
 };

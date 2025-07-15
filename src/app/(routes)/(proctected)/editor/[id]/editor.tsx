@@ -46,6 +46,7 @@ export default function Editor() {
     e.stopPropagation();
     setIsDraggingOver(false);
     const elementType = e.dataTransfer.getData("elementType");
+    
     const newElement = createElements(elementType.toLowerCase(), 0, 0, id, "", undefined);
     
     addElement(newElement);

@@ -13,9 +13,6 @@ import {
   SelectComponent,
   SectionComponent,
 } from "@/types/editor";
-import { useElementHandler } from "@/hooks/useElementHandler";
-import { useParams } from "next/navigation";
-import { elementHelper } from "@/utils/elements/elementhelper";
 
 type Props = {
   elements: EditorElement[];

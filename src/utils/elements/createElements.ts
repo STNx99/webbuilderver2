@@ -12,7 +12,7 @@ const createElements = (
   const baseProperties = {
     id: uuidv4(),
     content: type,
-    isSelected: false,
+    isSelected: true,
     isHovered: false,
     isDraggedOver: false,
     x,
@@ -38,14 +38,13 @@ const createElements = (
         elements: [],
         styles: {
           ...baseProperties,
-          width: "400px",
-          height: "300px",
+          height: "200px",
+          width: "50%",
           backgroundColor: "#ffffff",
           border: "2px dashed #cbd5e1",
-          padding: "20px",
         },
         tailwindStyles:
-          "border-2 border-dashed border-slate-300 bg-white p-5 rounded-lg",
+          "border-2 border-dashed border-slate-300 bg-white rounded-lg",
       };
     case "button":
       return {

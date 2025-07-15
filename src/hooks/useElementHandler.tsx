@@ -47,6 +47,7 @@ export function useElementHandler() {
     updateElement(parentElement.id, {
       isDraggedOver: false,
     });
+    setDraggingElement(undefined);
   };
 
   const handleDragStart = (e: React.DragEvent, element: EditorElement) => {

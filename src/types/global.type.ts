@@ -46,7 +46,8 @@ type ElementType =
   | "Section"
   | "Text"
   | "Carousel"
-  | "Base";
+  | "Base"
+  | "Image"
 
 type ContainerType = "Frame" | "Form" | "List" | "Section" | "Carousel";
 
