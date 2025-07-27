@@ -1,6 +1,6 @@
 import { ElementDAL } from "@/data/element";
 import { EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/elements/elementhelper";
+import { elementHelper } from "@/utils/element/elementhelper";
 import { auth } from "@clerk/nextjs/server";
 
 export async function PUT(

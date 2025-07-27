@@ -1,3 +1,4 @@
+import { CONTAINER_ELEMENT_TYPES, EDITABLE_ELEMENT_TYPES } from "@/constants/elements";
 import {
   BaseElement,
   ButtonElement,
@@ -48,7 +49,16 @@ type ElementType =
   | "Carousel"
   | "Base"
   | "Image"
+  | "Link";
 
-type ContainerType = "Frame" | "Form" | "List" | "Section" | "Carousel";
+type ContainerElementType = (typeof CONTAINER_ELEMENT_TYPES)[number];
 
-export type { EditorElement, ContainerElement, ElementType, ContainerType };
+type EditableElementType =(typeof EDITABLE_ELEMENT_TYPES)[number]
+
+export type {
+  EditorElement,
+  EditableElementType,
+  ContainerElement,
+  ElementType,
+  ContainerElementType,
+};

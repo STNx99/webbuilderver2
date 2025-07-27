@@ -1,4 +1,4 @@
-import { ElementType } from "@/constants/elements";
+import { ElementType } from "@/types/global.type";
 import React from "react";
 
 type HolderProps = {

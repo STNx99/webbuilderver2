@@ -1,9 +1,10 @@
 "use client";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +15,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ChevronDown } from "lucide-react";
 import React from "react";
 import LayoutSideBarElements from "./LayoutSideBarElements";
 import { useParams } from "next/navigation";
@@ -30,6 +30,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import Configurations from "./configurations/Configurations";
 // import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {
@@ -42,36 +43,40 @@ function LayoutSideBar() {
   return (
     <Sidebar side="right">
       <SidebarContent>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="sidebar-layout">
-                Layout
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <LayoutSideBarElements />
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
-        <Collapsible className="group/collapsible">
-          <SidebarGroup>
-            <SidebarGroupLabel asChild>
-              <CollapsibleTrigger className="config-components">
-                Configuration
-                <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-              </CollapsibleTrigger>
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+        <Accordion
+          type="multiple"
+          className="w-full"
+          defaultValue={["layout", "configuration"]}
+        >
+          <AccordionItem value="layout">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger className="sidebar-layout">
+                  Layout
+                </AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  <LayoutSideBarElements />
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+          <AccordionItem value="configuration">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger className="config-components">
+                  Configuration
+                </AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  <Configurations />
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+        </Accordion>
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -91,9 +96,7 @@ function LayoutSideBar() {
                       formats
                     </DrawerDescription>
                   </DrawerHeader>
-                  <div className="px-4 py-2 flex-1 overflow-hidden">
-                    
-                  </div>
+                  <div className="px-4 py-2 flex-1 overflow-hidden"></div>
                   <DrawerFooter>
                     <DrawerClose asChild>
                       <Button variant="outline">Close</Button>

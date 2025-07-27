@@ -1,7 +1,7 @@
 import React from "react";
 import { EditorComponentProps } from "@/interfaces/editor";
 import { SectionElement } from "@/interfaces/element";
-import { elementHelper } from "@/utils/elements/elementhelper";
+import { elementHelper } from "@/utils/element/elementhelper";
 import { useElementHandler } from "@/hooks/useElementHandler";
 
 const SectionComponent = ({

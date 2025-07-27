@@ -25,31 +25,43 @@ export function EditorSideBar() {
   return (
     <Sidebar side="left">
       <SidebarContent>
-        <Accordion
-          type="multiple"
-          className="w-full px-2"
-          defaultValue={["components", "imageupload"]}
-        >
+        <Accordion type="multiple" className="w-full" defaultValue={["components", "imageupload"]}>
           <AccordionItem value="components">
-            <AccordionTrigger>Components</AccordionTrigger>
-            <AccordionContent >
-                <ul className="space-y-2 w-full">
-                  {elementHolders.map((element) => (
-                    <li key={element.type} className="w-full">
-                      <ComponentHolder
-                        icon={element.icon}
-                        type={element.type}
-                      />
-                    </li>
-                  ))}
-                </ul>
-            </AccordionContent>
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger>
+                  Components
+                </AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  <ul className="space-y-2 w-full">
+                    {elementHolders.map((element) => (
+                      <li key={element.type} className="w-full">
+                        <ComponentHolder
+                          icon={element.icon}
+                          type={element.type}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
           </AccordionItem>
           <AccordionItem value="imageupload">
-            <AccordionTrigger>Image Upload</AccordionTrigger>
-            <AccordionContent>
-              
-            </AccordionContent>
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger>
+                  Image Upload
+                </AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
           </AccordionItem>
         </Accordion>
       </SidebarContent>
@@ -63,7 +75,7 @@ export function EditorSideBar() {
                     href={"/settings/preferences"}
                     className="flex items-center gap-2"
                   >
-                    <Settings className="w-5 h-5  " />
+                    <Settings className="w-5 h-5" />
                     <span>Settings</span>
                   </Link>
                 </SidebarMenuButton>

@@ -1,8 +1,8 @@
-import { EditorElement } from "@/types/global.type";
+import { EditorElement, ElementType } from "@/types/global.type";
 
 // Interface from 
 interface DBElement {
-  type: string;
+  type: ElementType;
   id: string;
   content: string;
   name?: string;
@@ -20,6 +20,7 @@ interface Element extends DBElement {
   isSelected: boolean
   isHovered: boolean
   isDraggedOver: boolean
+  isEditing: boolean;
 }
 
 interface BaseElement extends Element {}

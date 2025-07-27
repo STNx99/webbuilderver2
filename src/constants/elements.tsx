@@ -1,12 +1,27 @@
+import { ElementType } from "@/types/global.type";
 import { FormInput, Image, TextSelection, Type, CardSim, MousePointerClick, Link } from "lucide-react";
 import React from "react";
-
-export type ElementType = "Text" | "Button" | "Image" | "Input" | "Select" | "Link" | "Form" | "Frame" | "Section";
 
 interface ElementHolder {
   type: ElementType;
   icon: React.ReactNode;
 }
+
+export const CONTAINER_ELEMENT_TYPES = [
+  "Frame",
+  "Form", 
+  "List",
+  "Section",
+  "Carousel"
+] as const;
+
+export const EDITABLE_ELEMENT_TYPES = [
+  "Text",
+  "Button",
+  "Input",
+  "Select",
+  "Link",
+] as const;
 
 export const elementHolders: ElementHolder[] = [
   {
@@ -45,6 +60,7 @@ export const elementHolders: ElementHolder[] = [
     type: "Frame",
     icon: <CardSim className="w-4 h-4" />
   }
-];
+] as const;
 
 export default elementHolders;
+

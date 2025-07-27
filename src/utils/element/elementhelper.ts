@@ -1,10 +1,12 @@
-import { ContainerElement, EditorElement } from "@/types/global.type";
+import { ContainerElement, ContainerElementType, EditableElementType, EditorElement } from "@/types/global.type";
 import { createElements } from "./createElements";
 import { handleSwap } from "./handleSwap";
 import { findElement } from "./findElement";
 import { getElementSettings } from "./getElementSettings";
+import { updateElementStyle } from "./updateElementStyle";
 import { renderChildElement } from "../renderElements";
 import React from "react";
+import { CONTAINER_ELEMENT_TYPES, EDITABLE_ELEMENT_TYPES } from "@/constants/elements";
 
 interface ElementHelper {
   createElements: (
@@ -32,11 +34,15 @@ interface ElementHelper {
   ) => string | null;
   
   isContainerElement: (element: EditorElement) => boolean;
-
+ 
+  isEditableElement: (element: EditorElement) => boolean; 
+  
   renderChildElement: (
     element: EditorElement,
     props: any
   ) => React.ReactNode;
+  
+  updateElementStyle: (element: EditorElement, styles: React.CSSProperties ) => void;
 }
 
 export const elementHelper: ElementHelper = {
@@ -45,13 +51,11 @@ export const elementHelper: ElementHelper = {
   findElement: findElement,
   getElementSettings : getElementSettings,
   isContainerElement: (element: EditorElement): element is ContainerElement => {
-    return (
-      element.type === "Frame" ||
-      element.type === "Form" ||
-      element.type === "List" ||
-      element.type === "Section" ||
-      element.type === "Carousel"
-    );
+    return CONTAINER_ELEMENT_TYPES.includes(element.type as ContainerElementType);
   },
-  renderChildElement: renderChildElement
+  isEditableElement: (element: EditorElement): boolean => {
+    return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);
+  },
+  renderChildElement: renderChildElement,
+  updateElementStyle : updateElementStyle
 };

@@ -3,7 +3,7 @@ import getToken from "./token";
 import { IProjectService } from "@/interfaces/services";
 import { Project } from "@/interfaces/project";
 
-export const projectService : IProjectService= {
+export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
     const response = await fetch(GetUrl("/projects/public"), {
       method: "GET",
@@ -50,5 +50,24 @@ export const projectService : IProjectService= {
       throw new Error("Failed to fetch project by ID");
     }
     return response.json();
+  },
+
+  getFonts : async (): Promise<string[]> => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_FONTS_API_KEY;
+    const response = await fetch(
+      `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch fonts");
+    }
+    const data = await response.json();
+    return data.items.map((font: { family: string }) => font.family);
   },
 };

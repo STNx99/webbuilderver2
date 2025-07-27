@@ -8,7 +8,7 @@ import ElementLoader from "@/components/editor/ElementLoader";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";
 import { Monitor, Smartphone, Table, Tablet } from "lucide-react";
 import { viewportSizes } from "@/constants/viewports";
-import { createElements } from "@/utils/elements/createElements";
+import { createElements } from "@/utils/element/createElements";
 import useElementStore from "@/globalstore/elementstore";
 
 export default function Editor() {

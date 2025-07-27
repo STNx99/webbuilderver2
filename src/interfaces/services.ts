@@ -12,6 +12,7 @@ interface IProjectService {
     getProjects: () => Promise<Project[]>;
     getUserProjects: () => Promise<Project[]>;
     getProjectById: (id: string) => Promise<Project>;
+    getFonts: () => Promise<string[]>;
 }
 
 export type { IElementService, IProjectService };

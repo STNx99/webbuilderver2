@@ -2,7 +2,7 @@ import React from "react";
 import { EditorComponentProps } from "@/interfaces/editor";
 import { FrameElement } from "@/interfaces/element";
 import { useElementHandler } from "@/hooks/useElementHandler";
-import { elementHelper } from "@/utils/elements/elementhelper";
+import { elementHelper } from "@/utils/element/elementhelper";
 
 const FrameComponent = ({
   element,
