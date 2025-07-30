@@ -8,7 +8,7 @@ const createElements = (
   projectId: string,
   src?: string,
   parentId?: string
-): EditorElement => {
+): EditorElement | undefined => {
   const baseProperties = {
     id: uuidv4(),
     content: type,
@@ -265,17 +265,7 @@ const createElements = (
           "w-[500px] h-[300px] border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-hidden",
       };
     default:
-      return {
-        type: "Base",
-        ...baseProperties,
-        styles: {
-          width: "200px",
-          height: "100px",
-          backgroundColor: "#f8f9fa",
-          padding: "16px",
-        },
-        tailwindStyles: "border border-gray-300 rounded-md bg-gray-50 p-4",
-      };
+        return undefined;
   }
 };
 

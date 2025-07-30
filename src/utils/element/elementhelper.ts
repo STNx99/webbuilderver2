@@ -7,6 +7,7 @@ import { updateElementStyle } from "./updateElementStyle";
 import { renderChildElement } from "../renderElements";
 import React from "react";
 import { CONTAINER_ELEMENT_TYPES, EDITABLE_ELEMENT_TYPES } from "@/constants/elements";
+import { findParent } from "./findParent";
 
 interface ElementHelper {
   createElements: (
@@ -16,7 +17,7 @@ interface ElementHelper {
     projectId: string,
     src?: string,
     parentId?: string
-  ) => EditorElement;
+  ) => EditorElement | undefined;
 
   handleSwap: (
     draggingElement: EditorElement,
@@ -40,9 +41,11 @@ interface ElementHelper {
   renderChildElement: (
     element: EditorElement,
     props: any
-  ) => React.ReactNode;
+  ) => React.ReactNode ;
   
   updateElementStyle: (element: EditorElement, styles: React.CSSProperties ) => void;
+  
+  findParent: (id: string) => EditorElement | undefined;
 }
 
 export const elementHelper: ElementHelper = {
@@ -57,5 +60,6 @@ export const elementHelper: ElementHelper = {
     return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);
   },
   renderChildElement: renderChildElement,
-  updateElementStyle : updateElementStyle
+  updateElementStyle : updateElementStyle,
+  findParent: findParent
 };

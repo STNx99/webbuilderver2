@@ -48,7 +48,8 @@ export default function Editor() {
     const elementType = e.dataTransfer.getData("elementType");
     
     const newElement = createElements(elementType.toLowerCase(), 0, 0, id, "", undefined);
-    
+    if(!newElement)
+        return;
     addElement(newElement);
   }
   
@@ -116,17 +117,18 @@ export default function Editor() {
                 setIsDraggingOver(false);
               }}
               onDrop={handleDrop}
+              id="canvas"
             >
               {isLoading ? (
                 <ElementLoading count={6} variant="mixed" />
               ) : (
-                <div className="flex flex-col min-h-full">
+                <>
                     <ElementLoader
                       elements={elements || []}
                       setContextMenuPosition={setContextMenuPosition}
                       setShowContextMenu={setShowContextMenu}
                     />
-                </div>
+                </>
               )}
             </div>
           </div>

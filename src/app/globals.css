@@ -363,3 +363,12 @@ body {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+
+.resize-handle {
+  transition: all 0.1s ease;
+  box-shadow: 0 0 0 1px white;
+}
+.resize-handle:hover {
+  transform: scale(1.2);
+  background-color: #3b82f6 !important;
+}
