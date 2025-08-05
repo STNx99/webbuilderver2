@@ -1,21 +1,25 @@
-import { ContainerElement, EditorElement } from "@/types/global.type";
+import useElementStore from "@/globalstore/elementstore";
+import { EditorElement } from "@/types/global.type";
 
 export function findElement(
-  element: EditorElement,
   id: string
 ): EditorElement | undefined {
-  if (element.id === id) {
-    return element;
-  }
+  const elements = useElementStore.getState().elements;
 
-  if ("elements" in element) {
-    for (const child of (element as ContainerElement).elements) {
-      const found = findElement(child, id);
-      if (found) {
-        return found;
+  function find(elements: EditorElement[]): EditorElement | undefined {
+    for (const element of elements) {
+      if (element.id === id) {
+        return element;
+      }
+      if ("elements" in element && Array.isArray(element.elements)) {
+        const found = find(element.elements);
+        if (found) {
+          return found;
+        }
       }
     }
+    return undefined;
   }
 
-  return undefined;
+  return find(elements);
 }

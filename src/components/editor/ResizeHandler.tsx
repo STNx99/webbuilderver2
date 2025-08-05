@@ -1,202 +1,281 @@
-import useElementStore from "@/globalstore/elementstore";
-import { cn } from "@/lib/utils";
-import { EditorElement } from "@/types/global.type";
-import React, { ReactNode, useRef, useState, useEffect } from "react";
+"use client"
 
-type ResizeDirection = "se" | "sw" | "ne" | "nw" | "n" | "s" | "e" | "w";
+import useElementStore from "@/globalstore/elementstore"
+import { cn } from "@/lib/utils"
+import type { EditorElement } from "@/types/global.type"
+import type React from "react"
+import { type ReactNode, useRef, useState, useEffect } from "react"
+
+type ResizeDirection = "se" | "sw" | "ne" | "nw" | "n" | "s" | "e" | "w"
 
 interface ResizeHandlerProps {
-    element: EditorElement;
-    children: ReactNode;
+  element: EditorElement
+  children: ReactNode
 }
 
 interface ResizeHandleProps {
-    direction: ResizeDirection;
-    onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void;
+  direction: ResizeDirection
+  onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void
 }
 
 function ResizeHandle({ direction, onResizeStart }: ResizeHandleProps) {
-    const handleMouseDown = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        onResizeStart(direction, e);
-    };
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onResizeStart(direction, e)
+  }
 
-    const commonClasses =
-        "absolute bg-blue-500 rounded-full w-3 h-3 border-2 border-white";
+  const commonClasses = "absolute bg-blue-500 rounded-full w-3 h-3 border-2 border-white z-10"
 
-    const directionalClasses = {
-        n: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-n-resize",
-        s: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 cursor-s-resize",
-        e: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2 cursor-e-resize",
-        w: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 cursor-w-resize",
-        ne: "right-0 top-0 translate-x-1/2 -translate-y-1/2 cursor-ne-resize",
-        nw: "left-0 top-0 -translate-x-1/2 -translate-y-1/2 cursor-nw-resize",
-        se: "right-0 bottom-0 translate-x-1/2 translate-y-1/2 cursor-se-resize",
-        sw: "left-0 bottom-0 -translate-x-1/2 translate-y-1/2 cursor-sw-resize",
-    }[direction];
+  const directionalClasses = {
+    n: "top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-n-resize",
+    s: "bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 cursor-s-resize",
+    e: "right-0 top-1/2 -translate-y-1/2 translate-x-1/2 cursor-e-resize",
+    w: "left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 cursor-w-resize",
+    ne: "right-0 top-0 translate-x-1/2 -translate-y-1/2 cursor-ne-resize",
+    nw: "left-0 top-0 -translate-x-1/2 -translate-y-1/2 cursor-nw-resize",
+    se: "right-0 bottom-0 translate-x-1/2 translate-y-1/2 cursor-se-resize",
+    sw: "left-0 bottom-0 -translate-x-1/2 translate-y-1/2 cursor-sw-resize",
+  }[direction]
 
-    return (
-        <div
-            className={cn(
-                commonClasses,
-                directionalClasses,
-                "hover:bg-blue-600 active:bg-blue-700 active:scale-125",
-            )}
-            onMouseDown={handleMouseDown}
-        />
-    );
+  return (
+    <div
+      className={cn(commonClasses, directionalClasses, "hover:bg-blue-600 active:bg-blue-700 active:scale-125")}
+      onMouseDown={handleMouseDown}
+    />
+  )
 }
 
-export default function ResizeHandler({
-    element,
-    children,
-}: ResizeHandlerProps) {
-    const [resizeDirection, setResizeDirection] =
-        useState<ResizeDirection | null>(null);
-    const targetRef = useRef<HTMLDivElement>(null);
-    const startMousePos = useRef<{ x: number; y: number } | null>(null);
-    const startDimensionsPx = useRef<{ width: number; height: number } | null>(
-        null,
-    );
+// Helper function to parse CSS values
+const parseCSSValue = (value: string | number | undefined): number => {
+  if (typeof value === "number") return value
+  if (typeof value === "string") {
+    const parsed = Number.parseFloat(value)
+    return isNaN(parsed) ? 0 : parsed
+  }
+  return 0
+}
 
-    const { updateElement } = useElementStore();
+// Helper function to get computed margins
+const getElementMargins = (element: HTMLElement) => {
+  const computedStyle = window.getComputedStyle(element)
+  return {
+    top: parseCSSValue(computedStyle.marginTop),
+    right: parseCSSValue(computedStyle.marginRight),
+    bottom: parseCSSValue(computedStyle.marginBottom),
+    left: parseCSSValue(computedStyle.marginLeft),
+  }
+}
 
-    const handleResizeStart = (
-        direction: ResizeDirection,
-        e: React.MouseEvent,
-    ) => {
-        setResizeDirection(direction);
-        if (targetRef.current) {
-            const rect = targetRef.current.getBoundingClientRect();
-            startDimensionsPx.current = {
-                width: rect.width,
-                height: rect.height,
-            };
-            startMousePos.current = { x: e.clientX, y: e.clientY };
-        }
-    };
+// Helper function to get element's available space considering margins
+const getAvailableSpace = (element: HTMLElement, parentElement: HTMLElement | null) => {
+  if (!parentElement) {
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    }
+  }
 
-    const handleMouseMove = (e: MouseEvent) => {
-        if (
-            !resizeDirection ||
-            !startMousePos.current ||
-            !startDimensionsPx.current
-        ) {
-            return;
-        }
+  const margins = getElementMargins(element)
+  const parentRect = parentElement.getBoundingClientRect()
 
-        const getEffectiveParentDimensions = () => {
-            const parentEl = element.parentId
-                ? document.getElementById(element.parentId)
-                : document.getElementById("canvas");
+  return {
+    width: parentRect.width - margins.left - margins.right,
+    height: parentRect.height - margins.top - margins.bottom,
+  }
+}
 
-            if (parentEl) {
-                return {
-                    width: parentEl.offsetWidth, // Always returns pixels
-                    height: parentEl.offsetHeight,
-                };
-            }
+export default function ResizeHandler({ element, children }: ResizeHandlerProps) {
+  const [resizeDirection, setResizeDirection] = useState<ResizeDirection | null>(null)
+  const targetRef = useRef<HTMLDivElement>(null)
+  const startMousePos = useRef<{ x: number; y: number } | null>(null)
+  const startDimensionsPx = useRef<{ width: number; height: number } | null>(null)
+  const startMargins = useRef<{ top: number; right: number; bottom: number; left: number } | null>(null)
+  const availableSpace = useRef<{ width: number; height: number } | null>(null)
 
-            const canvas = document.getElementById("canvas");
-            if (canvas) {
-                return {
-                    width: canvas.offsetWidth,
-                    height: canvas.offsetHeight,
-                };
-            }
+  const { updateElement } = useElementStore()
 
-            return {
-                width: window.innerWidth,
-                height: window.innerHeight,
-            };
-        };
+  const handleResizeStart = (direction: ResizeDirection, e: React.MouseEvent) => {
+    setResizeDirection(direction)
+    if (targetRef.current) {
+      const rect = targetRef.current.getBoundingClientRect()
+      const margins = getElementMargins(targetRef.current)
 
-        const { width: effectiveParentWidth, height: effectiveParentHeight } =
-            getEffectiveParentDimensions();
+      // Get parent element for available space calculation
+      const parentElement = element.parentId
+        ? document.getElementById(element.parentId)
+        : document.getElementById("canvas")
 
-        // Calculate mouse movement
-        const dx = e.clientX - startMousePos.current.x;
-        const dy = e.clientY - startMousePos.current.y;
+      const available = getAvailableSpace(targetRef.current, parentElement)
 
-        // Calculate new dimensions
-        let newWidthPx = startDimensionsPx.current.width;
-        let newHeightPx = startDimensionsPx.current.height;
+      startDimensionsPx.current = {
+        width: rect.width,
+        height: rect.height,
+      }
+      startMargins.current = margins
+      availableSpace.current = available
+      startMousePos.current = { x: e.clientX, y: e.clientY }
+    }
+  }
 
-        // Apply resize direction
-        if (resizeDirection.includes("e")) newWidthPx += dx;
-        if (resizeDirection.includes("w")) newWidthPx -= dx;
-        if (resizeDirection.includes("s")) newHeightPx += dy;
-        if (resizeDirection.includes("n")) newHeightPx -= dy;
+  const handleMouseMove = (e: MouseEvent) => {
+    if (
+      !resizeDirection ||
+      !startMousePos.current ||
+      !startDimensionsPx.current ||
+      !startMargins.current ||
+      !availableSpace.current
+    ) {
+      return
+    }
 
-        // Ensure minimum dimensions
-        newWidthPx = Math.max(1, newWidthPx);
-        newHeightPx = Math.max(1, newHeightPx);
+    const { clientX, clientY } = e
+    const { x: startX, y: startY } = startMousePos.current
+    const { width: startWidth, height: startHeight } = startDimensionsPx.current
+    const margins = startMargins.current
+    const { width: availableWidth, height: availableHeight } = availableSpace.current
 
-        // Convert to percentages with safeguards
-        const MIN_SIZE_PERCENT = 2;
-        const newWidthPercent = Math.max(
-            MIN_SIZE_PERCENT,
-            (newWidthPx / effectiveParentWidth) * 100,
-        );
-        const newHeightPercent = Math.max(
-            MIN_SIZE_PERCENT,
-            (newHeightPx / effectiveParentHeight) * 100,
-        );
+    const dx = clientX - startX
+    const dy = clientY - startY
 
-        updateElement(element.id, {
-            styles: {
-                ...element.styles,
-                // Store both representations
-                width: `${newWidthPercent}%`,
-                height: `${newHeightPercent}%`,
-            },
-        });
-    };
+    let newWidthPx = startWidth
+    let newHeightPx = startHeight
 
-    const handleResizeEnd = () => {
-        setResizeDirection(null);
-        startMousePos.current = null;
-        startDimensionsPx.current = null;
-    };
+    // Apply resize based on direction
+    if (resizeDirection.includes("e")) newWidthPx += dx
+    if (resizeDirection.includes("w")) newWidthPx -= dx
+    if (resizeDirection.includes("s")) newHeightPx += dy
+    if (resizeDirection.includes("n")) newHeightPx -= dy
 
-    useEffect(() => {
-        if (resizeDirection) {
-            document.addEventListener("mousemove", handleMouseMove);
-            document.addEventListener("mouseup", handleResizeEnd);
-        } else {
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleResizeEnd);
-        }
+    // Ensure minimum size
+    newWidthPx = Math.max(20, newWidthPx)
+    newHeightPx = Math.max(20, newHeightPx)
 
-        return () => {
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", handleResizeEnd);
-        };
-    }, [resizeDirection]);
+    // Calculate maximum allowed dimensions considering margins
+    const maxWidth = availableWidth
+    const maxHeight = availableHeight
 
-    return (
-        <div
-            ref={targetRef}
-            className="relative"
-            style={{
-                width: element.styles?.width,
-                height: element.styles?.height,
-            }}
-        >
-            {children}
+    // Constrain to available space
+    newWidthPx = Math.min(newWidthPx, maxWidth)
+    newHeightPx = Math.min(newHeightPx, maxHeight)
 
-            {element.isSelected && (
-                <>
-                    {["n", "s", "e", "w", "ne", "nw", "se", "sw"].map((dir) => (
-                        <ResizeHandle
-                            key={dir}
-                            direction={dir as ResizeDirection}
-                            onResizeStart={handleResizeStart}
-                        />
-                    ))}
-                </>
-            )}
-        </div>
-    );
+    // Convert to percentage if parent exists, otherwise use pixels
+    const parentElement = element.parentId
+      ? document.getElementById(element.parentId)
+      : document.getElementById("canvas")
+
+    let finalWidth: string
+    let finalHeight: string
+
+    if (parentElement && element.parentId) {
+      // For child elements, use percentage relative to parent's content area
+      const parentRect = parentElement.getBoundingClientRect()
+      const parentContentWidth = parentRect.width - margins.left - margins.right
+      const parentContentHeight = parentRect.height - margins.top - margins.bottom
+
+      const widthPercent = Math.max(1, Math.min(100, (newWidthPx / parentContentWidth) * 100))
+      const heightPercent = Math.max(1, Math.min(100, (newHeightPx / parentContentHeight) * 100))
+
+      finalWidth = `${widthPercent.toFixed(2)}%`
+      finalHeight = `${heightPercent.toFixed(2)}%`
+    } else {
+      // For root elements, use pixels or viewport units
+      finalWidth = `${newWidthPx}px`
+      finalHeight = `${newHeightPx}px`
+    }
+
+    const updatedStyles: Partial<React.CSSProperties> = {
+      ...element.styles,
+    }
+
+    const isHorizontalResize = resizeDirection.includes("w") || resizeDirection.includes("e")
+    const isVerticalResize = resizeDirection.includes("n") || resizeDirection.includes("s")
+
+    if (isHorizontalResize) {
+      updatedStyles.width = finalWidth
+    }
+    if (isVerticalResize) {
+      updatedStyles.height = finalHeight
+    }
+
+    // Handle position adjustments for corner/edge resizing from top/left
+    if (resizeDirection.includes("w") && element.styles?.position === "absolute") {
+      const currentLeft = parseCSSValue(element.styles.left)
+      const deltaX = startWidth - newWidthPx
+      updatedStyles.left = `${currentLeft + deltaX}px`
+    }
+
+    if (resizeDirection.includes("n") && element.styles?.position === "absolute") {
+      const currentTop = parseCSSValue(element.styles.top)
+      const deltaY = startHeight - newHeightPx
+      updatedStyles.top = `${currentTop + deltaY}px`
+    }
+
+    updateElement(element.id, { styles: updatedStyles })
+  }
+
+  const handleResizeEnd = () => {
+    setResizeDirection(null)
+    startMousePos.current = null
+    startDimensionsPx.current = null
+    startMargins.current = null
+    availableSpace.current = null
+  }
+
+  useEffect(() => {
+    if (resizeDirection) {
+      document.addEventListener("mousemove", handleMouseMove)
+      document.addEventListener("mouseup", handleResizeEnd)
+
+      // Prevent text selection during resize
+      document.body.style.userSelect = "none"
+      document.body.style.cursor = `${resizeDirection}-resize`
+    } else {
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleResizeEnd)
+
+      // Restore text selection
+      document.body.style.userSelect = ""
+      document.body.style.cursor = ""
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+      document.removeEventListener("mouseup", handleResizeEnd)
+      document.body.style.userSelect = ""
+      document.body.style.cursor = ""
+    }
+  }, [resizeDirection])
+
+  return (
+    <div
+      ref={targetRef}
+      className="relative"
+      style={{
+        width: element.styles?.width || "auto",
+        height: element.styles?.height || "auto",
+        margin: element.styles?.margin,
+        marginTop: element.styles?.marginTop,
+        marginRight: element.styles?.marginRight,
+        marginBottom: element.styles?.marginBottom,
+        marginLeft: element.styles?.marginLeft,
+      }}
+      id={element.id}
+    >
+      {children}
+
+      {element.isSelected && (
+        <>
+          {["n", "s", "e", "w", "ne", "nw", "se", "sw"].map((dir) => (
+            <ResizeHandle key={dir} direction={dir as ResizeDirection} onResizeStart={handleResizeStart} />
+          ))}
+
+          {/* Visual feedback during resize */}
+          {resizeDirection && (
+            <div className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none" />
+          )}
+        </>
+      )}
+    </div>
+  )
 }

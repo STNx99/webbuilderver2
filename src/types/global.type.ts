@@ -62,3 +62,42 @@ export type {
   ElementType,
   ContainerElementType,
 };
+
+export type Breakpoint = "base" | "mobile" | "tablet" | "desktop";
+
+export type ResponsiveValue<T> = {
+  base?: T; 
+  mobile?: T;
+  tablet?: T;
+  desktop?: T;
+};
+
+export type ResponsiveCSSProperties = {
+  [K in keyof React.CSSProperties]?:
+    | React.CSSProperties[K]
+    | ResponsiveValue<React.CSSProperties[K]>;
+};
+
+export function resolveResponsiveStyles(
+  styles: React.CSSProperties | ResponsiveCSSProperties | undefined,
+  breakpoint: Breakpoint
+): React.CSSProperties {
+  if (!styles) return {};
+  const resolved: React.CSSProperties = {};
+  for (const key in styles) {
+    const value = styles[key as keyof typeof styles];
+    if (
+      value &&
+      typeof value === "object" &&
+      ("base" in value || "mobile" in value || "tablet" in value || "desktop" in value)
+    ) {
+      resolved[key as keyof React.CSSProperties] =
+        (value as ResponsiveValue<any>)[breakpoint] ??
+        (value as ResponsiveValue<any>).base ??
+        undefined;
+    } else {
+      resolved[key as keyof React.CSSProperties] = value as any;
+    }
+  }
+  return resolved;
+}

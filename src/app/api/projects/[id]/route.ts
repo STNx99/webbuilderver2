@@ -1,7 +1,7 @@
 import { projectDAL } from "@/data/project";
 import { auth } from "@clerk/nextjs/server";
 
-export default async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export  async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { userId } = await auth();
         if (!userId) {

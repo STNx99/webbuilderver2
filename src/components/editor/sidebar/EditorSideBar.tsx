@@ -22,6 +22,7 @@ import Link from "next/link";
 import ComponentHolder from "./ComponentHolder";
 
 export function EditorSideBar() {
+    
   return (
     <Sidebar side="left">
       <SidebarContent>

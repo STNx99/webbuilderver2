@@ -5,4 +5,7 @@ export interface Project {
   subdomain?: string;
   published?: boolean;
   styles: React.CSSProperties;
+  createdAt?: Date;
+  views?: number;
+  lastModifiedAt?: Date;
 }

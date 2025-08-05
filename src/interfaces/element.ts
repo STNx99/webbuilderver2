@@ -1,4 +1,4 @@
-import { EditorElement, ElementType } from "@/types/global.type";
+import { EditorElement, ElementType, ResponsiveCSSProperties } from "@/types/global.type";
 
 // Interface from 
 interface DBElement {
@@ -8,8 +8,6 @@ interface DBElement {
   name?: string;
   styles?: React.CSSProperties;
   tailwindStyles?: string;
-  x: number;
-  y: number;
   src?: string;
   href?: string;
   parentId?: string;
@@ -20,7 +18,6 @@ interface Element extends DBElement {
   isSelected: boolean
   isHovered: boolean
   isDraggedOver: boolean
-  isEditing: boolean;
 }
 
 interface BaseElement extends Element {}

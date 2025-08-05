@@ -1,6 +1,6 @@
 import useElementStore from "@/globalstore/elementstore";
 import { cn } from "@/lib/utils";
-import { EditorElement } from "@/types/global.type";
+import { EditorElement, ElementType } from "@/types/global.type";
 import { elementHelper } from "@/utils/element/elementhelper";
 
 export function useElementHandler() {
@@ -40,14 +40,12 @@ export function useElementHandler() {
                 return;
             }
 
-            const newElement = elementHelper.createElements(
-                data,
-                0,
-                0,
+            const newElement = elementHelper.createElement(
+                data as ElementType,
                 projectId,
-                undefined,
                 parentElement.id,
             );
+            
             if (!newElement) {
                 return;
             }
@@ -149,18 +147,14 @@ export function useElementHandler() {
             borderWidth,
             borderStyle,
             borderColor,
+            width,
+            height,
             ...cleanStyles
         } = element.styles || {};
-
+    
         return {
             ...cleanStyles,
-            width: "100%",
             height: "100%",
-            ...(element.isSelected && {
-                borderWidth: "4px",
-                borderStyle: "solid",
-                borderColor: "black",
-            }),
             ...(element.isHovered &&
                 !element.isSelected && {
                     borderWidth: "2px",
@@ -177,6 +171,7 @@ export function useElementHandler() {
                 }),
         };
     };
+
     const getCommonProps = (element: EditorElement) => {
         const tailwindStyles = getTailwindStyles(element);
         const mergedStyles = getStyles(element);

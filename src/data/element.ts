@@ -21,8 +21,6 @@ export const ElementDAL = {
         Styles: JSON.stringify(element.styles) || "",
         Content: JSON.stringify(element.content) || "",
         ParentId: element.parentId || null,
-        X: element.x || 0,
-        Y: element.y || 0,
         Src: element.src || null,
         Href: element.href || null,
         TailwindStyles: element.tailwindStyles || "",
