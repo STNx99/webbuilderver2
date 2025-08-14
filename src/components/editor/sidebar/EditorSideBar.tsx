@@ -20,9 +20,13 @@ import elementHolders from "@/constants/elements";
 import { Settings } from "lucide-react";
 import Link from "next/link";
 import ComponentHolder from "./ComponentHolder";
+import { useAiChat } from "@/providers/aiprovider";
 
 export function EditorSideBar() {
-    
+  const { chatOpen } = useAiChat();
+
+  if (chatOpen) return null;
+
   return (
     <Sidebar side="left">
       <SidebarContent>
@@ -59,7 +63,7 @@ export function EditorSideBar() {
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
-                  
+                  {/* Image upload content here */}
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>

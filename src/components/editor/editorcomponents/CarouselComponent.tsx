@@ -3,8 +3,6 @@ import { EditorComponentProps } from "@/interfaces/editor";
 
 const CarouselComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   return (
     <div style={element.styles} className={element.tailwindStyles}>

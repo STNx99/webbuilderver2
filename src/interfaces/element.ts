@@ -1,7 +1,7 @@
-import { EditorElement, ElementType, ResponsiveCSSProperties } from "@/types/global.type";
+import { EditorElement, ElementType } from "@/types/global.type";
 
-// Interface from 
-interface DBElement {
+// Interface from
+interface DBElement<Settings = undefined> {
   type: ElementType;
   id: string;
   content: string;
@@ -12,58 +12,59 @@ interface DBElement {
   href?: string;
   parentId?: string;
   projectId: string;
+  settings?: Settings | null;
 }
 
-interface Element extends DBElement {
-  isSelected: boolean
-  isHovered: boolean
-  isDraggedOver: boolean
+
+interface Element<Settings = undefined> extends DBElement<Settings> {
+  isSelected: boolean;
+  isHovered: boolean;
+  isDraggedOver: boolean;
 }
 
 interface BaseElement extends Element {}
 
-interface TextElement extends Element {
+interface TextElement extends Element<void> {
   type: "Text";
 }
 
-interface FrameElement extends Element {
+interface FrameElement extends Element<void> {
   elements: EditorElement[];
 }
 
-interface SectionElement extends Element {
+interface SectionElement extends Element<void> {
   elements: EditorElement[];
 }
-interface SectionElement extends Element {
+
+interface CarouselSettings {
+  autoplay?: boolean;
+  dots?: boolean;
+  arrows?: boolean;
+  infinite?: boolean;
+  speed?: number;
+  slidesToShow?: number;
+  slidesToScroll?: number;
+}
+
+interface CarouselElement extends Element<CarouselSettings> {
   elements: EditorElement[];
 }
-interface CarouselElement extends Element {
-  elements: EditorElement[];
-  carouselSettings: {
-    autoplay?: boolean;
-    dots?: boolean;
-    arrows?: boolean;
-    infinite?: boolean;
-    speed?: number;
-    slidesToShow?: number;
-    slidesToScroll?: number;
-  };
-}
-interface ButtonElement extends Element {
-  buttonType: string;
+
+interface ButtonElement extends Element<void> {
   element?: FrameElement;
 }
-interface InputElement extends Element {
-  inputSettings: Partial<HTMLInputElement>;
-}
-interface ListElement extends Element {
+
+interface InputElement extends Element<Partial<HTMLInputElement>> {}
+
+interface ListElement extends Element<void> {
   elements: EditorElement[];
 }
-interface SelectElement extends Element {
+
+interface SelectElement extends Element<Partial<HTMLSelectElement>> {
   options: Array<Partial<HTMLOptionElement>>;
-  selectSettings?: Partial<HTMLSelectElement>;
 }
 
-interface ChartElement extends Element {
+interface ChartElement extends Element<Record<string, unknown>> {
   type: "Chart";
   chartType: "bar" | "line" | "pie" | "doughnut" | "radar" | "polarArea";
   chartData: {
@@ -80,25 +81,25 @@ interface ChartElement extends Element {
   chartOptions?: Record<string, <T>(data: T) => T>;
 }
 
-interface DataTableElement extends Element {
-  type: "DataTable";
-  headers: string[];
-  rows: Array<Array<string | number>>;
-  tableSettings?: {
-    sortable?: boolean;
-    searchable?: boolean;
-    pagination?: boolean;
-    rowsPerPage?: number;
-    striped?: boolean;
-    bordered?: boolean;
-    hoverEffect?: boolean;
-  };
+interface DataTableSettings {
+  sortable?: boolean;
+  searchable?: boolean;
+  pagination?: boolean;
+  rowsPerPage?: number;
+  striped?: boolean;
+  bordered?: boolean;
+  hoverEffect?: boolean;
 }
 
-interface FormElement extends Element {
-  elements: EditorElement[];
-  formSettings?: Partial<HTMLFormElement>;
+interface DataTableElement extends Element<DataTableSettings> {
+  headers: string[] | undefined;
+  rows: Array<Array<string | number>> | undefined;
 }
+
+interface FormElement extends Element<Partial<HTMLFormElement>> {
+  elements: EditorElement[];
+}
+
 
 export type {
   BaseElement,

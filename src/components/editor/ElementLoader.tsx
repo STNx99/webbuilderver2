@@ -14,25 +14,16 @@ import {
     SectionComponent,
 } from "@/types/editor";
 import ResizeHandler from "./ResizeHandler";
+import EditorContextMenu from "./EditorContextMenu";
 
 type Props = {
     elements: EditorElement[];
-    setContextMenuPosition: React.Dispatch<
-        React.SetStateAction<{ x: number; y: number }>
-    >;
-    setShowContextMenu: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function ElementLoader({
-    elements,
-    setContextMenuPosition,
-    setShowContextMenu,
-}: Props) {
+export default function ElementLoader({ elements }: Props) {
     const renderElement = (element: EditorElement) => {
         const commonProps = {
             element,
-            setContextMenuPosition,
-            setShowContextMenu,
         };
 
         switch (element.type) {
@@ -63,8 +54,10 @@ export default function ElementLoader({
     return (
         <>
             {elements.map((element) => (
-                <ResizeHandler element={element} key={element.id}>
-                    {renderElement(element)}
+                <ResizeHandler element={element} key={element.id || Math.random()}>
+                    <EditorContextMenu  element={element}>
+                        {renderElement(element)}
+                    </EditorContextMenu>
                 </ResizeHandler>
             ))}
         </>

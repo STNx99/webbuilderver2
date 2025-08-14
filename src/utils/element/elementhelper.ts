@@ -5,7 +5,6 @@ import {
     EditorElement,
     ElementType,
 } from "@/types/global.type";
-import { createElement } from "./create/createElements";
 import { handleSwap } from "./handleSwap";
 import { findElement } from "./findElement";
 import { getElementSettings } from "./getElementSettings";
@@ -16,6 +15,7 @@ import {
     CONTAINER_ELEMENT_TYPES,
     EDITABLE_ELEMENT_TYPES,
 } from "@/constants/elements";
+import { createElement } from "./create/createElements";
 
 interface ElementHelper {
     createElement: (
@@ -41,7 +41,7 @@ interface ElementHelper {
 
     isEditableElement: (element: EditorElement) => boolean;
 
-    renderChildElement: (element: EditorElement, props: any) => React.ReactNode;
+    renderChildElement: (element: EditorElement, props: any, excludes?: ElementType[]) => React.ReactNode;
 
     updateElementStyle: (
         element: EditorElement,

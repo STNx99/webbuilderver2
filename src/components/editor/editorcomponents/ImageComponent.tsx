@@ -13,8 +13,9 @@ const ImageComponent = ({ element }: Props) => {
     <div className="">
       {imageElement.src ? (
         <img
-          src={imageElement.src}
+          src={"https://placehold.co/600x400"}
           alt={imageElement.name || "Image"}
+          className="w-full h-full object-cover"
           style={imageElement.styles}
         />
       ) : (

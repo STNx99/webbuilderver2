@@ -4,8 +4,6 @@ import { InputElement } from "@/interfaces/element";
 
 const InputComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   const inputElement = element as InputElement;
 

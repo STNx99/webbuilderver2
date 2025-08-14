@@ -65,7 +65,6 @@ export class ButtonElementCreateStrategy implements ElementCreateStrategy {
             parentId: elementState.parentId,
             ...elementState.baseProperties,
             content: "Click me",
-            buttonType: "primary",
             styles: {
                 width: "120px",
                 height: "40px",
@@ -93,7 +92,7 @@ export class InputElementCreateStrategy implements ElementCreateStrategy {
             parentId: elementState.parentId,
             ...elementState.baseProperties,
             content: "",
-            inputSettings: {
+            settings: {
                 type: "text",
                 placeholder: "Enter text...",
             },
@@ -149,7 +148,7 @@ export class SelectElementCreateStrategy implements ElementCreateStrategy {
                 { value: "option1", text: "Option 1" },
                 { value: "option2", text: "Option 2" },
             ],
-            selectSettings: {},
+            settings: {},
             styles: {
                 width: "180px",
                 height: "40px",
@@ -230,7 +229,7 @@ export class DataTableElementCreateStrategy implements ElementCreateStrategy {
                 ["Jane Smith", 30, "London"],
                 ["Bob Johnson", 35, "Paris"],
             ],
-            tableSettings: {
+            settings: {
                 sortable: true,
                 searchable: true,
                 pagination: true,
@@ -253,6 +252,7 @@ export class DataTableElementCreateStrategy implements ElementCreateStrategy {
     }
 }
 
+
 export class FormElementCreateStrategy implements ElementCreateStrategy {
     buildElement(elementState: BuilderState): EditorElement {
         return {
@@ -264,7 +264,7 @@ export class FormElementCreateStrategy implements ElementCreateStrategy {
             content: "",
             ...elementState.baseProperties,
             elements: [],
-            formSettings: {
+            settings: {
                 method: "POST",
                 action: "",
             },
@@ -316,7 +316,7 @@ export class CarouselElementCreateStrategy implements ElementCreateStrategy {
             content: "",
             ...elementState.baseProperties,
             elements: [],
-            carouselSettings: {
+            settings: {
                 autoplay: true,
                 dots: true,
                 arrows: true,

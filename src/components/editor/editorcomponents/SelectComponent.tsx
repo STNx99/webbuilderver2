@@ -4,8 +4,6 @@ import { SelectElement } from "@/interfaces/element";
 
 const SelectComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   const selectElement = element as SelectElement;
 

@@ -6,19 +6,16 @@ import { elementHelper } from "@/utils/element/elementhelper";
 
 const FrameComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
   const {getCommonProps} = useElementHandler();
-  const childProps = { setContextMenuPosition, setShowContextMenu };
 
   return (
     <div
       {...getCommonProps(frameElement)}
     >
       {frameElement.elements?.map((child) =>
-        elementHelper.renderChildElement(child, childProps),
+          elementHelper.renderChildElement(child, {}),
       )}
     </div>
   );

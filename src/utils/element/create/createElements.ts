@@ -4,7 +4,6 @@ import { getElementStrategy } from "./elementStrategyMap";
 import { BuilderState } from "./elementCreateStrategy";
 
 
-
 export class ElementBuilder {
     private id: string = uuidv4();
     private type: ElementType = "Text";

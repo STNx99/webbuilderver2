@@ -17,14 +17,78 @@ import {
 import useElementStore from "@/globalstore/elementstore";
 import { elementHelper } from "@/utils/element/elementhelper";
 import React, { useEffect, useState } from "react";
-import { EditorElement, resolveResponsiveStyles } from "@/types/global.type";
-import { useBreakpointStore } from "@/globalstore/responsivebreakpointstore";
 
-type AppearanceStyles = Partial<React.CSSProperties>;
+type AppearanceStyles = Pick<
+    React.CSSProperties,
+    // Size & Position
+    | "height"
+    | "width"
+    | "top"
+    | "bottom"
+    | "left"
+    | "right"
+    | "position"
+    | "zIndex"
+    // Color & Border
+    | "backgroundColor"
+    | "color"
+    | "borderColor"
+    | "borderWidth"
+    | "borderRadius"
+    | "boxShadow"
+    | "outline"
+    | "outlineColor"
+    | "outlineWidth"
+    | "outlineStyle"
+    // Opacity
+    | "opacity"
+    // Spacing
+    | "padding"
+    | "paddingTop"
+    | "paddingBottom"
+    | "paddingLeft"
+    | "paddingRight"
+    | "margin"
+    | "marginTop"
+    | "marginBottom"
+    | "marginLeft"
+    | "marginRight"
+    // Flexbox
+    | "display"
+    | "flexDirection"
+    | "flexWrap"
+    | "justifyContent"
+    | "alignItems"
+    | "alignContent"
+    | "gap"
+    | "rowGap"
+    | "columnGap"
+    | "alignSelf"
+    | "order"
+    | "flex"
+    | "flexGrow"
+    | "flexShrink"
+    | "flexBasis"
+    // Grid
+    | "gridTemplateColumns"
+    | "gridTemplateRows"
+    | "gridColumn"
+    | "gridRow"
+    | "gridColumnStart"
+    | "gridColumnEnd"
+    | "gridRowStart"
+    | "gridRowEnd"
+    | "gridGap"
+    | "gridRowGap"
+    | "gridColumnGap"
+    | "placeItems"
+    | "placeContent"
+    | "placeSelf"
+    | "justifyItems"
+>;
 
 export const AppearanceAccordion = () => {
     const { selectedElement } = useElementStore();
-    const { breakpoint, setBreakpoint } = useBreakpointStore();
     const [styles, setStyles] = useState<AppearanceStyles>({
         height: "auto",
         width: "auto",
@@ -52,10 +116,8 @@ export const AppearanceAccordion = () => {
 
     useEffect(() => {
         if (selectedElement?.styles) {
-            const s = resolveResponsiveStyles(
-                selectedElement.styles as React.CSSProperties | undefined,
-                breakpoint,
-            );
+            const s = selectedElement.styles as React.CSSProperties | undefined;
+            if (!s) return;
             setStyles({
                 ...s,
                 backgroundColor: s.backgroundColor || "#ffffff",
@@ -103,33 +165,6 @@ export const AppearanceAccordion = () => {
         setStyles(newStyles);
         elementHelper.updateElementStyle(selectedElement, newStyles);
     };
-
-    const updateElementSize = (sizeType: "height" | "width") => {
-        if (!selectedElement) return;
-
-        const getElementSize = (
-            sizeType: "height" | "width",
-            element: EditorElement,
-        ): string => {
-            const domElement = document.getElementById(element.id);
-            if (!domElement) {
-                return "auto";
-            }
-            const computedStyles = window.getComputedStyle(domElement);
-            const parentSize =
-                sizeType === "height"
-                    ? computedStyles.height
-                    : computedStyles.width;
-            return parentSize || "auto";
-        };
-
-        const newSize = getElementSize(sizeType, selectedElement);
-        updateStyle(sizeType, newSize);
-    };
-
-    useEffect(() => {
-        console.log(JSON.stringify(styles));
-    }, [styles]);
 
     if (!selectedElement) {
         return <AccordionItem value="appearance"></AccordionItem>;
@@ -774,34 +809,27 @@ export const AppearanceAccordion = () => {
                     {/* Display Section */}
                     <AccordionItem value="display">
                         <AccordionTrigger className="text-xs">
-                            Display
+                            Display & Layout
                         </AccordionTrigger>
                         <AccordionContent>
-                            <div className="flex items-center gap-5 py-1">
+                            {/* Position Control */}
+                            <div className="mb-4">
                                 <Label
-                                    htmlFor="display"
+                                    htmlFor="position"
                                     className="text-xs w-16"
                                 >
-                                    Display
+                                    Position
                                 </Label>
                                 <Select
-                                    value={styles.position || "default"}
+                                    value={styles.position || "static"}
                                     onValueChange={(value) =>
-                                        updateStyle(
-                                            "position",
-                                            value === "default"
-                                                ? undefined
-                                                : value,
-                                        )
+                                        updateStyle("position", value)
                                     }
                                 >
-                                    <SelectTrigger className="w-24 max-h-6 px-1 py-0 text-xs border">
-                                        <SelectValue placeholder="Default" />
+                                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                        <SelectValue placeholder="Position" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="default">
-                                            Default
-                                        </SelectItem>
                                         <SelectItem value="static">
                                             Static
                                         </SelectItem>
@@ -820,6 +848,301 @@ export const AppearanceAccordion = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
+                            {/* Display Control */}
+                            <div className="mb-4">
+                                <Label
+                                    htmlFor="display"
+                                    className="text-xs w-16"
+                                >
+                                    Display
+                                </Label>
+                                <Select
+                                    value={styles.display || "block"}
+                                    onValueChange={(value) =>
+                                        updateStyle("display", value)
+                                    }
+                                >
+                                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                        <SelectValue placeholder="Display" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="block">
+                                            Block
+                                        </SelectItem>
+                                        <SelectItem value="inline-block">
+                                            Inline Block
+                                        </SelectItem>
+                                        <SelectItem value="flex">
+                                            Flex
+                                        </SelectItem>
+                                        <SelectItem value="grid">
+                                            Grid
+                                        </SelectItem>
+                                        <SelectItem value="none">
+                                            None
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            {/* Flex Controls */}
+                            {styles.display === "flex" && (
+                                <div className="flex flex-col gap-3 mb-2 pl-2 border-l border-gray-200">
+                                    <div>
+                                        <Label className="text-xs">
+                                            Flex Direction
+                                        </Label>
+                                        <Select
+                                            value={
+                                                styles.flexDirection || "row"
+                                            }
+                                            onValueChange={(value) =>
+                                                updateStyle(
+                                                    "flexDirection",
+                                                    value,
+                                                )
+                                            }
+                                        >
+                                            <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                                <SelectValue placeholder="Direction" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="row">
+                                                    Row
+                                                </SelectItem>
+                                                <SelectItem value="row-reverse">
+                                                    Row Reverse
+                                                </SelectItem>
+                                                <SelectItem value="column">
+                                                    Column
+                                                </SelectItem>
+                                                <SelectItem value="column-reverse">
+                                                    Column Reverse
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs">
+                                            Flex Wrap
+                                        </Label>
+                                        <Select
+                                            value={styles.flexWrap || "nowrap"}
+                                            onValueChange={(value) =>
+                                                updateStyle("flexWrap", value)
+                                            }
+                                        >
+                                            <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                                <SelectValue placeholder="Wrap" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="nowrap">
+                                                    No Wrap
+                                                </SelectItem>
+                                                <SelectItem value="wrap">
+                                                    Wrap
+                                                </SelectItem>
+                                                <SelectItem value="wrap-reverse">
+                                                    Wrap Reverse
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs">
+                                            Justify Content
+                                        </Label>
+                                        <Select
+                                            value={
+                                                styles.justifyContent ||
+                                                "flex-start"
+                                            }
+                                            onValueChange={(value) =>
+                                                updateStyle(
+                                                    "justifyContent",
+                                                    value,
+                                                )
+                                            }
+                                        >
+                                            <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                                <SelectValue placeholder="Justify" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="flex-start">
+                                                    Start
+                                                </SelectItem>
+                                                <SelectItem value="center">
+                                                    Center
+                                                </SelectItem>
+                                                <SelectItem value="flex-end">
+                                                    End
+                                                </SelectItem>
+                                                <SelectItem value="space-between">
+                                                    Space Between
+                                                </SelectItem>
+                                                <SelectItem value="space-around">
+                                                    Space Around
+                                                </SelectItem>
+                                                <SelectItem value="space-evenly">
+                                                    Space Evenly
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs">
+                                            Align Items
+                                        </Label>
+                                        <Select
+                                            value={
+                                                styles.alignItems || "stretch"
+                                            }
+                                            onValueChange={(value) =>
+                                                updateStyle("alignItems", value)
+                                            }
+                                        >
+                                            <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                                <SelectValue placeholder="Align" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="stretch">
+                                                    Stretch
+                                                </SelectItem>
+                                                <SelectItem value="flex-start">
+                                                    Start
+                                                </SelectItem>
+                                                <SelectItem value="center">
+                                                    Center
+                                                </SelectItem>
+                                                <SelectItem value="flex-end">
+                                                    End
+                                                </SelectItem>
+                                                <SelectItem value="baseline">
+                                                    Baseline
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <Label className="text-xs">Gap</Label>
+                                        <div className="flex items-center gap-8">
+                                            <Input
+                                                type="text"
+                                                value={styles.gap || ""}
+                                                placeholder="e.g. 10px"
+                                                onChange={(e) =>
+                                                    updateStyle(
+                                                        "gap",
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className="w-32 h-6 px-1 py-0 text-xs border"
+                                            />
+                                            <Slider
+                                                min={0}
+                                                max={100}
+                                                step={1}
+                                                value={[
+                                                    typeof styles.gap ===
+                                                    "string"
+                                                        ? parseInt(styles.gap)
+                                                        : Number(styles.gap),
+                                                ]}
+                                                onValueChange={([val]) =>
+                                                    updateStyle(
+                                                        "gap",
+                                                        `${val}px`,
+                                                    )
+                                                }
+                                                className="w-20"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            {/* Grid Controls */}
+                            {styles.display === "grid" && (
+                              <div className="flex flex-col gap-3 mb-2 pl-2 border-l border-gray-200">
+                                <div>
+                                  <Label className="text-xs">Grid Template Columns</Label>
+                                  <Input
+                                    value={styles.gridTemplateColumns?.toString() || ""}
+                                    onChange={e => updateStyle("gridTemplateColumns", e.target.value)}
+                                    placeholder="e.g. 1fr 1fr"
+                                    className="w-40"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Grid Template Rows</Label>
+                                  <Input
+                                    value={styles.gridTemplateRows?.toString() || ""}
+                                    onChange={e => updateStyle("gridTemplateRows", e.target.value)}
+                                    placeholder="e.g. auto 1fr"
+                                    className="w-40"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Gap</Label>
+                                  <Input
+                                    value={styles.gap?.toString() || ""}
+                                    onChange={e => updateStyle("gap", e.target.value)}
+                                    placeholder="e.g. 8px"
+                                    className="w-24"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Column Gap</Label>
+                                  <Input
+                                    value={styles.columnGap?.toString() || ""}
+                                    onChange={e => updateStyle("columnGap", e.target.value)}
+                                    placeholder="e.g. 16px"
+                                    className="w-24"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Row Gap</Label>
+                                  <Input
+                                    value={styles.rowGap?.toString() || ""}
+                                    onChange={e => updateStyle("rowGap", e.target.value)}
+                                    placeholder="e.g. 8px"
+                                    className="w-24"
+                                  />
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Justify Items</Label>
+                                  <Select
+                                    value={styles.justifyItems || "stretch"}
+                                    onValueChange={value => updateStyle("justifyItems", value)}
+                                  >
+                                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                      <SelectValue placeholder="Justify Items" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="stretch">Stretch</SelectItem>
+                                      <SelectItem value="start">Start</SelectItem>
+                                      <SelectItem value="center">Center</SelectItem>
+                                      <SelectItem value="end">End</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div>
+                                  <Label className="text-xs">Align Items</Label>
+                                  <Select
+                                    value={styles.alignItems || "stretch"}
+                                    onValueChange={value => updateStyle("alignItems", value)}
+                                  >
+                                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                                      <SelectValue placeholder="Align Items" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="stretch">Stretch</SelectItem>
+                                      <SelectItem value="start">Start</SelectItem>
+                                      <SelectItem value="center">Center</SelectItem>
+                                      <SelectItem value="end">End</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                            )}
                         </AccordionContent>
                     </AccordionItem>
 

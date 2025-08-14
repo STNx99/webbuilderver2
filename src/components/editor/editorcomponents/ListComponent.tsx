@@ -1,19 +1,22 @@
 import React from "react";
 import { EditorComponentProps } from "@/interfaces/editor";
 import { ListElement } from "@/interfaces/element";
+import { useElementHandler } from "@/hooks/useElementHandler";
+import { elementHelper } from "@/utils/element/elementhelper";
 
-const ListComponent = ({
-  element,
-  setContextMenuPosition,
-  setShowContextMenu,
-}: EditorComponentProps) => {
-  const listElement = element as ListElement;
-
-  return (
-    <ul style={listElement.styles} className={listElement.tailwindStyles}>
-      <li>{listElement.content || "List item"}</li>
-    </ul>
-  );
+const ListComponent = ({ element }: EditorComponentProps) => {
+    const listElement = element as ListElement;
+    
+    const {getCommonProps} = useElementHandler()
+    return (
+        <ul {...getCommonProps(listElement)}>
+            {listElement.elements?.map((item, index) => (
+                <li key={index} className="list-item">
+                    {elementHelper.renderChildElement(item, {})}
+                </li>
+            ))}
+        </ul>
+    );
 };
 
 export default ListComponent;

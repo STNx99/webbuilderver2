@@ -4,8 +4,6 @@ import { DataTableElement } from "@/interfaces/element";
 
 const DataTableComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   const dataTableElement = element as DataTableElement;
 

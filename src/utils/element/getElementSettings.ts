@@ -1,26 +1,12 @@
-import { FormElement, InputElement, SelectElement } from "@/interfaces/element";
 import { EditorElement } from "@/types/global.type";
 
-function convertToString(value: Object): string {
+function convertToString(value: unknown): string {
   return JSON.stringify(value);
 }
 
 export function getElementSettings(element: EditorElement): string | null {
-  let settings: string | null = null;
-  switch (element.type) {
-    case "Form":
-      settings = convertToString((element as FormElement).formSettings || {});
-      break;
-    case "Input":
-      settings = convertToString((element as InputElement).inputSettings || {});
-      break;
-    case "Select":
-      settings = convertToString(
-        (element as SelectElement).selectSettings || {}
-      );
-      break;
-    default:
-      break;
+  if (!element || typeof element !== "object" || element.settings == null) {
+    return null;
   }
-  return settings;
+  return convertToString(element.settings);
 }

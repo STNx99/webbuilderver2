@@ -11,6 +11,7 @@ import { viewportSizes } from "@/constants/viewports";
 import useElementStore from "@/globalstore/elementstore";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { mockElements } from "@/mock/elmentMock";
+import GenerateButton from "@/components/editor/ai/GenerateButton";
 
 export default function Editor() {
     const params = useParams();
@@ -21,13 +22,8 @@ export default function Editor() {
         "mobile" | "tablet" | "desktop"
     >("desktop");
 
-    const [contextMenuPosition, setContextMenuPosition] = useState<{
-        x: number;
-        y: number;
-    }>({ x: 0, y: 0 });
     const { addElement, loadElements, elements } = useElementStore();
 
-    const [showContextMenu, setShowContextMenu] = useState(false);
     const [isDraggingOver, setIsDraggingOver] = useState(false);
 
     const { data, isLoading } = useQuery<EditorElement[]>({
@@ -38,9 +34,10 @@ export default function Editor() {
     useEffect(() => {
         if (data && data.length > 0) {
             loadElements(data);
-        }else{
-            loadElements(mockElements)
-        }
+        } 
+        // else {
+        //     loadElements(mockElements);
+        // }
     }, [data, loadElements]);
 
     // Define viewport dimensions for each device
@@ -66,6 +63,7 @@ export default function Editor() {
                     <h1 className="text-xl font-semibold text-card-foreground font-sans">
                         Responsive Preview
                     </h1>
+                    <GenerateButton/>
                 </div>
 
                 <div className="flex items-center ">
@@ -118,7 +116,7 @@ export default function Editor() {
                         }}
                     >
                         <div
-                            className={`h-full w-full overflow-auto  ${isDraggingOver ? "bg-primary/10" : ""}`}
+                            className={`h-full w-full overflow-auto m-2 ${isDraggingOver ? "bg-primary/10" : ""}`}
                             onDragOver={(e) => {
                                 e.preventDefault();
                                 setIsDraggingOver(true);
@@ -133,23 +131,7 @@ export default function Editor() {
                             {isLoading ? (
                                 <ElementLoading count={6} variant="mixed" />
                             ) : (
-                                elements.length === 0 ? (
-                                    <ElementLoader
-                                        elements={elements || []}
-                                        setContextMenuPosition={
-                                            setContextMenuPosition
-                                        }
-                                        setShowContextMenu={setShowContextMenu}
-                                    />
-                                ) : (
-                                    <ElementLoader
-                                        elements={elements || []}
-                                        setContextMenuPosition={
-                                            setContextMenuPosition
-                                        }
-                                        setShowContextMenu={setShowContextMenu}
-                                    /> 
-                                )
+                                <ElementLoader elements={elements || []} />
                             )}
                         </div>
                     </div>

@@ -4,8 +4,6 @@ import { ChartElement } from "@/interfaces/element";
 
 const ChartComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   const chartElement = element as ChartElement;
 

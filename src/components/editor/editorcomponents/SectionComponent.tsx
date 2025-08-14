@@ -6,8 +6,6 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 
 const SectionComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
   const sectionElement = element as SectionElement;
   const { getCommonProps } = useElementHandler();
@@ -16,8 +14,7 @@ const SectionComponent = ({
     <div {...getCommonProps(sectionElement)}>
       {sectionElement.elements.map((childElement) => {
         return elementHelper.renderChildElement(childElement, {
-          setContextMenuPosition,
-          setShowContextMenu,
+  
         });
       })}
     </div>

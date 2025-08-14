@@ -14,35 +14,29 @@ import {
     SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import React from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerPortal,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer";
 import Configurations from "./configurations/Configurations";
 import useElementStore from "@/globalstore/elementstore";
 import ElementTreeItem from "./ElementTreeItem";
 import { Square } from "lucide-react";
+import { useAiChat } from "@/providers/aiprovider";
 // import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {
     const params = useParams();
+    const {toggleSidebar} = useSidebar()
+    const { toggleChat } = useAiChat();
     const visitProjectSubdomain = (projectId: string) => {
         // const subdomainUrl = getProjectSubdomainUrl(projectId);
         // window.open(subdomainUrl, "_blank");
     };
     const { elements, selectedElement } = useElementStore();
-
+    
+    
     return (
         <Sidebar side="right">
             <SidebarContent>
@@ -64,7 +58,7 @@ function LayoutSideBar() {
                                         {elements.length > 0 ? (
                                             elements.map((element) => (
                                                 <ElementTreeItem
-                                                    key={element.id}
+                                                    key={element.id || Math.random()}
                                                     element={element}
                                                 />
                                             ))
@@ -121,32 +115,16 @@ function LayoutSideBar() {
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <Drawer>
-                            <DrawerTrigger asChild>
-                                <Button variant="secondary" className="w-full">
-                                    Export code
-                                </Button>
-                            </DrawerTrigger>
-                            <DrawerPortal>
-                                <DrawerContent className="h-full">
-                                    <DrawerHeader>
-                                        <DrawerTitle>Generate Code</DrawerTitle>
-                                        <DrawerDescription>
-                                            Generate code from your project
-                                            elements in different formats
-                                        </DrawerDescription>
-                                    </DrawerHeader>
-                                    <div className="px-4 py-2 flex-1 overflow-hidden"></div>
-                                    <DrawerFooter>
-                                        <DrawerClose asChild>
-                                            <Button variant="outline">
-                                                Close
-                                            </Button>
-                                        </DrawerClose>
-                                    </DrawerFooter>
-                                </DrawerContent>
-                            </DrawerPortal>
-                        </Drawer>
+                        <Button
+                            onClick={() => {
+                                toggleChat();
+                                toggleSidebar();
+                            }}
+                            className="w-full font-bold"
+                            variant="outline"
+                        >
+                            AI Assistant
+                        </Button>
                     </SidebarMenuItem>
                     <SidebarMenuItem>
                         <Button

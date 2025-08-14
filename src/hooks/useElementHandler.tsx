@@ -7,21 +7,51 @@ export function useElementHandler() {
     const {
         draggingElement,
         addElement,
+        selectedElements,
         setSelectedElement,
+        setSelectedElements,
         setDraggingElement,
         updateElement,
-        clearHoverStatesExcept,
+        deselectAll,
+        dehoverAll,
     } = useElementStore();
 
     const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
         e.stopPropagation();
-        if (element.isSelected) {
+        const isMultiSelect = e.ctrlKey || e.metaKey;
+    
+        if (
+            !isMultiSelect &&
+            Array.isArray(selectedElements) &&
+            selectedElements.length === 1 &&
+            selectedElements[0].id === element.id
+        ) {
+            // If the element is already selected and it's a single selection, deselect it
             setSelectedElement(undefined);
-        } else {
-            setSelectedElement(element);
+            setSelectedElements([]);
+            updateElement(element.id, { isSelected: false });
+            return;
         }
-        updateElement(element.id, { isSelected: !element.isSelected });
+    
+        setSelectedElement(element);
+    
+        if (!isMultiSelect || !Array.isArray(selectedElements)) {
+            deselectAll();
+            updateElement(element.id, { isSelected: true });
+            setSelectedElement(element);
+            setSelectedElements([element]);
+        } else {
+            const alreadySelected = selectedElements.some((el: EditorElement) => el.id === element.id);
+            if (alreadySelected) {
+                updateElement(element.id, { isSelected: false });
+                setSelectedElements(selectedElements.filter((el: EditorElement) => el.id !== element.id));
+            } else {
+                updateElement(element.id, { isSelected: true });
+                setSelectedElements([...selectedElements, element]);
+            }
+        }
     };
+
 
     const handleDrop = (
         e: React.DragEvent,
@@ -98,7 +128,10 @@ export function useElementHandler() {
         return cn("", element.tailwindStyles);
     };
 
-    const handleMouseEnter = (_: React.MouseEvent, element: EditorElement) => {
+    const handleMouseEnter = (e: React.MouseEvent, element: EditorElement) => {
+        // Prevent event from bubbling to parent elements
+        e.stopPropagation();
+        e.preventDefault()
         // Don't interfere if any contentEditable element is currently focused
         if (
             document.activeElement &&
@@ -107,12 +140,15 @@ export function useElementHandler() {
             return;
         }
 
+        dehoverAll(); // Clear hover states from all other elements
         // Clear hover states from all other elements, then set this one as hovered
-        clearHoverStatesExcept(element.id);
         updateElement(element.id, { isHovered: true });
     };
 
-    const handleMouseLeave = (_: React.MouseEvent, element: EditorElement) => {
+    const handleMouseLeave = (e: React.MouseEvent, element: EditorElement) => {
+        // Prevent event from bubbling to parent elements
+        e.stopPropagation();
+        
         // Don't interfere if any contentEditable element is currently focused
         if (
             document.activeElement &&
@@ -120,7 +156,7 @@ export function useElementHandler() {
         ) {
             return;
         }
-
+        // Clear hover state for this element
         updateElement(element.id, { isHovered: false });
     };
 
@@ -137,46 +173,18 @@ export function useElementHandler() {
         });
     };
 
-    const getStyles = (element: EditorElement) => {
-        const {
-            border,
-            borderTop,
-            borderRight,
-            borderBottom,
-            borderLeft,
-            borderWidth,
-            borderStyle,
-            borderColor,
-            width,
-            height,
-            ...cleanStyles
-        } = element.styles || {};
-    
+    const getStyles = (element: EditorElement) : React.CSSProperties => {
         return {
-            ...cleanStyles,
+            ...element.styles,
             height: "100%",
-            ...(element.isHovered &&
-                !element.isSelected && {
-                    borderWidth: "2px",
-                    borderStyle: "solid",
-                    borderColor: "black",
-                }),
-            ...(element.id !== draggingElement?.id &&
-                element.isDraggedOver &&
-                !element.isSelected &&
-                !element.isHovered && {
-                    borderWidth: "2px",
-                    borderStyle: "dashed",
-                    borderColor: "#1d4ed8",
-                }),
-        };
+            width: "100%"
+        }
     };
 
     const getCommonProps = (element: EditorElement) => {
         const tailwindStyles = getTailwindStyles(element);
         const mergedStyles = getStyles(element);
         const isEditableElement = elementHelper.isEditableElement(element);
-        const isContainerElement = elementHelper.isContainerElement(element);
 
         return {
             style: mergedStyles,
@@ -201,17 +209,12 @@ export function useElementHandler() {
             // Mouse event handlers
             onDoubleClick: (e: React.MouseEvent) =>
                 handleDoubleClick(e, element),
-            onMouseEnter:
-                isContainerElement && element.isSelected
-                    ? undefined
-                    : (e: React.MouseEvent) => handleMouseEnter(e, element),
-            onMouseLeave:
-                isContainerElement && element.isSelected
-                    ? undefined
-                    : (e: React.MouseEvent) => handleMouseLeave(e, element),
+            onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(e, element),
+            onMouseLeave: (e: React.MouseEvent) => handleMouseLeave(e, element),
 
             // Text editing handler (fires when element loses focus)
             onBlur: (e: React.FocusEvent) => handleTextChange(e, element),
+            
         };
     };
 

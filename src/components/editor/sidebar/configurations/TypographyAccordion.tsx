@@ -15,9 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import useElementStore from "@/globalstore/elementstore";
-import { useBreakpointStore } from "@/globalstore/responsivebreakpointstore";
 import { projectService } from "@/services/project";
-import { resolveResponsiveStyles } from "@/types/global.type";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
@@ -50,7 +48,6 @@ const FONT_WEIGHTS = [
 
 export const TypographyAccordion = () => {
     const { selectedElement } = useElementStore();
-    const {breakpoint, setBreakpoint} = useBreakpointStore();
     const [fonts, setFonts] = useState<string[]>(FONT_FAMILIES);
 
     const { data, isLoading } = useQuery({
@@ -78,10 +75,8 @@ export const TypographyAccordion = () => {
 
     useEffect(() => {
         if (selectedElement?.styles) {
-            const s = resolveResponsiveStyles(
-                selectedElement.styles,
-                breakpoint,
-            );
+            const s = selectedElement.styles;
+            
             setStyles({
                 fontFamily: s.fontFamily || "Arial",
                 fontSize: s.fontSize || "16px",
