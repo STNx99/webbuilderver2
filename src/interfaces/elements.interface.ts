@@ -55,7 +55,7 @@ interface ButtonElement extends Element<void> {
 }
 
 interface InputSettings {
-    name: string;
+    name?: string;
     type?: "text" | "email" | "password" | "number" | "tel" | "url";
     placeholder?: string;
     defaultValue?: string | number;
@@ -68,7 +68,7 @@ interface InputSettings {
     autoComplete?: string;
     validateRules?: ValidationRule[]; 
 }
-interface InputElement extends Element<Partial<InputSettings>> {}
+interface InputElement extends Element<InputSettings> {}
 
 interface ListElement extends Element<void> {
     elements: EditorElement[];

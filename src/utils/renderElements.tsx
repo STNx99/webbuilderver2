@@ -26,98 +26,32 @@ export function renderChildElement(
         }
         switch (element.type as ElementType) {
             case "Frame":
-                return (
-                    <FrameComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <FrameComponent element={element} {...props} />;
             case "Form":
-                return (
-                    <FormComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <FormComponent element={element} {...props} />;
             case "Carousel":
-                return (
-                    <CarouselComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <CarouselComponent element={element} {...props} />;
             case "Button":
-                return (
-                    <ButtonComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <ButtonComponent element={element} {...props} />;
             case "Chart":
-                return (
-                    <ChartComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <ChartComponent element={element} {...props} />;
             case "DataTable":
-                return (
-                    <DataTableComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <DataTableComponent element={element} {...props} />;
             case "Image":
-                return (
-                    <ImageComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <ImageComponent element={element} {...props} />;
             case "Input":
-                return (
-                    <InputComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <InputComponent element={element} {...props} />;
             case "List":
-                return (
-                    <ListComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <ListComponent element={element} {...props} />;
             case "Select":
-                return (
-                    <SelectComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <SelectComponent element={element} {...props} />;
             default:
-                return (
-                    <BaseComponent
-                        key={element.id}
-                        element={element}
-                        {...props}
-                    />
-                );
+                return <BaseComponent element={element} {...props} />;
         }
     };
     return (
         <EditorContextMenu element={element} key={element.id}>
-            <ResizeHandler element={element} >
+            <ResizeHandler element={element}>
                 {renderElement(element)}
             </ResizeHandler>
         </EditorContextMenu>

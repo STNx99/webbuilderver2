@@ -1,4 +1,4 @@
-import { ButtonElement, FormElement } from "@/interfaces/element";
+import { FormElement, InputElement } from "@/interfaces/elements.interface";
 import { EditorElement, ElementType } from "@/types/global.type";
 
 export type BuilderState = {
@@ -110,7 +110,7 @@ export class InputElementCreateStrategy implements ElementCreateStrategy {
             },
             tailwindStyles:
                 "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
-        };
+        } as InputElement;
     }
 }
 

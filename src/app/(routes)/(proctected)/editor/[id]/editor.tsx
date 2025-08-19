@@ -35,9 +35,9 @@ export default function Editor() {
         if (data && data.length > 0) {
             loadElements(data);
         } 
-        else {
-            loadElements(mockElements);
-        }
+        // else {
+        //     loadElements(mockElements);
+        // }
     }, [data, loadElements]);
     
     // Define viewport dimensions for each device

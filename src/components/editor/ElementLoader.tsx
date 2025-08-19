@@ -55,7 +55,7 @@ export default function ElementLoader({ elements }: Props) {
         <>
             {elements.map((element) => (
                 <ResizeHandler element={element} key={element.id}>
-                    <EditorContextMenu  element={element}>
+                    <EditorContextMenu element={element}>
                         {renderElement(element)}
                     </EditorContextMenu>
                 </ResizeHandler>
