@@ -14,9 +14,9 @@ import {
     SelectItem,
     SelectValue,
 } from "@/components/ui/select";
-import useElementStore from "@/globalstore/elementstore";
 import { elementHelper } from "@/utils/element/elementhelper";
 import React, { useEffect, useState } from "react";
+import { useElementStore } from "@/globalstore/elementstore";
 
 type AppearanceStyles = Pick<
     React.CSSProperties,

@@ -8,10 +8,10 @@ import ElementLoader from "@/components/editor/ElementLoader";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";
 import { Monitor, Smartphone, Table, Tablet } from "lucide-react";
 import { viewportSizes } from "@/constants/viewports";
-import useElementStore from "@/globalstore/elementstore";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { mockElements } from "@/mock/elmentMock";
 import GenerateButton from "@/components/editor/ai/GenerateButton";
+import { useElementStore } from "@/globalstore/elementstore";
 
 export default function Editor() {
     const params = useParams();
@@ -35,11 +35,11 @@ export default function Editor() {
         if (data && data.length > 0) {
             loadElements(data);
         } 
-        // else {
-        //     loadElements(mockElements);
-        // }
+        else {
+            loadElements(mockElements);
+        }
     }, [data, loadElements]);
-
+    
     // Define viewport dimensions for each device
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -116,7 +116,7 @@ export default function Editor() {
                         }}
                     >
                         <div
-                            className={`h-full w-full overflow-auto m-2 ${isDraggingOver ? "bg-primary/10" : ""}`}
+                            className={`h-full w-full overflow-auto p-2 ${isDraggingOver ? "bg-primary/10" : ""}`}
                             onDragOver={(e) => {
                                 e.preventDefault();
                                 setIsDraggingOver(true);

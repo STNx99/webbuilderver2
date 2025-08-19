@@ -4,21 +4,17 @@ import { SectionElement } from "@/interfaces/element";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { useElementHandler } from "@/hooks/useElementHandler";
 
-const SectionComponent = ({
-  element,
-}: EditorComponentProps) => {
-  const sectionElement = element as SectionElement;
-  const { getCommonProps } = useElementHandler();
+const SectionComponent = ({ element }: EditorComponentProps) => {
+    const sectionElement = element as SectionElement;
+    const { getCommonProps } = useElementHandler();
 
-  return (
-    <div {...getCommonProps(sectionElement)}>
-      {sectionElement.elements.map((childElement) => {
-        return elementHelper.renderChildElement(childElement, {
-  
-        });
-      })}
-    </div>
-  );
+    return (
+        <section {...getCommonProps(sectionElement)}>
+            {sectionElement.elements.map((childElement) => {
+                return elementHelper.renderChildElement(childElement, {});
+            })}
+        </section>
+    );
 };
 
 export default SectionComponent;

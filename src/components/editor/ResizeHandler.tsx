@@ -1,6 +1,6 @@
 "use client";
 
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { cn } from "@/lib/utils";
 import type { EditorElement } from "@/types/global.type";
@@ -329,7 +329,7 @@ export default function ResizeHandler({
               <div className="pointer-events-none absolute inset-0 border border-black z-20" />
             )}
             {(element.isDraggedOver && !element.isSelected) && (
-              <div className="pointer-events-none absolute border-dashed inset-0 border-4 border-green-600 z-20" />
+              <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
             )}
         </div>
     );

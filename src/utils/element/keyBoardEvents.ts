@@ -1,7 +1,7 @@
-import useElementStore from "@/globalstore/elementstore";
 import { ContainerElement, EditorElement } from "@/types/global.type";
 import { v4 as uuidv4 } from "uuid";
 import { elementHelper } from "./elementhelper";
+import { useElementStore } from "@/globalstore/elementstore";
 
 export interface IKeyboardEvent {
     copyElement: () => void;
@@ -14,7 +14,7 @@ export interface IKeyboardEvent {
 
 export class KeyboardEvent implements IKeyboardEvent {
     public copyElement = () => {
-        const { selectedElement } = useElementStore.getState();
+        const { selectedElement } = useElementStore();
         if (!selectedElement) return;
         sessionStorage.setItem("copiedElement", JSON.stringify(selectedElement));
     };

@@ -1,4 +1,4 @@
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 import { EditorElement } from "@/types/global.type";
 
 /**
@@ -11,7 +11,7 @@ export const updateElementStyle = (
   element: EditorElement,
   styles: React.CSSProperties
 ): void => {
-  const updateElement = useElementStore.getState().updateElement;
+  const updateElement = useElementStore(state=>state.updateElement)
   
   updateElement(element.id, { styles:  styles});
 };

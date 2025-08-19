@@ -14,7 +14,7 @@ import {
     SelectContent,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 import { projectService } from "@/services/project";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { useQuery } from "@tanstack/react-query";

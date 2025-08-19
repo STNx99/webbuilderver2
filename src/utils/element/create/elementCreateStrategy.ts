@@ -1,3 +1,4 @@
+import { ButtonElement, FormElement } from "@/interfaces/element";
 import { EditorElement, ElementType } from "@/types/global.type";
 
 export type BuilderState = {
@@ -18,7 +19,7 @@ export interface ElementCreateStrategy {
 }
 
 export class TextElementCreateStrategy implements ElementCreateStrategy {
-    buildElement(elementState: BuilderState): EditorElement{
+    buildElement(elementState: BuilderState): EditorElement {
         return {
             id: elementState.id,
             type: elementState.type,
@@ -50,7 +51,8 @@ export class FrameElementCreateStrategy implements ElementCreateStrategy {
                 backgroundColor: "#ffffff",
                 border: "2px dashed #cbd5e1",
             },
-            tailwindStyles: "border-2 border-dashed border-slate-300 bg-white rounded-lg",
+            tailwindStyles:
+                "border-2 border-dashed border-slate-300 bg-white rounded-lg",
         };
     }
 }
@@ -77,7 +79,8 @@ export class ButtonElementCreateStrategy implements ElementCreateStrategy {
                 fontSize: "14px",
                 fontWeight: "500",
             },
-            tailwindStyles: "bg-blue-500 text-white border-none rounded-md px-4 py-2 cursor-pointer text-sm font-medium hover:bg-blue-600 transition-colors",
+            tailwindStyles:
+                "bg-blue-500 text-white border-none rounded-md px-4 py-2 cursor-pointer text-sm font-medium hover:bg-blue-600 transition-colors",
         };
     }
 }
@@ -105,7 +108,8 @@ export class InputElementCreateStrategy implements ElementCreateStrategy {
                 fontSize: "14px",
                 backgroundColor: "#ffffff",
             },
-            tailwindStyles: "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+            tailwindStyles:
+                "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
         };
     }
 }
@@ -129,7 +133,8 @@ export class ListElementCreateStrategy implements ElementCreateStrategy {
                 borderRadius: "6px",
                 padding: "12px",
             },
-            tailwindStyles: "border border-gray-200 rounded-md bg-white p-3 shadow-sm",
+            tailwindStyles:
+                "border border-gray-200 rounded-md bg-white p-3 shadow-sm",
         };
     }
 }
@@ -159,7 +164,8 @@ export class SelectElementCreateStrategy implements ElementCreateStrategy {
                 backgroundColor: "#ffffff",
                 cursor: "pointer",
             },
-            tailwindStyles: "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500",
+            tailwindStyles:
+                "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500",
         };
     }
 }
@@ -208,13 +214,14 @@ export class ChartElementCreateStrategy implements ElementCreateStrategy {
                 borderRadius: "8px",
                 padding: "16px",
             },
-            tailwindStyles: "border border-gray-200 rounded-lg bg-white p-4 shadow-sm",
+            tailwindStyles:
+                "border border-gray-200 rounded-lg bg-white p-4 shadow-sm",
         };
     }
 }
 
 export class DataTableElementCreateStrategy implements ElementCreateStrategy {
-    buildElement(elementState: BuilderState): EditorElement  {
+    buildElement(elementState: BuilderState): EditorElement {
         return {
             id: elementState.id,
             type: elementState.type,
@@ -247,7 +254,8 @@ export class DataTableElementCreateStrategy implements ElementCreateStrategy {
                 padding: "16px",
                 overflow: "auto",
             },
-            tailwindStyles: "border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-auto",
+            tailwindStyles:
+                "border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-auto",
         };
     }
 }
@@ -263,10 +271,15 @@ export class FormElementCreateStrategy implements ElementCreateStrategy {
             parentId: elementState.parentId,
             content: "",
             ...elementState.baseProperties,
-            elements: [],
+            elements:[],
             settings: {
-                method: "POST",
+                method: "post", // lowercase for HTML forms
                 action: "",
+                autoComplete: "on",
+                encType: "application/x-www-form-urlencoded",
+                target: "_self",
+                validateOnSubmit: false,
+                redirectUrl: "",
             },
             styles: {
                 width: "350px",
@@ -277,10 +290,9 @@ export class FormElementCreateStrategy implements ElementCreateStrategy {
                 padding: "20px",
             },
             tailwindStyles: "border border-gray-200 rounded-lg bg-white p-5 shadow-sm",
-        };
+        } as FormElement;
     }
 }
-
 export class SectionElementCreateStrategy implements ElementCreateStrategy {
     buildElement(elementState: BuilderState): EditorElement {
         return {
@@ -300,13 +312,14 @@ export class SectionElementCreateStrategy implements ElementCreateStrategy {
                 borderRadius: "8px",
                 padding: "24px",
             },
-            tailwindStyles: "w-full min-h-[200px] border border-gray-200 rounded-lg bg-white p-6 shadow-sm",
+            tailwindStyles:
+                "w-full min-h-[200px] border border-gray-200 rounded-lg bg-white p-6 shadow-sm",
         };
     }
 }
 
 export class CarouselElementCreateStrategy implements ElementCreateStrategy {
-    buildElement(elementState: BuilderState): EditorElement  {
+    buildElement(elementState: BuilderState): EditorElement {
         return {
             id: elementState.id,
             type: elementState.type,
@@ -334,7 +347,8 @@ export class CarouselElementCreateStrategy implements ElementCreateStrategy {
                 padding: "16px",
                 overflow: "hidden",
             },
-            tailwindStyles: "w-[500px] h-[300px] border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-hidden",
+            tailwindStyles:
+                "w-[500px] h-[300px] border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-hidden",
         };
     }
 }

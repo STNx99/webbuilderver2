@@ -54,7 +54,7 @@ export default function ElementLoader({ elements }: Props) {
     return (
         <>
             {elements.map((element) => (
-                <ResizeHandler element={element} key={element.id || Math.random()}>
+                <ResizeHandler element={element} key={element.id}>
                     <EditorContextMenu  element={element}>
                         {renderElement(element)}
                     </EditorContextMenu>

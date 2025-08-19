@@ -1,4 +1,4 @@
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 import { cn } from "@/lib/utils";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { elementHelper } from "@/utils/element/elementhelper";
@@ -19,7 +19,7 @@ export function useElementHandler() {
     const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
         e.stopPropagation();
         const isMultiSelect = e.ctrlKey || e.metaKey;
-    
+
         if (
             !isMultiSelect &&
             Array.isArray(selectedElements) &&
@@ -32,26 +32,31 @@ export function useElementHandler() {
             updateElement(element.id, { isSelected: false });
             return;
         }
-    
+
         setSelectedElement(element);
-    
+
         if (!isMultiSelect || !Array.isArray(selectedElements)) {
             deselectAll();
             updateElement(element.id, { isSelected: true });
             setSelectedElement(element);
             setSelectedElements([element]);
         } else {
-            const alreadySelected = selectedElements.some((el: EditorElement) => el.id === element.id);
+            const alreadySelected = selectedElements.some(
+                (el: EditorElement) => el.id === element.id,
+            );
             if (alreadySelected) {
                 updateElement(element.id, { isSelected: false });
-                setSelectedElements(selectedElements.filter((el: EditorElement) => el.id !== element.id));
+                setSelectedElements(
+                    selectedElements.filter(
+                        (el: EditorElement) => el.id !== element.id,
+                    ),
+                );
             } else {
                 updateElement(element.id, { isSelected: true });
                 setSelectedElements([...selectedElements, element]);
             }
         }
     };
-
 
     const handleDrop = (
         e: React.DragEvent,
@@ -60,9 +65,9 @@ export function useElementHandler() {
     ) => {
         e.stopPropagation();
         e.preventDefault();
-
+        deselectAll()
         const data = e.dataTransfer.getData("elementType");
-
+        
         if (data) {
             const isContainer = elementHelper.isContainerElement(parentElement);
 
@@ -75,13 +80,22 @@ export function useElementHandler() {
                 projectId,
                 parentElement.id,
             );
-            
+
             if (!newElement) {
                 return;
             }
             addElement(newElement as EditorElement);
 
             setSelectedElement(newElement);
+        } else if (draggingElement) {
+            elementHelper.handleSwap(
+                draggingElement,
+                parentElement,
+                updateElement,
+            );
+            updateElement(draggingElement.id,{
+                isDraggedOver:false
+            })
         }
         updateElement(parentElement.id, {
             isDraggedOver: false,
@@ -97,6 +111,7 @@ export function useElementHandler() {
     const handleDragOver = (e: React.DragEvent, element: EditorElement) => {
         e.preventDefault();
         e.stopPropagation();
+        if (element.isDraggedOver || draggingElement?.id === element.id) return;
         updateElement(element.id, {
             isDraggedOver: true,
         });
@@ -104,6 +119,7 @@ export function useElementHandler() {
 
     const handleDragLeave = (e: React.DragEvent, element: EditorElement) => {
         e.stopPropagation();
+        if (!element.isDraggedOver) return;
         updateElement(element.id, {
             isDraggedOver: false,
         });
@@ -114,13 +130,6 @@ export function useElementHandler() {
         hoveredElement: EditorElement,
     ) => {
         e.stopPropagation();
-        if (draggingElement && hoveredElement.isHovered) {
-            elementHelper.handleSwap(
-                draggingElement,
-                hoveredElement,
-                updateElement,
-            );
-        }
         setDraggingElement(undefined);
     };
 
@@ -131,7 +140,7 @@ export function useElementHandler() {
     const handleMouseEnter = (e: React.MouseEvent, element: EditorElement) => {
         // Prevent event from bubbling to parent elements
         e.stopPropagation();
-        e.preventDefault()
+        e.preventDefault();
         // Don't interfere if any contentEditable element is currently focused
         if (
             document.activeElement &&
@@ -148,7 +157,7 @@ export function useElementHandler() {
     const handleMouseLeave = (e: React.MouseEvent, element: EditorElement) => {
         // Prevent event from bubbling to parent elements
         e.stopPropagation();
-        
+
         // Don't interfere if any contentEditable element is currently focused
         if (
             document.activeElement &&
@@ -173,12 +182,12 @@ export function useElementHandler() {
         });
     };
 
-    const getStyles = (element: EditorElement) : React.CSSProperties => {
+    const getStyles = (element: EditorElement): React.CSSProperties => {
         return {
             ...element.styles,
             height: "100%",
-            width: "100%"
-        }
+            width: "100%",
+        };
     };
 
     const getCommonProps = (element: EditorElement) => {
@@ -214,7 +223,6 @@ export function useElementHandler() {
 
             // Text editing handler (fires when element loses focus)
             onBlur: (e: React.FocusEvent) => handleTextChange(e, element),
-            
         };
     };
 

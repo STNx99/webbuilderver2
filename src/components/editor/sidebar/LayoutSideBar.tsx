@@ -20,10 +20,10 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Configurations from "./configurations/Configurations";
-import useElementStore from "@/globalstore/elementstore";
 import ElementTreeItem from "./ElementTreeItem";
 import { Square } from "lucide-react";
 import { useAiChat } from "@/providers/aiprovider";
+import { useElementStore } from "@/globalstore/elementstore";
 // import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {

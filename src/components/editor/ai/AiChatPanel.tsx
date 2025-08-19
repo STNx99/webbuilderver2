@@ -18,7 +18,7 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { useAiChat } from "@/providers/aiprovider";
 import { useSidebar } from "@/components/ui/sidebar";
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 
 interface UseAutoResizeTextareaProps {
     minHeight: number;

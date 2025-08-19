@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import { EditorElement } from "@/types/global.type";
-import { ButtonElement } from "@/interfaces/element";
+import { ButtonElement } from "@/interfaces/elements.interface";
 
 export const ElementDAL = {
   updateElement: async (element: EditorElement, settings: string | null) => {

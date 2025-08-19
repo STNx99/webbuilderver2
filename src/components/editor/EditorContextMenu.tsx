@@ -12,7 +12,7 @@ import {
 import { Copy, Trash2, Layers, ArrowUp, ArrowDown } from "lucide-react";
 import { KeyboardEvent as EditorKeyboardEvent } from "@/utils/element/keyBoardEvents";
 import { EditorElement } from "@/types/global.type";
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 
 interface EditorContextMenuProps {
     children: React.ReactNode;

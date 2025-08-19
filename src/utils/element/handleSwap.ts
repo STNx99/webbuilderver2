@@ -5,12 +5,13 @@ export function handleSwap(
   hoveredElement: EditorElement,
   updateElement: (id: string, updatedElement: Partial<EditorElement>) => void
 ) {
-  if (draggingElement.id !== hoveredElement?.id) {
+  if (!hoveredElement || draggingElement.id === hoveredElement.id) {
     return;
   }
-  const draggingElementCopy = draggingElement;
 
-  updateElement(hoveredElement.id, draggingElementCopy);
+  const { id: dragId, ...dragRest } = draggingElement;
+  const { id: hoverId, ...hoverRest } = hoveredElement;
 
-  updateElement(draggingElement.id, draggingElement);
+  updateElement(draggingElement.id, hoverRest);
+  updateElement(hoveredElement.id, dragRest);
 }

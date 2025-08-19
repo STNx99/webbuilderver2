@@ -12,7 +12,7 @@ import {
   SelectElement,
   TextElement,
   CarouselElement,
-} from "@/interfaces/element";
+} from "@/interfaces/elements.interface";
 
 type ContainerElement =
   | FrameElement
@@ -50,7 +50,7 @@ type ElementType =
   | "Base"
   | "Image"
   | "Link";
-
+    
 type ContainerElementType = (typeof CONTAINER_ELEMENT_TYPES)[number];
 
 type EditableElementType =(typeof EDITABLE_ELEMENT_TYPES)[number]

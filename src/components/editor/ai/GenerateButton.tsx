@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 import { EditorElement } from "@/types/global.type";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import React from "react";

@@ -1,10 +1,10 @@
-import useElementStore from "@/globalstore/elementstore";
+import { useElementStore } from "@/globalstore/elementstore";
 import { EditorElement } from "@/types/global.type";
 
 export function findElement(
   id: string
 ): EditorElement | undefined {
-  const elements = useElementStore.getState().elements;
+  const elements = useElementStore(state=> state.elements);
 
   function find(elements: EditorElement[]): EditorElement | undefined {
     for (const element of elements) {

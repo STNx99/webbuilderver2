@@ -18,11 +18,11 @@ import {
 import { createElement } from "./create/createElements";
 
 interface ElementHelper {
-    createElement: (
+    createElement: <T extends EditorElement>(
         type: ElementType,
         projectId: string,
         parentId?: string,
-    ) => EditorElement | undefined;
+    ) => T | undefined;
 
     handleSwap: (
         draggingElement: EditorElement,
