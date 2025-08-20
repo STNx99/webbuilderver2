@@ -1,32 +1,31 @@
-
-import { create, StoreApi, UseBoundStore } from "zustand";
+import { create } from "zustand";
 import { ContainerElement, EditorElement } from "@/types/global.type";
 
 const isContainer = (element: EditorElement): element is ContainerElement => {
-    return "elements" in element;
+  return "elements" in element;
 };
 
 type ElementStore<TElement extends EditorElement> = {
-    elements: TElement[];
-    selectedElement: TElement | undefined;
-    selectedElements: TElement[] | undefined;
-    draggingElement: TElement | undefined;
+  elements: TElement[];
+  selectedElement: TElement | undefined;
+  selectedElements: TElement[] | undefined;
+  draggingElement: TElement | undefined;
 
-    setSelectedElements: (elements: TElement[] | undefined) => void;
-    setDraggingElement: (element: TElement | undefined) => void;
-    setSelectedElement: (element: TElement | undefined) => void;
-    setElements: (elements: TElement[]) => void;
-    loadElements: (elements: TElement[]) => void;
-    updateElement: (id: string, updatedElement: Partial<TElement>) => void;
-    deleteElement: (id: string) => void;
-    addElement: (newElement: TElement) => void;
-    deselectAll: () => void;
-    dehoverAll: () => void;
-    updateAllElements: (update: Partial<EditorElement>) => void;
+  setSelectedElements: (elements: TElement[] | undefined) => void;
+  setDraggingElement: (element: TElement | undefined) => void;
+  setSelectedElement: (element: TElement | undefined) => void;
+  setElements: (elements: TElement[]) => void;
+  loadElements: (elements: TElement[]) => void;
+  updateElement: (id: string, updatedElement: Partial<TElement>) => void;
+  deleteElement: (id: string) => void;
+  addElement: (newElement: TElement) => void;
+  deselectAll: () => void;
+  dehoverAll: () => void;
+  updateAllElements: (update: Partial<EditorElement>) => void;
 };
 
-// Create the generic store factory
-const useElementStoreImplementation = create<ElementStore<any>>((set, get) => ({
+const createElementStore = <TElement extends EditorElement>() => {
+  return create<ElementStore<TElement>>((set, get) => ({
     elements: [],
     selectedElement: undefined,
     selectedElements: undefined,
@@ -36,144 +35,161 @@ const useElementStoreImplementation = create<ElementStore<any>>((set, get) => ({
     setDraggingElement: (element) => set({ draggingElement: element }),
     setSelectedElement: (element) => set({ selectedElement: element }),
     setSelectedElements: (elements) => set({ selectedElements: elements }),
-    loadElements: (elements: any[]) => set({ elements }),
+    loadElements: (elements: TElement[]) => set({ elements }),
 
     updateElement: (id, updatedElement) => {
-        const { elements } = get();
-        const updateElementRecursively = (
-            element: EditorElement,
-        ): EditorElement => {
-            if (element.id === id) {
-                return { ...element, ...updatedElement };
+      const { elements, selectedElement } = get();
+      const updateElementRecursively = (
+        element: EditorElement,
+      ): EditorElement => {
+        if (element.id === id) {
+          return { ...element, ...updatedElement } as TElement;
+        }
+        if (isContainer(element)) {
+          return {
+            ...element,
+            elements: element.elements.map(updateElementRecursively),
+          };
+        }
+        return element;
+      };
+      const updatedElements = elements.map(
+        (e) => updateElementRecursively(e) as TElement,
+      );
+
+      let updatedSelectedElement = selectedElement;
+      if (selectedElement && selectedElement.id === id) {
+        const findUpdated = (els: EditorElement[]): EditorElement | undefined => {
+          for (const el of els) {
+            if (el.id === id) return el;
+            if (isContainer(el)) {
+              const found = findUpdated(el.elements);
+              if (found) return found;
             }
-            if (isContainer(element)) {
-                return {
-                    ...element,
-                    elements: element.elements.map(
-                        updateElementRecursively,
-                    ),
-                };
-            }
-            return element;
+          }
+          return undefined;
         };
-        const updatedElements = elements.map(
-            updateElementRecursively,
-        ) as any[];
-        set({ elements: updatedElements });
+        updatedSelectedElement = findUpdated(updatedElements) as TElement;
+      }
+
+      set({
+        elements: updatedElements,
+        selectedElement: updatedSelectedElement as TElement,
+      });
     },
 
     deleteElement: (id) => {
-        const { elements } = get();
-        const deleteElementRecursively = (
-            element: EditorElement,
-        ): EditorElement | undefined => {
-            if (element.id === id) {
-                return undefined;
-            }
-            if (isContainer(element)) {
-                const filteredElements = element.elements
-                    .map(deleteElementRecursively)
-                    .filter((el): el is EditorElement => el !== undefined);
-                return { ...element, elements: filteredElements };
-            }
-            return element;
-        };
-        const updatedElements = elements
+      const { elements } = get();
+      const deleteElementRecursively = (
+        element: EditorElement,
+      ): EditorElement | undefined => {
+        if (element.id === id) {
+          return undefined;
+        }
+        if (isContainer(element)) {
+          const filteredElements = element.elements
             .map(deleteElementRecursively)
-            .filter((el): el is any => el !== undefined);
-        set({ elements: updatedElements });
-        set({
-            selectedElement: undefined,
-            selectedElements: undefined,
-            draggingElement: undefined,
-        });
+            .filter((el): el is EditorElement => el !== undefined);
+          return { ...element, elements: filteredElements };
+        }
+        return element;
+      };
+      const updatedElements = elements
+        .map(deleteElementRecursively)
+        .filter((el): el is TElement => el !== undefined);
+      set({ elements: updatedElements });
+      set({
+        selectedElement: undefined,
+        selectedElements: undefined,
+        draggingElement: undefined,
+      });
     },
 
     addElement: (newElement) => {
-        const { elements } = get();
+      const { elements } = get();
 
-        if (!newElement.parentId) {
-            set({ elements: [...elements, newElement] });
-            return;
+      if (!newElement.parentId) {
+        set({ elements: [...elements, newElement] as TElement[] });
+        return;
+      }
+
+      const addElementToParent = (element: EditorElement): EditorElement => {
+        if (element.id === newElement.parentId) {
+          if (isContainer(element)) {
+            return {
+              ...element,
+              elements: [...element.elements, newElement],
+            };
+          }
+          return element;
         }
 
-        const addElementToParent = (
-            element: EditorElement,
-        ): EditorElement => {
-            if (element.id === newElement.parentId) {
-                if (isContainer(element)) {
-                    return {
-                        ...element,
-                        elements: [...element.elements, newElement],
-                    };
-                }
-                return element;
-            }
-
-            if (isContainer(element)) {
-                return {
-                    ...element,
-                    elements: element.elements.map(addElementToParent),
-                };
-            }
-            return element;
-        };
-        const updatedElements = elements.map(
-            addElementToParent,
-        ) as any[];
-        set({ elements: updatedElements });
-        set({
-            selectedElement: newElement,
-            selectedElements: [newElement],
-        });
+        if (isContainer(element)) {
+          return {
+            ...element,
+            elements: element.elements.map(addElementToParent),
+          };
+        }
+        return element;
+      };
+      const updatedElements = elements.map(
+        (e) => addElementToParent(e) as TElement,
+      );
+      set({ elements: updatedElements });
+      set({
+        selectedElement: newElement,
+        selectedElements: [newElement],
+      });
     },
 
     updateAllElements: (update) => {
-        const { elements } = get();
-        const recursivelyUpdate = (
-            element: EditorElement,
-        ): EditorElement => {
-            const updated = { ...element };
-            Object.assign(updated, update);
+      const { elements } = get();
+      const recursivelyUpdate = (element: EditorElement): EditorElement => {
+        const updated = { ...element };
+        Object.assign(updated, update);
 
-            if (update.styles) {
-                updated.styles = { ...element.styles, ...update.styles };
-            }
+        if (update.styles) {
+          updated.styles = { ...element.styles, ...update.styles };
+        }
 
-            if (isContainer(element)) {
-                return {
-                    ...updated,
-                    elements: element.elements.map(recursivelyUpdate),
-                };
-            }
-            return updated;
-        };
-        const updatedElements = elements.map(
-            recursivelyUpdate,
-        ) as any[];
-        set({ elements: updatedElements });
+        if (isContainer(element)) {
+          return {
+            ...updated,
+            elements: element.elements.map(recursivelyUpdate),
+          };
+        }
+        return updated;
+      };
+      const updatedElements = elements.map(
+        (e) => recursivelyUpdate(e) as TElement,
+      );
+      set({ elements: updatedElements });
     },
 
     deselectAll: () => {
-        get().updateAllElements({
-            isSelected: false,
-            isHovered: false,
-        });
-        set({
-            selectedElements: undefined,
-            selectedElement: undefined,
-        });
+      get().updateAllElements({
+        isSelected: false,
+        isHovered: false,
+      });
+      set({
+        selectedElements: undefined,
+        selectedElement: undefined,
+      });
     },
 
     dehoverAll: () => {
-        get().updateAllElements({ isHovered: false });
+      get().updateAllElements({ isHovered: false });
     },
-}));
+  }));
+};
 
-// Provide the type-safe wrapper
+const useElementStoreImplementation = createElementStore();
+
 export const useElementStore = useElementStoreImplementation as {
   <TElement extends EditorElement>(): ElementStore<TElement>;
   <TElement extends EditorElement, U>(
-      selector: (state: ElementStore<TElement>) => U,
+    selector: (state: ElementStore<TElement>) => U,
   ): U;
 };
+
+export const ElementStore = useElementStoreImplementation;

@@ -12,6 +12,7 @@ import { elementHelper } from "@/utils/element/elementhelper";
 import { mockElements } from "@/mock/elmentMock";
 import GenerateButton from "@/components/editor/ai/GenerateButton";
 import { useElementStore } from "@/globalstore/elementstore";
+import { CarouselSpacing } from "@/components/TestCarousel";
 
 export default function Editor() {
     const params = useParams();
@@ -133,6 +134,7 @@ export default function Editor() {
                             ) : (
                                 <ElementLoader elements={elements || []} />
                             )}
+                            {/*<CarouselSpacing/>*/}
                         </div>
                     </div>
                 </div>

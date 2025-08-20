@@ -1,6 +1,6 @@
+import { EditorComponentProps } from "@/interfaces/editor.interface";
+import { SelectElement } from "@/interfaces/elements.interface";
 import React from "react";
-import { EditorComponentProps } from "@/interfaces/editor";
-import { SelectElement } from "@/interfaces/element";
 
 const SelectComponent = ({
   element,

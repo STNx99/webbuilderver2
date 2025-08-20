@@ -26,14 +26,7 @@ export default function ValidationConfiguration() {
   const [newRule, setNewRule] = React.useState<RuleType>("required");
 
   // Local state for validation rules
-  const [validateRules, setValidateRules] = React.useState<ValidationRule[]>(
-    selectedElement?.settings?.validateRules ?? [],
-  );
-
-  React.useEffect(() => {
-    setValidateRules(selectedElement?.settings?.validateRules ?? []);
-  }, [selectedElement?.settings?.validateRules, selectedElement?.id]);
-
+  const validateRules = selectedElement?.settings?.validateRules ?? [];
   const updateValidationRule = <T extends ValidationRule>(
     updateRule: T,
   ): void => {
@@ -54,7 +47,6 @@ export default function ValidationConfiguration() {
       newRules = [...currentRules, updateRule];
     }
 
-    setValidateRules(newRules);
     updateElement(selectedElement.id, {
       settings: {
         ...selectedElement.settings,
@@ -66,7 +58,6 @@ export default function ValidationConfiguration() {
   const removeValidationRule = (ruleType: RuleType) => {
     if (!selectedElement) return;
     const newRules = validateRules.filter((rule) => rule.rule !== ruleType);
-    setValidateRules(newRules);
     updateElement(selectedElement.id, {
       settings: {
         ...selectedElement.settings,

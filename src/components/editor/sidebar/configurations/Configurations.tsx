@@ -7,36 +7,39 @@ import { LinkConfigurationAccordion } from "./LinkConfiguration";
 import { FormConfigurationAccordion } from "./FormConfiguration";
 import InputConfiguration from "./InputConfiguration";
 import { useElementStore } from "@/globalstore/elementstore";
+import CarouselConfigurationAccordion from "./CarouselConfiguration";
 
 export default function Configurations() {
-    const { selectedElement } = useElementStore();
+  const { selectedElement } = useElementStore();
 
-    const renderChildElement = (type: ElementType): React.ReactNode => {
-        if (!type) {
-            return null;
-        }
+  const renderChildElement = (type: ElementType): React.ReactNode => {
+    if (!type) {
+      return null;
+    }
 
-        switch (type) {
-            case "Text":
-                return <TypographyAccordion />;
-            case "Link":
-                return <LinkConfigurationAccordion />;
-            case "Form":
-                return <FormConfigurationAccordion />;
-            case "Input":
-                return <InputConfiguration/>
-            default:
-                return null;
-        }
-    };
-
-    if (!selectedElement) {
+    switch (type) {
+      case "Text":
+        return <TypographyAccordion />;
+      case "Link":
+        return <LinkConfigurationAccordion />;
+      case "Form":
+        return <FormConfigurationAccordion />;
+      case "Input":
+        return <InputConfiguration />;
+      case "Carousel":
+        return <CarouselConfigurationAccordion />;
+      default:
         return null;
     }
-    return (
-        <Accordion type="single" collapsible className="w-full">
-            <AppearanceAccordion />
-            {renderChildElement(selectedElement.type)}
-        </Accordion>
-    );
+  };
+
+  if (!selectedElement) {
+    return null;
+  }
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      <AppearanceAccordion />
+      {renderChildElement(selectedElement.type)}
+    </Accordion>
+  );
 }

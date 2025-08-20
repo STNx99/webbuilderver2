@@ -1,5 +1,14 @@
 import { ElementType } from "@/types/global.type";
-import { FormInput, Image, TextSelection, Type, CardSim, MousePointerClick, Link } from "lucide-react";
+import {
+  FormInput,
+  Image,
+  TextSelection,
+  Type,
+  CardSim,
+  MousePointerClick,
+  Link,
+  SlidersHorizontal,
+} from "lucide-react";
 import React from "react";
 
 interface ElementHolder {
@@ -9,10 +18,10 @@ interface ElementHolder {
 
 export const CONTAINER_ELEMENT_TYPES = [
   "Frame",
-  "Form", 
+  "Form",
   "List",
   "Section",
-  "Carousel"
+  "Carousel",
 ] as const;
 
 export const EDITABLE_ELEMENT_TYPES = [
@@ -26,41 +35,44 @@ export const EDITABLE_ELEMENT_TYPES = [
 export const elementHolders: ElementHolder[] = [
   {
     type: "Text",
-    icon: <Type className="w-4 h-4" />
+    icon: <Type className="w-4 h-4" />,
   },
   {
     type: "Button",
-    icon: <MousePointerClick className="w-4 h-4" />
+    icon: <MousePointerClick className="w-4 h-4" />,
   },
   {
     type: "Section",
-    icon: <CardSim className="w-4 h-4" />
+    icon: <CardSim className="w-4 h-4" />,
   },
   {
     type: "Image",
-    icon: <Image className="w-4 h-4" />
+    icon: <Image className="w-4 h-4" />,
   },
   {
     type: "Input",
-    icon: <FormInput className="w-4 h-4" />
+    icon: <FormInput className="w-4 h-4" />,
   },
   {
     type: "Select",
-    icon: <TextSelection className="w-4 h-4" />
+    icon: <TextSelection className="w-4 h-4" />,
   },
   {
     type: "Link",
-    icon: <Link className="w-4 h-4" />
+    icon: <Link className="w-4 h-4" />,
   },
   {
     type: "Form",
-    icon: <FormInput className="w-4 h-4" />
+    icon: <FormInput className="w-4 h-4" />,
   },
   {
     type: "Frame",
-    icon: <CardSim className="w-4 h-4" />
-  }
+    icon: <CardSim className="w-4 h-4" />,
+  },
+  {
+    type: "Carousel",
+    icon: <SlidersHorizontal className="w-4 h-4" />,
+  },
 ] as const;
 
 export default elementHolders;
-

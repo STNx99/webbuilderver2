@@ -1,6 +1,6 @@
+import { EditorComponentProps } from "@/interfaces/editor.interface";
+import { DataTableElement } from "@/interfaces/elements.interface";
 import React from "react";
-import { EditorComponentProps } from "@/interfaces/editor";
-import { DataTableElement } from "@/interfaces/element";
 
 const DataTableComponent = ({
   element,

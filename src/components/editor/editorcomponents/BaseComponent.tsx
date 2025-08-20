@@ -1,8 +1,8 @@
 import React from "react";
-import { EditorComponentProps } from "@/interfaces/editor";
 import DOMPurify from "dompurify";
-import { TextElement } from "@/interfaces/element";
 import { useElementHandler } from "@/hooks/useElementHandler";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
+import { TextElement } from "@/interfaces/elements.interface";
 
 const BaseComponent = ({
   element,
