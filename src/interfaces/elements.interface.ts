@@ -72,7 +72,7 @@ interface ListElement extends Element<void> {
 }
 
 interface SelectElement extends Element<Partial<HTMLSelectElement>> {
-  options: Array<Partial<HTMLOptionElement>>;
+  elements: EditorElement[]
 }
 
 interface ChartElement extends Element<Record<string, unknown>> {

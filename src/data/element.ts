@@ -5,7 +5,7 @@ import { ButtonElement } from "@/interfaces/elements.interface";
 export const ElementDAL = {
   updateElement: async (element: EditorElement, settings: string | null) => {
     if (settings) {
-      await prisma.settings.updateMany({
+      await prisma.setting.updateMany({
         where: { ElementId: element.id },
         data: {
           Settings: settings,
@@ -13,7 +13,7 @@ export const ElementDAL = {
       })
     }
     
-    return await prisma.elements.update({
+    return await prisma.element.update({
       where: { Id: element.id },
       data: {
         Type: element.type,
@@ -24,14 +24,13 @@ export const ElementDAL = {
         Src: element.src || null,
         Href: element.href || null,
         TailwindStyles: element.tailwindStyles || "",
-        ButtonType: (element as ButtonElement).buttonType || null,
         ProjectId: element.projectId,
       },
     });
   },
   
   deleteElement: async (id: string) => {
-    return await prisma.elements.delete({
+    return await prisma.element.delete({
       where: { Id: id },
     });
   },
