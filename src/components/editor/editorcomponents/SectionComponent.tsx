@@ -1,19 +1,20 @@
 import React from "react";
-import { EditorComponentProps } from "@/interfaces/editor";
-import { FormElement } from "@/interfaces/element";
+import { elementHelper } from "@/utils/element/elementhelper";
+import { useElementHandler } from "@/hooks/useElementHandler";
+import { SectionElement } from "@/interfaces/elements.interface";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
 
-const SectionComponent = ({
-  element,
-  setContextMenuPosition,
-  setShowContextMenu,
-}: EditorComponentProps) => {
-  const formElement = element as FormElement;
+const SectionComponent = ({ element }: EditorComponentProps) => {
+    const sectionElement = element as SectionElement;
+    const { getCommonProps } = useElementHandler();
 
-  return (
-    <div>
-      SectionELement
-    </div>
-  );
+    return (
+        <div {...getCommonProps(sectionElement)}>
+            {sectionElement.elements.map((childElement) => {
+                return elementHelper.renderChildElement(childElement, {});
+            })}
+        </div>
+    );
 };
 
 export default SectionComponent;

@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Element {
+  Id             String    @id @map("PK_Elements")
+  Type           String    @db.VarChar(32)
+  Content        String?
+  Name           String?
+  Styles         Json?
+  TailwindStyles String?
+  Src            String?
+  Href           String?
+  ParentId       String?
+  ProjectId      String
+  Order          Int       @default(0)
+  Settings       Setting?  @relation("ElementSettings")
+  Elements       Element[] @relation("ElementChildren")
+  Parent         Element?  @relation("ElementChildren", fields: [ParentId], references: [Id])
+  Project        Project   @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@index([ParentId])
+  @@index([ProjectId])
+}
+
+model Image {
+  ImageId   String  @id(map: "PK_Images")
+  ImageName String?
+  UserId    String
+  ImageLink String  @default("")
+  User      User    @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Images_Users_UserId")
+
+  @@index([UserId], map: "IX_Images_UserId")
+}
+
+model Project {
+  Id          String    @id(map: "PK_Projects")
+  Name        String
+  Description String?
+  OwnerId     String
+  Published   Boolean   @default(false)
+  Subdomain   String?
+  Styles      String    @default("")
+  Elements    Element[]
+  Owner       User      @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+
+  @@index([OwnerId], map: "IX_Projects_OwnerId")
+}
+
+model Setting {
+  Id          String    @id(map: "PK_Settings")
+  Name        String
+  SettingType String
+  Settings    String
+  ElementId   String @unique
+  Element     Element?  @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
+
+  @@index([ElementId], map: "IX_Settings_ElementId")
+}
+
+model User {
+  Id        String    @id(map: "PK_Users")
+  Email     String
+  FirstName String?
+  LastName  String?
+  ImageUrl  String?
+  CreatedAt DateTime  @db.Timestamptz(6)
+  UpdatedAt DateTime  @db.Timestamptz(6)
+  Images    Image[]
+  Projects  Project[]
+}
+
+model EFMigrationsHistory {
+  MigrationId    String @id(map: "PK___EFMigrationsHistory") @db.VarChar(150)
+  ProductVersion String @db.VarChar(32)
+
+  @@map("__EFMigrationsHistory")
+}

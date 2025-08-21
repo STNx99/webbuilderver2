@@ -1,22 +1,24 @@
 import React from "react";
-import { EditorComponentProps } from "@/interfaces/editor";
-import { ButtonElement } from "@/interfaces/element";
+import { useElementHandler } from "@/hooks/useElementHandler";
+import DOMPurify from "dompurify";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
+import { ButtonElement } from "@/interfaces/elements.interface";
 
-const ButtonComponent = ({
-  element,
-  setContextMenuPosition,
-  setShowContextMenu,
-}: EditorComponentProps) => {
-  const buttonElement = element as ButtonElement;
-
-  return (
-    <button
-      style={buttonElement.styles}
-      className={buttonElement.tailwindStyles}
-    >
-      {buttonElement.content || "Button"}
-    </button>
-  );
+const ButtonComponent = ({ element }: EditorComponentProps) => {
+    const buttonElement = element as ButtonElement;
+    const { getCommonProps } = useElementHandler();
+    return (
+        <button
+            {...getCommonProps(buttonElement)}
+            type={"button"}
+           
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(element.content || ""),
+            }}
+        >
+            
+        </button>
+    );
 };
 
 export default ButtonComponent;

@@ -1,3 +1,4 @@
+import { CONTAINER_ELEMENT_TYPES, EDITABLE_ELEMENT_TYPES } from "@/constants/elements";
 import {
   BaseElement,
   ButtonElement,
@@ -9,13 +10,16 @@ import {
   ListElement,
   SectionElement,
   SelectElement,
-} from "@/interfaces/element";
+  TextElement,
+  CarouselElement,
+} from "@/interfaces/elements.interface";
 
 type ContainerElement =
   | FrameElement
   | SectionElement
   | FormElement
-  | ListElement;
+  | ListElement
+  | CarouselElement;
 
 type EditorElement =
   | BaseElement
@@ -26,6 +30,35 @@ type EditorElement =
   | SelectElement
   | ChartElement
   | DataTableElement
-  | FormElement;
+  | FormElement
+  | SectionElement
+  | TextElement
+  | CarouselElement;
 
-export type { EditorElement, ContainerElement };
+type ElementType =
+  | "Frame"
+  | "Button"
+  | "List"
+  | "Input"
+  | "Select"
+  | "Chart"
+  | "DataTable"
+  | "Form"
+  | "Section"
+  | "Text"
+  | "Carousel"
+  | "Base"
+  | "Image"
+  | "Link";
+    
+type ContainerElementType = (typeof CONTAINER_ELEMENT_TYPES)[number];
+
+type EditableElementType =(typeof EDITABLE_ELEMENT_TYPES)[number]
+
+export type {
+  EditorElement,
+  EditableElementType,
+  ContainerElement,
+  ElementType,
+  ContainerElementType,
+};

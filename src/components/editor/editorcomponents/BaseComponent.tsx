@@ -1,17 +1,18 @@
 import React from "react";
-import { EditorComponentProps } from "@/interfaces/editor";
 import DOMPurify from "dompurify";
+import { useElementHandler } from "@/hooks/useElementHandler";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
+import { TextElement } from "@/interfaces/elements.interface";
 
 const BaseComponent = ({
   element,
-  setContextMenuPosition,
-  setShowContextMenu,
 }: EditorComponentProps) => {
-    
+  const baseElement = element as TextElement;
+  
+  const { getCommonProps} = useElementHandler();
   return (
     <div
-      style={element.styles}
-      className={element.tailwindStyles}
+      {...getCommonProps(baseElement)}
       suppressContentEditableWarning={true}
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(element.content || ""),

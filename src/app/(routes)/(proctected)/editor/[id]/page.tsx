@@ -27,9 +27,16 @@ export default async function EditorPage({
     queryKey: ["elements", id],
     queryFn: () => elementService.getElements(id),
   }); 
+  
   await queryClient.prefetchQuery({
     queryKey: ["project", id],
     queryFn: () => projectService.getProjectById(id),
+  });
+  
+  // TODO: Prefetch fonts and other resources if needed
+  await queryClient.prefetchQuery({
+    queryKey: ["fonts"],
+    queryFn: () => projectService.getFonts(),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

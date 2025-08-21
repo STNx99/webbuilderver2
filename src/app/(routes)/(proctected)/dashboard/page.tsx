@@ -1,18 +1,18 @@
 import { getQueryClient } from "@/client/queryclient";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import Projects from "./projects";
 import { projectService } from "@/services/project";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import Dashboard from "./dashboard";
 
-export default async function DashBoardPage() {
+export default async function DashboardPage() {
   const queryClient = getQueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ["projects"],
-    queryFn: projectService.getUserProjects,
+    queryFn: () => projectService.getUserProjects(),
   });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Projects />
+      <Dashboard />
     </HydrationBoundary>
   );
 }

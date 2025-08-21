@@ -1,12 +1,8 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)"]);
-const isTokenRoute = createRouteMatcher(["/api/gettoken"]);
+const isProtectedRoute = createRouteMatcher(["/dashboard(.*)", "/forum(.*)", "/editor(.*)", "/settings(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // Skip middleware for token endpoint to reduce latency
-  if (isTokenRoute(req)) return;
-
   if (isProtectedRoute(req)) await auth.protect();
 });
 
