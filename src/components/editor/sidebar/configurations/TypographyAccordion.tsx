@@ -46,6 +46,24 @@ const FONT_WEIGHTS = [
   { label: "Black", value: 900 },
 ];
 
+type TextAlign = "left" | "right" | "center" | "justify" | "start" | "end";
+const TEXT_ALIGN_OPTIONS: TextAlign[] = [
+  "left",
+  "right",
+  "center",
+  "justify",
+  "start",
+  "end",
+];
+
+type TextTransform = "none" | "capitalize" | "uppercase" | "lowercase";
+const TEXT_TRANSFORM_OPTIONS: TextTransform[] = [
+  "none",
+  "capitalize",
+  "uppercase",
+  "lowercase",
+];
+
 export const TypographyAccordion = () => {
   const { selectedElement } = useElementStore();
   const [fonts, setFonts] = useState<string[]>(FONT_FAMILIES);
@@ -63,7 +81,10 @@ export const TypographyAccordion = () => {
 
   const styles: TypographyStyles = selectedElement?.styles ?? {};
 
-  const updateStyle = (property: keyof TypographyStyles, value: any) => {
+  const updateStyle = <K extends keyof TypographyStyles>(
+    property: K,
+    value: TypographyStyles[K],
+  ) => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
     elementHelper.updateElementStyle(selectedElement, newStyles);
@@ -273,8 +294,12 @@ export const TypographyAccordion = () => {
                   Align
                 </Label>
                 <Select
-                  value={styles.textAlign || "default"}
-                  onValueChange={(value) =>
+                  value={
+                    TEXT_ALIGN_OPTIONS.includes(styles.textAlign as TextAlign)
+                      ? (styles.textAlign as TextAlign)
+                      : "default"
+                  }
+                  onValueChange={(value: TextAlign | "default") =>
                     updateStyle(
                       "textAlign",
                       value === "default" ? undefined : value,
@@ -286,12 +311,11 @@ export const TypographyAccordion = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="left">Left</SelectItem>
-                    <SelectItem value="center">Center</SelectItem>
-                    <SelectItem value="right">Right</SelectItem>
-                    <SelectItem value="justify">Justify</SelectItem>
-                    <SelectItem value="start">Start</SelectItem>
-                    <SelectItem value="end">End</SelectItem>
+                    {TEXT_ALIGN_OPTIONS.map((align) => (
+                      <SelectItem key={align} value={align}>
+                        {align.charAt(0).toUpperCase() + align.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -309,8 +333,14 @@ export const TypographyAccordion = () => {
                   Transform
                 </Label>
                 <Select
-                  value={styles.textTransform || "default"}
-                  onValueChange={(value) =>
+                  value={
+                    TEXT_TRANSFORM_OPTIONS.includes(
+                      styles.textTransform as TextTransform,
+                    )
+                      ? (styles.textTransform as TextTransform)
+                      : "default"
+                  }
+                  onValueChange={(value: TextTransform | "default") =>
                     updateStyle(
                       "textTransform",
                       value === "default" ? undefined : value,
@@ -322,10 +352,11 @@ export const TypographyAccordion = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="none">None</SelectItem>
-                    <SelectItem value="capitalize">Capitalize</SelectItem>
-                    <SelectItem value="uppercase">Uppercase</SelectItem>
-                    <SelectItem value="lowercase">Lowercase</SelectItem>
+                    {TEXT_TRANSFORM_OPTIONS.map((transform) => (
+                      <SelectItem key={transform} value={transform}>
+                        {transform.charAt(0).toUpperCase() + transform.slice(1)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

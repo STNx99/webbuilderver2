@@ -2,8 +2,6 @@ import { CONTAINER_ELEMENT_TYPES, EDITABLE_ELEMENT_TYPES } from "@/constants/ele
 import {
   BaseElement,
   ButtonElement,
-  ChartElement,
-  DataTableElement,
   FormElement,
   FrameElement,
   InputElement,
@@ -28,8 +26,6 @@ type EditorElement =
   | ListElement
   | InputElement
   | SelectElement
-  | ChartElement
-  | DataTableElement
   | FormElement
   | SectionElement
   | TextElement
@@ -41,8 +37,6 @@ type ElementType =
   | "List"
   | "Input"
   | "Select"
-  | "Chart"
-  | "DataTable"
   | "Form"
   | "Section"
   | "Text"

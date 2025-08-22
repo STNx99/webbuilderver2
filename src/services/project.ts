@@ -1,7 +1,7 @@
 import GetUrl from "@/utils/geturl";
 import getToken from "./token";
-import { IProjectService } from "@/interfaces/services";
-import { Project } from "@/interfaces/project";
+import { IProjectService } from "@/interfaces/service.interface";
+import { Project } from "next/dist/build/swc/types";
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {

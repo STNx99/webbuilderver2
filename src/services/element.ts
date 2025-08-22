@@ -1,7 +1,7 @@
 import { EditorElement } from "@/types/global.type";
 import GetUrl from "@/utils/geturl";
 import getToken from "./token";
-import { IElementService } from "@/interfaces/services";
+import { IElementService } from "@/interfaces/service.interface";
 
 export const elementService : IElementService = {
   getElements: async (projectId: string): Promise<EditorElement[]> => {

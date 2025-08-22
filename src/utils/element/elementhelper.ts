@@ -1,9 +1,9 @@
 import {
-    ContainerElement,
-    ContainerElementType,
-    EditableElementType,
-    EditorElement,
-    ElementType,
+  ContainerElement,
+  ContainerElementType,
+  EditableElementType,
+  EditorElement,
+  ElementType,
 } from "@/types/global.type";
 import { handleSwap } from "./handleSwap";
 import { findElement } from "./findElement";
@@ -12,61 +12,62 @@ import { updateElementStyle } from "./updateElementStyle";
 import { renderChildElement } from "../renderElements";
 import React from "react";
 import {
-    CONTAINER_ELEMENT_TYPES,
-    EDITABLE_ELEMENT_TYPES,
+  CONTAINER_ELEMENT_TYPES,
+  EDITABLE_ELEMENT_TYPES,
 } from "@/constants/elements";
 import { createElement } from "./create/createElements";
+import { filterElementByPageId } from "./filterElementByPageId";
 
 interface ElementHelper {
-    createElement: <T extends EditorElement>(
-        type: ElementType,
-        projectId: string,
-        parentId?: string,
-    ) => T | undefined;
+  createElement: <T extends EditorElement>(
+    type: ElementType,
+    projectId: string,
+    parentId?: string,
+    pageId?: string,
+  ) => T | undefined;
 
-    handleSwap: (
-        draggingElement: EditorElement,
-        hoveredElement: EditorElement,
-        updateElement: (
-            id: string,
-            updatedElement: Partial<EditorElement>,
-        ) => void,
-    ) => void;
+  handleSwap: (
+    draggingElement: EditorElement,
+    hoveredElement: EditorElement,
+    updateElement: (id: string, updatedElement: Partial<EditorElement>) => void,
+  ) => void;
 
-    findElement: (id: string) => EditorElement | undefined;
+  filterElementByPageId: (id?: string) => EditorElement[];
 
-    getElementSettings: (element: EditorElement) => string | null;
+  findElement: (id: string) => EditorElement | undefined;
 
-    isContainerElement: (element: EditorElement) => boolean;
+  getElementSettings: (element: EditorElement) => string | null;
 
-    isEditableElement: (element: EditorElement) => boolean;
+  isContainerElement: (element: EditorElement) => boolean;
 
-    renderChildElement: (element: EditorElement, props: any, excludes?: ElementType[]) => React.ReactNode;
+  isEditableElement: (element: EditorElement) => boolean;
 
-    updateElementStyle: (
-        element: EditorElement,
-        styles: React.CSSProperties,
-    ) => void;
+  renderChildElement: (
+    element: EditorElement,
+    props: any,
+    excludes?: ElementType[],
+  ) => React.ReactNode;
 
+  updateElementStyle: (
+    element: EditorElement,
+    styles: React.CSSProperties,
+  ) => void;
 }
 
 export const elementHelper: ElementHelper = {
-    createElement: createElement,
-    handleSwap: handleSwap,
-    findElement: findElement,
-    getElementSettings: getElementSettings,
-    isContainerElement: (
-        element: EditorElement,
-    ): element is ContainerElement => {
-        return CONTAINER_ELEMENT_TYPES.includes(
-            element.type as ContainerElementType,
-        );
-    },
-    isEditableElement: (element: EditorElement): boolean => {
-        return EDITABLE_ELEMENT_TYPES.includes(
-            element.type as EditableElementType,
-        );
-    },
-    renderChildElement: renderChildElement,
-    updateElementStyle: updateElementStyle,
+  createElement: createElement,
+  handleSwap: handleSwap,
+  findElement: findElement,
+  getElementSettings: getElementSettings,
+  isContainerElement: (element: EditorElement): element is ContainerElement => {
+    return CONTAINER_ELEMENT_TYPES.includes(
+      element.type as ContainerElementType,
+    );
+  },
+  filterElementByPageId: filterElementByPageId,
+  isEditableElement: (element: EditorElement): boolean => {
+    return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);
+  },
+  renderChildElement: renderChildElement,
+  updateElementStyle: updateElementStyle,
 };

@@ -5,16 +5,23 @@ import { SectionElement } from "@/interfaces/elements.interface";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 
 const SectionComponent = ({ element }: EditorComponentProps) => {
-    const sectionElement = element as SectionElement;
-    const { getCommonProps } = useElementHandler();
+  const sectionElement = element as SectionElement;
+  const { getCommonProps } = useElementHandler();
 
-    return (
-        <div {...getCommonProps(sectionElement)}>
-            {sectionElement.elements.map((childElement) => {
-                return elementHelper.renderChildElement(childElement, {});
-            })}
-        </div>
-    );
+  return (
+    <div
+      {...getCommonProps(sectionElement)}
+      style={{
+        ...(sectionElement.styles || {}),
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      {sectionElement.elements.map((childElement) => {
+        return elementHelper.renderChildElement(childElement, {});
+      })}
+    </div>
+  );
 };
 
 export default SectionComponent;

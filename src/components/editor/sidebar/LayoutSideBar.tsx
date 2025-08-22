@@ -17,13 +17,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import React from "react";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Configurations from "./configurations/Configurations";
 import ElementTreeItem from "./ElementTreeItem";
 import { Square } from "lucide-react";
 import { useAiChat } from "@/providers/aiprovider";
 import { useElementStore } from "@/globalstore/elementstore";
+import { elementHelper } from "@/utils/element/elementhelper";
 // import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {
@@ -35,7 +36,7 @@ function LayoutSideBar() {
     // window.open(subdomainUrl, "_blank");
   };
   const { elements, selectedElement } = useElementStore();
-
+  const searchParams = useSearchParams();
   return (
     <Sidebar side="right">
       <SidebarContent>
@@ -54,7 +55,9 @@ function LayoutSideBar() {
               <AccordionContent>
                 <SidebarGroupContent>
                   <div className="max-h-60 overflow-y-auto">
-                    {elements.length > 0 ? (
+                    {elementHelper.filterElementByPageId(
+                      searchParams.get("page") || undefined,
+                    ).length > 0 ? (
                       elements.map((element) => (
                         <ElementTreeItem
                           key={element.id || Math.random()}

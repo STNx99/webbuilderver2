@@ -26,17 +26,7 @@ export default function InputConfiguration() {
     return <AccordionItem value="input-settings"></AccordionItem>;
   }
 
-  const [settings, setSettings] = React.useState<InputSettings>(
-    {} as InputSettings,
-  );
-
-  React.useEffect(() => {
-    if (selectedElement && selectedElement.settings) {
-      setSettings(selectedElement.settings);
-    } else {
-      setSettings({} as InputSettings);
-    }
-  }, [selectedElement]);
+  const settings: InputSettings = selectedElement.settings ?? {};
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;

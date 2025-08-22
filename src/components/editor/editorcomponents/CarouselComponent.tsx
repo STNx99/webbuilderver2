@@ -22,8 +22,8 @@ interface Props {
 
 const CarouselComponent = ({ element }: Props) => {
   const { getCommonProps } = useElementHandler();
-  
-  element = element as CarouselElement
+
+  element = element as CarouselElement;
   if (!element || !element.elements) {
     return <div>No carousel content available.</div>;
   }
@@ -35,14 +35,19 @@ const CarouselComponent = ({ element }: Props) => {
     <Carousel
       {...getCommonProps(element)}
       opts={carouselSettings}
-      className={cn("w-full")}
+      className={cn("w-full h-full")}
+      style={{
+        ...(element.styles || {}),
+        width: "100%",
+        height: "100%",
+      }}
       role="region"
       aria-roledescription="carousel"
     >
       <CarouselContent>
         {element.elements.map((slide) => (
           <CarouselItem key={slide.id}>
-            <div className="p-1">
+            <div className="p-1 h-full w-full">
               {elementHelper.renderChildElement(slide, {})}
             </div>
           </CarouselItem>
