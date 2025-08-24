@@ -1,16 +1,67 @@
 import { EditorElement } from "@/types/global.type";
-import { navbarComponent, navbarComponent2, navbarComponent3, navbarComponent4, navbarComponent5 } from "./navbar/navbarComponents";
-import { footerComponent, footerComponent2, footerComponent3, footerComponent4 } from "./footer/footerComponents";
-import { headerComponent, headerComponent2, headerComponent3 } from "./header/headerComponents";
-import { sidebarLeftComponent, sidebarLeftComponent2, sidebarLeftComponent3, sidebarLeftComponent4 } from "./sidebar/sidebarLeftComponents";
-import { sidebarRightComponent, sidebarRightComponent2, sidebarRightComponent3, sidebarRightComponent4 } from "./sidebar/sidebarRightComponents";
-import { aboutCarouselHorizontal, aboutCarouselVertical, aboutDynamicHorizontal, aboutDynamicVertical, teamMembersComponent1, teamMembersComponent2, teamMembersComponent3 } from "./team/teamMembersComponents";
-import { missionComponent1, missionComponent2, missionComponentCompact, missionComponentSlider } from "./mission/missionComponents";
-import { barChartComponent, pieChartComponent, lineChartComponent } from "./chart/chartComponents";
-import { simpleDataTableComponent, complexDataTableComponent } from "./data/dataTableComponents";
-import { clockWidgetComponent, digitalClockWidgetComponent } from "./widgets/widgetComponents";
+import {
+  navbarComponent,
+  navbarComponent2,
+  navbarComponent3,
+  navbarComponent4,
+  navbarComponent5,
+} from "./navbar/navbarComponents";
+import {
+  footerComponent,
+  footerComponent2,
+  footerComponent3,
+  footerComponent4,
+} from "./footer/footerComponents";
+import {
+  headerComponent,
+  headerComponent2,
+  headerComponent3,
+} from "./header/headerComponents";
+import {
+  sidebarLeftComponent,
+  sidebarLeftComponent2,
+  sidebarLeftComponent3,
+  sidebarLeftComponent4,
+} from "./sidebar/sidebarLeftComponents";
+import {
+  sidebarRightComponent,
+  sidebarRightComponent2,
+  sidebarRightComponent3,
+  sidebarRightComponent4,
+} from "./sidebar/sidebarRightComponents";
+import {
+  aboutCarouselHorizontal,
+  aboutCarouselVertical,
+  aboutDynamicHorizontal,
+  aboutDynamicVertical,
+  teamMembersComponent1,
+  teamMembersComponent2,
+  teamMembersComponent3,
+} from "./team/teamMembersComponents";
+import {
+  missionComponent1,
+  missionComponent2,
+  missionComponentCompact,
+  missionComponentSlider,
+} from "./mission/missionComponents";
+import {
+  barChartComponent,
+  pieChartComponent,
+  lineChartComponent,
+} from "./chart/chartComponents";
+import {
+  simpleDataTableComponent,
+  complexDataTableComponent,
+} from "./data/dataTableComponents";
+import {
+  clockWidgetComponent,
+  digitalClockWidgetComponent,
+} from "./widgets/widgetComponents";
 import { formComponent1, formComponent2 } from "./form/formComponents";
-import { landingPageTemplateComponent, landingPageTemplateComponent2 } from "./landingpage/landingPageComponents";
+import {
+  landingPageTemplateComponent,
+  landingPageTemplateComponent2,
+} from "./landingpage/landingPageComponents";
 
 export interface CustomComponent {
   component: Partial<EditorElement>;
@@ -58,5 +109,5 @@ export const customComponents: CustomComponent[] = [
   formComponent1,
   formComponent2,
   landingPageTemplateComponent,
-  landingPageTemplateComponent2
+  landingPageTemplateComponent2,
 ];

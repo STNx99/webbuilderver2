@@ -10,16 +10,16 @@ export const ElementDAL = {
         data: {
           Settings: settings,
         },
-      })
+      });
     }
-    
+
     return await prisma.element.update({
       where: { Id: element.id },
       data: {
         Type: element.type,
         Name: element.name || "",
-        Styles: JSON.stringify(element.styles) || "",
-        Content: JSON.stringify(element.content) || "",
+        Styles: JSON.parse(JSON.stringify(element.styles)),
+        Content: element.content || "",
         ParentId: element.parentId || null,
         Src: element.src || null,
         Href: element.href || null,
@@ -28,7 +28,7 @@ export const ElementDAL = {
       },
     });
   },
-  
+
   deleteElement: async (id: string) => {
     return await prisma.element.delete({
       where: { Id: id },
