@@ -45,15 +45,6 @@ import {
   missionComponentSlider,
 } from "./mission/missionComponents";
 import {
-  barChartComponent,
-  pieChartComponent,
-  lineChartComponent,
-} from "./chart/chartComponents";
-import {
-  simpleDataTableComponent,
-  complexDataTableComponent,
-} from "./data/dataTableComponents";
-import {
   clockWidgetComponent,
   digitalClockWidgetComponent,
 } from "./widgets/widgetComponents";
@@ -99,11 +90,6 @@ export const customComponents: CustomComponent[] = [
   missionComponent2,
   missionComponentCompact,
   missionComponentSlider,
-  barChartComponent,
-  pieChartComponent,
-  lineChartComponent,
-  simpleDataTableComponent,
-  complexDataTableComponent,
   clockWidgetComponent,
   digitalClockWidgetComponent,
   formComponent1,

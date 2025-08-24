@@ -10,8 +10,7 @@ export const footerComponent: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 450,
+
     styles: {
       position: "relative",
       width: "100%",
@@ -33,8 +32,6 @@ export const footerComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
         href: "",
         src: "",
         styles: {
@@ -53,8 +50,6 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
             href: "",
             src: "",
             styles: { width: "80px", height: "80px" },
@@ -70,8 +65,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: { color: "#6c757d", fontSize: "14px" },
@@ -88,8 +82,7 @@ export const footerComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -108,8 +101,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: { color: "#ff6f61", fontWeight: "bold" },
@@ -124,8 +116,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -140,8 +131,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -156,8 +146,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -172,8 +161,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -190,8 +178,7 @@ export const footerComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -210,8 +197,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: { color: "#ff6f61", fontWeight: "bold" },
@@ -226,8 +212,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -242,8 +227,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -258,8 +242,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -274,8 +257,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: { color: "#333" },
@@ -292,8 +274,7 @@ export const footerComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -312,8 +293,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: { color: "#ff6f61", fontWeight: "bold" },
@@ -328,8 +308,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://facebook.com",
             src: "",
             styles: { color: "#333" },
@@ -344,8 +323,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://twitter.com",
             src: "",
             styles: { color: "#333" },
@@ -360,8 +338,7 @@ export const footerComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://instagram.com",
             src: "",
             styles: { color: "#333" },
@@ -388,8 +365,6 @@ export const footerComponent2: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 500,
     styles: {
       position: "relative",
       width: "100%",
@@ -411,8 +386,7 @@ export const footerComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -431,8 +405,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -451,8 +424,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -471,8 +443,7 @@ export const footerComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -491,8 +462,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -510,8 +480,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -528,8 +497,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -546,8 +514,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -564,8 +531,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -584,8 +550,7 @@ export const footerComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -604,8 +569,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -623,8 +587,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -641,8 +604,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -659,8 +621,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -677,8 +638,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -697,8 +657,7 @@ export const footerComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -717,8 +676,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -736,8 +694,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -757,8 +714,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
                 styles: { 
@@ -777,8 +733,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -797,8 +752,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -818,8 +772,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/732/732200.png",
                 styles: { 
@@ -838,8 +791,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -858,8 +810,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -879,8 +830,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/724/724664.png",
                 styles: { 
@@ -899,8 +849,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -919,8 +868,7 @@ export const footerComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -940,8 +888,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/724/724664.png",
                 styles: { 
@@ -960,8 +907,7 @@ export const footerComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -988,8 +934,7 @@ export const footerComponent3: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 450,
+
     styles: {
       position: "relative",
       width: "100%",
@@ -1012,8 +957,7 @@ export const footerComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -1034,8 +978,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -1054,8 +997,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -1073,8 +1015,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "/",
                 src: "",
                 styles: {
@@ -1091,8 +1032,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "/",
                 src: "",
                 styles: {
@@ -1111,8 +1051,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -1131,8 +1070,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -1150,8 +1088,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "https://github.com",
                 src: "",
                 styles: {
@@ -1168,8 +1105,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "https://discord.com",
                 src: "",
                 styles: {
@@ -1188,8 +1124,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "",
             src: "",
             styles: {
@@ -1208,8 +1143,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "",
                 src: "",
                 styles: {
@@ -1227,8 +1161,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "/privacy-policy",
                 src: "",
                 styles: {
@@ -1245,8 +1178,7 @@ export const footerComponent3: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 href: "/terms",
                 src: "",
                 styles: {
@@ -1267,8 +1199,7 @@ export const footerComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -1287,8 +1218,7 @@ export const footerComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: {
@@ -1308,8 +1238,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://facebook.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733547.png",
             styles: {
@@ -1327,8 +1256,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://discord.com",
             src: "https://cdn-icons-png.flaticon.com/512/2111/2111370.png",
             styles: {
@@ -1346,8 +1274,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://twitter.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733579.png",
             styles: {
@@ -1365,8 +1292,7 @@ export const footerComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "https://github.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733553.png",
             styles: {
@@ -1396,8 +1322,6 @@ export const footerComponent4: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 500,
     styles: {
       position: "relative",
       width: "100%",
@@ -1419,8 +1343,7 @@ export const footerComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "/",
         src: "",
         styles: {
@@ -1439,8 +1362,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1459,8 +1381,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1477,8 +1398,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1495,8 +1415,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1513,8 +1432,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1533,8 +1451,7 @@ export const footerComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "/",
         src: "",
         styles: {
@@ -1553,8 +1470,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1573,8 +1489,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1591,8 +1506,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1609,8 +1523,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1627,8 +1540,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1647,8 +1559,7 @@ export const footerComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "/",
         src: "",
         styles: {
@@ -1667,8 +1578,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1687,8 +1597,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1706,8 +1615,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1725,8 +1633,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1744,8 +1651,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1764,8 +1670,7 @@ export const footerComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "/",
         src: "",
         styles: {
@@ -1784,8 +1689,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1804,8 +1708,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1823,8 +1726,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1842,8 +1744,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {
@@ -1861,8 +1762,7 @@ export const footerComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             href: "/",
             src: "",
             styles: {

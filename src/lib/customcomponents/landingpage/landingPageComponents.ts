@@ -10,8 +10,7 @@ export const landingPageTemplateComponent: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       minHeight: "100vh",
@@ -28,8 +27,7 @@ export const landingPageTemplateComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           height: "auto",
@@ -51,8 +49,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "100px",
               height: "40px",
@@ -78,8 +75,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               gap: "20px",
@@ -94,8 +90,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#333333",
                   fontWeight: "500",
@@ -113,8 +108,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#333333",
                   fontWeight: "500",
@@ -132,8 +126,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#333333",
                   fontWeight: "500",
@@ -151,8 +144,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#333333",
                   fontWeight: "500",
@@ -170,9 +162,6 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
-                buttonType: "button",
                 styles: {
                   backgroundColor: "#0ea5e9",
                   color: "white",
@@ -209,8 +198,7 @@ export const landingPageTemplateComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           minHeight: "600px",
@@ -230,8 +218,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "row",
@@ -251,8 +238,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -269,8 +255,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "40px",
                       fontWeight: "bold",
@@ -290,8 +275,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "18px",
                       color: "#4b5563",
@@ -310,9 +294,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
-                    buttonType: "button",
+
                     styles: {
                       backgroundColor: "#0ea5e9",
                       color: "white",
@@ -343,8 +325,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   width: "100%",
                   maxWidth: "500px",
@@ -377,8 +358,7 @@ export const landingPageTemplateComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "80px 20px",
@@ -394,8 +374,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1200px",
               margin: "0 auto",
@@ -413,8 +392,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   textAlign: "center",
                   marginBottom: "20px",
@@ -428,8 +406,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#0ea5e9",
                       fontWeight: "600",
@@ -450,8 +427,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "36px",
                       fontWeight: "bold",
@@ -471,8 +447,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "18px",
                       color: "#4b5563",
@@ -499,8 +474,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
@@ -516,8 +490,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -536,8 +509,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                           color: "#0ea5e9",
@@ -556,8 +528,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -576,8 +547,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#4b5563",
@@ -603,8 +573,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -623,8 +592,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                           color: "#0ea5e9",
@@ -643,8 +611,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -663,8 +630,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#4b5563",
@@ -690,8 +656,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -710,8 +675,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                           color: "#0ea5e9",
@@ -730,8 +694,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -750,8 +713,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#4b5563",
@@ -796,8 +758,7 @@ export const landingPageTemplateComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "80px 20px",
@@ -813,8 +774,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1200px",
               margin: "0 auto",
@@ -832,8 +792,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   textAlign: "center",
                   marginBottom: "40px",
@@ -847,8 +806,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#0ea5e9",
                       fontWeight: "600",
@@ -869,8 +827,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "36px",
                       fontWeight: "bold",
@@ -890,8 +847,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "18px",
                       color: "#4b5563",
@@ -918,8 +874,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "grid",
                   gridTemplateColumns: "repeat(4, 1fr)",
@@ -935,8 +890,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -953,8 +907,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           width: "150px",
                           height: "150px",
@@ -976,8 +929,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -996,8 +948,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#0ea5e9",
@@ -1016,8 +967,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#6b7280",
@@ -1043,8 +993,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -1061,8 +1010,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           width: "150px",
                           height: "150px",
@@ -1084,8 +1032,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -1104,8 +1051,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#0ea5e9",
@@ -1124,8 +1070,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#6b7280",
@@ -1151,8 +1096,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -1169,8 +1113,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           width: "150px",
                           height: "150px",
@@ -1192,8 +1135,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -1212,8 +1154,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#0ea5e9",
@@ -1232,8 +1173,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#6b7280",
@@ -1259,8 +1199,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -1277,8 +1216,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           width: "150px",
                           height: "150px",
@@ -1300,8 +1238,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "20px",
                           fontWeight: "600",
@@ -1320,8 +1257,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#0ea5e9",
@@ -1340,8 +1276,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#6b7280",
@@ -1373,8 +1308,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -1394,8 +1328,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "24px",
                       fontWeight: "600",
@@ -1414,8 +1347,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "16px",
                       color: "#4b5563",
@@ -1434,8 +1366,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "16px",
                       color: "#4b5563",
@@ -1455,8 +1386,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       justifyContent: "space-between",
@@ -1474,8 +1404,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           flexDirection: "column",
@@ -1491,8 +1420,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "28px",
                               fontWeight: "bold",
@@ -1511,8 +1439,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "14px",
                               color: "#6b7280",
@@ -1537,8 +1464,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           flexDirection: "column",
@@ -1554,8 +1480,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "28px",
                               fontWeight: "bold",
@@ -1574,8 +1499,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "14px",
                               color: "#6b7280",
@@ -1600,8 +1524,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           flexDirection: "column",
@@ -1617,8 +1540,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "28px",
                               fontWeight: "bold",
@@ -1637,8 +1559,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "14px",
                               color: "#6b7280",
@@ -1663,8 +1584,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           flexDirection: "column",
@@ -1680,8 +1600,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "28px",
                               fontWeight: "bold",
@@ -1700,8 +1619,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               fontSize: "14px",
                               color: "#6b7280",
@@ -1751,8 +1669,7 @@ export const landingPageTemplateComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           backgroundColor: "#0ea5e9",
@@ -1769,8 +1686,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1000px",
               margin: "0 auto",
@@ -1789,8 +1705,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "36px",
                   fontWeight: "bold",
@@ -1809,8 +1724,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "18px",
                   maxWidth: "700px",
@@ -1829,9 +1743,6 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
-                buttonType: "button",
                 styles: {
                   backgroundColor: "white",
                   color: "#0ea5e9",
@@ -1856,8 +1767,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "14px",
                   marginTop: "10px",
@@ -1890,8 +1800,7 @@ export const landingPageTemplateComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           backgroundColor: "white",
@@ -1908,8 +1817,7 @@ export const landingPageTemplateComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1200px",
               margin: "0 auto",
@@ -1927,8 +1835,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   justifyContent: "space-between",
@@ -1945,8 +1852,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -1961,8 +1867,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           width: "100px",
                           height: "40px",
@@ -1985,8 +1890,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2012,8 +1916,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -2028,8 +1931,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           fontWeight: "600",
@@ -2049,8 +1951,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2068,8 +1969,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2087,8 +1987,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2113,8 +2012,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -2129,8 +2027,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           fontWeight: "600",
@@ -2150,8 +2047,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2169,8 +2065,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2188,8 +2083,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2214,8 +2108,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -2230,8 +2123,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           fontWeight: "600",
@@ -2251,8 +2143,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2270,8 +2161,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2289,8 +2179,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2321,8 +2210,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   justifyContent: "space-between",
@@ -2341,8 +2229,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#9ca3af",
@@ -2361,8 +2248,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       gap: "16px",
@@ -2376,8 +2262,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2395,8 +2280,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2414,8 +2298,7 @@ export const landingPageTemplateComponent: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#9ca3af",
@@ -2466,8 +2349,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       minHeight: "100vh",
@@ -2486,8 +2368,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           height: "auto",
@@ -2513,8 +2394,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "center",
@@ -2529,8 +2409,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   height: "32px",
                   width: "auto",
@@ -2555,8 +2434,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               gap: "32px",
@@ -2571,8 +2449,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#e2e8f0",
                   fontWeight: "500",
@@ -2591,8 +2468,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#e2e8f0",
                   fontWeight: "500",
@@ -2611,8 +2487,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#e2e8f0",
                   fontWeight: "500",
@@ -2631,8 +2506,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#e2e8f0",
                   fontWeight: "500",
@@ -2651,9 +2525,6 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
-                buttonType: "button",
                 styles: {
                   backgroundColor: "#3b82f6",
                   color: "white",
@@ -2691,8 +2562,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           minHeight: "calc(100vh - 80px)",
@@ -2713,8 +2583,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -2734,8 +2603,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "56px",
                   fontWeight: "bold",
@@ -2758,8 +2626,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#cbd5e1",
@@ -2780,8 +2647,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   gap: "16px",
@@ -2798,9 +2664,6 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
-                    buttonType: "button",
                     styles: {
                       backgroundColor: "#3b82f6",
                       color: "white",
@@ -2825,9 +2688,6 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
-                    buttonType: "button",
                     styles: {
                       backgroundColor: "transparent",
                       color: "#e2e8f0",
@@ -2864,8 +2724,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               position: "absolute",
               top: "20%",
@@ -2898,8 +2757,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "100px 20px",
@@ -2915,8 +2773,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1200px",
               margin: "0 auto",
@@ -2934,8 +2791,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   textAlign: "center",
                   marginBottom: "20px",
@@ -2949,8 +2805,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#3b82f6",
                       fontWeight: "600",
@@ -2971,8 +2826,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "42px",
                       fontWeight: "bold",
@@ -2999,8 +2853,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "grid",
                   gridTemplateColumns: "repeat(3, 1fr)",
@@ -3016,8 +2869,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -3037,8 +2889,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "48px",
                         },
@@ -3055,8 +2906,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                           fontWeight: "600",
@@ -3075,8 +2925,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#cbd5e1",
@@ -3102,8 +2951,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -3123,8 +2971,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "48px",
                         },
@@ -3141,8 +2988,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                           fontWeight: "600",
@@ -3161,8 +3007,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#cbd5e1",
@@ -3188,8 +3033,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -3209,8 +3053,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "48px",
                         },
@@ -3227,8 +3070,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                           fontWeight: "600",
@@ -3247,8 +3089,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#cbd5e1",
@@ -3293,8 +3134,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "100px 20px",
@@ -3310,8 +3150,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1200px",
               margin: "0 auto",
@@ -3329,8 +3168,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   textAlign: "center",
                 },
@@ -3343,8 +3181,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "42px",
                       fontWeight: "bold",
@@ -3363,8 +3200,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "18px",
                       color: "#cbd5e1",
@@ -3390,8 +3226,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "grid",
                   gridTemplateColumns: "repeat(2, 1fr)",
@@ -3407,8 +3242,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -3426,8 +3260,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                         },
@@ -3444,8 +3277,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "18px",
                           color: "#e2e8f0",
@@ -3466,8 +3298,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           alignItems: "center",
@@ -3482,8 +3313,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               width: "60px",
                               height: "60px",
@@ -3504,8 +3334,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               display: "flex",
                               flexDirection: "column",
@@ -3519,8 +3348,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                                 isSelected: false,
                                 isHovered: false,
                                 isDraggedOver: false,
-                                x: 0,
-                                y: 0,
+
                                 styles: {
                                   fontSize: "16px",
                                   fontWeight: "600",
@@ -3539,8 +3367,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                                 isSelected: false,
                                 isHovered: false,
                                 isDraggedOver: false,
-                                x: 0,
-                                y: 0,
+
                                 styles: {
                                   fontSize: "14px",
                                   color: "#94a3b8",
@@ -3577,8 +3404,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -3596,8 +3422,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "24px",
                         },
@@ -3614,8 +3439,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "18px",
                           color: "#e2e8f0",
@@ -3636,8 +3460,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           alignItems: "center",
@@ -3652,8 +3475,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               width: "60px",
                               height: "60px",
@@ -3674,8 +3496,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               display: "flex",
                               flexDirection: "column",
@@ -3689,8 +3510,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                                 isSelected: false,
                                 isHovered: false,
                                 isDraggedOver: false,
-                                x: 0,
-                                y: 0,
+
                                 styles: {
                                   fontSize: "16px",
                                   fontWeight: "600",
@@ -3709,8 +3529,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                                 isSelected: false,
                                 isHovered: false,
                                 isDraggedOver: false,
-                                x: 0,
-                                y: 0,
+
                                 styles: {
                                   fontSize: "14px",
                                   color: "#94a3b8",
@@ -3766,8 +3585,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "100px 20px",
@@ -3783,8 +3601,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "800px",
               margin: "0 auto",
@@ -3802,8 +3619,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   textAlign: "center",
                 },
@@ -3816,8 +3632,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "42px",
                       fontWeight: "bold",
@@ -3836,8 +3651,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "18px",
                       color: "#cbd5e1",
@@ -3863,8 +3677,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -3880,9 +3693,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
-                    buttonType: "button",
+
                     styles: {
                       backgroundColor: "#3b82f6",
                       color: "white",
@@ -3907,8 +3718,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "16px",
                       color: "#94a3b8",
@@ -3946,8 +3756,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           backgroundColor: "#0f172a",
@@ -3965,8 +3774,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               maxWidth: "1200px",
               margin: "0 auto",
@@ -3984,8 +3792,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   justifyContent: "space-between",
@@ -4002,8 +3809,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -4020,8 +3826,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           display: "flex",
                           alignItems: "center",
@@ -4036,8 +3841,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                             isSelected: false,
                             isHovered: false,
                             isDraggedOver: false,
-                            x: 0,
-                            y: 0,
+
                             styles: {
                               height: "24px",
                               width: "auto",
@@ -4061,8 +3865,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#94a3b8",
@@ -4088,8 +3891,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -4104,8 +3906,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           fontWeight: "600",
@@ -4125,8 +3926,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#94a3b8",
@@ -4144,8 +3944,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#94a3b8",
@@ -4163,8 +3962,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#94a3b8",
@@ -4189,8 +3987,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -4205,8 +4002,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           fontWeight: "600",
@@ -4226,8 +4022,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#94a3b8",
@@ -4245,8 +4040,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#94a3b8",
@@ -4277,8 +4071,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   justifyContent: "space-between",
@@ -4296,8 +4089,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       height: "24px",
                       width: "auto",
@@ -4315,8 +4107,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       gap: "20px",
@@ -4330,8 +4121,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#64748b",
@@ -4349,8 +4139,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#64748b",
@@ -4368,8 +4157,7 @@ export const landingPageTemplateComponent2: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#64748b",

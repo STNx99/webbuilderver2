@@ -5,7 +5,6 @@ export const buttonMultiComponent: CustomComponent = {
   component: {
     type: "Button",
     name: "Button Multi",
-    buttonType: "multi",
     content: "Dropdown",
     isSelected: false,
     isHovered: false,
@@ -75,7 +74,6 @@ export const buttonMultiComponent: CustomComponent = {
           src: "",
           parentId: "",
           projectId: "",
-          buttonType: "primary",
           styles: {
             padding: "8px 12px",
             width: "100%",
@@ -103,7 +101,6 @@ export const buttonMultiComponent: CustomComponent = {
           src: "",
           parentId: "",
           projectId: "",
-          buttonType: "primary",
           styles: {
             padding: "8px 12px",
             width: "100%",
@@ -131,7 +128,6 @@ export const buttonMultiComponent: CustomComponent = {
           src: "",
           parentId: "",
           projectId: "",
-          buttonType: "primary",
           styles: {
             padding: "8px 12px",
             width: "100%",

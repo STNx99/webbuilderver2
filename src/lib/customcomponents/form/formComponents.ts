@@ -11,8 +11,6 @@ export const formComponent1: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       width: "100%",
       margin: "0 auto",
@@ -34,8 +32,7 @@ export const formComponent1: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           marginBottom: "16px",
@@ -49,8 +46,7 @@ export const formComponent1: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontSize: "24px", 
               fontWeight: "700",
@@ -79,8 +75,7 @@ export const formComponent1: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "row",
@@ -98,8 +93,7 @@ export const formComponent1: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "40%",
               objectFit: "cover",
@@ -120,8 +114,7 @@ export const formComponent1: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -138,8 +131,7 @@ export const formComponent1: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -155,8 +147,7 @@ export const formComponent1: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       fontWeight: "500",
@@ -175,8 +166,7 @@ export const formComponent1: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       padding: "10px 14px",
                       border: "1px solid #e5e7eb",
@@ -189,7 +179,7 @@ export const formComponent1: CustomComponent = {
                     src: "",
                     parentId: "",
                     projectId: "",
-                    inputSettings: {
+                    settings: {
                       type: "text",
                       placeholder: "",
                       required: true,
@@ -210,8 +200,7 @@ export const formComponent1: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "row",
@@ -228,8 +217,7 @@ export const formComponent1: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -245,8 +233,7 @@ export const formComponent1: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           fontWeight: "500",
@@ -265,8 +252,7 @@ export const formComponent1: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           padding: "10px 14px",
                           border: "1px solid #e5e7eb",
@@ -279,7 +265,7 @@ export const formComponent1: CustomComponent = {
                         src: "",
                         parentId: "",
                         projectId: "",
-                        inputSettings: {
+                        settings: {
                           type: "email",
                           placeholder: "",
                           required: true,
@@ -300,8 +286,7 @@ export const formComponent1: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
@@ -317,8 +302,7 @@ export const formComponent1: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           fontWeight: "500",
@@ -337,8 +321,7 @@ export const formComponent1: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           padding: "10px 14px",
                           border: "1px solid #e5e7eb",
@@ -351,7 +334,7 @@ export const formComponent1: CustomComponent = {
                         src: "",
                         parentId: "",
                         projectId: "",
-                        inputSettings: {
+                        settings: {
                           type: "tel",
                           placeholder: "",
                           required: false,
@@ -378,8 +361,7 @@ export const formComponent1: CustomComponent = {
                 isSelected: false,
                 isHovered: false,
                 isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -395,8 +377,7 @@ export const formComponent1: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       fontWeight: "500",
@@ -415,8 +396,7 @@ export const formComponent1: CustomComponent = {
                     isSelected: false,
                     isHovered: false,
                     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       padding: "10px 14px",
                       border: "1px solid #e5e7eb",
@@ -438,8 +418,7 @@ export const formComponent1: CustomComponent = {
                         isSelected: false,
                         isHovered: false,
                         isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           width: "100%",
                           height: "100%",
@@ -452,7 +431,7 @@ export const formComponent1: CustomComponent = {
                         src: "",
                         parentId: "",
                         projectId: "",
-                        inputSettings: {
+                        settings: {
                           type: "textarea",
                           placeholder: "",
                           required: true,
@@ -486,9 +465,7 @@ export const formComponent1: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
-        buttonType: "submit",
+        // Removed buttonType property
         styles: {
           backgroundColor: "#3b82f6",
           color: "#ffffff",
@@ -511,10 +488,10 @@ export const formComponent1: CustomComponent = {
     src: "",
     parentId: "",
     projectId: "",
-    formSettings: {
+    settings: {
       method: "post",
-      autocomplete: "on",
-      noValidate: false,
+      autoComplete: "on", // Changed from autocomplete to autoComplete to match FormSettings interface
+      validateOnSubmit: false, // Changed from noValidate to validateOnSubmit
     },
   },
 };
@@ -529,8 +506,10 @@ export const formComponent2: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+    settings: {
+      method: "post",
+      autoComplete: "on",
+    },
     styles: {
       width: "100%",
       margin: "0 auto",
@@ -551,8 +530,7 @@ export const formComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "24px",
           fontWeight: "700",
@@ -573,8 +551,7 @@ export const formComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "16px",
           color: "#6b7280",
@@ -595,8 +572,7 @@ export const formComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "row",
@@ -613,8 +589,7 @@ export const formComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               padding: "12px 16px",
               border: "1px solid #e5e7eb",
@@ -627,7 +602,7 @@ export const formComponent2: CustomComponent = {
             src: "",
             parentId: "",
             projectId: "",
-            inputSettings: {
+            settings: {
               type: "email",
               placeholder: "Enter your email",
               required: true,
@@ -641,9 +616,6 @@ export const formComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
-            buttonType: "submit",
             styles: {
               backgroundColor: "#3b82f6",
               color: "#ffffff",
@@ -671,10 +643,5 @@ export const formComponent2: CustomComponent = {
     src: "",
     parentId: "",
     projectId: "",
-    formSettings: {
-      method: "post",
-      autocomplete: "on",
-      noValidate: false,
-    },
   },
 };

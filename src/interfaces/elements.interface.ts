@@ -54,7 +54,7 @@ interface ButtonElement extends Element<void> {
 
 interface InputSettings {
   name?: string;
-  type?: "text" | "email" | "password" | "number" | "tel" | "url";
+  type?: "text" | "email" | "password" | "number" | "tel" | "url" | "textarea";
   placeholder?: string;
   defaultValue?: string | number;
   min?: number;

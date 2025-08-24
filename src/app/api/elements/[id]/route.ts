@@ -5,7 +5,6 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function PUT(
   req: Request,
-  res: Response,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -185,7 +184,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE({ params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { userId } = await auth();
     if (!userId) {
