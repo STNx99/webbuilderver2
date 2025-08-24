@@ -31,7 +31,7 @@ export const cardComponent: CustomComponent = {
       "w-[360px] bg-white flex flex-col rounded-xl p-6 shadow-lg border border-gray-200 gap-4 hover:shadow-xl transition-shadow",
     elements: [
       {
-        type: "Heading",
+        type: "Text",  // Changed from "Heading" to "Text" which is a valid ElementType
         name: "Card Title",
         id: uuidv4(),
         isSelected: false,
@@ -82,7 +82,7 @@ export const cardComponent: CustomComponent = {
         src: "",
         parentId: "",
         projectId: "",
-        buttonType: "primary",
+        // Removed buttonType: "primary", as it's not part of ButtonElement interface
         styles: {
           padding: "10px 20px",
           backgroundColor: "#4f46e5",

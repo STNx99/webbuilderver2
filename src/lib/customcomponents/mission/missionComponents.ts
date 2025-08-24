@@ -1,4 +1,4 @@
-import { FrameElement } from "@/interfaces/element";
+import { FrameElement } from "@/interfaces/elements.interface";
 import { CustomComponent } from "../styleconstants";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,14 +16,12 @@ const createBadge = (
   };
 
   return {
-    type: "Text",
+    type: "Text" as const,
     content: text,
     id: uuidv4(),
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       display: "inline-block",
       backgroundColor: bgColor,
@@ -51,15 +49,13 @@ const createBadge = (
 // Function to create flexible mission content layout
 const createMissionLayout = (layout: "left" | "right" | "center") => {
   const baseComponent = {
-    type: "Frame",
+    type: "Frame" as const,
     name: `MissionComponent_${layout}`,
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       width: "100%",
       padding: "40px 20px",
@@ -97,15 +93,13 @@ export const missionComponent1: CustomComponent = {
 // Update the component elements based on layout
 (missionComponent1.component as FrameElement).elements = [
   {
-    type: "Frame",
+    type: "Frame" as const,
     name: "TextContent",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       display: "flex",
       flexDirection: "column",
@@ -116,14 +110,12 @@ export const missionComponent1: CustomComponent = {
     elements: [
       createBadge("Sứ mệnh của chúng tôi", "#dbeafe", "#1e40af", "rounded"),
       {
-        type: "Text",
+        type: "Text" as const,
         content: "Biến ý tưởng thành hiện thực",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           fontSize: "36px",
           fontWeight: "bold",
@@ -136,15 +128,13 @@ export const missionComponent1: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Text",
+        type: "Text" as const,
         content:
           "Chúng tôi ra đời với mục tiêu giúp mọi người dễ dàng tiếp cận và xây dựng giao diện web chuyên nghiệp, mà không cần kiến thức lập trình phức tạp.",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           fontSize: "18px",
           color: "#6b7280",
@@ -157,15 +147,14 @@ export const missionComponent1: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "FeaturesList",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -174,15 +163,14 @@ export const missionComponent1: CustomComponent = {
         tailwindStyles: "space-y-2",
         elements: [
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "FeatureItem",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "flex-start",
@@ -190,14 +178,13 @@ export const missionComponent1: CustomComponent = {
             tailwindStyles: "flex items-start",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "✓",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#22c55e",
@@ -210,14 +197,13 @@ export const missionComponent1: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tạo ra website dễ dàng với drag & drop",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#374151",
@@ -235,15 +221,14 @@ export const missionComponent1: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "FeatureItem",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "flex-start",
@@ -251,14 +236,13 @@ export const missionComponent1: CustomComponent = {
             tailwindStyles: "flex items-start",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "✓",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#22c55e",
@@ -271,14 +255,13 @@ export const missionComponent1: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tùy chỉnh mọi phần của trang web",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#374151",
@@ -296,15 +279,14 @@ export const missionComponent1: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "FeatureItem",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "flex-start",
@@ -312,14 +294,13 @@ export const missionComponent1: CustomComponent = {
             tailwindStyles: "flex items-start",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "✓",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#22c55e",
@@ -332,14 +313,13 @@ export const missionComponent1: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tối ưu trải nghiệm người dùng",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#374151",
@@ -369,15 +349,14 @@ export const missionComponent1: CustomComponent = {
     projectId: "",
   },
   {
-    type: "Frame",
+    type: "Frame" as const,
     name: "ImageContainer",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       borderRadius: "12px",
       overflow: "hidden",
@@ -388,14 +367,13 @@ export const missionComponent1: CustomComponent = {
     tailwindStyles: "rounded-xl overflow-hidden shadow-xl order-1 md:order-2",
     elements: [
       {
-        type: "Image",
+        type: "Image" as const,
         content: "",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           height: "auto",
@@ -417,15 +395,14 @@ export const missionComponent1: CustomComponent = {
 
 export const missionComponent2: CustomComponent = {
   component: {
-    type: "Frame",
+    type: "Frame" as const,
     name: "MissionComponent2",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       display: "flex",
@@ -438,15 +415,14 @@ export const missionComponent2: CustomComponent = {
     tailwindStyles: "flex flex-col gap-10 py-16 px-5 bg-gray-50 rounded-2xl",
     elements: [
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "Header",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           textAlign: "center",
           marginBottom: "20px",
@@ -455,14 +431,13 @@ export const missionComponent2: CustomComponent = {
         elements: [
           createBadge("Sứ mệnh của chúng tôi", "#e0e7ff", "#4f46e5", "pill"),
           {
-            type: "Text",
+            type: "Text" as const,
             content: "Biến ý tưởng thành hiện thực",
             id: uuidv4(),
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontSize: "36px",
               fontWeight: "bold",
@@ -484,15 +459,14 @@ export const missionComponent2: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "ContentContainer",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -502,14 +476,13 @@ export const missionComponent2: CustomComponent = {
         tailwindStyles: "grid grid-cols-1 lg:grid-cols-2 gap-10 items-center",
         elements: [
           {
-            type: "Image",
+            type: "Image" as const,
             content: "",
             id: uuidv4(),
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "100%",
               borderRadius: "12px",
@@ -523,15 +496,14 @@ export const missionComponent2: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "TextContent",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -540,15 +512,14 @@ export const missionComponent2: CustomComponent = {
             tailwindStyles: "flex flex-col space-y-6",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Chúng tôi ra đời với mục tiêu giúp mọi người dễ dàng tiếp cận và xây dựng giao diện web chuyên nghiệp, mà không cần kiến thức lập trình phức tạp.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "18px",
                   color: "#4b5563",
@@ -561,15 +532,14 @@ export const missionComponent2: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Features",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
@@ -579,15 +549,14 @@ export const missionComponent2: CustomComponent = {
                 tailwindStyles: "grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4",
                 elements: [
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -596,14 +565,13 @@ export const missionComponent2: CustomComponent = {
                     tailwindStyles: "flex items-center gap-3",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "white",
                           backgroundColor: "#10b981",
@@ -624,14 +592,13 @@ export const missionComponent2: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Drag & Drop Builder",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#374151",
@@ -650,15 +617,14 @@ export const missionComponent2: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -667,14 +633,13 @@ export const missionComponent2: CustomComponent = {
                     tailwindStyles: "flex items-center gap-3",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "white",
                           backgroundColor: "#10b981",
@@ -695,14 +660,13 @@ export const missionComponent2: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Custom Templates",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#374151",
@@ -721,15 +685,14 @@ export const missionComponent2: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -738,14 +701,13 @@ export const missionComponent2: CustomComponent = {
                     tailwindStyles: "flex items-center gap-3",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "white",
                           backgroundColor: "#10b981",
@@ -766,14 +728,13 @@ export const missionComponent2: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Responsive Design",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#374151",
@@ -792,15 +753,14 @@ export const missionComponent2: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -809,14 +769,13 @@ export const missionComponent2: CustomComponent = {
                     tailwindStyles: "flex items-center gap-3",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "white",
                           backgroundColor: "#10b981",
@@ -837,14 +796,13 @@ export const missionComponent2: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Clean Code Export",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "16px",
                           color: "#374151",
@@ -894,15 +852,14 @@ export const missionComponentLeft: CustomComponent = {
 
 (missionComponentLeft.component as FrameElement).elements = [
   {
-    type: "Frame",
+    type: "Frame" as const,
     name: "ImageContainer",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       borderRadius: "12px",
       overflow: "hidden",
@@ -913,14 +870,13 @@ export const missionComponentLeft: CustomComponent = {
     tailwindStyles: "rounded-xl overflow-hidden shadow-xl order-1",
     elements: [
       {
-        type: "Image",
+        type: "Image" as const,
         content: "",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           height: "auto",
@@ -939,15 +895,14 @@ export const missionComponentLeft: CustomComponent = {
     projectId: "",
   },
   {
-    type: "Frame",
+    type: "Frame" as const,
     name: "TextContent",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "column",
@@ -958,14 +913,13 @@ export const missionComponentLeft: CustomComponent = {
     elements: [
       createBadge("Sứ mệnh của chúng tôi", "#fef3c7", "#92400e", "square"),
       {
-        type: "Text",
+        type: "Text" as const,
         content: "Biến ý tưởng thành hiện thực",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "36px",
           fontWeight: "bold",
@@ -978,15 +932,14 @@ export const missionComponentLeft: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Text",
+        type: "Text" as const,
         content:
           "Chúng tôi ra đời với mục tiêu giúp mọi người dễ dàng tiếp cận và xây dựng giao diện web chuyên nghiệp, mà không cần kiến thức lập trình phức tạp.",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "18px",
           color: "#6b7280",
@@ -999,15 +952,14 @@ export const missionComponentLeft: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "FeaturesList",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -1016,15 +968,14 @@ export const missionComponentLeft: CustomComponent = {
         tailwindStyles: "space-y-2",
         elements: [
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "FeatureItem",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "flex-start",
@@ -1032,14 +983,13 @@ export const missionComponentLeft: CustomComponent = {
             tailwindStyles: "flex items-start",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "✓",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#22c55e",
@@ -1052,14 +1002,13 @@ export const missionComponentLeft: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tạo ra website dễ dàng với drag & drop",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#374151",
@@ -1077,15 +1026,14 @@ export const missionComponentLeft: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "FeatureItem",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "flex-start",
@@ -1093,14 +1041,13 @@ export const missionComponentLeft: CustomComponent = {
             tailwindStyles: "flex items-start",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "✓",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#22c55e",
@@ -1113,14 +1060,13 @@ export const missionComponentLeft: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tùy chỉnh mọi phần của trang web",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#374151",
@@ -1138,15 +1084,14 @@ export const missionComponentLeft: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "FeatureItem",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               alignItems: "flex-start",
@@ -1154,14 +1099,13 @@ export const missionComponentLeft: CustomComponent = {
             tailwindStyles: "flex items-start",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "✓",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "20px",
                   color: "#22c55e",
@@ -1174,14 +1118,13 @@ export const missionComponentLeft: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tối ưu trải nghiệm người dùng",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#374151",
@@ -1217,15 +1160,14 @@ export const missionComponentCentered: CustomComponent = {
 };
 (missionComponentCentered.component as FrameElement).elements = [
   {
-    type: "Frame",
+    type: "Frame" as const,
     name: "HeaderContent",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "column",
@@ -1238,14 +1180,13 @@ export const missionComponentCentered: CustomComponent = {
     elements: [
       createBadge("Sứ mệnh", "#d1fae5", "#047857", "pill"),
       {
-        type: "Text",
+        type: "Text" as const,
         content: "Biến ý tưởng thành hiện thực",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "40px",
           fontWeight: "bold",
@@ -1258,15 +1199,14 @@ export const missionComponentCentered: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Text",
+        type: "Text" as const,
         content:
           "Chúng tôi ra đời với mục tiêu giúp mọi người dễ dàng tiếp cận và xây dựng giao diện web chuyên nghiệp, mà không cần kiến thức lập trình phức tạp.",
         id: uuidv4(),
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "18px",
           color: "#6b7280",
@@ -1286,14 +1226,13 @@ export const missionComponentCentered: CustomComponent = {
     projectId: "",
   },
   {
-    type: "Image",
+    type: "Image" as const,
     content: "",
     id: uuidv4(),
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       maxWidth: "700px",
@@ -1311,15 +1250,14 @@ export const missionComponentCentered: CustomComponent = {
 
 export const missionComponentCompact: CustomComponent = {
   component: {
-    type: "Frame",
+    type: "Frame" as const,
     name: "MissionComponentCompact",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       maxWidth: "900px",
@@ -1333,15 +1271,14 @@ export const missionComponentCompact: CustomComponent = {
       "w-full max-w-3xl mx-auto p-6 sm:p-8 rounded-xl bg-gray-50 shadow-md",
     elements: [
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "Header",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           alignItems: "center",
@@ -1350,15 +1287,14 @@ export const missionComponentCompact: CustomComponent = {
         tailwindStyles: "flex items-center mb-5",
         elements: [
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "Badge",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               backgroundColor: "#dbeafe",
               color: "#1e40af",
@@ -1372,14 +1308,13 @@ export const missionComponentCompact: CustomComponent = {
               "bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md text-xs font-semibold mr-4",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Sứ mệnh",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {},
                 tailwindStyles: "",
                 href: "",
@@ -1394,14 +1329,13 @@ export const missionComponentCompact: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Text",
+            type: "Text" as const,
             content: "Biến ý tưởng thành hiện thực",
             id: uuidv4(),
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontWeight: "bold",
               fontSize: "24px",
@@ -1420,15 +1354,14 @@ export const missionComponentCompact: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "Content",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           gap: "20px",
@@ -1437,14 +1370,13 @@ export const missionComponentCompact: CustomComponent = {
         tailwindStyles: "flex flex-col md:flex-row gap-5 items-center",
         elements: [
           {
-            type: "Image",
+            type: "Image" as const,
             content: "",
             id: uuidv4(),
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "180px",
               height: "180px",
@@ -1459,15 +1391,14 @@ export const missionComponentCompact: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "TextContent",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -1476,15 +1407,14 @@ export const missionComponentCompact: CustomComponent = {
             tailwindStyles: "flex flex-col gap-4",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Chúng tôi giúp bạn xây dựng giao diện web chuyên nghiệp mà không cần kiến thức lập trình phức tạp.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#4b5563",
@@ -1497,15 +1427,14 @@ export const missionComponentCompact: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Features",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
@@ -1514,15 +1443,14 @@ export const missionComponentCompact: CustomComponent = {
                 tailwindStyles: "grid grid-cols-1 sm:grid-cols-2 gap-2.5",
                 elements: [
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -1531,14 +1459,13 @@ export const missionComponentCompact: CustomComponent = {
                     tailwindStyles: "flex items-center gap-2",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "#10b981",
                           fontWeight: "bold",
@@ -1550,14 +1477,13 @@ export const missionComponentCompact: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Drag & Drop Builder",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#374151",
@@ -1575,15 +1501,14 @@ export const missionComponentCompact: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -1592,14 +1517,13 @@ export const missionComponentCompact: CustomComponent = {
                     tailwindStyles: "flex items-center gap-2",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "#10b981",
                           fontWeight: "bold",
@@ -1611,14 +1535,13 @@ export const missionComponentCompact: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Responsive Design",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#374151",
@@ -1636,15 +1559,14 @@ export const missionComponentCompact: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -1653,14 +1575,13 @@ export const missionComponentCompact: CustomComponent = {
                     tailwindStyles: "flex items-center gap-2",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "#10b981",
                           fontWeight: "bold",
@@ -1672,14 +1593,13 @@ export const missionComponentCompact: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Custom Templates",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#374151",
@@ -1697,15 +1617,14 @@ export const missionComponentCompact: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Frame",
+                    type: "Frame" as const,
                     name: "FeatureItem",
                     id: uuidv4(),
                     content: "",
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       alignItems: "center",
@@ -1714,14 +1633,13 @@ export const missionComponentCompact: CustomComponent = {
                     tailwindStyles: "flex items-center gap-2",
                     elements: [
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "✓",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           color: "#10b981",
                           fontWeight: "bold",
@@ -1733,14 +1651,13 @@ export const missionComponentCompact: CustomComponent = {
                         projectId: "",
                       },
                       {
-                        type: "Text",
+                        type: "Text" as const,
                         content: "Clean Code Export",
                         id: uuidv4(),
                         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           color: "#374151",
@@ -1785,15 +1702,14 @@ export const missionComponentCompact: CustomComponent = {
 
 export const missionComponentSlider: CustomComponent = {
   component: {
-    type: "Frame",
+    type: "Frame" as const,
     name: "MissionComponentSlider",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       overflow: "hidden",
@@ -1802,15 +1718,14 @@ export const missionComponentSlider: CustomComponent = {
     tailwindStyles: "w-full overflow-hidden py-5",
     elements: [
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "SliderContainer",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           gap: "10px",
@@ -1823,15 +1738,14 @@ export const missionComponentSlider: CustomComponent = {
           "flex gap-3 w-full overflow-x-auto scrollbar-hide px-5 pb-2",
         elements: [
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "MissionCard",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -1846,14 +1760,13 @@ export const missionComponentSlider: CustomComponent = {
               "flex flex-col min-w-[300px] bg-white rounded-lg p-5 shadow-xs border border-gray-100",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Sứ mệnh",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#2563eb",
                   fontWeight: "600",
@@ -1867,14 +1780,13 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Biến ý tưởng thành hiện thực",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontWeight: "bold",
                   fontSize: "18px",
@@ -1888,15 +1800,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Giúp bạn xây dựng giao diện web chuyên nghiệp, dễ dàng mà không cần kiến thức lập trình phức tạp.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "14px",
                   color: "#4b5563",
@@ -1909,15 +1820,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Feature",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   alignItems: "center",
@@ -1927,14 +1837,13 @@ export const missionComponentSlider: CustomComponent = {
                 tailwindStyles: "flex items-center gap-2 mb-2",
                 elements: [
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "✓",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#10b981",
                       fontWeight: "bold",
@@ -1946,14 +1855,13 @@ export const missionComponentSlider: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "Drag & Drop Builder",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#374151",
@@ -1971,15 +1879,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Feature",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   alignItems: "center",
@@ -1988,14 +1895,13 @@ export const missionComponentSlider: CustomComponent = {
                 tailwindStyles: "flex items-center gap-2",
                 elements: [
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "✓",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#10b981",
                       fontWeight: "bold",
@@ -2007,14 +1913,13 @@ export const missionComponentSlider: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "Clean Code Export",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#374151",
@@ -2038,15 +1943,14 @@ export const missionComponentSlider: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "MissionCard",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -2061,14 +1965,13 @@ export const missionComponentSlider: CustomComponent = {
               "flex flex-col min-w-[300px] bg-gray-100 rounded-lg p-5 shadow-xs border border-gray-200",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Tầm nhìn",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#7c3aed",
                   fontWeight: "600",
@@ -2082,14 +1985,13 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Nâng cao trải nghiệm",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontWeight: "bold",
                   fontSize: "18px",
@@ -2103,15 +2005,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Trở thành công cụ xây dựng web tốt nhất, giúp người dùng tạo ra giao diện đẹp mắt.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "14px",
                   color: "#4b5563",
@@ -2124,15 +2025,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Feature",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   alignItems: "center",
@@ -2142,14 +2042,13 @@ export const missionComponentSlider: CustomComponent = {
                 tailwindStyles: "flex items-center gap-2 mb-2",
                 elements: [
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "✓",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#8b5cf6",
                       fontWeight: "bold",
@@ -2161,14 +2060,13 @@ export const missionComponentSlider: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "AI-powered Templates",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#374151",
@@ -2186,15 +2084,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Feature",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   alignItems: "center",
@@ -2203,14 +2100,13 @@ export const missionComponentSlider: CustomComponent = {
                 tailwindStyles: "flex items-center gap-2",
                 elements: [
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "✓",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#8b5cf6",
                       fontWeight: "bold",
@@ -2222,14 +2118,13 @@ export const missionComponentSlider: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "Advanced Analytics",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#374151",
@@ -2253,15 +2148,14 @@ export const missionComponentSlider: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "MissionCard",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -2276,14 +2170,13 @@ export const missionComponentSlider: CustomComponent = {
               "flex flex-col min-w-[300px] bg-blue-50 rounded-lg p-5 shadow-xs border border-blue-100",
             elements: [
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Giá trị",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   color: "#0ea5e9",
                   fontWeight: "600",
@@ -2297,14 +2190,13 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Đơn giản & Hiệu quả",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontWeight: "bold",
                   fontSize: "18px",
@@ -2318,15 +2210,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Chúng tôi tin rằng công cụ tốt nhất là công cụ đơn giản nhưng mạnh mẽ và hiệu quả.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "14px",
                   color: "#4b5563",
@@ -2339,15 +2230,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Feature",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   alignItems: "center",
@@ -2357,14 +2247,13 @@ export const missionComponentSlider: CustomComponent = {
                 tailwindStyles: "flex items-center gap-2 mb-2",
                 elements: [
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "✓",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#0ea5e9",
                       fontWeight: "bold",
@@ -2376,14 +2265,13 @@ export const missionComponentSlider: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "Intuitive Interface",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#374151",
@@ -2401,15 +2289,14 @@ export const missionComponentSlider: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Frame",
+                type: "Frame" as const,
                 name: "Feature",
                 id: uuidv4(),
                 content: "",
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   alignItems: "center",
@@ -2418,14 +2305,13 @@ export const missionComponentSlider: CustomComponent = {
                 tailwindStyles: "flex items-center gap-2",
                 elements: [
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "✓",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       color: "#0ea5e9",
                       fontWeight: "bold",
@@ -2437,14 +2323,13 @@ export const missionComponentSlider: CustomComponent = {
                     projectId: "",
                   },
                   {
-                    type: "Text",
+                    type: "Text" as const,
                     content: "Fast Performance",
                     id: uuidv4(),
                     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       color: "#374151",
@@ -2483,15 +2368,14 @@ export const missionComponentSlider: CustomComponent = {
 
 export const missionComponentAlternating: CustomComponent = {
   component: {
-    type: "Frame",
+    type: "Frame" as const,
     name: "MissionComponentAlternating",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       display: "flex",
@@ -2502,15 +2386,14 @@ export const missionComponentAlternating: CustomComponent = {
     tailwindStyles: "w-full flex flex-col gap-20 py-16 px-5",
     elements: [
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "Section1",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -2520,15 +2403,14 @@ export const missionComponentAlternating: CustomComponent = {
         tailwindStyles: "grid grid-cols-1 md:grid-cols-2 gap-10 items-center",
         elements: [
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "TextContent",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -2538,14 +2420,13 @@ export const missionComponentAlternating: CustomComponent = {
             elements: [
               createBadge("Sứ mệnh", "#fee2e2", "#b91c1c", "rounded"),
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Biến ý tưởng thành hiện thực",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "32px",
                   fontWeight: "bold",
@@ -2558,15 +2439,14 @@ export const missionComponentAlternating: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Chúng tôi ra đời với mục tiêu giúp mọi người dễ dàng tiếp cận và xây dựng giao diện web chuyên nghiệp.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#6b7280",
@@ -2585,14 +2465,13 @@ export const missionComponentAlternating: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Image",
+            type: "Image" as const,
             content: "",
             id: uuidv4(),
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "100%",
               borderRadius: "12px",
@@ -2611,15 +2490,14 @@ export const missionComponentAlternating: CustomComponent = {
         projectId: "",
       },
       {
-        type: "Frame",
+        type: "Frame" as const,
         name: "Section2",
         id: uuidv4(),
         content: "",
         isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
@@ -2629,14 +2507,13 @@ export const missionComponentAlternating: CustomComponent = {
         tailwindStyles: "grid grid-cols-1 md:grid-cols-2 gap-10 items-center",
         elements: [
           {
-            type: "Image",
+            type: "Image" as const,
             content: "",
             id: uuidv4(),
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "100%",
               borderRadius: "12px",
@@ -2650,15 +2527,14 @@ export const missionComponentAlternating: CustomComponent = {
             projectId: "",
           },
           {
-            type: "Frame",
+            type: "Frame" as const,
             name: "TextContent",
             id: uuidv4(),
             content: "",
             isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -2669,14 +2545,13 @@ export const missionComponentAlternating: CustomComponent = {
             elements: [
               createBadge("Tầm nhìn", "#e0e7ff", "#4f46e5", "rounded"),
               {
-                type: "Text",
+                type: "Text" as const,
                 content: "Nâng cao trải nghiệm",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "32px",
                   fontWeight: "bold",
@@ -2689,15 +2564,14 @@ export const missionComponentAlternating: CustomComponent = {
                 projectId: "",
               },
               {
-                type: "Text",
+                type: "Text" as const,
                 content:
                   "Trở thành công cụ xây dựng web tốt nhất, giúp người dùng tạo ra giao diện đẹp mắt một cách dễ dàng.",
                 id: uuidv4(),
                 isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   fontSize: "16px",
                   color: "#6b7280",

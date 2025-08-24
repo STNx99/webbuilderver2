@@ -4,14 +4,13 @@ import { v4 as uuidv4 } from "uuid";
 export const clockWidgetComponent: CustomComponent = {
   component: {
     type: "Frame",
-    name: "WidgetClock", 
+    name: "WidgetClock",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "280px",
       backgroundColor: "#ffffff",
@@ -23,17 +22,17 @@ export const clockWidgetComponent: CustomComponent = {
       alignItems: "center",
       gap: "12px",
     },
-    tailwindStyles: "w-72 bg-white rounded-xl shadow-md p-4 flex flex-col items-center gap-3 hover:shadow-lg transition-shadow",
+    tailwindStyles:
+      "w-72 bg-white rounded-xl shadow-md p-4 flex flex-col items-center gap-3 hover:shadow-lg transition-shadow",
     elements: [
       {
         type: "Text",
         content: "Current Time",
         id: uuidv4(),
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           fontSize: "16px",
           fontWeight: "600",
@@ -52,10 +51,9 @@ export const clockWidgetComponent: CustomComponent = {
         id: uuidv4(),
         content: "",
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           width: "200px",
           height: "200px",
@@ -67,7 +65,8 @@ export const clockWidgetComponent: CustomComponent = {
           justifyContent: "center",
           alignItems: "center",
         },
-        tailwindStyles: "w-48 h-48 rounded-full border-4 border-blue-500 bg-gray-100 relative flex justify-center items-center",
+        tailwindStyles:
+          "w-48 h-48 rounded-full border-4 border-blue-500 bg-gray-100 relative flex justify-center items-center",
         elements: [
           {
             type: "Frame",
@@ -75,10 +74,9 @@ export const clockWidgetComponent: CustomComponent = {
             id: uuidv4(),
             content: "",
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               width: "12px",
               height: "12px",
@@ -101,10 +99,9 @@ export const clockWidgetComponent: CustomComponent = {
             id: uuidv4(),
             content: "",
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               width: "6px",
@@ -116,7 +113,8 @@ export const clockWidgetComponent: CustomComponent = {
               bottom: "50%",
               zIndex: "5",
             },
-            tailwindStyles: "absolute w-1.5 h-[60px] bg-gray-800 rounded-full transform rotate-45 origin-bottom bottom-1/2 z-5",
+            tailwindStyles:
+              "absolute w-1.5 h-[60px] bg-gray-800 rounded-full transform rotate-45 origin-bottom bottom-1/2 z-5",
             elements: [],
             href: "",
             src: "",
@@ -130,10 +128,9 @@ export const clockWidgetComponent: CustomComponent = {
             id: uuidv4(),
             content: "",
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               width: "4px",
@@ -145,7 +142,8 @@ export const clockWidgetComponent: CustomComponent = {
               bottom: "50%",
               zIndex: "6",
             },
-            tailwindStyles: "absolute w-1 h-[80px] bg-gray-600 rounded-full transform rotate-90 origin-bottom bottom-1/2 z-6",
+            tailwindStyles:
+              "absolute w-1 h-[80px] bg-gray-600 rounded-full transform rotate-90 origin-bottom bottom-1/2 z-6",
             elements: [],
             href: "",
             src: "",
@@ -159,10 +157,9 @@ export const clockWidgetComponent: CustomComponent = {
             id: uuidv4(),
             content: "",
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               width: "2px",
@@ -174,7 +171,8 @@ export const clockWidgetComponent: CustomComponent = {
               bottom: "50%",
               zIndex: "7",
             },
-            tailwindStyles: "absolute w-0.5 h-[90px] bg-red-500 rounded-full transform rotate-180 origin-bottom bottom-1/2 z-7",
+            tailwindStyles:
+              "absolute w-0.5 h-[90px] bg-red-500 rounded-full transform rotate-180 origin-bottom bottom-1/2 z-7",
             elements: [],
             href: "",
             src: "",
@@ -187,10 +185,9 @@ export const clockWidgetComponent: CustomComponent = {
             content: "12",
             id: uuidv4(),
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               top: "8%",
@@ -198,7 +195,8 @@ export const clockWidgetComponent: CustomComponent = {
               fontWeight: "bold",
               color: "#111827",
             },
-            tailwindStyles: "absolute top-[8%] text-base font-bold text-gray-900",
+            tailwindStyles:
+              "absolute top-[8%] text-base font-bold text-gray-900",
             href: "",
             src: "",
             parentId: "",
@@ -209,10 +207,9 @@ export const clockWidgetComponent: CustomComponent = {
             content: "3",
             id: uuidv4(),
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               right: "8%",
@@ -220,7 +217,8 @@ export const clockWidgetComponent: CustomComponent = {
               fontWeight: "bold",
               color: "#111827",
             },
-            tailwindStyles: "absolute right-[8%] text-base font-bold text-gray-900",
+            tailwindStyles:
+              "absolute right-[8%] text-base font-bold text-gray-900",
             href: "",
             src: "",
             parentId: "",
@@ -231,10 +229,9 @@ export const clockWidgetComponent: CustomComponent = {
             content: "6",
             id: uuidv4(),
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               bottom: "8%",
@@ -242,7 +239,8 @@ export const clockWidgetComponent: CustomComponent = {
               fontWeight: "bold",
               color: "#111827",
             },
-            tailwindStyles: "absolute bottom-[8%] text-base font-bold text-gray-900",
+            tailwindStyles:
+              "absolute bottom-[8%] text-base font-bold text-gray-900",
             href: "",
             src: "",
             parentId: "",
@@ -253,10 +251,9 @@ export const clockWidgetComponent: CustomComponent = {
             content: "9",
             id: uuidv4(),
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               position: "absolute",
               left: "8%",
@@ -264,7 +261,8 @@ export const clockWidgetComponent: CustomComponent = {
               fontWeight: "bold",
               color: "#111827",
             },
-            tailwindStyles: "absolute left-[8%] text-base font-bold text-gray-900",
+            tailwindStyles:
+              "absolute left-[8%] text-base font-bold text-gray-900",
             href: "",
             src: "",
             parentId: "",
@@ -281,10 +279,9 @@ export const clockWidgetComponent: CustomComponent = {
         content: "10:25:13",
         id: uuidv4(),
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           fontSize: "24px",
           fontWeight: "700",
@@ -303,10 +300,9 @@ export const clockWidgetComponent: CustomComponent = {
         content: "Monday, January 10",
         id: uuidv4(),
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           fontSize: "14px",
           color: "#6b7280",
@@ -328,14 +324,13 @@ export const clockWidgetComponent: CustomComponent = {
 export const digitalClockWidgetComponent: CustomComponent = {
   component: {
     type: "Frame",
-    name: "WidgetDigitalClock", 
+    name: "WidgetDigitalClock",
     id: uuidv4(),
     content: "",
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "280px",
       backgroundColor: "#1f2937",
@@ -347,17 +342,17 @@ export const digitalClockWidgetComponent: CustomComponent = {
       alignItems: "center",
       gap: "16px",
     },
-    tailwindStyles: "w-72 bg-gray-800 rounded-xl shadow-md p-6 flex flex-col items-center gap-4 hover:shadow-lg transition-shadow",
+    tailwindStyles:
+      "w-72 bg-gray-800 rounded-xl shadow-md p-6 flex flex-col items-center gap-4 hover:shadow-lg transition-shadow",
     elements: [
       {
         type: "Text",
         content: "DIGITAL CLOCK",
         id: uuidv4(),
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           fontSize: "14px",
           fontWeight: "600",
@@ -375,10 +370,9 @@ export const digitalClockWidgetComponent: CustomComponent = {
         content: "10:25",
         id: uuidv4(),
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           fontSize: "48px",
           fontWeight: "700",
@@ -396,10 +390,9 @@ export const digitalClockWidgetComponent: CustomComponent = {
         content: "13",
         id: uuidv4(),
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           fontSize: "24px",
           fontWeight: "700",
@@ -419,10 +412,9 @@ export const digitalClockWidgetComponent: CustomComponent = {
         id: uuidv4(),
         content: "",
         isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-        x: 0,
-        y: 0,
+        isHovered: false,
+        isDraggedOver: false,
+
         styles: {
           width: "100%",
           display: "flex",
@@ -437,10 +429,9 @@ export const digitalClockWidgetComponent: CustomComponent = {
             content: "MON, JAN 10",
             id: uuidv4(),
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               fontSize: "14px",
               color: "#9ca3af",
@@ -457,10 +448,9 @@ export const digitalClockWidgetComponent: CustomComponent = {
             content: "NEW YORK",
             id: uuidv4(),
             isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-            x: 0,
-            y: 0,
+            isHovered: false,
+            isDraggedOver: false,
+
             styles: {
               fontSize: "14px",
               color: "#9ca3af",

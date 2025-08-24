@@ -10,8 +10,7 @@ export const navbarComponent: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "auto",
       minHeight: "50px",
@@ -30,8 +29,7 @@ export const navbarComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "black",
           transition:
@@ -51,8 +49,7 @@ export const navbarComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "black",
           display: "flex",
@@ -72,8 +69,7 @@ export const navbarComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "black",
           display: "flex",
@@ -103,8 +99,7 @@ export const navbarComponent2: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "auto",
       minHeight: "80px",
@@ -124,8 +119,7 @@ export const navbarComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         href: "",
         src: "",
         styles: { width: "80px", height: "80px", display: "flex", justifyContent: "center", alignItems: "center" },
@@ -141,8 +135,7 @@ export const navbarComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: { 
           display: "flex",
           alignItems: "center",
@@ -158,8 +151,7 @@ export const navbarComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "white",
               fontSize: "16px",
@@ -179,8 +171,7 @@ export const navbarComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "white",
               fontSize: "16px",
@@ -200,8 +191,7 @@ export const navbarComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "white",
               fontSize: "16px",
@@ -237,8 +227,7 @@ export const navbarComponent3: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "auto",
       minHeight: "65px",
@@ -260,8 +249,7 @@ export const navbarComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#333",
           margin: "0 20px",
@@ -284,8 +272,7 @@ export const navbarComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#333",
           margin: "0 20px",
@@ -309,8 +296,7 @@ export const navbarComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#333",
           margin: "0 20px",
@@ -333,8 +319,7 @@ export const navbarComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           margin: "0 20px",
@@ -368,8 +353,7 @@ export const navbarComponent4: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "auto",
       minHeight: "70px",
@@ -390,8 +374,7 @@ export const navbarComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#333",
           fontWeight: "bold",
@@ -413,8 +396,7 @@ export const navbarComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           alignItems: "center",
@@ -429,8 +411,7 @@ export const navbarComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#333",
               fontSize: "16px",
@@ -452,8 +433,7 @@ export const navbarComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#333",
               fontSize: "16px",
@@ -475,8 +455,7 @@ export const navbarComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#333",
               fontSize: "16px",
@@ -514,8 +493,7 @@ export const navbarComponent5: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "auto",
       minHeight: "60px",
@@ -537,8 +515,7 @@ export const navbarComponent5: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           fontWeight: "bold",
@@ -557,8 +534,7 @@ export const navbarComponent5: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           fontSize: "16px",
@@ -576,8 +552,7 @@ export const navbarComponent5: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           fontSize: "16px",
@@ -595,8 +570,7 @@ export const navbarComponent5: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           fontSize: "16px",
@@ -614,8 +588,7 @@ export const navbarComponent5: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           fontSize: "16px",

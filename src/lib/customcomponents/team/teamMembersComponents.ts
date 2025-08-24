@@ -1,7 +1,7 @@
 import { EditorElement } from "@/types/global.type";
 import { CustomComponent } from "../styleconstants";
 import { v4 as uuidv4 } from "uuid";
-import { FrameElement } from "@/interfaces/element";
+import { FrameElement } from "@/interfaces/elements.interface";
 
 const createAboutCardVertical = (
   title: string = "About Title",
@@ -18,8 +18,7 @@ const createAboutCardVertical = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "column",
@@ -42,8 +41,7 @@ const createAboutCardVertical = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               height: "180px",
               borderRadius: "8px",
@@ -64,8 +62,7 @@ const createAboutCardVertical = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontWeight: "bold",
           fontSize: "20px",
@@ -86,8 +83,7 @@ const createAboutCardVertical = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "14px",
           color: "#666",
@@ -108,8 +104,7 @@ const createAboutCardVertical = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#3b82f6",
               fontSize: "14px",
@@ -149,8 +144,7 @@ const createAboutCardHorizontal = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "row",
@@ -174,8 +168,7 @@ const createAboutCardHorizontal = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "120px",
               height: "120px",
@@ -198,8 +191,7 @@ const createAboutCardHorizontal = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -214,8 +206,7 @@ const createAboutCardHorizontal = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontWeight: "bold",
               fontSize: "20px",
@@ -235,8 +226,7 @@ const createAboutCardHorizontal = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontSize: "14px",
               color: "#666",
@@ -329,8 +319,7 @@ const createAboutComponent = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       display: "flex",
@@ -348,8 +337,7 @@ const createAboutComponent = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontWeight: "bold",
           fontSize: "32px",
@@ -370,8 +358,7 @@ const createAboutComponent = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "18px",
           color: "#64748b",
@@ -444,8 +431,7 @@ const createAboutComponent = (
           isSelected: false,
           isHovered: false,
           isDraggedOver: false,
-          x: 0,
-          y: 0,
+
           styles: {
             display: "flex",
             overflowX: "auto",
@@ -489,8 +475,7 @@ const createTeamMemberCard = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "column",
@@ -514,8 +499,7 @@ const createTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "120px",
               height: "120px",
@@ -539,8 +523,7 @@ const createTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontWeight: "bold",
           fontSize: "18px",
@@ -562,8 +545,7 @@ const createTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "14px",
           color: "#64748b",
@@ -584,8 +566,7 @@ const createTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "14px",
           color: "#64748b",
@@ -608,8 +589,7 @@ const createTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               gap: "12px",
@@ -700,8 +680,7 @@ const createTeamMembersComponent = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       width: "100%",
       display: "flex",
@@ -720,8 +699,7 @@ const createTeamMembersComponent = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontWeight: "bold",
           fontSize: "32px",
@@ -742,8 +720,7 @@ const createTeamMembersComponent = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "18px",
           color: "#64748b",
@@ -792,8 +769,7 @@ const createTeamMembersComponent = (
           isSelected: false,
           isHovered: false,
           isDraggedOver: false,
-          x: 0,
-          y: 0,
+
           styles: {
             display: "flex",
             overflowX: "auto",
@@ -869,8 +845,7 @@ const createVerticalTeamMemberCard = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "column",
@@ -894,8 +869,7 @@ const createVerticalTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "120px",
               height: "120px",
@@ -919,8 +893,7 @@ const createVerticalTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontWeight: "bold",
           fontSize: "18px",
@@ -942,8 +915,7 @@ const createVerticalTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "14px",
           color: "#64748b",
@@ -964,8 +936,7 @@ const createVerticalTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "14px",
           color: "#64748b",
@@ -988,8 +959,7 @@ const createVerticalTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               display: "flex",
               gap: "12px",
@@ -1046,8 +1016,7 @@ const createHorizontalTeamMemberCard = (
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       display: "flex",
       flexDirection: "row",
@@ -1071,8 +1040,7 @@ const createHorizontalTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               width: "100px",
               height: "100px",
@@ -1097,8 +1065,7 @@ const createHorizontalTeamMemberCard = (
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -1113,8 +1080,7 @@ const createHorizontalTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontWeight: "bold",
               fontSize: "18px",
@@ -1134,8 +1100,7 @@ const createHorizontalTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontSize: "14px",
               color: "#64748b",
@@ -1154,8 +1119,7 @@ const createHorizontalTeamMemberCard = (
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               fontSize: "14px",
               color: "#64748b",
@@ -1244,7 +1208,7 @@ export const addTeamMember = (
     : "carousel";
 
   const container = (teamComponent.component as FrameElement).elements?.find(
-    (el) => (el as FrameElement).name === containerName
+    (el: any) => (el as FrameElement).name === containerName
   ) as FrameElement | undefined;
 
   if (
@@ -1295,7 +1259,7 @@ export const clearTeamMembers = (
   const containerName = isCarousel ? "CarouselTrack" : "TeamGrid";
 
   const container = (teamComponent.component as FrameElement).elements?.find(
-    (el) => (el as FrameElement).name === containerName
+    (el: any) => (el as FrameElement).name === containerName
   ) as FrameElement | undefined;
 
   if (container && container.elements) {

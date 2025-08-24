@@ -10,8 +10,7 @@ export const sidebarRightComponent: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "100%",
       width: "300px",
@@ -34,8 +33,7 @@ export const sidebarRightComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#333",
           fontSize: "20px",
@@ -56,8 +54,7 @@ export const sidebarRightComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "12px",
@@ -74,8 +71,7 @@ export const sidebarRightComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#333",
               fontSize: "16px",
@@ -94,8 +90,7 @@ export const sidebarRightComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#888",
               fontSize: "14px",
@@ -120,8 +115,10 @@ export const sidebarRightComponent: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
+        parentId: "",
+        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -141,8 +138,10 @@ export const sidebarRightComponent: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+            href: "",
+            src: "",
+            parentId: "",
+            projectId: "",
             styles: {
               color: "#111827",
               fontSize: "14px",
@@ -169,8 +168,7 @@ export const sidebarRightComponent2: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "100%",
       width: "320px",
@@ -192,8 +190,7 @@ export const sidebarRightComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "white",
           fontSize: "18px",
@@ -215,8 +212,7 @@ export const sidebarRightComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "15px",
@@ -235,8 +231,7 @@ export const sidebarRightComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "white",
               fontSize: "16px",
@@ -255,8 +250,7 @@ export const sidebarRightComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#aaa",
               fontSize: "14px",
@@ -281,8 +275,10 @@ export const sidebarRightComponent2: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
+        parentId: "",
+        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -302,8 +298,10 @@ export const sidebarRightComponent2: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+            href: "",
+            src: "",
+            parentId: "",
+            projectId: "",
             styles: {
               color: "white",
               fontSize: "14px",
@@ -330,8 +328,7 @@ export const sidebarRightComponent3: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "100%",
       width: "280px",
@@ -354,8 +351,7 @@ export const sidebarRightComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#343a40",
           fontSize: "18px",
@@ -376,8 +372,7 @@ export const sidebarRightComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "12px",
@@ -397,8 +392,7 @@ export const sidebarRightComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#333",
               fontSize: "16px",
@@ -417,8 +411,7 @@ export const sidebarRightComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#6c757d",
               fontSize: "14px",
@@ -443,8 +436,10 @@ export const sidebarRightComponent3: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
+        parentId: "",
+        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -464,8 +459,10 @@ export const sidebarRightComponent3: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+            href: "",
+            src: "",
+            parentId: "",
+            projectId: "",
             styles: {
               color: "#495057",
               fontSize: "14px",
@@ -492,8 +489,7 @@ export const sidebarRightComponent4: CustomComponent = {
     isSelected: false,
     isHovered: false,
     isDraggedOver: false,
-    x: 0,
-    y: 0,
+
     styles: {
       height: "100%",
       width: "330px",
@@ -516,8 +512,7 @@ export const sidebarRightComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           color: "#333",
           fontSize: "18px",
@@ -538,8 +533,7 @@ export const sidebarRightComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           width: "100%",
           padding: "10px 0",
@@ -557,8 +551,7 @@ export const sidebarRightComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#4CAF50",
               fontSize: "24px",
@@ -577,8 +570,7 @@ export const sidebarRightComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               color: "#333",
               fontSize: "16px",
@@ -602,8 +594,10 @@ export const sidebarRightComponent4: CustomComponent = {
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
+        parentId: "",
+        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -623,8 +617,10 @@ export const sidebarRightComponent4: CustomComponent = {
             isSelected: false,
             isHovered: false,
             isDraggedOver: false,
-            x: 0,
-            y: 0,
+            href: "",
+            src: "",
+            parentId: "",
+            projectId: "",
             styles: {
               color: "#333",
               fontSize: "14px",
