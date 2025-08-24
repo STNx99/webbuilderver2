@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -22,10 +21,19 @@ import {
 import { usePageStore } from "@/globalstore/pagestore";
 import { Button } from "../ui/button";
 import { v4 as uuidv4 } from "uuid";
-import { Page } from "@/interfaces/page.interface";
 import { useParams } from "next/navigation";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
@@ -33,36 +41,69 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PageSchema } from "@/schema/zod";
+import { Page } from "@/generated/prisma";
+import createPage from "@/app/actions/page";
 
-// CreatePageDialog component
+const createPageSchema = z.object({
+  name: z.string().min(1, "Page name is required"),
+  type: z.enum(["sp", "dp"], {
+    required_error: "Page type is required",
+  }),
+});
+
+type CreatePageFormValues = z.infer<typeof createPageSchema>;
+
 function CreatePageDialog() {
-  const { createPage, pages } = usePageStore();
+  const { addPage, pages } = usePageStore();
   const { id } = useParams();
   const [open, setOpen] = useState(false);
-  const [pageName, setPageName] = useState("");
-  const [pageType, setPageType] = useState<"sp" | "dp">("sp");
 
-  const handleCreatePage = () => {
-    if (!pageName.trim()) {
-      return; // Prevent creating a page with an empty name
-    }
-    const newPage: Page = {
-      id: uuidv4(),
-      name: pageName,
-      projectId: id as string,
-      styles: {},
-      type: pageType,
-      deletedAt: undefined,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+  const form = useForm<CreatePageFormValues>({
+    resolver: zodResolver(createPageSchema),
+    defaultValues: {
+      name: "",
+      type: "sp",
+    },
+  });
+
+  const onSubmit = async (data: CreatePageFormValues) => {
+    const newPageData = {
+      Id: uuidv4(),
+      Name: data.name,
+      ProjectId: id as string,
+      Styles: {},
+      Type: data.type as "sp" | "dp",
+      DeletedAt: undefined,
+      CreatedAt: new Date(),
+      UpdatedAt: new Date(),
     };
-    createPage(newPage);
-    setOpen(false); // Close the dialog
-    setPageName(""); // Reset the input field
+
+    const newPage = PageSchema.safeParse(newPageData);
+
+    if (!newPage.success) {
+      console.error("Validation failed:", newPage.error);
+      return;
+    }
+
+    const response = await createPage(newPage.data);
+    if (response) {
+      addPage(response);
+    }
+    setOpen(false);
+    form.reset();
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        setOpen(isOpen);
+        if (!isOpen) {
+          form.reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="ghost" className="w-full justify-start h-6">
           + Add New Page
@@ -72,58 +113,78 @@ function CreatePageDialog() {
         <DialogHeader>
           <DialogTitle>Create New Page</DialogTitle>
           <DialogDescription>
-            Enter a name for your new page.
+            Enter a name and select a type for your new page.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              value={pageName}
-              onChange={(e) => setPageName(e.target.value)}
-              className="col-span-3"
-              onKeyDown={(e) => e.key === "Enter" && handleCreatePage()}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter page name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="type" className="text-right">
-              Type
-            </Label>
-            <Select
-              onValueChange={(value: "sp" | "dp") => setPageType(value)}
-              defaultValue="sp"
-            >
-              <SelectTrigger id="type" className="col-span-3">
-                <SelectValue placeholder="Select a page type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="sp">Single Page</SelectItem>
-                <SelectItem value="dp">Dynamic Page</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button onClick={handleCreatePage}>Create</Button>
-        </DialogFooter>
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a page type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="sp">Single Page</SelectItem>
+                      <SelectItem value="dp">Dynamic Page</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setOpen(false);
+                  form.reset();
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit">Create</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );
 }
 
 type DeletePageDialogProps = {
-  page: Page
-  onDelete: (id : string) => void
-}
+  page: Page;
+  onDelete: (id: string) => void;
+};
 
 // DeletePageDialog component
-function DeletePageDialog({ page, onDelete } : DeletePageDialogProps) {
+function DeletePageDialog({ page, onDelete }: DeletePageDialogProps) {
   const [open, setOpen] = useState(false);
   const handleDelete = () => {
-    onDelete(page.id);
+    onDelete(page.Id);
     setOpen(false);
   };
   return (
@@ -138,7 +199,8 @@ function DeletePageDialog({ page, onDelete } : DeletePageDialogProps) {
           <DialogTitle>Delete Page</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete the page named `
-            <span className="font-semibold">{page.name}</span>`? This action cannot be undone.
+            <span className="font-semibold">{page.Name}</span>`? This action
+            cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -165,10 +227,13 @@ export function ProjectPageCommand() {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         {pages.map((page) => (
-          <CommandItem key={page.id} className="group justify-between">
-            <span>{page.name}</span>
+          <CommandItem key={page.Id} className="group justify-between">
+            <span>{page.Name}</span>
             <div className="flex gap-2">
-              <Button variant="ghost" className="text-xs h-6 px-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button
+                variant="ghost"
+                className="text-xs h-6 px-2 opacity-0 group-hover:opacity-100 transition-opacity"
+              >
                 Edit
               </Button>
               <DeletePageDialog page={page} onDelete={deletePage} />

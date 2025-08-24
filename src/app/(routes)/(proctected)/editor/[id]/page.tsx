@@ -15,17 +15,20 @@ export default async function EditorPage({
   const { page } = await searchParams;
 
   const queryClient = getQueryClient();
-  await queryClient.prefetchQuery({
-    queryKey: ["elements", id],
-    queryFn: () => elementService.getElements(id),
-  });
-
-  await queryClient.prefetchQuery({
-    queryKey: ["project", id],
-    queryFn: () => projectService.getProjectById(id),
-  });
-
-  // TODO: Prefetch fonts and other resources if needed
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["elements", id],
+      queryFn: () => elementService.getElements(id),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["project", id],
+      queryFn: () => projectService.getProjectById(id),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["pages", id],
+      queryFn: () => projectService.getProjectPages(id),
+    }),
+  ]);
   await queryClient.prefetchQuery({
     queryKey: ["fonts"],
     queryFn: () => projectService.getFonts(),

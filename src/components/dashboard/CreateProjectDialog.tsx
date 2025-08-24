@@ -23,6 +23,7 @@ import { z } from "zod";
 import createProject from "@/app/actions/project";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type CreateProjectDialogProps = {
   children?: React.ReactNode;
@@ -41,8 +42,25 @@ export default function CreateProjectDialog({
   isCreateDialogOpen,
   setIsCreateDialogOpen,
 }: CreateProjectDialogProps) {
-  const [isCreating, setIsCreating] = React.useState(false);
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // TanStack  mutation for create project
+  const createProjectMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof projectSchema>) => {
+      await createProject({
+        Name: data.name,
+        Description: data.description ?? "",
+        Subdomain: data.subdomain ?? "",
+        Published: data.published ?? false,
+        Styles: {},
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      setIsCreateDialogOpen(false);
+    },
+  });
 
   const form = useForm<z.infer<typeof projectSchema>>({
     resolver: zodResolver(projectSchema),
@@ -54,26 +72,11 @@ export default function CreateProjectDialog({
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof projectSchema>) => {
-    setIsCreating(true);
-    try {
-      const response = await createProject({
-        Name: data.name,
-        Description: data.description ?? "",
-        Subdomain: data.subdomain ?? "",
-        Published: data.published ?? false,
-        Styles: {},
-      });
-      if (response.Id && response) {
-        router.push(`/editor/${response.Id}`);
-      }
-      setIsCreateDialogOpen(false);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsCreating(false);
-    }
+  // Use TanStacddk Query mutation for create
+  const handleSubmit = async (data: z.infer<typeof projectSchema>) => {
+    createProjectMutation.mutate(data);
   };
+
   return (
     <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
       <DialogTrigger asChild>
@@ -94,7 +97,10 @@ export default function CreateProjectDialog({
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -142,8 +148,10 @@ export default function CreateProjectDialog({
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isCreating}>
-                {isCreating ? "Creating..." : "Create Project"}
+              <Button type="submit" disabled={createProjectMutation.isPending}>
+                {createProjectMutation.isPending
+                  ? "Creating..."
+                  : "Create Project"}
               </Button>
             </div>
           </form>

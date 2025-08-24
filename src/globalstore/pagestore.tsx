@@ -1,4 +1,5 @@
-import { Page } from "@/interfaces/page.interface";
+import { Page } from "@/generated/prisma";
+import { projectService } from "@/services/project";
 import { create } from "zustand";
 
 /**
@@ -11,7 +12,7 @@ type PageStore = {
    * @param updatedPage The updated Page object.
    * @param id The ID of the page to update.
    */
-  createPage: (newPage: Page) => void;
+  addPage: (newPage: Page) => void;
 
   updatePage: (updatedPage: Page, id: string) => void;
 
@@ -32,21 +33,30 @@ export const usePageStore = create<PageStore>((set, get) => ({
   updatePage: (updatedPage, id) => {
     set((state) => ({
       pages: state.pages.map((page) =>
-        page.id === id ? { ...page, ...updatedPage } : page,
+        page.Id === id ? { ...page, ...updatedPage } : page,
       ),
     }));
     // TODO: Optionally, call an API to persist the update
   },
-  createPage: (newPage) => {
+  addPage: (newPage) => {
     set((state) => ({
       pages: [...state.pages, newPage],
     }));
   },
 
-  deletePage: (id) => {
+  deletePage: async (id) => {
+    const pagesCopy = get().pages;
+    const pageToDelete = pagesCopy.find((page) => page.Id === id);
     set((state) => ({
-      pages: state.pages.filter((page) => page.id !== id),
+      pages: state.pages.filter((page) => page.Id !== id),
     }));
+    if (pageToDelete) {
+      const result = await projectService.deleteProjectPage(
+        pageToDelete?.ProjectId,
+        id,
+      );
+      if (!result) set({ pages: pagesCopy });
+    }
   },
 
   resetPage: () => {

@@ -2,17 +2,18 @@
 import { elementService } from "@/services/element";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { useQuery } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import ElementLoader from "@/components/editor/ElementLoader";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";
-import { Monitor, Smartphone, Table, Tablet } from "lucide-react";
+import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { viewportSizes } from "@/constants/viewports";
 import { elementHelper } from "@/utils/element/elementhelper";
 import GenerateButton from "@/components/editor/ai/GenerateButton";
 import { useElementStore } from "@/globalstore/elementstore";
 import { Input } from "@/components/ui/input";
 import { usePageStore } from "@/globalstore/pagestore";
+import { projectService } from "@/services/project";
 
 type EditorProps = {
   id: string;
@@ -20,14 +21,27 @@ type EditorProps = {
 };
 
 export default function Editor({ id, pageId }: EditorProps) {
-
   const [currentView, setCurrentView] = useState<
     "mobile" | "tablet" | "desktop"
   >("desktop");
 
   const { addElement, loadElements } = useElementStore();
 
-  const filteredElements = elementHelper.filterElementByPageId(pageId)
+  // Fetch project pages
+  const { data: projectPages, isLoading: isPagesLoading } = useQuery({
+    queryKey: ["pages", id],
+    queryFn: () => projectService.getProjectPages(id),
+  });
+
+  const { pages, loadPages } = usePageStore();
+
+  useEffect(() => {
+    if (projectPages && projectPages.length > 0) {
+      loadPages(projectPages);
+    }
+  }, [projectPages, loadPages]);
+
+  const filteredElements = elementHelper.filterElementByPageId(pageId);
 
   const [isDraggingOver, setIsDraggingOver] = useState(false);
 
@@ -36,8 +50,6 @@ export default function Editor({ id, pageId }: EditorProps) {
     queryFn: () => elementService.getElements(id),
   });
 
-  const { pages } = usePageStore();
-
   useEffect(() => {
     if (data && data.length > 0) {
       loadElements(data);
@@ -45,7 +57,6 @@ export default function Editor({ id, pageId }: EditorProps) {
   }, [data, loadElements]);
 
   const router = useRouter();
-  // Define viewport dimensions for each device
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -63,10 +74,10 @@ export default function Editor({ id, pageId }: EditorProps) {
 
   const handlePageNavigation = (e: React.FocusEvent<HTMLInputElement>) => {
     const pageName = e.currentTarget.value.slice(1);
-    const page = pages.find((page) => page.name === pageName);
+    const page = pages.find((page) => page.Name === pageName);
 
     if (page) {
-      router.push(`/editor/${id}?page=${page.id}`);
+      router.push(`/editor/${id}?page=${page.Id}`);
     } else {
       router.push(`/editor/${id}`);
     }

@@ -1,5 +1,14 @@
 export default async function getToken(): Promise<string> {
-  const response = await fetch("/api/gettoken", {
+  let url = "/api/gettoken";
+  if (typeof window === "undefined") {
+    const base =
+      process.env.NEXT_PUBLIC_BASE_URL ||
+      process.env.NEXTAUTH_URL ||
+      "http://localhost:3000";
+    url = `${base}/api/gettoken`;
+  }
+
+  const response = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
