@@ -164,38 +164,54 @@ export default function ResizeHandler({
   ];
 
   return (
-    <div
-      ref={targetRef}
-      className="relative"
-      style={{
-        width: element.styles?.width || "auto",
-        height: element.styles?.height || "auto",
-      }}
-      id={element.id}
-      onDoubleClick={(e) => {
-        e.stopPropagation();
-        handleDoubleClick(e, element);
-      }}
-    >
-      {children}
-      {element.isSelected && (
-        <>
-          {resizeHandles.map((dir) => (
-            <ResizeHandle
-              key={dir}
-              direction={dir}
-              onResizeStart={handleResizeStart}
-            />
-          ))}
-          <div className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none" />
-        </>
-      )}
-      {element.isHovered && !element.isDraggedOver && !element.isSelected && (
-        <div className="pointer-events-none absolute inset-0 border border-black z-20" />
-      )}
-      {element.isDraggedOver && !element.isSelected && (
-        <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
-      )}
-    </div>
+    <>
+      <div
+        ref={targetRef}
+        className="relative"
+        style={{
+          width: element.styles?.width || "auto",
+          height: element.styles?.height || "auto",
+        }}
+        id={element.id}
+        onDoubleClick={(e) => {
+          e.stopPropagation();
+          handleDoubleClick(e, element);
+        }}
+      >
+        {element.isSelected && (
+          <div
+            className="absolute top-0 left-0 z-30 text-blue-500 text-xs px-1 py-0.5 pointer-events-none select-none"
+            style={{
+              transform: "translateY(-20px)",
+              maxWidth: "80%",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {element.type} {element.id}
+          </div>
+        )}
+        {children}
+        {element.isSelected && (
+          <>
+            {resizeHandles.map((dir) => (
+              <ResizeHandle
+                key={dir}
+                direction={dir}
+                onResizeStart={handleResizeStart}
+              />
+            ))}
+            <div className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none" />
+          </>
+        )}
+        {element.isHovered && !element.isDraggedOver && !element.isSelected && (
+          <div className="pointer-events-none absolute inset-0 border border-black z-20" />
+        )}
+        {element.isDraggedOver && !element.isSelected && (
+          <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
+        )}
+      </div>
+    </>
   );
 }

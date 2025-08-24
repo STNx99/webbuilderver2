@@ -1,16 +1,10 @@
-import { CustomComponent } from "../styleconstants";
-import { v4 as uuidv4 } from "uuid";
+import { CustomComponent } from "../customComponents";
 
 export const sidebarRightComponent: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarRight",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-
     styles: {
       height: "100%",
       width: "300px",
@@ -24,37 +18,25 @@ export const sidebarRightComponent: CustomComponent = {
       right: "0",
       top: "0",
     },
-    tailwindStyles: "flex flex-col items-start w-72 h-full p-5 bg-white shadow-md fixed right-0 top-0 md:w-56 sm:w-40 transition-all hidden sm:block",
+    tailwindStyles:
+      "flex flex-col items-start w-72 h-full p-5 bg-white shadow-md fixed right-0 top-0 md:w-56 sm:w-40 transition-all hidden sm:block",
     elements: [
       {
         type: "Text",
         content: "Notifications",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "#333",
           fontSize: "20px",
           fontWeight: "bold",
           marginBottom: "20px",
         },
-        tailwindStyles: "text-gray-800 text-xl font-bold mb-5 text-center md:text-lg sm:text-sm",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
+        tailwindStyles:
+          "text-gray-800 text-xl font-bold mb-5 text-center md:text-lg sm:text-sm",
       },
       {
         type: "Frame",
         name: "NotificationItem",
-        id: uuidv4(),
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           width: "100%",
           padding: "12px",
@@ -62,63 +44,24 @@ export const sidebarRightComponent: CustomComponent = {
           display: "flex",
           flexDirection: "column",
         },
-        tailwindStyles: "w-full p-3 border-b border-gray-100 flex flex-col text-sm md:text-xs sm:text-[10px]",
+        tailwindStyles:
+          "w-full p-3 border-b border-gray-100 flex flex-col text-sm md:text-xs sm:text-[10px]",
         elements: [
           {
             type: "Text",
             content: "New message received",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "#333",
               fontSize: "16px",
               fontWeight: "500",
             },
             tailwindStyles: "text-gray-800 text-md font-medium",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
-          },
-          {
-            type: "Text",
-            content: "5 minutes ago",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            styles: {
-              color: "#888",
-              fontSize: "14px",
-              marginTop: "5px",
-            },
-            tailwindStyles: "text-gray-500 text-sm mt-1",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -134,14 +77,6 @@ export const sidebarRightComponent: CustomComponent = {
           {
             type: "Text",
             content: "John Doe",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
             styles: {
               color: "#111827",
               fontSize: "14px",
@@ -154,8 +89,6 @@ export const sidebarRightComponent: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -163,12 +96,7 @@ export const sidebarRightComponent2: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarRight2",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-
     styles: {
       height: "100%",
       width: "320px",
@@ -181,16 +109,12 @@ export const sidebarRightComponent2: CustomComponent = {
       right: "0",
       top: "0",
     },
-    tailwindStyles: "flex flex-col items-start w-80 h-full p-6 bg-gray-900 fixed right-0 top-0 md:w-60 sm:w-40 transition-all hidden sm:block",
+    tailwindStyles:
+      "flex flex-col items-start w-80 h-full p-6 bg-gray-900 fixed right-0 top-0 md:w-60 sm:w-40 transition-all hidden sm:block",
     elements: [
       {
         type: "Text",
         content: "ACTIVITY FEED",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "white",
           fontSize: "18px",
@@ -198,21 +122,13 @@ export const sidebarRightComponent2: CustomComponent = {
           marginBottom: "30px",
           letterSpacing: "1px",
         },
-        tailwindStyles: "text-white text-lg font-bold mb-8 tracking-wide text-center md:text-base sm:text-sm",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
+        tailwindStyles:
+          "text-white text-lg font-bold mb-8 tracking-wide text-center md:text-base sm:text-sm",
       },
       {
         type: "Frame",
         name: "ActivityItem",
-        id: uuidv4(),
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           width: "100%",
           padding: "15px",
@@ -222,63 +138,36 @@ export const sidebarRightComponent2: CustomComponent = {
           display: "flex",
           flexDirection: "column",
         },
-        tailwindStyles: "w-full p-4 bg-gray-800 rounded-lg mb-4 flex flex-col text-sm md:text-xs sm:text-[10px]",
+        tailwindStyles:
+          "w-full p-4 bg-gray-800 rounded-lg mb-4 flex flex-col text-sm md:text-xs sm:text-[10px]",
         elements: [
           {
             type: "Text",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "white",
               fontSize: "16px",
               fontWeight: "500",
             },
             tailwindStyles: "text-white text-md font-medium",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Text",
             content: "5 minutes ago",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "#aaa",
               fontSize: "14px",
               marginTop: "5px",
             },
             tailwindStyles: "text-gray-400 text-sm mt-1",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -294,14 +183,6 @@ export const sidebarRightComponent2: CustomComponent = {
           {
             type: "Text",
             content: "John Doe",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
             styles: {
               color: "white",
               fontSize: "14px",
@@ -314,8 +195,6 @@ export const sidebarRightComponent2: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -323,12 +202,7 @@ export const sidebarRightComponent3: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarRight3",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-
     styles: {
       height: "100%",
       width: "280px",
@@ -342,37 +216,25 @@ export const sidebarRightComponent3: CustomComponent = {
       right: "0",
       top: "0",
     },
-    tailwindStyles: "flex flex-col items-start w-72 h-full p-5 bg-gray-100 border-l border-gray-200 fixed right-0 top-0 md:w-56 sm:w-40 transition-all hidden sm:block",
+    tailwindStyles:
+      "flex flex-col items-start w-72 h-full p-5 bg-gray-100 border-l border-gray-200 fixed right-0 top-0 md:w-56 sm:w-40 transition-all hidden sm:block",
     elements: [
       {
         type: "Text",
         content: "Recent Updates",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "#343a40",
           fontSize: "18px",
           fontWeight: "600",
           marginBottom: "20px",
         },
-        tailwindStyles: "text-gray-800 text-lg font-semibold mb-5 text-center md:text-base sm:text-sm",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
+        tailwindStyles:
+          "text-gray-800 text-lg font-semibold mb-5 text-center md:text-base sm:text-sm",
       },
       {
         type: "Frame",
         name: "UpdateItem",
-        id: uuidv4(),
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           width: "100%",
           padding: "12px",
@@ -383,63 +245,36 @@ export const sidebarRightComponent3: CustomComponent = {
           flexDirection: "column",
           boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
         },
-        tailwindStyles: "w-full p-3 bg-white rounded-md mb-3 flex flex-col shadow-xs text-sm md:text-xs sm:text-[10px]",
+        tailwindStyles:
+          "w-full p-3 bg-white rounded-md mb-3 flex flex-col shadow-xs text-sm md:text-xs sm:text-[10px]",
         elements: [
           {
             type: "Text",
             content: "Product Update v2.1",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "#333",
               fontSize: "16px",
               fontWeight: "500",
             },
             tailwindStyles: "text-gray-800 text-md font-medium",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Text",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "#6c757d",
               fontSize: "14px",
               marginTop: "5px",
             },
             tailwindStyles: "text-gray-600 text-sm mt-1",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -455,14 +290,6 @@ export const sidebarRightComponent3: CustomComponent = {
           {
             type: "Text",
             content: "Jane Doe",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
             styles: {
               color: "#495057",
               fontSize: "14px",
@@ -475,8 +302,6 @@ export const sidebarRightComponent3: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -484,12 +309,7 @@ export const sidebarRightComponent4: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarRight4",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-
     styles: {
       height: "100%",
       width: "330px",
@@ -503,37 +323,25 @@ export const sidebarRightComponent4: CustomComponent = {
       right: "0",
       top: "0",
     },
-    tailwindStyles: "flex flex-col items-start w-80 h-full p-6 bg-white shadow-md fixed right-0 top-0 md:w-64 sm:w-48 transition-all hidden sm:block",
+    tailwindStyles:
+      "flex flex-col items-start w-80 h-full p-6 bg-white shadow-md fixed right-0 top-0 md:w-64 sm:w-48 transition-all hidden sm:block",
     elements: [
       {
         type: "Text",
         content: "People Online",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "#333",
           fontSize: "18px",
           fontWeight: "bold",
           marginBottom: "20px",
         },
-        tailwindStyles: "text-gray-800 text-lg font-bold mb-5 text-center md:text-left sm:text-sm",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
+        tailwindStyles:
+          "text-gray-800 text-lg font-bold mb-5 text-center md:text-left sm:text-sm",
       },
       {
         type: "Frame",
         name: "UserItem",
-        id: uuidv4(),
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           width: "100%",
           padding: "10px 0",
@@ -542,62 +350,35 @@ export const sidebarRightComponent4: CustomComponent = {
           flexDirection: "row",
           alignItems: "center",
         },
-        tailwindStyles: "w-full py-2 border-b border-gray-100 flex flex-row items-center text-sm md:text-base",
+        tailwindStyles:
+          "w-full py-2 border-b border-gray-100 flex flex-row items-center text-sm md:text-base",
         elements: [
           {
             type: "Text",
             content: "•",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "#4CAF50",
               fontSize: "24px",
               marginRight: "10px",
             },
             tailwindStyles: "text-green-500 text-2xl mr-2",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Text",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             styles: {
               color: "#333",
               fontSize: "16px",
             },
             tailwindStyles: "text-gray-800 text-md",
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
         styles: {
           display: "flex",
           alignItems: "center",
@@ -613,14 +394,6 @@ export const sidebarRightComponent4: CustomComponent = {
           {
             type: "Text",
             content: "Guest User",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
             styles: {
               color: "#333",
               fontSize: "14px",
@@ -633,7 +406,5 @@ export const sidebarRightComponent4: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };

@@ -1,4 +1,4 @@
-import { EditorElement } from "@/types/global.type";
+import { EditorElement, ElementTemplate } from "@/types/global.type";
 import {
   navbarComponent,
   navbarComponent2,
@@ -29,36 +29,19 @@ import {
   sidebarRightComponent3,
   sidebarRightComponent4,
 } from "./sidebar/sidebarRightComponents";
-import {
-  aboutCarouselHorizontal,
-  aboutCarouselVertical,
-  aboutDynamicHorizontal,
-  aboutDynamicVertical,
-  teamMembersComponent1,
-  teamMembersComponent2,
-  teamMembersComponent3,
-} from "./team/teamMembersComponents";
-import {
-  missionComponent1,
-  missionComponent2,
-  missionComponentCompact,
-  missionComponentSlider,
-} from "./mission/missionComponents";
-import {
-  clockWidgetComponent,
-  digitalClockWidgetComponent,
-} from "./widgets/widgetComponents";
 import { formComponent1, formComponent2 } from "./form/formComponents";
 import {
   landingPageTemplateComponent,
   landingPageTemplateComponent2,
 } from "./landingpage/landingPageComponents";
 
-export interface CustomComponent {
-  component: Partial<EditorElement>;
+export type CustomComponent = {
+  component: ElementTemplate & {
+    elements?: ElementTemplate[];
+  };
 }
 
-export const customComponents: CustomComponent[] = [
+const customComponents: CustomComponent[] = [
   navbarComponent,
   navbarComponent2,
   navbarComponent3,
@@ -79,21 +62,12 @@ export const customComponents: CustomComponent[] = [
   sidebarRightComponent2,
   sidebarRightComponent3,
   sidebarRightComponent4,
-  aboutDynamicVertical,
-  aboutDynamicHorizontal,
-  aboutCarouselVertical,
-  aboutCarouselHorizontal,
-  teamMembersComponent1,
-  teamMembersComponent2,
-  teamMembersComponent3,
-  missionComponent1,
-  missionComponent2,
-  missionComponentCompact,
-  missionComponentSlider,
-  clockWidgetComponent,
-  digitalClockWidgetComponent,
   formComponent1,
   formComponent2,
   landingPageTemplateComponent,
   landingPageTemplateComponent2,
 ];
+
+export const customComps = customComponents
+  .flat()
+  .map((customComp) => customComp.component);

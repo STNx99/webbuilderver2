@@ -180,10 +180,7 @@ export class SectionElementCreateStrategy implements ElementCreateStrategy {
       styles: {
         width: "100%",
         minHeight: "200px",
-        height: "25%",
         backgroundColor: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: "8px",
         padding: "24px",
       },
       tailwindStyles:

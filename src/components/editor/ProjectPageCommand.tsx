@@ -43,7 +43,7 @@ import {
 } from "@/components/ui/select";
 import { PageSchema } from "@/schema/zod";
 import { Page } from "@/generated/prisma";
-import createPage from "@/app/actions/page";
+import createPage from "@/app/actions/pageAction";
 
 const createPageSchema = z.object({
   name: z.string().min(1, "Page name is required"),

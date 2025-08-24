@@ -22,6 +22,7 @@ type ElementStore<TElement extends EditorElement> = {
   deselectAll: () => void;
   dehoverAll: () => void;
   updateAllElements: (update: Partial<EditorElement>) => void;
+  insertElement: (element: TElement, elementToBeInserted: TElement) => void;
 };
 
 const createElementStore = <TElement extends EditorElement>() => {
@@ -59,7 +60,9 @@ const createElementStore = <TElement extends EditorElement>() => {
 
       let updatedSelectedElement = selectedElement;
       if (selectedElement && selectedElement.id === id) {
-        const findUpdated = (els: EditorElement[]): EditorElement | undefined => {
+        const findUpdated = (
+          els: EditorElement[],
+        ): EditorElement | undefined => {
           for (const el of els) {
             if (el.id === id) return el;
             if (isContainer(el)) {
@@ -103,6 +106,40 @@ const createElementStore = <TElement extends EditorElement>() => {
         selectedElements: undefined,
         draggingElement: undefined,
       });
+    },
+
+    insertElement: (element, elementToBeInserted) => {
+      const { elements } = get();
+
+      // Helper to insert after the target element in an array
+      const insertAfter = (
+        arr: EditorElement[],
+        targetId: string,
+        toInsert: EditorElement,
+      ) => {
+        const idx = arr.findIndex((el) => el.id === targetId);
+        if (idx === -1) return arr;
+        return [...arr.slice(0, idx + 1), toInsert, ...arr.slice(idx + 1)];
+      };
+
+      const insertRecursively = (arr: EditorElement[]): EditorElement[] => {
+        const idx = arr.findIndex((el) => el.id === element.id);
+        if (idx !== -1) {
+          return insertAfter(arr, element.id, elementToBeInserted);
+        }
+        return arr.map((el) => {
+          if (isContainer(el)) {
+            return {
+              ...el,
+              elements: insertRecursively(el.elements),
+            };
+          }
+          return el;
+        });
+      };
+
+      const updatedElements = insertRecursively(elements) as TElement[];
+      set({ elements: updatedElements });
     },
 
     addElement: (newElement) => {

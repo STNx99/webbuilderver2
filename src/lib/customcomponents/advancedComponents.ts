@@ -1,5 +1,7 @@
-import { buttonMultiComponent } from "./button/buttonMultiComponents";
 import { cardComponent } from "./card/cardComponents";
-import { CustomComponent } from "./styleconstants";
+import { CustomComponent } from "./customComponents";
 
-export const advancedComponents: CustomComponent[] = [cardComponent, buttonMultiComponent];
+// No changes needed here as this file only exports references to other components.
+export const advancedComponents: CustomComponent[] = [
+  cardComponent,
+];

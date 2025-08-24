@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React from "react";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { useElementHandler } from "@/hooks/useElementHandler";
@@ -11,18 +10,19 @@ import { useElementStore } from "@/globalstore/elementstore";
 
 const SectionComponent = ({ element }: EditorComponentProps) => {
   const sectionElement = element as SectionElement;
-  const {elements, addElement} = useElementStore()
+  const { insertElement } = useElementStore();
   const { id } = useParams();
   const searchParams = useSearchParams();
 
   const { getCommonProps } = useElementHandler();
   const handleCreateSeciont = () => {
-    const newElement  = elementHelper.createElement<SectionElement>(
+    const newElement = elementHelper.createElement<SectionElement>(
       "Section",
       id as string,
       undefined,
       searchParams.get("page") || undefined,
     );
+    if (newElement) insertElement(element, newElement);
   };
   return (
     <div
@@ -49,14 +49,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
         >
           <Button
             className="h-6"
-            onClick={() => {
-              elementHelper.createElement(
-                "Section",
-                element.projectId,
-                undefined,
-                element.pageId,
-              );
-            }}
+            onClick={handleCreateSeciont}
           >
             + Add Section
           </Button>

@@ -1,16 +1,11 @@
-import { CustomComponent } from "../styleconstants";
+import { CustomComponent } from "../customComponents";
 import { v4 as uuidv4 } from "uuid";
 
 export const footerComponent: CustomComponent = {
   component: {
     type: "Frame",
     name: "Footer",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-
     styles: {
       position: "relative",
       width: "100%",
@@ -28,61 +23,35 @@ export const footerComponent: CustomComponent = {
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
         styles: {
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-4",
-        projectId: "",
-        parentId: "",
         elements: [
           {
             type: "Image",
             content: "Logo",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
             href: "",
             src: "",
             styles: { width: "80px", height: "80px" },
             tailwindStyles: "w-20 h-20",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Text",
             content:
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "",
             src: "",
             styles: { color: "#6c757d", fontSize: "14px" },
             tailwindStyles: "text-gray-600 text-sm",
-            projectId: "",
-            parentId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "",
         src: "",
         styles: {
@@ -91,94 +60,52 @@ export const footerComponent: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        projectId: "",
-        parentId: "",
         elements: [
           {
             type: "Text",
             content: "Services",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "",
             src: "",
             styles: { color: "#ff6f61", fontWeight: "bold" },
             tailwindStyles: "text-[#ff6f61] font-bold",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Email Marketing",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Campaigns",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Branding",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Offline",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "",
         src: "",
         styles: {
@@ -187,94 +114,52 @@ export const footerComponent: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        projectId: "",
-        parentId: "",
         elements: [
           {
             type: "Text",
             content: "About",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "",
             src: "",
             styles: { color: "#ff6f61", fontWeight: "bold" },
             tailwindStyles: "text-[#ff6f61] font-bold",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Our Story",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Benefits",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Team",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Careers",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "",
         src: "",
         styles: {
@@ -283,76 +168,44 @@ export const footerComponent: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        projectId: "",
-        parentId: "",
         elements: [
           {
             type: "Text",
             content: "Follow Us",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "",
             src: "",
             styles: { color: "#ff6f61", fontWeight: "bold" },
             tailwindStyles: "text-[#ff6f61] font-bold",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Facebook",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "https://facebook.com",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Twitter",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "https://twitter.com",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
           {
             type: "Link",
             content: "Instagram",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "https://instagram.com",
             src: "",
             styles: { color: "#333" },
             tailwindStyles: "text-[#333] hover:underline",
-            projectId: "",
-            parentId: "",
           },
         ],
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -360,11 +213,7 @@ export const footerComponent2: CustomComponent = {
   component: {
     type: "Frame",
     name: "Footer2",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
     styles: {
       position: "relative",
       width: "100%",
@@ -382,48 +231,26 @@ export const footerComponent2: CustomComponent = {
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
-        href: "",
-        src: "",
         styles: {
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        parentId: "",
-        projectId: "",
         elements: [
           {
             type: "Text",
             content: "COMPANY NAME",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            href: "",
-            src: "",
             styles: {
               color: "#000",
               fontWeight: "bold",
             },
             tailwindStyles: "text-black font-bold",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Text",
             content:
               "Here you can use rows and columns to organize your footer content. Lorem ipsum dolor sit amet, consectetur adipisicing elit.",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "",
             src: "",
@@ -431,19 +258,12 @@ export const footerComponent2: CustomComponent = {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 text-sm",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "",
         src: "",
         styles: {
@@ -452,105 +272,61 @@ export const footerComponent2: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        parentId: "",
-        projectId: "",
         elements: [
           {
             type: "Text",
             content: "PRODUCTS",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            href: "",
-            src: "",
             styles: {
               color: "#000",
               fontWeight: "bold",
             },
             tailwindStyles: "text-black font-bold",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "MDBootstrap",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "MDWordPress",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "BrandFlow",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Bootstrap Angular",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "",
         src: "",
         styles: {
@@ -559,17 +335,10 @@ export const footerComponent2: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        parentId: "",
-        projectId: "",
         elements: [
           {
             type: "Text",
             content: "USEFUL LINKS",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "",
             src: "",
             styles: {
@@ -577,86 +346,52 @@ export const footerComponent2: CustomComponent = {
               fontWeight: "bold",
             },
             tailwindStyles: "text-black font-bold",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Your Account",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Become an Affiliate",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Shipping Rates",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Help",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#6c757d",
             },
             tailwindStyles: "text-gray-600 hover:underline",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         href: "",
         src: "",
@@ -666,35 +401,19 @@ export const footerComponent2: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start gap-2",
-        parentId: "",
-        projectId: "",
         elements: [
           {
             type: "Text",
-            content: "CONTACT",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            href: "",
-            src: "",
+            content: "USEFUL LINKS",
             styles: {
               color: "#000",
               fontWeight: "bold",
             },
             tailwindStyles: "text-black font-bold",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "",
             src: "",
             styles: {
@@ -704,35 +423,24 @@ export const footerComponent2: CustomComponent = {
               gap: "10px",
             },
             tailwindStyles: "flex flex-row items-center gap-2",
-            parentId: "",
-            projectId: "",
+
             elements: [
               {
                 type: "Image",
                 content: "",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-                styles: { 
-                  width: "24px", 
-                  height: "24px", 
-                  objectFit: "contain" 
+                styles: {
+                  width: "24px",
+                  height: "24px",
+                  objectFit: "contain",
                 },
-                tailwindStyles: "w-6 h-6 object-contain" ,
-                parentId: "",
-                projectId: "",
+                tailwindStyles: "w-6 h-6 object-contain",
               },
               {
                 type: "Text",
                 content: "New York, NY 10012, US",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "",
                 src: "",
@@ -740,21 +448,12 @@ export const footerComponent2: CustomComponent = {
                   color: "#6c757d",
                 },
                 tailwindStyles: "text-gray-600",
-                parentId: "",
-                projectId: "",
               },
             ],
           },
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            href: "",
-            src: "",
             styles: {
               display: "flex",
               flexDirection: "row",
@@ -762,57 +461,69 @@ export const footerComponent2: CustomComponent = {
               gap: "10px",
             },
             tailwindStyles: "flex flex-row items-center gap-2",
-            parentId: "",
-            projectId: "",
             elements: [
               {
                 type: "Image",
                 content: "",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-
+                href: "",
+                src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                styles: {
+                  width: "24px",
+                  height: "24px",
+                  objectFit: "contain",
+                },
+                tailwindStyles: "w-6 h-6 object-contain",
+              },
+              {
+                type: "Text",
+                content: "New York, NY 10012, US",
+                href: "",
+                src: "",
+                styles: {
+                  color: "#6c757d",
+                },
+                tailwindStyles: "text-gray-600",
+              },
+            ],
+          },
+          {
+            type: "Frame",
+            content: "",
+            styles: {
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
+            },
+            tailwindStyles: "flex flex-row items-center gap-2",
+            elements: [
+              {
+                type: "Image",
+                content: "",
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/732/732200.png",
-                styles: { 
-                  width: "24px", 
-                  height: "24px", 
-                  objectFit: "contain" 
+                styles: {
+                  width: "24px",
+                  height: "24px",
+                  objectFit: "contain",
                 },
-                tailwindStyles: "w-6 h-6 object-contain" ,
-                parentId: "",
-                projectId: "",
+                tailwindStyles: "w-6 h-6 object-contain",
               },
               {
                 type: "Text",
                 content: "info@example.com",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-
                 href: "",
                 src: "",
                 styles: {
                   color: "#6c757d",
                 },
                 tailwindStyles: "text-gray-600",
-                parentId: "",
-                projectId: "",
               },
             ],
           },
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            href: "",
-            src: "",
             styles: {
               display: "flex",
               flexDirection: "row",
@@ -820,93 +531,22 @@ export const footerComponent2: CustomComponent = {
               gap: "10px",
             },
             tailwindStyles: "flex flex-row items-center gap-2",
-            parentId: "",
-            projectId: "",
             elements: [
               {
                 type: "Image",
                 content: "",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/724/724664.png",
-                styles: { 
-                  width: "24px", 
-                  height: "24px", 
-                  objectFit: "contain" 
-                },
-                tailwindStyles: "w-6 h-6 object-contain" ,
-                parentId: "",
-                projectId: "",
-              },
-              {
-                type: "Text",
-                content: "+ 01 234 567 88",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-
-                href: "",
-                src: "",
                 styles: {
-                  color: "#6c757d",
+                  width: "24px",
+                  height: "24px",
+                  objectFit: "contain",
                 },
-                tailwindStyles: "text-gray-600",
-                parentId: "",
-                projectId: "",
-              },
-            ],
-          },
-          {
-            type: "Frame",
-            content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
-            href: "",
-            src: "",
-            styles: {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
-            },
-            tailwindStyles: "flex flex-row items-center gap-2",
-            parentId: "",
-            projectId: "",
-            elements: [
-              {
-                type: "Image",
-                content: "",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-
-                href: "",
-                src: "https://cdn-icons-png.flaticon.com/512/724/724664.png",
-                styles: { 
-                  width: "24px", 
-                  height: "24px", 
-                  objectFit: "contain" 
-                },
-                tailwindStyles: "w-6 h-6 object-contain" ,
-                parentId: "",
-                projectId: "",
+                tailwindStyles: "w-6 h-6 object-contain",
               },
               {
                 type: "Text",
                 content: "+ 01 234 567 89",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "",
                 src: "",
@@ -914,8 +554,6 @@ export const footerComponent2: CustomComponent = {
                   color: "#6c757d",
                 },
                 tailwindStyles: "text-gray-600",
-                parentId: "",
-                projectId: "",
               },
             ],
           },
@@ -929,11 +567,7 @@ export const footerComponent3: CustomComponent = {
   component: {
     type: "Frame",
     name: "Footer3",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
 
     styles: {
       position: "relative",
@@ -953,10 +587,6 @@ export const footerComponent3: CustomComponent = {
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         href: "",
         src: "",
@@ -967,17 +597,13 @@ export const footerComponent3: CustomComponent = {
           width: "100%",
           maxWidth: "1200px",
         },
-        tailwindStyles: "flex flex-row justify-around w-full max-w-[1200px] gap-10",
-        parentId: "",
-        projectId: "",
+        tailwindStyles:
+          "flex flex-row justify-around w-full max-w-[1200px] gap-10",
+
         elements: [
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "",
             src: "",
@@ -987,16 +613,11 @@ export const footerComponent3: CustomComponent = {
               alignItems: "flex-start",
             },
             tailwindStyles: "flex flex-col items-start gap-2",
-            parentId: "",
-            projectId: "",
+
             elements: [
               {
                 type: "Text",
                 content: "RESOURCES",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "",
                 src: "",
@@ -1005,16 +626,10 @@ export const footerComponent3: CustomComponent = {
                   fontWeight: "bold",
                 },
                 tailwindStyles: "text-white font-bold",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Link",
                 content: "Flowbite",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "/",
                 src: "",
@@ -1022,16 +637,10 @@ export const footerComponent3: CustomComponent = {
                   color: "#a0aec0",
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Link",
                 content: "Tailwind CSS",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "/",
                 src: "",
@@ -1039,18 +648,12 @@ export const footerComponent3: CustomComponent = {
                   color: "#a0aec0",
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
-                parentId: "",
-                projectId: "",
               },
             ],
           },
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "",
             src: "",
@@ -1060,16 +663,11 @@ export const footerComponent3: CustomComponent = {
               alignItems: "flex-start",
             },
             tailwindStyles: "flex flex-col items-start gap-2",
-            parentId: "",
-            projectId: "",
+
             elements: [
               {
                 type: "Text",
                 content: "FOLLOW US",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "",
                 src: "",
@@ -1078,16 +676,10 @@ export const footerComponent3: CustomComponent = {
                   fontWeight: "bold",
                 },
                 tailwindStyles: "text-white font-bold",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Link",
                 content: "Github",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "https://github.com",
                 src: "",
@@ -1095,16 +687,10 @@ export const footerComponent3: CustomComponent = {
                   color: "#a0aec0",
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Link",
                 content: "Discord",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "https://discord.com",
                 src: "",
@@ -1112,18 +698,12 @@ export const footerComponent3: CustomComponent = {
                   color: "#a0aec0",
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
-                parentId: "",
-                projectId: "",
               },
             ],
           },
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "",
             src: "",
@@ -1133,16 +713,11 @@ export const footerComponent3: CustomComponent = {
               alignItems: "flex-start",
             },
             tailwindStyles: "flex flex-col items-start gap-2",
-            parentId: "",
-            projectId: "",
+
             elements: [
               {
                 type: "Text",
                 content: "LEGAL",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "",
                 src: "",
@@ -1151,16 +726,10 @@ export const footerComponent3: CustomComponent = {
                   fontWeight: "bold",
                 },
                 tailwindStyles: "text-white font-bold",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Link",
                 content: "Privacy Policy",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "/privacy-policy",
                 src: "",
@@ -1168,16 +737,10 @@ export const footerComponent3: CustomComponent = {
                   color: "#a0aec0",
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Link",
                 content: "Terms & Conditions",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
 
                 href: "/terms",
                 src: "",
@@ -1185,8 +748,6 @@ export const footerComponent3: CustomComponent = {
                   color: "#a0aec0",
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
-                parentId: "",
-                projectId: "",
               },
             ],
           },
@@ -1195,10 +756,6 @@ export const footerComponent3: CustomComponent = {
       {
         type: "Text",
         content: "© 2023 Flowbite™. All Rights Reserved.",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         href: "",
         src: "",
@@ -1208,16 +765,10 @@ export const footerComponent3: CustomComponent = {
           textAlign: "center",
         },
         tailwindStyles: "text-white text-sm text-center mt-5",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         href: "",
         src: "",
@@ -1228,16 +779,11 @@ export const footerComponent3: CustomComponent = {
           gap: "15px",
         },
         tailwindStyles: "flex flex-row justify-center gap-4 mt-3",
-        parentId: "",
-        projectId: "",
+
         elements: [
           {
             type: "Image",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "https://facebook.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733547.png",
@@ -1246,16 +792,10 @@ export const footerComponent3: CustomComponent = {
               height: "24px",
             },
             tailwindStyles: "w-6 h-6",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Image",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "https://discord.com",
             src: "https://cdn-icons-png.flaticon.com/512/2111/2111370.png",
@@ -1264,16 +804,10 @@ export const footerComponent3: CustomComponent = {
               height: "24px",
             },
             tailwindStyles: "w-6 h-6",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Image",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "https://twitter.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733579.png",
@@ -1282,16 +816,10 @@ export const footerComponent3: CustomComponent = {
               height: "24px",
             },
             tailwindStyles: "w-6 h-6",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Image",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "https://github.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733553.png",
@@ -1300,16 +828,12 @@ export const footerComponent3: CustomComponent = {
               height: "24px",
             },
             tailwindStyles: "w-6 h-6",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -1317,11 +841,7 @@ export const footerComponent4: CustomComponent = {
   component: {
     type: "Frame",
     name: "Footer4",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
     styles: {
       position: "relative",
       width: "100%",
@@ -1339,10 +859,6 @@ export const footerComponent4: CustomComponent = {
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         href: "/",
         src: "",
@@ -1352,16 +868,11 @@ export const footerComponent4: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
-        parentId: "",
-        projectId: "",
+
         elements: [
           {
             type: "Text",
             content: "shopping online",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1371,16 +882,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "10px",
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "frequently asked questions",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1388,16 +893,10 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "delivery",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1405,16 +904,10 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "pricing",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1422,16 +915,10 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "where we deliver?",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1439,18 +926,12 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         href: "/",
         src: "",
@@ -1460,16 +941,11 @@ export const footerComponent4: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
-        parentId: "",
-        projectId: "",
+
         elements: [
           {
             type: "Text",
             content: "gift cards",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1479,16 +955,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "10px",
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "frequently asked questions",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1496,16 +966,10 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "delivery and payment",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1513,16 +977,10 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "activate the card",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
 
             href: "/",
             src: "",
@@ -1530,36 +988,22 @@ export const footerComponent4: CustomComponent = {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "rules",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "/",
         src: "",
         styles: {
@@ -1568,17 +1012,10 @@ export const footerComponent4: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
-        parentId: "",
-        projectId: "",
         elements: [
           {
             type: "Text",
             content: "company",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1587,17 +1024,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "10px",
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "buy a gift card",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1605,17 +1035,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "5px",
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "history",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1623,17 +1046,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "5px",
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "return",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1641,36 +1057,22 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "5px",
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "contact",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         href: "/",
         src: "",
         styles: {
@@ -1679,17 +1081,10 @@ export const footerComponent4: CustomComponent = {
           alignItems: "flex-start",
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
-        parentId: "",
-        projectId: "",
         elements: [
           {
             type: "Text",
             content: "diamond club",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1698,17 +1093,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "10px",
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "registration",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1716,17 +1104,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "5px",
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "application",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1734,17 +1115,10 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "5px",
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "about program",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
@@ -1752,25 +1126,16 @@ export const footerComponent4: CustomComponent = {
               marginBottom: "5px",
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "rules",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-
             href: "/",
             src: "",
             styles: {
               color: "#333",
             },
             tailwindStyles: "text-[#333] hover:underline",
-            parentId: "",
-            projectId: "",
           },
         ],
       },

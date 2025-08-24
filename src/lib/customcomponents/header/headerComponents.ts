@@ -1,16 +1,11 @@
-import { CustomComponent } from "../styleconstants";
+import { CustomComponent } from "../customComponents";
 import { v4 as uuidv4 } from "uuid";
 
 export const headerComponent: CustomComponent = {
   component: {
     type: "Frame",
     name: "Header",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-
     styles: {
       height: "70px",
       width: "100%",
@@ -28,65 +23,58 @@ export const headerComponent: CustomComponent = {
       {
         type: "Base",
         content: "My Portfolio",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "#0d47a1",
           fontSize: "28px",
           fontWeight: "bold",
         },
-        tailwindStyles: "text-blue-900 text-3xl font-bold text-center md:text-left",
+        tailwindStyles:
+          "text-blue-900 text-3xl font-bold text-center md:text-left",
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Base",
         content: "Home",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "#0d47a1",
           margin: "0 10px",
           fontSize: "18px",
         },
-        tailwindStyles: "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
+        tailwindStyles:
+          "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
         href: "/",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Base",
         content: "Projects",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-
         styles: {
           color: "#0d47a1",
           margin: "0 10px",
           fontSize: "18px",
         },
-        tailwindStyles: "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
-        href: "/",
+        tailwindStyles:
+          "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
+        href: "/projects",
         src: "",
-        parentId: "",
-        projectId: "",
+      },
+      {
+        type: "Base",
+        content: "Contact",
+        styles: {
+          color: "#0d47a1",
+          margin: "0 10px",
+          fontSize: "18px",
+        },
+        tailwindStyles:
+          "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
+        href: "/contact",
+        src: "",
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -94,11 +82,7 @@ export const headerComponent2: CustomComponent = {
   component: {
     type: "Frame",
     name: "Header2",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
 
     styles: {
       height: "70px",
@@ -117,65 +101,48 @@ export const headerComponent2: CustomComponent = {
       {
         type: "Base",
         content: "Brothers Inc",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         styles: {
           color: "white",
           fontSize: "28px",
           fontWeight: "bold",
         },
-        tailwindStyles: "text-white text-3xl font-bold text-center md:text-left",
+        tailwindStyles:
+          "text-white text-3xl font-bold text-center md:text-left",
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Base",
         content: "Home",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         styles: {
           color: "white",
           margin: "0 10px",
           fontSize: "18px",
         },
-        tailwindStyles: "m-2 text-white text-lg text-center md:text-left hover:text-gray-300 transition-colors",
+        tailwindStyles:
+          "m-2 text-white text-lg text-center md:text-left hover:text-gray-300 transition-colors",
         href: "/",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Base",
         content: "Portfolio",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         styles: {
           color: "white",
           margin: "0 10px",
           fontSize: "18px",
         },
-        tailwindStyles: "m-2 text-white text-lg text-center md:text-left hover:text-gray-300 transition-colors",
+        tailwindStyles:
+          "m-2 text-white text-lg text-center md:text-left hover:text-gray-300 transition-colors",
         href: "/",
         src: "",
-        parentId: "",
-        projectId: "",
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -183,11 +150,7 @@ export const headerComponent3: CustomComponent = {
   component: {
     type: "Frame",
     name: "Header3",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
 
     styles: {
       height: "80px",
@@ -206,64 +169,47 @@ export const headerComponent3: CustomComponent = {
       {
         type: "Base",
         content: "Welcome to My Site",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         styles: {
           color: "#1b5e20",
           fontSize: "28px",
           fontWeight: "bold",
         },
-        tailwindStyles: "text-green-900 text-3xl font-bold text-center md:text-left",
+        tailwindStyles:
+          "text-green-900 text-3xl font-bold text-center md:text-left",
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Base",
         content: "Home",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         styles: {
           color: "#1b5e20",
           margin: "0 10px",
           fontSize: "18px",
         },
-        tailwindStyles: "m-2 text-green-900 text-lg text-center md:text-left hover:text-green-700 transition-colors",
+        tailwindStyles:
+          "m-2 text-green-900 text-lg text-center md:text-left hover:text-green-700 transition-colors",
         href: "/",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Base",
         content: "Pricing",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
 
         styles: {
           color: "#1b5e20",
           margin: "0 10px",
           fontSize: "18px",
         },
-        tailwindStyles: "m-2 text-green-900 text-lg text-center md:text-left hover:text-green-700 transition-colors",
+        tailwindStyles:
+          "m-2 text-green-900 text-lg text-center md:text-left hover:text-green-700 transition-colors",
         href: "/articles",
         src: "",
-        parentId: "",
-        projectId: "",
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };

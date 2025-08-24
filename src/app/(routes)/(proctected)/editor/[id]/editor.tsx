@@ -14,6 +14,8 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { Input } from "@/components/ui/input";
 import { usePageStore } from "@/globalstore/pagestore";
 import { projectService } from "@/services/project";
+import { Button } from "@/components/ui/button";
+import { SectionElement } from "@/interfaces/elements.interface";
 
 type EditorProps = {
   id: string;
@@ -25,7 +27,7 @@ export default function Editor({ id, pageId }: EditorProps) {
     "mobile" | "tablet" | "desktop"
   >("desktop");
 
-  const { addElement, loadElements } = useElementStore();
+  const { addElement, loadElements, selectedElement } = useElementStore();
 
   // Fetch project pages
   const { data: projectPages, isLoading: isPagesLoading } = useQuery({
@@ -140,7 +142,7 @@ export default function Editor({ id, pageId }: EditorProps) {
             }}
           >
             <div
-              className={`h-full w-full overflow-auto p-2 ${isDraggingOver ? "bg-primary/10" : ""}`}
+              className={`h-full w-full  overflow-auto p-2 ${isDraggingOver ? "bg-primary/10" : ""}`}
               onDragOver={(e) => {
                 e.preventDefault();
                 setIsDraggingOver(true);
@@ -157,7 +159,23 @@ export default function Editor({ id, pageId }: EditorProps) {
               ) : (
                 <ElementLoader elements={filteredElements || []} />
               )}
-              {/*<CarouselSpacing/>*/}
+              {!selectedElement && (
+                <Button
+                  className="w-full h-6"
+                  onClick={() => {
+                    const newElement =
+                      elementHelper.createElement<SectionElement>(
+                        "Section",
+                        id,
+                        undefined,
+                        pageId,
+                      );
+                    if (newElement) addElement(newElement);
+                  }}
+                >
+                  + Add new section
+                </Button>
+              )}
             </div>
           </div>
         </div>
