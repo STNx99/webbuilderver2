@@ -1,6 +1,6 @@
-
 import {
   CarouselElement,
+  CSSStyles,
   FormElement,
   InputElement,
 } from "@/interfaces/elements.interface";
@@ -13,6 +13,10 @@ export type BuilderState = {
   src?: string;
   parentId?: string;
   pageId?: string;
+  styles?: CSSStyles;
+  tailwindStyles?: string;
+  href?: string;
+  content?: string;
   baseProperties: {
     isSelected: boolean;
     isHovered: boolean;
@@ -26,7 +30,7 @@ export interface ElementCreateStrategy {
 
 function createBaseElement(
   state: BuilderState,
-  overrides: Partial<EditorElement> = {}
+  overrides: Partial<EditorElement> = {},
 ): EditorElement {
   return {
     id: state.id,
@@ -112,6 +116,11 @@ export class InputElementCreateStrategy implements ElementCreateStrategy {
   }
 }
 
+export class ImageElementCreateStrategy implements ElementCreateStrategy {
+  buildElement(state: BuilderState): EditorElement {
+    return createBaseElement(state);
+  }
+}
 export class ListElementCreateStrategy implements ElementCreateStrategy {
   buildElement(state: BuilderState): EditorElement {
     return createBaseElement(state, {
@@ -184,7 +193,7 @@ export class SectionElementCreateStrategy implements ElementCreateStrategy {
         padding: "24px",
       },
       tailwindStyles:
-        "w-full min-h-[200px] h-1/4 border border-gray-200 rounded-lg bg-white p-6 shadow-sm",
+        "w-full min-h-[200px] h-1/4 border-gray-200 bg-white p-6 shadow-sm",
     });
   }
 }

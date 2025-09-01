@@ -73,7 +73,7 @@ export function useElementHandler() {
         return;
       }
 
-      const newElement = elementHelper.createElement(
+      const newElement = elementHelper.createElement.create(
         data as ElementType,
         projectId,
         parentElement.id,

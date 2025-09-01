@@ -16,7 +16,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
 
   const { getCommonProps } = useElementHandler();
   const handleCreateSeciont = () => {
-    const newElement = elementHelper.createElement<SectionElement>(
+    const newElement = elementHelper.createElement.create<SectionElement>(
       "Section",
       id as string,
       undefined,

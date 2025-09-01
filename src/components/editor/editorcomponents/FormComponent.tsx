@@ -20,7 +20,7 @@ export default function FormComponent({ element }: FormComponentProps) {
 
   const handleAddField = () => {
     const searhParams = useSearchParams();
-    const newField = elementHelper.createElement<InputElement>(
+    const newField = elementHelper.createElement.create<InputElement>(
       "Input",
       id as string,
       formElement.id,

@@ -9,26 +9,23 @@ datasource db {
 }
 
 model Element {
-  Id             String    @id @map("Id")
-  Type           String    @db.VarChar(32)
   Content        String?
+  Href           String?
+  Id             String    @id @map("Id")
   Name           String?
+  Order          Int       @default(0)
+  ParentId       String?
+  ProjectId      String
+  Src            String?
   Styles         Json?
   TailwindStyles String?
-  Src            String?
-  Href           String?
-  ParentId       String?
-  PageId         String?  
-  ProjectId      String
-  Order          Int       @default(0)
-  CreatedAt      DateTime  @db.Timestamp(6)
-  UpdatedAt      DateTime  @db.Timestamp(6)
-  DeletedAt      DateTime? @db.Timestamp(6)
-  Settings       Setting?  @relation("ElementSettings")
+  Type           String    @db.VarChar(32)
+  PageId         String?
+  Page           Page?     @relation(fields: [PageId], references: [Id], onDelete: Cascade)
+  Parent         Element?  @relation("ElementChildren", fields: [ParentId], references: [Id], onDelete: Cascade)
   Elements       Element[] @relation("ElementChildren")
-  Parent         Element?  @relation("ElementChildren", fields: [ParentId], references: [Id])
-  Page           Page?      @relation(fields: [PageId], references: [Id], onDelete: Cascade)
   Project        Project   @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+  Settings       Setting?  @relation("ElementSettings")
 
   @@index([ParentId])
   @@index([PageId])
@@ -37,28 +34,28 @@ model Element {
 
 model Image {
   ImageId   String    @id(map: "PK_Images")
+  ImageLink String    @default("")
   ImageName String?
   UserId    String
-  ImageLink String    @default("")
   CreatedAt DateTime  @db.Timestamp(6)
-  UpdatedAt DateTime  @db.Timestamp(6)
   DeletedAt DateTime? @db.Timestamp(6)
+  UpdatedAt DateTime  @db.Timestamp(6)
   User      User      @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Images_Users_UserId")
 
   @@index([UserId], map: "IX_Images_UserId")
 }
 
 model Project {
+  Description String?
   Id          String    @id(map: "PK_Projects")
   Name        String
-  Description String?
   OwnerId     String
   Published   Boolean   @default(false)
   Subdomain   String?
-  Styles      Json?
   CreatedAt   DateTime  @db.Timestamp(6)
-  UpdatedAt   DateTime  @db.Timestamp(6)
   DeletedAt   DateTime? @db.Timestamp(6)
+  UpdatedAt   DateTime  @db.Timestamp(6)
+  Styles      Json?
   Elements    Element[]
   Pages       Page[]
   Owner       User      @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
@@ -78,31 +75,28 @@ model Page {
   Elements  Element[]
   Project   Project   @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
 
+  @@unique([ProjectId, Name])
   @@index([ProjectId])
-  @@unique([ProjectId, Name]) // Ensures pages within a project have unique names
 }
 
 model Setting {
-  Id          String   @id(map: "PK_Settings")
+  ElementId   String    @unique
+  Id          String    @id(map: "PK_Settings")
   Name        String
   SettingType String
   Settings    Json
-  ElementId   String   @unique
-  CreatedAt   DateTime @db.Timestamp(6)
-  UpdatedAt   DateTime @db.Timestamp(6)
-  DeletedAt   DateTime? @db.Timestamp(6)
-  Element     Element? @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
+  Element     Element   @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
 
   @@index([ElementId], map: "IX_Settings_ElementId")
 }
 
 model User {
-  Id        String    @id(map: "PK_Users")
+  CreatedAt DateTime  @db.Timestamptz(6)
   Email     String
   FirstName String?
-  LastName  String?
+  Id        String    @id(map: "PK_Users")
   ImageUrl  String?
-  CreatedAt DateTime  @db.Timestamptz(6)
+  LastName  String?
   UpdatedAt DateTime  @db.Timestamptz(6)
   Images    Image[]
   Projects  Project[]

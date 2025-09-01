@@ -1,9 +1,9 @@
-import GetUrl from "@/utils/geturl";
+import GetUrl, { GetNextJSURL } from "@/utils/geturl";
 import { IProjectService } from "@/interfaces/service.interface";
-import { fetchWithAuth, fetchPublic } from "./fetcher";
 import getToken from "./token";
 import { Page } from "@/generated/prisma";
 import { Project } from "@/interfaces/project.interface";
+import { fetchPublic, fetchWithAuth } from "./api";
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
@@ -20,7 +20,7 @@ export const projectService: IProjectService = {
 
   deleteProject: async (id: string): Promise<boolean> => {
     const token = await getToken();
-    const response = await fetch(`/api/project/${id}`, {
+    const response = await fetch(GetNextJSURL(`/api/projects/${id}`), {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

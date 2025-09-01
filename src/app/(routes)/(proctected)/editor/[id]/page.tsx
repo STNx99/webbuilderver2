@@ -28,11 +28,11 @@ export default async function EditorPage({
       queryKey: ["pages", id],
       queryFn: () => projectService.getProjectPages(id),
     }),
+    queryClient.prefetchQuery({
+      queryKey: ["fonts"],
+      queryFn: () => projectService.getFonts(),
+    }),
   ]);
-  await queryClient.prefetchQuery({
-    queryKey: ["fonts"],
-    queryFn: () => projectService.getFonts(),
-  });
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Editor id={id} pageId={page} />

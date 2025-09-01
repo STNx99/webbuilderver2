@@ -2,13 +2,15 @@ import { EditorElement, ElementType } from "@/types/global.type";
 import { ValidationRule } from "./validate.interface";
 import { EmblaOptionsType } from "embla-carousel";
 
+type CSSStyles = React.CSSProperties
+
 // Interface from
 interface DBElement<Settings = undefined> {
   type: ElementType;
   id: string;
   content: string;
   name?: string;
-  styles?: React.CSSProperties;
+  styles?: CSSStyles
   tailwindStyles?: string;
   src?: string;
   href?: string;
@@ -107,3 +109,4 @@ export type {
 };
 //Export settings
 export type { CarouselSettings, FormSettings, InputSettings };
+export type {CSSStyles}

@@ -10,8 +10,9 @@ import {
   ListComponent,
   SelectComponent,
   SectionComponent,
+  ImageComponent,
 } from "@/types/editor";
-import ResizeHandler from "./ResizeHandler";
+import ResizeHandler from "./resizehandler/ResizeHandler";
 import EditorContextMenu from "./EditorContextMenu";
 
 type Props = {
@@ -25,6 +26,8 @@ export default function ElementLoader({ elements }: Props) {
     };
 
     switch (element.type) {
+      case "Image":
+        return <ImageComponent key={element.id} {...commonProps} />;
       case "Frame":
         return <FrameComponent key={element.id} {...commonProps} />;
       case "Form":

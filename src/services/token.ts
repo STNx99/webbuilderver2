@@ -1,12 +1,9 @@
+import { GetNextJSURL } from "@/utils/geturl";
+
 export default async function getToken(): Promise<string> {
   let url = "/api/gettoken";
-  if (typeof window === "undefined") {
-    const base =
-      process.env.NEXT_PUBLIC_BASE_URL ||
-      process.env.NEXTAUTH_URL ||
-      "http://localhost:3000";
-    url = `${base}/api/gettoken`;
-  }
+  console.log("[getToken] Fetching token from URL:", url);
+  GetNextJSURL(url);
 
   const response = await fetch(url, {
     method: "GET",
@@ -16,9 +13,14 @@ export default async function getToken(): Promise<string> {
   });
 
   if (!response.ok) {
+    console.error(
+      "[getToken] Failed to get authentication token. Status:",
+      response.status,
+    );
     throw new Error("Failed to get authentication token");
   }
 
   const { tokenJWT } = await response.json();
+  console.log("[getToken] Received tokenJWT:", tokenJWT);
   return tokenJWT;
 }

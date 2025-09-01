@@ -31,20 +31,14 @@ type CustomComponentHolderProps = {
 };
 
 export function CustomComponentHolder({ name }: CustomComponentHolderProps) {
-  const type = "customComponents";
-
-  const onDragStart = (
-    e: React.DragEvent<HTMLDivElement>,
-    elementType: string,
-  ) => {
-    e.dataTransfer.setData("elementType", elementType);
+  const onDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("customComponentName", name);
   };
 
   return (
     <div
       draggable
-      onDragStart={(e) => onDragStart(e, type)}
+      onDragStart={(e) => onDragStart(e)}
       className="flex flex-row justify-between items-center w-full px-2 h-full text-xs rounded-md cursor-grab active:cursor-grabbing transition-colors"
     >
       <div>{name}</div>

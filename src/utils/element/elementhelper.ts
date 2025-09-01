@@ -3,6 +3,7 @@ import {
   ContainerElementType,
   EditableElementType,
   EditorElement,
+  ElementTemplate,
   ElementType,
 } from "@/types/global.type";
 import { handleSwap } from "./handleSwap";
@@ -15,16 +16,29 @@ import {
   CONTAINER_ELEMENT_TYPES,
   EDITABLE_ELEMENT_TYPES,
 } from "@/constants/elements";
-import { createElement } from "./create/createElements";
+import {
+  createElement,
+  createElementFromTemplate,
+} from "./create/createElements";
 import { filterElementByPageId } from "./filterElementByPageId";
 
-interface ElementHelper {
-  createElement: <T extends EditorElement>(
+interface ICreateElment {
+  create: <T extends EditorElement>(
     type: ElementType,
     projectId: string,
     parentId?: string,
     pageId?: string,
   ) => T | undefined;
+
+  createFromTemplate: <T extends EditorElement>(
+    element: ElementTemplate,
+    projectId: string,
+    pageId?: string,
+  ) => T | undefined;
+}
+
+interface ElementHelper {
+  createElement: ICreateElment;
 
   handleSwap: (
     draggingElement: EditorElement,
@@ -38,7 +52,7 @@ interface ElementHelper {
 
   getElementSettings: (element: EditorElement) => string | null;
 
-  isContainerElement: (element: EditorElement) => boolean;
+  isContainerElement: (element: EditorElement) => element is ContainerElement;
 
   isEditableElement: (element: EditorElement) => boolean;
 
@@ -54,16 +68,21 @@ interface ElementHelper {
   ) => void;
 }
 
+export const isContainerElement = (
+  element: EditorElement,
+): element is ContainerElement => {
+  return CONTAINER_ELEMENT_TYPES.includes(element.type as ContainerElementType);
+};
+
 export const elementHelper: ElementHelper = {
-  createElement: createElement,
+  createElement: {
+    create: createElement,
+    createFromTemplate: createElementFromTemplate,
+  },
   handleSwap: handleSwap,
   findElement: findElement,
   getElementSettings: getElementSettings,
-  isContainerElement: (element: EditorElement): element is ContainerElement => {
-    return CONTAINER_ELEMENT_TYPES.includes(
-      element.type as ContainerElementType,
-    );
-  },
+  isContainerElement: isContainerElement,
   filterElementByPageId: filterElementByPageId,
   isEditableElement: (element: EditorElement): boolean => {
     return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);

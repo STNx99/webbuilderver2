@@ -77,5 +77,7 @@ export type {
   ContainerElement,
   ElementType,
   ContainerElementType,
+  ContainerElementTemplate,
+  LeafElementTemplate,
   ElementTemplate,
 };

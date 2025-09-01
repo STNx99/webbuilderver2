@@ -1,5 +1,5 @@
 import EditorContextMenu from "@/components/editor/EditorContextMenu";
-import ResizeHandler from "@/components/editor/ResizeHandler";
+import ResizeHandler from "@/components/editor/resizehandler/ResizeHandler";
 import {
   BaseComponent,
   ButtonComponent,
@@ -16,7 +16,7 @@ import { EditorElement, ElementType } from "@/types/global.type";
 export function renderChildElement(
   element: EditorElement,
   props: any,
-  excludes: ElementType[] = [],
+  excludes: ElementType[] = []
 ): React.ReactNode {
   const renderElement = (element: EditorElement) => {
     if (excludes.includes(element.type as ElementType)) {

@@ -1,19 +1,22 @@
 import { ElementType } from "@/types/global.type";
 import {
-    ButtonElementCreateStrategy,
-    CarouselElementCreateStrategy,
-    ElementCreateStrategy,
-    FormElementCreateStrategy,
-    FrameElementCreateStrategy,
-    InputElementCreateStrategy,
-    ListElementCreateStrategy,
-    SectionElementCreateStrategy,
-    SelectElementCreateStrategy,
-    TextElementCreateStrategy,
+  ButtonElementCreateStrategy,
+  CarouselElementCreateStrategy,
+  ElementCreateStrategy,
+  FormElementCreateStrategy,
+  FrameElementCreateStrategy,
+  ImageElementCreateStrategy,
+  InputElementCreateStrategy,
+  ListElementCreateStrategy,
+  SectionElementCreateStrategy,
+  SelectElementCreateStrategy,
+  TextElementCreateStrategy,
 } from "./elementCreateStrategy";
 
-export const ElementStrategyMap: Map<ElementType, ElementCreateStrategy> = new Map([
+export const ElementStrategyMap: Map<ElementType, ElementCreateStrategy> =
+  new Map([
     ["Text", new TextElementCreateStrategy()],
+    ["Image", new ImageElementCreateStrategy()],
     ["Frame", new FrameElementCreateStrategy()],
     ["Button", new ButtonElementCreateStrategy()],
     ["Input", new InputElementCreateStrategy()],
@@ -22,12 +25,14 @@ export const ElementStrategyMap: Map<ElementType, ElementCreateStrategy> = new M
     ["Form", new FormElementCreateStrategy()],
     ["Section", new SectionElementCreateStrategy()],
     ["Carousel", new CarouselElementCreateStrategy()],
-]);
+  ]);
 
-export const getElementStrategy = (type: ElementType): ElementCreateStrategy => {
-    const strategy = ElementStrategyMap.get(type);
-    if (!strategy) {
-        throw new Error(`No strategy found for element type: ${type}`);
-    }
-    return strategy;
+export const getElementStrategy = (
+  type: ElementType,
+): ElementCreateStrategy => {
+  const strategy = ElementStrategyMap.get(type);
+  if (!strategy) {
+    throw new Error(`No strategy found for element type: ${type}`);
+  }
+  return strategy;
 };

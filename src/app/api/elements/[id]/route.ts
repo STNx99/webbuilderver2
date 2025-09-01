@@ -5,7 +5,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     // Authentication check
@@ -16,7 +16,7 @@ export async function PUT(
           error: "Unauthorized",
           message: "You must be logged in to update elements",
         }),
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -32,80 +32,91 @@ export async function PUT(
           error: "Invalid element ID",
           message: "Element ID is required and must be a valid string",
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Parse and validate request body
-    let body;
+    // Parse request body and normalize payload.
+    // Accept shapes:
+    //  - { element: { ... }, settings: ... }
+    //  - { data: { ... } }
+    //  - raw element object
+    let payload;
     try {
-      body = await req.json();
-    } catch (parseError) {
+      payload = await req.json();
+    } catch {
       return new Response(
         JSON.stringify({
           error: "Invalid JSON",
           message: "Request body must be valid JSON",
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    if (!body || typeof body !== "object" || !body.data) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid request body",
-          message:
-            "Request body must contain a 'data' field with element information",
-        }),
-        { status: 400 }
-      );
-    }
+    // Normalize element payload (element field takes precedence, then data, then raw)
+    const maybeElement =
+      payload && typeof payload === "object"
+        ? "element" in payload
+          ? (payload as any).element
+          : "data" in payload
+            ? (payload as any).data
+            : payload
+        : undefined;
 
-    const element: Partial<EditorElement> = body.data;
+    const element: Partial<EditorElement> =
+      (maybeElement as Partial<EditorElement>) ??
+      ({} as Partial<EditorElement>);
 
-    // Validate element data
     if (!element || typeof element !== "object") {
       return new Response(
         JSON.stringify({
           error: "Invalid element data",
-          message: "Element data must be a valid object",
+          message: "Request body must be an object",
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Ensure element ID matches the URL parameter
+    // Ensure element ID matches the URL parameter if provided; otherwise set it
     if (element.id && element.id !== elementId) {
       return new Response(
         JSON.stringify({
           error: "Element ID mismatch",
           message: "Element ID in body does not match URL parameter",
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
-
-    // Set the element ID to ensure consistency
     element.id = elementId;
 
-    // Validate required fields
-    if (!element.type || typeof element.type !== "string") {
+    // Minimal type check: if provided, it must be a string
+    if (element.type !== undefined && typeof element.type !== "string") {
       return new Response(
         JSON.stringify({
           error: "Invalid element type",
-          message: "Element type is required and must be a string",
+          message: "If provided, element.type must be a string",
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Get element settings
-    const settings = elementHelper.getElementSettings(element as EditorElement);
+    // Determine settings: prefer explicit settings in the request payload if present,
+    // otherwise compute from the element using elementHelper.
+    const payloadSettings =
+      payload && typeof payload === "object" && "settings" in payload
+        ? (payload as any).settings
+        : undefined;
 
-    // Update the element
+    const settings =
+      payloadSettings !== undefined
+        ? payloadSettings
+        : elementHelper.getElementSettings(element as EditorElement);
+
+    // Update the element (pass undefined when settings intentionally absent)
     const updatedElement = await ElementDAL.updateElement(
       element as EditorElement,
-      settings
+      settings ?? undefined,
     );
 
     if (!updatedElement) {
@@ -115,7 +126,7 @@ export async function PUT(
           message:
             "Element could not be updated. It may not exist or you may not have permission to modify it.",
         }),
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -134,7 +145,7 @@ export async function PUT(
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("Error in PUT /api/elements/[id]:", error);
@@ -146,7 +157,7 @@ export async function PUT(
           error: "Invalid JSON",
           message: "Request body contains invalid JSON",
         }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -159,7 +170,7 @@ export async function PUT(
             error: "Element not found",
             message: "The specified element does not exist",
           }),
-          { status: 404 }
+          { status: 404 },
         );
       }
       if (error.code === "P2002") {
@@ -169,7 +180,7 @@ export async function PUT(
             error: "Constraint violation",
             message: "Element update violates database constraints",
           }),
-          { status: 409 }
+          { status: 409 },
         );
       }
     }
@@ -179,14 +190,14 @@ export async function PUT(
         error: "Internal server error",
         message: "An unexpected error occurred while updating the element",
       }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId } = await auth();
@@ -204,21 +215,23 @@ export async function DELETE(
     }
 
     const response = await ElementDAL.deleteElement(elementId);
+    if (response === false) {
+      return new Response(JSON.stringify({ error: "Element not found" }), {
+        status: 404,
+      });
+    }
     if (!response) {
       return new Response(
         JSON.stringify({ error: "Failed to delete element" }),
-        { status: 500 }
+        { status: 500 },
       );
     }
-    return new Response(
-      JSON.stringify({ message: `Element with ID ${elementId} deleted` }),
-      { status: 204 }
-    );
+    return new Response(null, { status: 204 });
   } catch (error) {
     console.error("Error in DELETE request:", error);
     return new Response(
       JSON.stringify({ error: "Failed to process request" }),
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
