@@ -1,58 +1,56 @@
-import GetUrl from "@/utils/geturl";
+import GetUrl, { GetNextJSURL } from "@/utils/geturl";
+import { IProjectService } from "@/interfaces/service.interface";
 import getToken from "./token";
-import { IProjectService } from "@/interfaces/services";
-import { Project } from "@/interfaces/project";
+import { Page } from "@/generated/prisma";
+import { Project } from "@/interfaces/project.interface";
+import { fetchPublic, fetchWithAuth } from "./api";
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    const response = await fetch(GetUrl("/projects/public"), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch projects");
-    }
-    return response.json();
+    return fetchPublic<Project[]>(GetUrl("/projects/public"));
   },
 
   getUserProjects: async (): Promise<Project[]> => {
-    const token = await getToken();
-
-    const response = await fetch(GetUrl("/projects/user"), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch user projects");
-    }
-    return response.json();
+    return fetchWithAuth<Project[]>(GetUrl("/projects/user"));
   },
 
   getProjectById: async (id: string): Promise<Project> => {
-    const token = await getToken();
-
-    const response = await fetch(GetUrl(`/projects/${id}`), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch project by ID");
-    }
-    return response.json();
+    return fetchWithAuth<Project>(GetUrl(`/projects/${id}`));
   },
 
-  getFonts : async (): Promise<string[]> => {
+  deleteProject: async (id: string): Promise<boolean> => {
+    const token = await getToken();
+    const response = await fetch(GetNextJSURL(`/api/projects/${id}`), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (response.status === 204) return true;
+    return false;
+  },
+
+  getProjectPages: async (id: string): Promise<Page[]> => {
+    return fetchWithAuth<Page[]>(GetUrl(`/projects/${id}/pages`));
+  },
+
+  deleteProjectPage: async (
+    projectId: string,
+    pageId: string,
+  ): Promise<boolean> => {
+    const token = await getToken();
+    const response = await fetch(`/api/projects/${projectId}/pages/${pageId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    return response.status === 204;
+  },
+
+  getFonts: async (): Promise<string[]> => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_FONTS_API_KEY;
     const response = await fetch(
       `https://www.googleapis.com/webfonts/v1/webfonts?key=${apiKey}`,
@@ -63,7 +61,6 @@ export const projectService: IProjectService = {
         },
       },
     );
-
     if (!response.ok) {
       throw new Error("Failed to fetch fonts");
     }

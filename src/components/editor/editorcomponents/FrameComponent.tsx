@@ -9,7 +9,14 @@ const FrameComponent = ({ element }: EditorComponentProps) => {
   const { getCommonProps } = useElementHandler();
 
   return (
-    <div {...getCommonProps(frameElement)}>
+    <div
+      {...getCommonProps(frameElement)}
+      style={{
+        ...(frameElement.styles || {}),
+        width: "100%",
+        height: "100%",
+      }}
+    >
       {frameElement.elements?.map((child) =>
         elementHelper.renderChildElement(child, {}),
       )}

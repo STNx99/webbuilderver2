@@ -1,9 +1,10 @@
-import { CONTAINER_ELEMENT_TYPES, EDITABLE_ELEMENT_TYPES } from "@/constants/elements";
+import {
+  CONTAINER_ELEMENT_TYPES,
+  EDITABLE_ELEMENT_TYPES,
+} from "@/constants/elements";
 import {
   BaseElement,
   ButtonElement,
-  ChartElement,
-  DataTableElement,
   FormElement,
   FrameElement,
   InputElement,
@@ -28,8 +29,6 @@ type EditorElement =
   | ListElement
   | InputElement
   | SelectElement
-  | ChartElement
-  | DataTableElement
   | FormElement
   | SectionElement
   | TextElement
@@ -41,8 +40,6 @@ type ElementType =
   | "List"
   | "Input"
   | "Select"
-  | "Chart"
-  | "DataTable"
   | "Form"
   | "Section"
   | "Text"
@@ -50,10 +47,29 @@ type ElementType =
   | "Base"
   | "Image"
   | "Link";
-    
+
+type ExcludeType =
+  | "isSelected"
+  | "isHovered"
+  | "isDraggedOver"
+  | "id"
+  | "pageId"
+  | "projectId"
+  | "parentId";
+
+type ContainerElementTemplate = Partial<Omit<EditorElement, ExcludeType>> & {
+  type: ContainerElementType;
+  elements?: ElementTemplate[];
+};
+
+type LeafElementTemplate = Partial<Omit<EditorElement, ExcludeType>> & {
+  type: Exclude<ElementType, ContainerElementType>;
+};
+
+type ElementTemplate = ContainerElementTemplate | LeafElementTemplate;
 type ContainerElementType = (typeof CONTAINER_ELEMENT_TYPES)[number];
 
-type EditableElementType =(typeof EDITABLE_ELEMENT_TYPES)[number]
+type EditableElementType = (typeof EDITABLE_ELEMENT_TYPES)[number];
 
 export type {
   EditorElement,
@@ -61,4 +77,7 @@ export type {
   ContainerElement,
   ElementType,
   ContainerElementType,
+  ContainerElementTemplate,
+  LeafElementTemplate,
+  ElementTemplate,
 };

@@ -66,7 +66,6 @@ export const mockElements: EditorElement[] = [
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        buttonType: "primary",
         styles: {
           backgroundColor: "#3b82f6",
           color: "#ffffff",
@@ -390,7 +389,6 @@ export const mockElements: EditorElement[] = [
         isSelected: false,
         isHovered: false,
         isDraggedOver: false,
-        buttonType: "secondary",
         styles: {
           backgroundColor: "#ffffff",
           color: "#3b82f6",

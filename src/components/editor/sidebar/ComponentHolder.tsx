@@ -1,4 +1,5 @@
 import { ElementType } from "@/types/global.type";
+import { Component } from "lucide-react";
 import React from "react";
 
 type HolderProps = {
@@ -9,7 +10,7 @@ type HolderProps = {
 const ComponentHolder = ({ icon, type }: HolderProps) => {
   const onDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    elementType: string
+    elementType: string,
   ) => {
     e.dataTransfer.setData("elementType", elementType);
   };
@@ -17,12 +18,33 @@ const ComponentHolder = ({ icon, type }: HolderProps) => {
     <div
       draggable
       onDragStart={(e) => onDragStart(e, type)}
-      className="flex flex-row justify-between items-center w-full px-2 hover:bg-secondary rounded-md cursor-grab active:cursor-grabbing transition-colors"
+      className="flex flex-row justify-between items-center w-full px-2 h-full text-xs rounded-md cursor-grab active:cursor-grabbing transition-colors"
     >
       <div>{type}</div>
       {icon}
     </div>
   );
 };
+
+type CustomComponentHolderProps = {
+  name: string;
+};
+
+export function CustomComponentHolder({ name }: CustomComponentHolderProps) {
+  const onDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("customComponentName", name);
+  };
+
+  return (
+    <div
+      draggable
+      onDragStart={(e) => onDragStart(e)}
+      className="flex flex-row justify-between items-center w-full px-2 h-full text-xs rounded-md cursor-grab active:cursor-grabbing transition-colors"
+    >
+      <div>{name}</div>
+      <Component />
+    </div>
+  );
+}
 
 export default ComponentHolder;

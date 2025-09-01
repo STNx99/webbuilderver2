@@ -6,6 +6,7 @@ export interface Project {
   published?: boolean;
   styles: React.CSSProperties;
   createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
   views?: number;
-  lastModifiedAt?: Date;
 }

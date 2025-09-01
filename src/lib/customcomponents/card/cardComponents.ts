@@ -1,19 +1,11 @@
-import { CustomComponent } from "../styleconstants";
+import { CustomComponent } from "../customComponents";
 import { v4 as uuidv4 } from "uuid";
 
 export const cardComponent: CustomComponent = {
   component: {
     type: "Frame",
     name: "Card",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    href: "",
-    src: "",
-    parentId: "",
-    projectId: "",
     styles: {
       width: "360px",
       display: "flex",
@@ -31,16 +23,9 @@ export const cardComponent: CustomComponent = {
       "w-[360px] bg-white flex flex-col rounded-xl p-6 shadow-lg border border-gray-200 gap-4 hover:shadow-xl transition-shadow",
     elements: [
       {
-        type: "Heading",
+        type: "Text",
         name: "Card Title",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
+        content: "Card Title",
         styles: {
           fontSize: "20px",
           fontWeight: "700",
@@ -48,19 +33,12 @@ export const cardComponent: CustomComponent = {
           marginBottom: "4px",
         },
         tailwindStyles: "text-xl font-bold text-gray-900 mb-1",
-        content: "Card Title",
       },
       {
         type: "Text",
         name: "Card Description",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
+        content:
+          "This is a description for the card. You can add details about features, benefits, or any other relevant information here.",
         styles: {
           fontSize: "16px",
           color: "#6b7280",
@@ -68,35 +46,24 @@ export const cardComponent: CustomComponent = {
           marginBottom: "16px",
         },
         tailwindStyles: "text-base text-gray-500 leading-relaxed mb-4",
-        content:
-          "This is a description for the card. You can add details about features, benefits, or any other relevant information here.",
       },
       {
         type: "Button",
         name: "Card Button",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
-        buttonType: "primary",
-        styles: {
-          padding: "10px 20px",
-          backgroundColor: "#4f46e5",
-          color: "#ffffff",
-          borderRadius: "6px",
-          border: "none",
-          cursor: "pointer",
-          fontWeight: "500",
-          fontSize: "15px",
-          transition: "background-color 0.2s ease",
-          alignSelf: "flex-start",
-        },
-        tailwindStyles: "bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-md font-medium text-sm transition-colors self-start",
         content: "Learn More",
+        styles: {
+          padding: "12px 24px",
+          backgroundColor: "#2563eb",
+          color: "#fff",
+          border: "none",
+          borderRadius: "8px",
+          fontWeight: "600",
+          fontSize: "16px",
+          cursor: "pointer",
+          transition: "background 0.2s",
+        },
+        tailwindStyles:
+          "bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors text-base",
       },
     ],
   },

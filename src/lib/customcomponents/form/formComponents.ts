@@ -1,4 +1,4 @@
-import { CustomComponent } from "../styleconstants";
+import { CustomComponent } from "../customComponents";
 import { v4 as uuidv4 } from "uuid";
 
 // Contact Form
@@ -6,17 +6,11 @@ export const formComponent1: CustomComponent = {
   component: {
     type: "Form",
     name: "Form1",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       width: "100%",
       margin: "0 auto",
-      padding: "20px", 
+      padding: "20px",
       borderRadius: "12px",
       boxShadow: "0 4px 14px rgba(0, 0, 0, 0.07)",
       backgroundColor: "#ffffff",
@@ -24,18 +18,13 @@ export const formComponent1: CustomComponent = {
       flexDirection: "column",
       overflow: "hidden",
     },
-    tailwindStyles: "w-full mx-auto rounded-xl shadow-lg bg-white flex flex-col overflow-hidden p-4 md:p-6",
+    tailwindStyles:
+      "w-full mx-auto rounded-xl shadow-lg bg-white flex flex-col overflow-hidden p-4 md:p-6",
     elements: [
       {
         type: "Frame",
         name: "FormHeader",
-        id: uuidv4(),
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           width: "100%",
           marginBottom: "16px",
@@ -45,42 +34,27 @@ export const formComponent1: CustomComponent = {
           {
             type: "Text",
             content: "Thông tin liên hệ",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
-              fontSize: "24px", 
+              fontSize: "24px",
               fontWeight: "700",
               color: "#111827",
-              padding: "12px 0", 
+              padding: "12px 0",
               width: "100%",
               textAlign: "center",
             },
-            tailwindStyles: "text-xl md:text-2xl font-bold text-gray-900 py-2 md:py-3 text-center w-full",
+            tailwindStyles:
+              "text-xl md:text-2xl font-bold text-gray-900 py-2 md:py-3 text-center w-full",
             href: "",
             src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         name: "ContentContainer",
-        id: uuidv4(),
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           flexDirection: "row",
@@ -88,40 +62,28 @@ export const formComponent1: CustomComponent = {
           padding: "0px 24px 24px",
           gap: "24px",
         },
-        tailwindStyles: "w-full flex flex-col md:flex-row px-2 md:px-5 gap-5 md:gap-6",
+        tailwindStyles:
+          "w-full flex flex-col md:flex-row px-2 md:px-5 gap-5 md:gap-6",
         elements: [
           {
             type: "Image",
             name: "ContactImage",
-            id: uuidv4(),
             content: "",
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               width: "40%",
               objectFit: "cover",
               borderRadius: "8px",
               height: "100%",
             },
-            tailwindStyles: "w-full md:w-2/5 h-56 md:h-auto object-cover rounded-lg mb-5 md:mb-0",
+            tailwindStyles:
+              "w-full md:w-2/5 h-56 md:h-auto object-cover rounded-lg mb-5 md:mb-0",
             href: "",
             src: "https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Frame",
             name: "FormContainer",
-            id: uuidv4(),
             content: "",
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -133,13 +95,8 @@ export const formComponent1: CustomComponent = {
               {
                 type: "Frame",
                 name: "NameInputGroup",
-                id: uuidv4(),
                 content: "",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -151,12 +108,7 @@ export const formComponent1: CustomComponent = {
                   {
                     type: "Text",
                     content: "Họ và tên",
-                    id: uuidv4(),
-                    isSelected: false,
-                    isHovered: false,
-                    isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       fontWeight: "500",
@@ -165,18 +117,11 @@ export const formComponent1: CustomComponent = {
                     tailwindStyles: "text-sm font-medium text-gray-700",
                     href: "",
                     src: "",
-                    parentId: "",
-                    projectId: "",
                   },
                   {
                     type: "Input",
                     content: "",
-                    id: uuidv4(),
-                    isSelected: false,
-                    isHovered: false,
-                    isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       padding: "10px 14px",
                       border: "1px solid #e5e7eb",
@@ -184,12 +129,11 @@ export const formComponent1: CustomComponent = {
                       width: "100%",
                       fontSize: "14px",
                     },
-                    tailwindStyles: "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                    tailwindStyles:
+                      "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
                     href: "",
                     src: "",
-                    parentId: "",
-                    projectId: "",
-                    inputSettings: {
+                    settings: {
                       type: "text",
                       placeholder: "",
                       required: true,
@@ -199,19 +143,12 @@ export const formComponent1: CustomComponent = {
                 ],
                 href: "",
                 src: "",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Frame",
                 name: "ContactInfoGroup",
-                id: uuidv4(),
                 content: "",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "row",
@@ -223,30 +160,21 @@ export const formComponent1: CustomComponent = {
                   {
                     type: "Frame",
                     name: "EmailInputGroup",
-                    id: uuidv4(),
                     content: "",
-                    isSelected: false,
-                    isHovered: false,
-                    isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       display: "flex",
                       flexDirection: "column",
                       gap: "8px",
                       width: "50%",
                     },
-                    tailwindStyles: "flex flex-col gap-2 w-full sm:w-1/2 mb-3 sm:mb-0 sm:mr-2",
+                    tailwindStyles:
+                      "flex flex-col gap-2 w-full sm:w-1/2 mb-3 sm:mb-0 sm:mr-2",
                     elements: [
                       {
                         type: "Text",
                         content: "Email",
-                        id: uuidv4(),
-                        isSelected: false,
-                        isHovered: false,
-                        isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           fontSize: "14px",
                           fontWeight: "500",
@@ -255,18 +183,11 @@ export const formComponent1: CustomComponent = {
                         tailwindStyles: "text-sm font-medium text-gray-700",
                         href: "",
                         src: "",
-                        parentId: "",
-                        projectId: "",
                       },
                       {
                         type: "Input",
                         content: "",
-                        id: uuidv4(),
-                        isSelected: false,
-                        isHovered: false,
-                        isDraggedOver: false,
-                        x: 0,
-                        y: 0,
+
                         styles: {
                           padding: "10px 14px",
                           border: "1px solid #e5e7eb",
@@ -274,12 +195,11 @@ export const formComponent1: CustomComponent = {
                           width: "100%",
                           fontSize: "14px",
                         },
-                        tailwindStyles: "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                        tailwindStyles:
+                          "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
                         href: "",
                         src: "",
-                        parentId: "",
-                        projectId: "",
-                        inputSettings: {
+                        settings: {
                           type: "email",
                           placeholder: "",
                           required: true,
@@ -289,36 +209,23 @@ export const formComponent1: CustomComponent = {
                     ],
                     href: "",
                     src: "",
-                    parentId: "",
-                    projectId: "",
                   },
                   {
                     type: "Frame",
                     name: "PhoneInputGroup",
-                    id: uuidv4(),
                     content: "",
-                    isSelected: false,
-                    isHovered: false,
-                    isDraggedOver: false,
-                    x: 0,
-                    y: 0,
                     styles: {
                       display: "flex",
                       flexDirection: "column",
                       gap: "8px",
                       width: "50%",
                     },
-                    tailwindStyles: "flex flex-col gap-2 w-full sm:w-1/2 sm:ml-2",
+                    tailwindStyles:
+                      "flex flex-col gap-2 w-full sm:w-1/2 sm:ml-2",
                     elements: [
                       {
                         type: "Text",
                         content: "Số điện thoại",
-                        id: uuidv4(),
-                        isSelected: false,
-                        isHovered: false,
-                        isDraggedOver: false,
-                        x: 0,
-                        y: 0,
                         styles: {
                           fontSize: "14px",
                           fontWeight: "500",
@@ -327,18 +234,10 @@ export const formComponent1: CustomComponent = {
                         tailwindStyles: "text-sm font-medium text-gray-700",
                         href: "",
                         src: "",
-                        parentId: "",
-                        projectId: "",
                       },
                       {
                         type: "Input",
                         content: "",
-                        id: uuidv4(),
-                        isSelected: false,
-                        isHovered: false,
-                        isDraggedOver: false,
-                        x: 0,
-                        y: 0,
                         styles: {
                           padding: "10px 14px",
                           border: "1px solid #e5e7eb",
@@ -346,12 +245,11 @@ export const formComponent1: CustomComponent = {
                           width: "100%",
                           fontSize: "14px",
                         },
-                        tailwindStyles: "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                        tailwindStyles:
+                          "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
                         href: "",
                         src: "",
-                        parentId: "",
-                        projectId: "",
-                        inputSettings: {
+                        settings: {
                           type: "tel",
                           placeholder: "",
                           required: false,
@@ -361,25 +259,17 @@ export const formComponent1: CustomComponent = {
                     ],
                     href: "",
                     src: "",
-                    parentId: "",
-                    projectId: "",
                   },
                 ],
                 href: "",
                 src: "",
-                parentId: "",
-                projectId: "",
               },
               {
                 type: "Frame",
                 name: "MessageInputGroup",
-                id: uuidv4(),
+
                 content: "",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
+
                 styles: {
                   display: "flex",
                   flexDirection: "column",
@@ -391,12 +281,7 @@ export const formComponent1: CustomComponent = {
                   {
                     type: "Text",
                     content: "Nội dung liên hệ",
-                    id: uuidv4(),
-                    isSelected: false,
-                    isHovered: false,
-                    isDraggedOver: false,
-                    x: 0,
-                    y: 0,
+
                     styles: {
                       fontSize: "14px",
                       fontWeight: "500",
@@ -405,18 +290,10 @@ export const formComponent1: CustomComponent = {
                     tailwindStyles: "text-sm font-medium text-gray-700",
                     href: "",
                     src: "",
-                    parentId: "",
-                    projectId: "",
                   },
                   {
                     type: "Frame",
                     content: "",
-                    id: uuidv4(),
-                    isSelected: false,
-                    isHovered: false,
-                    isDraggedOver: false,
-                    x: 0,
-                    y: 0,
                     styles: {
                       padding: "10px 14px",
                       border: "1px solid #e5e7eb",
@@ -425,21 +302,14 @@ export const formComponent1: CustomComponent = {
                       fontSize: "14px",
                       minHeight: "140px",
                     },
-                    tailwindStyles: "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 min-h-[140px]",
+                    tailwindStyles:
+                      "w-full px-3.5 py-2.5 border border-gray-300 rounded-md text-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 min-h-[140px]",
                     href: "",
                     src: "",
-                    parentId: "",
-                    projectId: "",
                     elements: [
                       {
                         type: "Input",
                         content: "",
-                        id: uuidv4(),
-                        isSelected: false,
-                        isHovered: false,
-                        isDraggedOver: false,
-                        x: 0,
-                        y: 0,
                         styles: {
                           width: "100%",
                           height: "100%",
@@ -447,12 +317,11 @@ export const formComponent1: CustomComponent = {
                           outline: "none",
                           resize: "none",
                         },
-                        tailwindStyles: "w-full h-full border-none outline-none resize-none bg-transparent",
+                        tailwindStyles:
+                          "w-full h-full border-none outline-none resize-none bg-transparent",
                         href: "",
                         src: "",
-                        parentId: "",
-                        projectId: "",
-                        inputSettings: {
+                        settings: {
                           type: "textarea",
                           placeholder: "",
                           required: true,
@@ -464,31 +333,18 @@ export const formComponent1: CustomComponent = {
                 ],
                 href: "",
                 src: "",
-                parentId: "",
-                projectId: "",
               },
             ],
             href: "",
             src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Button",
         content: "Submit",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
-        buttonType: "submit",
         styles: {
           backgroundColor: "#3b82f6",
           color: "#ffffff",
@@ -500,21 +356,19 @@ export const formComponent1: CustomComponent = {
           width: "100%",
           borderRadius: "6px",
         },
-        tailwindStyles: "bg-blue-500 hover:bg-blue-600 text-white py-3 px-5 font-medium text-sm cursor-pointer border-none w-full rounded-md transition-colors mt-4 md:mt-6",
+        tailwindStyles:
+          "bg-blue-500 hover:bg-blue-600 text-white py-3 px-5 font-medium text-sm cursor-pointer border-none w-full rounded-md transition-colors mt-4 md:mt-6",
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
-    formSettings: {
+
+    settings: {
       method: "post",
-      autocomplete: "on",
-      noValidate: false,
+      autoComplete: "on", // Changed from autocomplete to autoComplete to match FormSettings interface
+      validateOnSubmit: false, // Changed from noValidate to validateOnSubmit
     },
   },
 };
@@ -524,13 +378,11 @@ export const formComponent2: CustomComponent = {
   component: {
     type: "Form",
     name: "Newsletter Form",
-    id: uuidv4(),
-    content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    x: 0,
-    y: 0,
+
+    settings: {
+      method: "post",
+      autoComplete: "on",
+    },
     styles: {
       width: "100%",
       margin: "0 auto",
@@ -542,17 +394,13 @@ export const formComponent2: CustomComponent = {
       flexDirection: "column",
       alignItems: "center",
     },
-    tailwindStyles: "w-full mx-auto rounded-xl shadow-lg bg-white flex flex-col items-center p-6 md:p-8",
+    tailwindStyles:
+      "w-full mx-auto rounded-xl shadow-lg bg-white flex flex-col items-center p-6 md:p-8",
     elements: [
       {
         type: "Text",
         content: "Subscribe to our Newsletter",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "24px",
           fontWeight: "700",
@@ -560,21 +408,15 @@ export const formComponent2: CustomComponent = {
           marginBottom: "8px",
           textAlign: "center",
         },
-        tailwindStyles: "text-xl md:text-2xl font-bold text-gray-900 mb-2 text-center",
+        tailwindStyles:
+          "text-xl md:text-2xl font-bold text-gray-900 mb-2 text-center",
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Text",
         content: "Get the latest updates and news delivered to your inbox.",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           fontSize: "16px",
           color: "#6b7280",
@@ -584,19 +426,13 @@ export const formComponent2: CustomComponent = {
         tailwindStyles: "text-base text-gray-500 mb-6 text-center",
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         name: "InputGroup",
-        id: uuidv4(),
+
         content: "",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
+
         styles: {
           display: "flex",
           flexDirection: "row",
@@ -609,12 +445,7 @@ export const formComponent2: CustomComponent = {
           {
             type: "Input",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
+
             styles: {
               padding: "12px 16px",
               border: "1px solid #e5e7eb",
@@ -622,12 +453,11 @@ export const formComponent2: CustomComponent = {
               fontSize: "14px",
               flex: "1",
             },
-            tailwindStyles: "flex-1 px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+            tailwindStyles:
+              "flex-1 px-4 py-3 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
             href: "",
             src: "",
-            parentId: "",
-            projectId: "",
-            inputSettings: {
+            settings: {
               type: "email",
               placeholder: "Enter your email",
               required: true,
@@ -637,13 +467,7 @@ export const formComponent2: CustomComponent = {
           {
             type: "Button",
             content: "Subscribe",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
-            buttonType: "submit",
+
             styles: {
               backgroundColor: "#3b82f6",
               color: "#ffffff",
@@ -654,27 +478,17 @@ export const formComponent2: CustomComponent = {
               border: "none",
               borderRadius: "6px",
             },
-            tailwindStyles: "bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 font-medium text-sm cursor-pointer border-none rounded-md transition-colors",
+            tailwindStyles:
+              "bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 font-medium text-sm cursor-pointer border-none rounded-md transition-colors",
             href: "",
             src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
         href: "",
         src: "",
-        parentId: "",
-        projectId: "",
       },
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
-    formSettings: {
-      method: "post",
-      autocomplete: "on",
-      noValidate: false,
-    },
   },
 };

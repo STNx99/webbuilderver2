@@ -1,17 +1,10 @@
-import { CustomComponent } from "../styleconstants";
-import { v4 as uuidv4 } from "uuid";
+import { CustomComponent } from "../customComponents";
 
 export const sidebarLeftComponent: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarLeft",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       height: "100%",
       width: "260px",
@@ -26,16 +19,9 @@ export const sidebarLeftComponent: CustomComponent = {
     tailwindStyles:
       "flex flex-col justify-between h-full bg-white shadow-xs border-r border-gray-100 w-full md:w-64 sm:w-20 p-4 sm:p-2 md:p-6 transition-all duration-300",
     elements: [
-      // Top section with logo and navigation
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -44,16 +30,9 @@ export const sidebarLeftComponent: CustomComponent = {
         },
         tailwindStyles: "flex flex-col w-full gap-6",
         elements: [
-          // Logo section
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               display: "flex",
               alignItems: "center",
@@ -67,12 +46,6 @@ export const sidebarLeftComponent: CustomComponent = {
               {
                 type: "Text",
                 content: "DASHBOARD",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#111827",
                   fontSize: "18px",
@@ -84,17 +57,9 @@ export const sidebarLeftComponent: CustomComponent = {
               },
             ],
           },
-
-          // Navigation section
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -103,16 +68,9 @@ export const sidebarLeftComponent: CustomComponent = {
             },
             tailwindStyles: "flex flex-col w-full gap-1",
             elements: [
-              // Navigation header
               {
                 type: "Text",
                 content: "MENU",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#6B7280",
                   fontSize: "12px",
@@ -124,17 +82,9 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "text-gray-500 text-xs  mb-2 tracking-wide uppercase sm:hidden",
               },
-
-              // Home link - active state
               {
                 type: "Link",
                 content: "Home",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#4F46E5",
                   margin: "2px 0",
@@ -151,18 +101,11 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "w-full text-indigo-600 bg-indigo-50 my-0.5 py-2.5 px-3 rounded-md  flex items-center gap-3 hover:bg-indigo-100",
                 href: "/",
+                src: "",
               },
-
-              // Analytics link
               {
                 type: "Link",
                 content: "Analytics",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#4B5563",
                   margin: "2px 0",
@@ -178,18 +121,11 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "w-full text-gray-600 my-0.5 py-2.5 px-3 rounded-md  flex items-center gap-3 hover:bg-gray-50",
                 href: "/analytics",
+                src: "",
               },
-
-              // Reports link
               {
                 type: "Link",
                 content: "Reports",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#4B5563",
                   margin: "2px 0",
@@ -205,18 +141,11 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "w-full text-gray-600 my-0.5 py-2.5 px-3 rounded-md  flex items-center gap-3 hover:bg-gray-50",
                 href: "/reports",
+                src: "",
               },
-
-              // Settings link
               {
                 type: "Link",
                 content: "Settings",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#4B5563",
                   margin: "2px 0",
@@ -232,20 +161,13 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "w-full text-gray-600 my-0.5 py-2.5 px-3 rounded-md  flex items-center gap-3 hover:bg-gray-50",
                 href: "/settings",
+                src: "",
               },
             ],
           },
-
-          // Secondary Navigation
           {
             type: "Frame",
             content: "",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               display: "flex",
               flexDirection: "column",
@@ -255,16 +177,9 @@ export const sidebarLeftComponent: CustomComponent = {
             },
             tailwindStyles: "flex flex-col w-full gap-1 mt-6",
             elements: [
-              // Secondary header
               {
                 type: "Text",
                 content: "WORKSPACE",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#6B7280",
                   fontSize: "12px",
@@ -276,17 +191,9 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "text-gray-500 text-xs  mb-2 tracking-wide uppercase sm:hidden",
               },
-
-              // Projects link
               {
                 type: "Link",
                 content: "Projects",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#4B5563",
                   margin: "2px 0",
@@ -302,18 +209,11 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "w-full text-gray-600 my-0.5 py-2.5 px-3 rounded-md  flex items-center gap-3 hover:bg-gray-50",
                 href: "/projects",
+                src: "",
               },
-
-              // Team link
               {
                 type: "Link",
                 content: "Team",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
                 styles: {
                   color: "#4B5563",
                   margin: "2px 0",
@@ -329,18 +229,14 @@ export const sidebarLeftComponent: CustomComponent = {
                 tailwindStyles:
                   "w-full text-gray-600 my-0.5 py-2.5 px-3 rounded-md  flex items-center gap-3 hover:bg-gray-50",
                 href: "/team",
+                src: "",
               },
               {
                 type: "Button",
                 name: "Dropdown Menu",
-                buttonType: "multi",
                 content: "More Options",
-                id: uuidv4(),
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
-                x: 0,
-                y: 0,
+                href: "",
+                src: "",
                 tailwindStyles:
                   "w-full text-gray-600 my-0.5 py-2.5 px-3 rounded-md flex items-center justify-between gap-3 hover:bg-gray-50",
                 styles: {
@@ -359,127 +255,14 @@ export const sidebarLeftComponent: CustomComponent = {
                   border: "none",
                   backgroundColor: "transparent",
                 },
-                element: {
-                  type: "Frame",
-                  name: "Dropdown Content",
-                  id: uuidv4(),
-                  content: "",
-                  styles: {
-                    display: "none",
-                    flexDirection: "column",
-                    width: "100%",
-                    backgroundColor: "#ffffff",
-                    border: "1px solid #f1f1f1",
-                    borderRadius: "6px",
-                    boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                    padding: "4px",
-                    gap: "2px",
-                    overflow: "hidden",
-                    marginTop: "8px",
-                  },
-                  elements: [
-                    {
-                      type: "Button",
-                      id: uuidv4(),
-                      content: "Profile Settings",
-                      isSelected: false,
-                      isHovered: false,
-                      isDraggedOver: false,
-                      x: 0,
-                      y: 0,
-                      buttonType: "primary",
-                      styles: {
-                        padding: "8px 12px",
-                        width: "100%",
-                        textAlign: "left",
-                        backgroundColor: "transparent",
-                        color: "#374151",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        transition: "background-color 0.2s",
-                      },
-                      tailwindStyles:
-                        "text-gray-700 hover:bg-gray-100 rounded w-full text-left px-3 py-2 text-sm",
-                    },
-                    {
-                      type: "Button",
-                      id: uuidv4(),
-                      content: "Notifications",
-                      isSelected: false,
-                      isHovered: false,
-                      isDraggedOver: false,
-                      x: 0,
-                      y: 0,
-                      buttonType: "primary",
-                      styles: {
-                        padding: "8px 12px",
-                        width: "100%",
-                        textAlign: "left",
-                        backgroundColor: "transparent",
-                        color: "#374151",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        transition: "background-color 0.2s",
-                      },
-                      tailwindStyles:
-                        "text-gray-700 hover:bg-gray-100 rounded w-full text-left px-3 py-2 text-sm",
-                    },
-                    {
-                      type: "Button",
-                      id: uuidv4(),
-                      content: "Advanced Options",
-                      isSelected: false,
-                      isHovered: false,
-                      isDraggedOver: false,
-                      x: 0,
-                      y: 0,
-                      buttonType: "primary",
-                      styles: {
-                        padding: "8px 12px",
-                        width: "100%",
-                        textAlign: "left",
-                        backgroundColor: "transparent",
-                        color: "#000000",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        transition: "background-color 0.2s",
-                      },
-                      tailwindStyles:
-                        "text-white hover:bg-gray-700 rounded w-full text-left px-3 py-2 text-sm",
-                    },
-                  ],
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                },
               },
             ],
-            href: "",
-            src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
-
-      // Bottom section for user profile
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           alignItems: "center",
@@ -487,19 +270,11 @@ export const sidebarLeftComponent: CustomComponent = {
           marginTop: "auto",
           borderRadius: "8px",
         },
-        tailwindStyles:
-          "flex items-center p-3 mt-auto rounded-lg gap-3",
+        tailwindStyles: "flex items-center p-3 mt-auto rounded-lg gap-3",
         elements: [
-          // User text
           {
             type: "Text",
             content: "John Doe",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "white",
               fontSize: "14px",
@@ -512,8 +287,6 @@ export const sidebarLeftComponent: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -521,13 +294,7 @@ export const sidebarLeftComponent2: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarLeft2",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       height: "100%",
       width: "280px",
@@ -544,12 +311,8 @@ export const sidebarLeftComponent2: CustomComponent = {
       {
         type: "Text",
         content: "ADMIN PANEL",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
         styles: {
           color: "white",
           fontSize: "18px",
@@ -559,20 +322,10 @@ export const sidebarLeftComponent2: CustomComponent = {
         },
         tailwindStyles:
           "text-white text-lg font-bold mb-8 tracking-wide text-center md:text-left sm:mb-4 sm:text-base",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -584,12 +337,6 @@ export const sidebarLeftComponent2: CustomComponent = {
           {
             type: "Link",
             content: "Dashboard",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "white",
               margin: "12px 0",
@@ -603,18 +350,10 @@ export const sidebarLeftComponent2: CustomComponent = {
               "w-full text-white my-2 py-2 px-4 bg-gray-800 rounded flex items-center justify-start md:text-left sm:text-sm sm:px-2 sm:py-1",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Users",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#d1d1d1",
               margin: "12px 0",
@@ -627,18 +366,10 @@ export const sidebarLeftComponent2: CustomComponent = {
               "w-full text-gray-300 my-2 py-2 px-4 hover:bg-gray-800 rounded flex items-center justify-start md:text-left sm:text-sm sm:px-2 sm:py-1",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Settings",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#d1d1d1",
               margin: "12px 0",
@@ -651,20 +382,13 @@ export const sidebarLeftComponent2: CustomComponent = {
               "w-full text-gray-300 my-2 py-2 px-4 hover:bg-gray-800 rounded flex items-center justify-start md:text-left sm:text-sm sm:px-2 sm:py-1",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Button",
             name: "Dropdown Menu",
-            buttonType: "multi",
             content: "Advanced Options",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
+            href: "",
+            src: "",
             tailwindStyles:
               "w-full text-gray-300 my-2 py-2 px-4 hover:bg-gray-800 rounded flex items-center justify-between md:text-left sm:text-sm sm:px-2 sm:py-1",
             styles: {
@@ -682,119 +406,12 @@ export const sidebarLeftComponent2: CustomComponent = {
               border: "none",
               backgroundColor: "transparent",
             },
-            element: {
-              type: "Frame",
-              name: "Dropdown Content",
-              id: uuidv4(),
-              content: "",
-              styles: {
-                display: "none",
-                flexDirection: "column",
-                width: "100%",
-                backgroundColor: "#2d3239",
-                border: "1px solid #393e46",
-                borderRadius: "5px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-                padding: "4px",
-                gap: "2px",
-                overflow: "hidden",
-                marginTop: "8px",
-              },
-              elements: [
-                {
-                  type: "Button",
-                  id: uuidv4(),
-                  content: "Account Settings",
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                  buttonType: "primary",
-                  styles: {
-                    padding: "8px 12px",
-                    width: "100%",
-                    textAlign: "left",
-                    backgroundColor: "transparent",
-                    color: "#000000",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s",
-                  },
-                  tailwindStyles:
-                    "text-white hover:bg-gray-700 rounded w-full text-left px-3 py-2 text-sm",
-                },
-                {
-                  type: "Button",
-                  id: uuidv4(),
-                  content: "User Permissions",
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                  buttonType: "primary",
-                  styles: {
-                    padding: "8px 12px",
-                    width: "100%",
-                    textAlign: "left",
-                    backgroundColor: "transparent",
-                    color: "#000000",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s",
-                  },
-                  tailwindStyles:
-                    "text-white hover:bg-gray-700 rounded w-full text-left px-3 py-2 text-sm",
-                },
-                {
-                  type: "Button",
-                  id: uuidv4(),
-                  content: "System Configuration",
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                  buttonType: "primary",
-                  styles: {
-                    padding: "8px 12px",
-                    width: "100%",
-                    textAlign: "left",
-                    backgroundColor: "transparent",
-                    color: "#000000",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s",
-                  },
-                  tailwindStyles:
-                    "text-white hover:bg-gray-700 rounded w-full text-left px-3 py-2 text-sm",
-                },
-              ],
-              isSelected: false,
-              isHovered: false,
-              isDraggedOver: false,
-              x: 0,
-              y: 0,
-            },
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           marginTop: "auto",
@@ -807,8 +424,6 @@ export const sidebarLeftComponent2: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -816,13 +431,7 @@ export const sidebarLeftComponent3: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarLeft3",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       height: "100%",
       width: "280px",
@@ -839,12 +448,8 @@ export const sidebarLeftComponent3: CustomComponent = {
       {
         type: "Text",
         content: "Menu",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
         styles: {
           color: "#6c757d",
           fontSize: "14px",
@@ -855,20 +460,10 @@ export const sidebarLeftComponent3: CustomComponent = {
         },
         tailwindStyles:
           "text-gray-500 text-sm  mb-4 uppercase tracking-wide text-center md:text-left",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -880,12 +475,6 @@ export const sidebarLeftComponent3: CustomComponent = {
           {
             type: "Link",
             content: "Home",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#495057",
               margin: "8px 0",
@@ -899,18 +488,10 @@ export const sidebarLeftComponent3: CustomComponent = {
               "w-full text-gray-700 my-2 py-2 px-3 rounded hover:bg-blue-50 hover:text-blue-600 text-center md:text-left sm:text-sm sm:px-2",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Products",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#495057",
               margin: "8px 0",
@@ -924,18 +505,10 @@ export const sidebarLeftComponent3: CustomComponent = {
               "w-full text-gray-700 my-2 py-2 px-3 rounded hover:bg-blue-50 hover:text-blue-600 text-center md:text-left sm:text-sm sm:px-2",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Orders",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#495057",
               margin: "8px 0",
@@ -949,20 +522,13 @@ export const sidebarLeftComponent3: CustomComponent = {
               "w-full text-gray-700 my-2 py-2 px-3 rounded hover:bg-blue-50 hover:text-blue-600 text-center md:text-left sm:text-sm sm:px-2",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Button",
             name: "Dropdown Menu",
-            buttonType: "multi",
             content: "More Options",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
+            href: "",
+            src: "",
             tailwindStyles:
               "w-full text-gray-700 my-2 py-2 px-3 rounded hover:bg-blue-50 hover:text-blue-600 text-center md:text-left sm:text-sm sm:px-2 flex items-center justify-between",
             styles: {
@@ -980,119 +546,12 @@ export const sidebarLeftComponent3: CustomComponent = {
               border: "none",
               backgroundColor: "transparent",
             },
-            element: {
-              type: "Frame",
-              name: "Dropdown Content",
-              id: uuidv4(),
-              content: "",
-              styles: {
-                display: "none",
-                flexDirection: "column",
-                width: "100%",
-                backgroundColor: "#f0f7ff", // Changed from #ffffff to light blue
-                border: "1px solid #cde1ff", // Changed border color to match the blue theme
-                borderRadius: "6px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-                padding: "4px",
-                gap: "2px",
-                overflow: "hidden",
-                marginTop: "8px",
-              },
-              elements: [
-                {
-                  type: "Button",
-                  id: uuidv4(),
-                  content: "Customer Support",
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                  buttonType: "primary",
-                  styles: {
-                    padding: "8px 12px",
-                    width: "100%",
-                    textAlign: "left",
-                    backgroundColor: "transparent",
-                    color: "#495057",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s",
-                  },
-                  tailwindStyles:
-                    "text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded w-full text-left px-3 py-2 text-sm",
-                },
-                {
-                  type: "Button",
-                  id: uuidv4(),
-                  content: "Reports",
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                  buttonType: "primary",
-                  styles: {
-                    padding: "8px 12px",
-                    width: "100%",
-                    textAlign: "left",
-                    backgroundColor: "transparent",
-                    color: "#495057",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s",
-                  },
-                  tailwindStyles:
-                    "text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded w-full text-left px-3 py-2 text-sm",
-                },
-                {
-                  type: "Button",
-                  id: uuidv4(),
-                  content: "Inventory",
-                  isSelected: false,
-                  isHovered: false,
-                  isDraggedOver: false,
-                  x: 0,
-                  y: 0,
-                  buttonType: "primary",
-                  styles: {
-                    padding: "8px 12px",
-                    width: "100%",
-                    textAlign: "left",
-                    backgroundColor: "transparent",
-                    color: "#495057",
-                    border: "none",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    transition: "background-color 0.2s",
-                  },
-                  tailwindStyles:
-                    "text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded w-full text-left px-3 py-2 text-sm",
-                },
-              ],
-              isSelected: false,
-              isHovered: false,
-              isDraggedOver: false,
-              x: 0,
-              y: 0,
-            },
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           marginTop: "auto",
@@ -1105,8 +564,6 @@ export const sidebarLeftComponent3: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };
 
@@ -1114,13 +571,7 @@ export const sidebarLeftComponent4: CustomComponent = {
   component: {
     type: "Frame",
     name: "SidebarLeft4",
-    id: uuidv4(),
     content: "",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
-    x: 0,
-    y: 0,
     styles: {
       height: "100%",
       width: "300px",
@@ -1137,12 +588,8 @@ export const sidebarLeftComponent4: CustomComponent = {
       {
         type: "Text",
         content: "BRAND",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
+        href: "",
+        src: "",
         styles: {
           color: "#333",
           fontSize: "22px",
@@ -1152,20 +599,10 @@ export const sidebarLeftComponent4: CustomComponent = {
         },
         tailwindStyles:
           "text-gray-800 text-xl font-bold mb-10 tracking-wider text-center md:text-left",
-        href: "",
-        src: "",
-        parentId: "",
-        projectId: "",
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           flexDirection: "column",
@@ -1177,12 +614,6 @@ export const sidebarLeftComponent4: CustomComponent = {
           {
             type: "Link",
             content: "Dashboard",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#555",
               margin: "10px 0",
@@ -1196,18 +627,10 @@ export const sidebarLeftComponent4: CustomComponent = {
               "w-full text-gray-600 my-2 py-3 px-4 rounded-lg hover:bg-gray-50 text-center md:text-center sm:text-sm sm:py-2 sm:px-2",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Profile",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#555",
               margin: "10px 0",
@@ -1221,18 +644,10 @@ export const sidebarLeftComponent4: CustomComponent = {
               "w-full text-gray-600 my-2 py-3 px-4 text-center rounded-lg hover:bg-gray-50 text-sm md:text-base sm:px-2",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
           {
             type: "Link",
             content: "Settings",
-            id: uuidv4(),
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
-            x: 0,
-            y: 0,
             styles: {
               color: "#555",
               margin: "10px 0",
@@ -1246,20 +661,12 @@ export const sidebarLeftComponent4: CustomComponent = {
               "w-full text-gray-600 my-2 py-3 px-4 text-center rounded-lg hover:bg-gray-50 text-sm md:text-base sm:px-2",
             href: "/",
             src: "",
-            parentId: "",
-            projectId: "",
           },
         ],
       },
       {
         type: "Frame",
         content: "",
-        id: uuidv4(),
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
-        x: 0,
-        y: 0,
         styles: {
           display: "flex",
           marginTop: "auto",
@@ -1272,7 +679,5 @@ export const sidebarLeftComponent4: CustomComponent = {
     ],
     href: "",
     src: "",
-    parentId: "",
-    projectId: "",
   },
 };

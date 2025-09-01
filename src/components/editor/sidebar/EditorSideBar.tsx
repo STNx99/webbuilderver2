@@ -16,11 +16,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import elementHolders from "@/constants/elements";
 import { Settings } from "lucide-react";
 import Link from "next/link";
 import ComponentHolder from "./ComponentHolder";
 import { useAiChat } from "@/providers/aiprovider";
+import { ProjectPageCommand } from "../ProjectPageCommand";
+import { ElementSelector } from "./ElementSelector";
 
 export function EditorSideBar() {
   const { chatOpen } = useAiChat();
@@ -30,7 +31,7 @@ export function EditorSideBar() {
   return (
     <Sidebar side="left">
       <SidebarContent>
-        <Accordion type="multiple" className="w-full" defaultValue={["components", "imageupload"]}>
+        <Accordion type="multiple" className="w-full" defaultValue={["components","pages", "imageupload"]}>
           <AccordionItem value="components">
             <SidebarGroup>
               <SidebarGroupLabel asChild>
@@ -40,16 +41,21 @@ export function EditorSideBar() {
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
-                  <ul className="space-y-2 w-full">
-                    {elementHolders.map((element) => (
-                      <li key={element.type} className="w-full">
-                        <ComponentHolder
-                          icon={element.icon}
-                          type={element.type}
-                        />
-                      </li>
-                    ))}
-                  </ul>
+                  <ElementSelector/>
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+          <AccordionItem value="pages">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger>
+                  Project's pages
+                </AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  <ProjectPageCommand></ProjectPageCommand>
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>
