@@ -116,7 +116,9 @@ interface IProjectService {
    * @returns A Promise that resolves to the requested `Project`.
    */
   getProjectById: (id: string) => Promise<Project>;
+  
 
+  updateProject: (id: string, updates: Partial<Project>) => Promise<Project>;
   /**
    * Delete a project by its ID.
    *

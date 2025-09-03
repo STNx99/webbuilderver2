@@ -65,7 +65,7 @@ const TEXT_TRANSFORM_OPTIONS: TextTransform[] = [
 ];
 
 export const TypographyAccordion = () => {
-  const { selectedElement } = useElementStore();
+  const { selectedElement, updateElement } = useElementStore();
   const [fonts, setFonts] = useState<string[]>(FONT_FAMILIES);
 
   const { data, isLoading } = useQuery({
@@ -87,7 +87,18 @@ export const TypographyAccordion = () => {
   ) => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
+
     elementHelper.updateElementStyle(selectedElement, newStyles);
+
+    try {
+      const newTailwind = elementHelper.computeTailwindFromStyles(newStyles);
+      updateElement(selectedElement.id, { tailwindStyles: newTailwind });
+    } catch (err) {
+      console.error(
+        "Failed to compute tailwind classes from typography styles:",
+        err,
+      );
+    }
   };
 
   if (!selectedElement) {

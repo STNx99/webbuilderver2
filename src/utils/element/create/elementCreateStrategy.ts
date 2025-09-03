@@ -59,15 +59,23 @@ export class TextElementCreateStrategy implements ElementCreateStrategy {
 
 export class FrameElementCreateStrategy implements ElementCreateStrategy {
   buildElement(state: BuilderState): EditorElement {
+    // Modern, accessible frame defaults:
+    // - responsive sizing with max-width
+    // - neutral background that adapts to light/dark if using CSS vars
+    // - soft rounded corners, subtle shadow and clear focus outline for keyboard users
     return createBaseElement(state, {
       styles: {
-        height: "200px",
-        width: "50%",
-        backgroundColor: "#ffffff",
-        border: "2px dashed #cbd5e1",
+        minHeight: "160px",
+        width: "100%",
+        margin: "0 auto",
+        backgroundColor: "var(--bg-surface, #ffffff)",
+        border: "1px solid rgba(15, 23, 42, 0.06)",
+        borderRadius: "8px",
+        padding: "16px",
+        boxShadow: "0 1px 2px rgba(16,24,40,0.04)",
       },
       tailwindStyles:
-        "border-2 border-dashed border-slate-300 bg-white rounded-lg",
+        "w-full mx-auto rounded-lg p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-shadow",
     });
   }
 }
@@ -77,19 +85,22 @@ export class ButtonElementCreateStrategy implements ElementCreateStrategy {
     return createBaseElement(state, {
       content: "Click me",
       styles: {
-        width: "120px",
-        height: "40px",
-        backgroundColor: "#3b82f6",
-        color: "#ffffff",
+        minWidth: "96px",
+        height: "44px",
+        backgroundColor: "var(--color-primary, #2563eb)",
+        color: "var(--color-on-primary, #ffffff)",
         border: "none",
-        borderRadius: "6px",
-        padding: "8px 16px",
+        borderRadius: "10px",
+        padding: "10px 18px",
         cursor: "pointer",
-        fontSize: "14px",
-        fontWeight: "500",
+        fontSize: "15px",
+        fontWeight: "600",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
       },
       tailwindStyles:
-        "bg-blue-500 text-white border-none rounded-md px-4 py-2 cursor-pointer text-sm font-medium hover:bg-blue-600 transition-colors",
+        "inline-flex items-center justify-center min-w-[96px] h-11 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold text-sm shadow-sm hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 transition",
     });
   }
 }
@@ -102,38 +113,48 @@ export class InputElementCreateStrategy implements ElementCreateStrategy {
         placeholder: "Enter text...",
       },
       styles: {
-        width: "200px",
-        height: "40px",
-        padding: "8px 12px",
-        border: "1px solid #d1d5db",
-        borderRadius: "6px",
-        fontSize: "14px",
-        backgroundColor: "#ffffff",
+        width: "100%",
+        height: "44px",
+        padding: "10px 14px",
+        border: "1px solid rgba(15,23,42,0.08)",
+        borderRadius: "8px",
+        fontSize: "15px",
+        backgroundColor: "var(--bg-input, #ffffff)",
       },
       tailwindStyles:
-        "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+        "w-full h-11 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-transparent transition",
     }) as InputElement;
   }
 }
 
 export class ImageElementCreateStrategy implements ElementCreateStrategy {
   buildElement(state: BuilderState): EditorElement {
-    return createBaseElement(state);
+    return createBaseElement(state, {
+      content: state.content ?? "Image",
+      styles: {
+        width: "100%",
+        height: "auto",
+        objectFit: "cover",
+        borderRadius: "8px",
+        backgroundColor: "transparent",
+      },
+      tailwindStyles: "w-full rounded-lg object-cover bg-transparent",
+    });
   }
 }
 export class ListElementCreateStrategy implements ElementCreateStrategy {
   buildElement(state: BuilderState): EditorElement {
     return createBaseElement(state, {
       styles: {
-        width: "250px",
-        height: "200px",
-        backgroundColor: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: "6px",
+        width: state.styles?.width ?? "100%",
+        minHeight: "160px",
+        backgroundColor: "var(--bg-surface, #ffffff)",
+        border: "1px solid rgba(15,23,42,0.06)",
+        borderRadius: "8px",
         padding: "12px",
       },
       tailwindStyles:
-        "border border-gray-200 rounded-md bg-white p-3 shadow-sm",
+        "w-full rounded-lg border border-gray-200 bg-white p-3 shadow-sm",
     });
   }
 }
@@ -142,17 +163,17 @@ export class SelectElementCreateStrategy implements ElementCreateStrategy {
   buildElement(state: BuilderState): EditorElement {
     return createBaseElement(state, {
       styles: {
-        width: "180px",
-        height: "40px",
-        padding: "8px 12px",
-        border: "1px solid #d1d5db",
-        borderRadius: "6px",
-        fontSize: "14px",
-        backgroundColor: "#ffffff",
+        width: "100%",
+        height: "44px",
+        padding: "10px 12px",
+        border: "1px solid rgba(15,23,42,0.06)",
+        borderRadius: "8px",
+        fontSize: "15px",
+        backgroundColor: "var(--bg-input, #ffffff)",
         cursor: "pointer",
       },
       tailwindStyles:
-        "border border-gray-300 rounded-md px-3 py-2 text-sm bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500",
+        "w-full h-11 rounded-lg border border-gray-200 bg-white text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 transition",
     });
   }
 }
@@ -170,15 +191,14 @@ export class FormElementCreateStrategy implements ElementCreateStrategy {
         redirectUrl: "",
       },
       styles: {
-        width: "350px",
-        height: "400px",
-        backgroundColor: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: "8px",
-        padding: "20px",
+        width: "100%",
+        backgroundColor: "var(--bg-surface, #ffffff)",
+        border: "1px solid rgba(15,23,42,0.06)",
+        borderRadius: "12px",
+        padding: "24px",
       },
       tailwindStyles:
-        "border border-gray-200 rounded-lg bg-white p-5 shadow-sm",
+        "w-full rounded-xl border border-gray-200 bg-white p-6 shadow-sm",
     }) as FormElement;
   }
 }
@@ -188,12 +208,12 @@ export class SectionElementCreateStrategy implements ElementCreateStrategy {
     return createBaseElement(state, {
       styles: {
         width: "100%",
-        minHeight: "200px",
-        backgroundColor: "#ffffff",
-        padding: "24px",
+        minHeight: "220px",
+        backgroundColor: "var(--bg-surface)",
+        padding: "32px 24px",
       },
       tailwindStyles:
-        "w-full min-h-[200px] h-1/4 border-gray-200 bg-white p-6 shadow-sm",
+        "w-full min-h-[220px] py-8 px-6 bg-white dark:bg-slate-900 border-t border-gray-100 dark:border-slate-800",
     });
   }
 }
@@ -205,16 +225,16 @@ export class CarouselElementCreateStrategy implements ElementCreateStrategy {
         autoplay: true,
       },
       styles: {
-        width: "500px",
-        height: "300px",
-        backgroundColor: "#ffffff",
-        border: "1px solid #e5e7eb",
-        borderRadius: "8px",
+        width: "100%",
+        height: "360px",
+        backgroundColor: "var(--bg-surface, #ffffff)",
+        border: "1px solid rgba(15,23,42,0.06)",
+        borderRadius: "12px",
         padding: "16px",
         overflow: "hidden",
       },
       tailwindStyles:
-        "w-[500px] h-[300px] border border-gray-200 rounded-lg bg-white p-4 shadow-sm overflow-hidden",
+        "w-full h-90 md:h-[360px] rounded-xl border border-gray-200 bg-white p-4 shadow-md overflow-hidden",
     }) as CarouselElement;
   }
 }

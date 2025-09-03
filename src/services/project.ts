@@ -2,12 +2,14 @@ import GetUrl, { GetNextJSURL } from "@/utils/geturl";
 import { IProjectService } from "@/interfaces/service.interface";
 import getToken from "./token";
 import { Page } from "@/generated/prisma";
+import { fetchPublic, fetchWithAuth, updateWithAuth } from "./api";
 import { Project } from "@/interfaces/project.interface";
-import { fetchPublic, fetchWithAuth } from "./api";
+
+
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    return fetchPublic<Project[]>(GetUrl("/projects/public"));
+    return fetchPublic<Project []>(GetUrl("/projects/public"));
   },
 
   getUserProjects: async (): Promise<Project[]> => {
@@ -33,6 +35,56 @@ export const projectService: IProjectService = {
 
   getProjectPages: async (id: string): Promise<Page[]> => {
     return fetchWithAuth<Page[]>(GetUrl(`/projects/${id}/pages`));
+  },
+
+  updateProject: async (
+    projectId: string,
+    project: Partial<Project>,
+  ): Promise<Project> => {
+    const token = await getToken();
+    try {
+      const response = await fetch(GetNextJSURL(`/api/projects/${projectId}`), {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(project),
+      });
+
+
+      if (!response.ok) {
+        let txt = "";
+        try {
+          txt = await response.text();
+        } catch (e) {
+          txt = String(e ?? "failed to read response body");
+        }
+        console.error(
+          "projectService.updateProject: server responded with error",
+          {
+            projectId,
+            status: response.status,
+            body: txt,
+          },
+        );
+        throw new Error(`Failed to update project: ${response.status} ${txt}`);
+      }
+
+      const data = await response.json();
+      console.debug("projectService.updateProject: server returned data", {
+        projectId,
+        data,
+      });
+      return data as Project;
+    } catch (err) {
+      console.error("projectService.updateProject: network/error", {
+        projectId,
+        error: err,
+        project,
+      });
+      throw err;
+    }
   },
 
   deleteProjectPage: async (

@@ -46,19 +46,20 @@ model Image {
 }
 
 model Project {
-  Description String?
-  Id          String    @id(map: "PK_Projects")
-  Name        String
-  OwnerId     String
-  Published   Boolean   @default(false)
-  Subdomain   String?
-  CreatedAt   DateTime  @db.Timestamp(6)
-  DeletedAt   DateTime? @db.Timestamp(6)
-  UpdatedAt   DateTime  @db.Timestamp(6)
-  Styles      Json?
-  Elements    Element[]
-  Pages       Page[]
-  Owner       User      @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+  Description  String?
+  Id           String    @id(map: "PK_Projects")
+  Name         String
+  OwnerId      String
+  Published    Boolean   @default(false)
+  Subdomain    String?
+  CreatedAt    DateTime  @db.Timestamp(6)
+  DeletedAt    DateTime? @db.Timestamp(6)
+  UpdatedAt    DateTime  @db.Timestamp(6)
+  Styles       Json?
+  CustomStyles String?
+  Elements     Element[]
+  Pages        Page[]
+  Owner        User      @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -80,12 +81,12 @@ model Page {
 }
 
 model Setting {
-  ElementId   String    @unique
-  Id          String    @id(map: "PK_Settings")
+  ElementId   String  @unique
+  Id          String  @id(map: "PK_Settings")
   Name        String
   SettingType String
   Settings    Json
-  Element     Element   @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
+  Element     Element @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
 
   @@index([ElementId], map: "IX_Settings_ElementId")
 }

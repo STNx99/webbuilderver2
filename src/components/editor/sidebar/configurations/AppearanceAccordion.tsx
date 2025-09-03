@@ -88,7 +88,7 @@ type AppearanceStyles = Pick<
 >;
 
 export const AppearanceAccordion = () => {
-  const { selectedElement } = useElementStore();
+  const { selectedElement, updateElement } = useElementStore();
 
   const styles: AppearanceStyles = selectedElement?.styles ?? {};
   const updateStyle = <K extends keyof AppearanceStyles>(
@@ -97,7 +97,11 @@ export const AppearanceAccordion = () => {
   ) => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
+
     elementHelper.updateElementStyle(selectedElement, newStyles);
+    const newTailwind = elementHelper.computeTailwindFromStyles(newStyles);
+
+    updateElement(selectedElement.id, { tailwindStyles: newTailwind });
   };
 
   if (!selectedElement) {
@@ -192,7 +196,7 @@ export const AppearanceAccordion = () => {
                   </Label>
                   <Input
                     id="backgroundColor"
-                    value={styles.backgroundColor}
+                    value={styles.backgroundColor || ""}
                     type="color"
                     onChange={(e) =>
                       updateStyle("backgroundColor", e.target.value)
@@ -202,7 +206,7 @@ export const AppearanceAccordion = () => {
                   <Input
                     id="backgroundColorHex"
                     type="text"
-                    value={styles.backgroundColor}
+                    value={styles.backgroundColor || ""}
                     maxLength={7}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -220,14 +224,14 @@ export const AppearanceAccordion = () => {
                   <Input
                     id="textColor"
                     type="color"
-                    value={styles.color}
+                    value={styles.color || ""}
                     onChange={(e) => updateStyle("color", e.target.value)}
                     className="w-6 h-6 p-0 border-none bg-transparent"
                   />
                   <Input
                     id="textColorHex"
                     type="text"
-                    value={styles.color}
+                    value={styles.color || ""}
                     maxLength={7}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -254,7 +258,7 @@ export const AppearanceAccordion = () => {
                   <Input
                     id="borderColor"
                     type="color"
-                    value={styles.borderColor}
+                    value={styles.borderColor || ""}
                     onChange={(e) => updateStyle("borderColor", e.target.value)}
                     className="w-6 h-6 p-0 border-none bg-transparent"
                   />
@@ -757,8 +761,8 @@ export const AppearanceAccordion = () => {
                         step={1}
                         value={[
                           typeof styles.gap === "string"
-                            ? parseInt(styles.gap)
-                            : Number(styles.gap),
+                            ? parseInt(styles.gap, 10) || 0
+                            : Number(styles.gap) || 0,
                         ]}
                         onValueChange={([val]) =>
                           updateStyle("gap", `${val}px`)
@@ -906,8 +910,10 @@ export const AppearanceAccordion = () => {
                   <Input
                     id="zIndex"
                     type="number"
-                    value={styles.zIndex || ""}
-                    onChange={(e) => updateStyle("zIndex", e.target.value)}
+                    value={styles.zIndex ?? ""}
+                    onChange={(e) =>
+                      updateStyle("zIndex", parseInt(e.target.value, 10))
+                    }
                     className="w-20 h-6 px-1 py-0 text-xs border"
                   />
                 </div>

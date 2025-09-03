@@ -2,7 +2,6 @@ import { GetNextJSURL } from "@/utils/geturl";
 
 export default async function getToken(): Promise<string> {
   let url = "/api/gettoken";
-  console.log("[getToken] Fetching token from URL:", url);
   GetNextJSURL(url);
 
   const response = await fetch(url, {
@@ -21,6 +20,5 @@ export default async function getToken(): Promise<string> {
   }
 
   const { tokenJWT } = await response.json();
-  console.log("[getToken] Received tokenJWT:", tokenJWT);
   return tokenJWT;
 }

@@ -8,6 +8,7 @@ import { FormConfigurationAccordion } from "./FormConfiguration";
 import InputConfiguration from "./InputConfiguration";
 import { useElementStore } from "@/globalstore/elementstore";
 import CarouselConfigurationAccordion from "./CarouselConfiguration";
+import TailwindAccordion from "./TailwindAccordion";
 
 export default function Configurations() {
   const { selectedElement } = useElementStore();
@@ -37,9 +38,10 @@ export default function Configurations() {
     return null;
   }
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion type="multiple"  className="w-full ">
       <AppearanceAccordion />
       {renderChildElement(selectedElement.type)}
+      <TailwindAccordion />
     </Accordion>
   );
 }

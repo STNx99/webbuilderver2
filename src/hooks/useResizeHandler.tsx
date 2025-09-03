@@ -53,11 +53,16 @@ export function useResizeHandler({
     startPos: { x: number; y: number };
     parentElement: HTMLElement;
     aspectRatio?: number;
+    pointerId?: number;
+    ownerDocument?: Document | null;
+    ownerWindow?: Window | null;
   } | null>(null);
 
-  // Pending style updates (batched via rAF)
   const pendingStylesRef = useRef<Partial<CSSStyles> | null>(null);
   const rafRef = useRef<number | null>(null);
+
+  const lastOwnerDocRef = useRef<Document | null>(null);
+  const lastOwnerWindowRef = useRef<Window | null>(null);
 
   const scheduleFlush = () => {
     if (rafRef.current !== null) return;
@@ -242,14 +247,52 @@ export function useResizeHandler({
     scheduleFlush();
   };
 
-  const onPointerUp = () => {
+  const onPointerUp = (e?: PointerEvent) => {
+    // release pointer capture if we set it earlier
+    const lastDoc = lastOwnerDocRef.current || document;
+
+    try {
+      if (
+        resizeState.current?.pointerId != null &&
+        targetRef.current?.releasePointerCapture
+      ) {
+        targetRef.current.releasePointerCapture(resizeState.current.pointerId);
+      }
+    } catch {
+      // best-effort release; ignore errors (e.g. pointer already released)
+    }
+
     // finalize
     resizeState.current = null;
-    document.removeEventListener("pointermove", onPointerMove);
-    document.removeEventListener("pointerup", onPointerUp);
+
+    // remove listeners from the owner document (or fallback to global document)
+    try {
+      lastDoc.removeEventListener("pointermove", onPointerMove);
+      lastDoc.removeEventListener("pointerup", onPointerUp as EventListener);
+    } catch {
+      document.removeEventListener("pointermove", onPointerMove);
+      document.removeEventListener("pointerup", onPointerUp as EventListener);
+    }
+
     cancelFlush();
-    document.body.style.userSelect = "";
-    document.body.style.cursor = "";
+
+    // clear styles on the owner document's body if available
+    try {
+      if (lastDoc && lastDoc.body) {
+        lastDoc.body.style.userSelect = "";
+        lastDoc.body.style.cursor = "";
+      } else {
+        document.body.style.userSelect = "";
+        document.body.style.cursor = "";
+      }
+    } catch {
+      // ignore cross-origin iframe failures
+      document.body.style.userSelect = "";
+      document.body.style.cursor = "";
+    }
+
+    lastOwnerDocRef.current = null;
+    lastOwnerWindowRef.current = null;
   };
 
   const handleResizeStart = (
@@ -258,15 +301,29 @@ export function useResizeHandler({
   ) => {
     if (!targetRef.current) return;
 
-    // Prefer pointer events if available
+    // Determine owner document/window (works when target lives inside an iframe)
+    const ownerDoc = targetRef.current.ownerDocument ?? document;
+    const ownerWin = (ownerDoc && ownerDoc.defaultView) ?? window;
+
+    // store for cleanup/usability
+    lastOwnerDocRef.current = ownerDoc;
+    lastOwnerWindowRef.current = ownerWin;
+
+    // Prefer pointer events if available. Scope parent lookup to ownerDoc.
     const parentElement =
-      targetRef.current.parentElement ?? document.getElementById("canvas");
+      targetRef.current.parentElement ??
+      ownerDoc.getElementById("preview-iframe") ??
+      document.getElementById("canvas");
     if (!parentElement) return;
 
-    // Extract clientX/Y from different event types
     const extractPos = (evt: any) => {
       if (evt.touches && evt.touches[0]) {
         return { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
+      }
+      // React synthetic events may expose nativeEvent
+      const native = evt?.nativeEvent ?? evt;
+      if (native && native.clientX !== undefined) {
+        return { x: native.clientX, y: native.clientY };
       }
       if (evt.clientX !== undefined) {
         return { x: evt.clientX, y: evt.clientY };
@@ -285,28 +342,91 @@ export function useResizeHandler({
       parentElement,
       aspectRatio:
         startRect.height > 0 ? startRect.width / startRect.height : undefined,
+      ownerDocument: ownerDoc,
+      ownerWindow: ownerWin,
     };
 
-    // Add pointer listeners (works for mouse, pen, touch in modern browsers)
-    document.addEventListener("pointermove", onPointerMove);
-    document.addEventListener("pointerup", onPointerUp, { once: true });
+    // Try to obtain a pointerId if this began from a PointerEvent (or nativeEvent exposes it)
+    const nativeEv = (e as any).nativeEvent ?? (e as any);
+    const pointerId =
+      nativeEv &&
+      (nativeEv.pointerId !== undefined ? nativeEv.pointerId : undefined);
+    if (typeof pointerId === "number" && targetRef.current.setPointerCapture) {
+      try {
+        targetRef.current.setPointerCapture(pointerId);
+        resizeState.current.pointerId = pointerId;
+      } catch {
+        // ignore if unavailable
+      }
+    }
 
-    // Prevent selection while dragging
-    document.body.style.userSelect = "none";
+    // Add pointer listeners on the owner document so events are received even
+    // while the pointer moves outside the iframe element but within its document.
+    try {
+      ownerDoc.addEventListener("pointermove", onPointerMove);
+      ownerDoc.addEventListener("pointerup", onPointerUp as EventListener, {
+        once: true,
+      });
+    } catch {
+      // fallback to global document
+      document.addEventListener("pointermove", onPointerMove);
+      document.addEventListener("pointerup", onPointerUp as EventListener, {
+        once: true,
+      });
+    }
 
-    // Set an appropriate cursor
-    document.body.style.cursor = directionToCursor(direction);
+    // Prevent selection while dragging on the correct document body
+    try {
+      if (ownerDoc && ownerDoc.body) ownerDoc.body.style.userSelect = "none";
+      else document.body.style.userSelect = "none";
+    } catch {
+      // ignore cross-origin iframe body styling failures
+      document.body.style.userSelect = "none";
+    }
+
+    // Set an appropriate cursor on owner document body
+    try {
+      const cur = directionToCursor(direction);
+      if (ownerDoc && ownerDoc.body) ownerDoc.body.style.cursor = cur;
+      else document.body.style.cursor = cur;
+    } catch {
+      document.body.style.cursor = directionToCursor(direction);
+    }
   };
 
   useEffect(() => {
     // Cleanup on unmount
     return () => {
       resizeState.current = null;
-      document.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerup", onPointerUp);
+
+      const lastDoc = lastOwnerDocRef.current || document;
+
+      try {
+        lastDoc.removeEventListener("pointermove", onPointerMove);
+        lastDoc.removeEventListener("pointerup", onPointerUp as EventListener);
+      } catch {
+        // fallback to global
+        document.removeEventListener("pointermove", onPointerMove);
+        document.removeEventListener("pointerup", onPointerUp as EventListener);
+      }
+
       cancelFlush();
-      document.body.style.userSelect = "";
-      document.body.style.cursor = "";
+
+      try {
+        if (lastDoc && lastDoc.body) {
+          lastDoc.body.style.userSelect = "";
+          lastDoc.body.style.cursor = "";
+        } else {
+          document.body.style.userSelect = "";
+          document.body.style.cursor = "";
+        }
+      } catch {
+        document.body.style.userSelect = "";
+        document.body.style.cursor = "";
+      }
+
+      lastOwnerDocRef.current = null;
+      lastOwnerWindowRef.current = null;
     };
     // We deliberately do not include element/updateElement/targetRef in deps -
     // the returned handlers will work with the refs captured at call time.

@@ -11,6 +11,7 @@ import { findElement } from "./findElement";
 import { getElementSettings } from "./getElementSettings";
 import { updateElementStyle } from "./updateElementStyle";
 import { renderChildElement } from "../renderElements";
+import computeTailwindFromStyles from "./computeTailwindFromStyles";
 import React from "react";
 import {
   CONTAINER_ELEMENT_TYPES,
@@ -62,6 +63,8 @@ interface ElementHelper {
     excludes?: ElementType[],
   ) => React.ReactNode;
 
+  computeTailwindFromStyles: (styles: Partial<React.CSSProperties>) => string;
+
   updateElementStyle: (
     element: EditorElement,
     styles: React.CSSProperties,
@@ -88,5 +91,6 @@ export const elementHelper: ElementHelper = {
     return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);
   },
   renderChildElement: renderChildElement,
+  computeTailwindFromStyles: computeTailwindFromStyles,
   updateElementStyle: updateElementStyle,
 };

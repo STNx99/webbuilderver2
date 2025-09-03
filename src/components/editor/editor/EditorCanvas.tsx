@@ -27,7 +27,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
 }) => {
   return (
     <div
-      className={`h-full w-full overflow-auto p-2 ${
+      className={`h-full w-full overflow-auto bg-background p-2 ${
         isDraggingOver ? "bg-primary/10" : ""
       }`}
       onDrop={handleDrop}

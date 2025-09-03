@@ -30,16 +30,13 @@ import {
   sidebarRightComponent4,
 } from "./sidebar/sidebarRightComponents";
 import { formComponent1, formComponent2 } from "./form/formComponents";
-import {
-  landingPageTemplateComponent,
-  landingPageTemplateComponent2,
-} from "./landingpage/landingPageComponents";
+import { landingPageSections } from "./landingpage/landingPageComponents";
 
 export type CustomComponent = {
   component: ElementTemplate & {
     elements?: ElementTemplate[];
   };
-}
+};
 
 const customComponents: CustomComponent[] = [
   navbarComponent,
@@ -64,8 +61,7 @@ const customComponents: CustomComponent[] = [
   sidebarRightComponent4,
   formComponent1,
   formComponent2,
-  landingPageTemplateComponent,
-  landingPageTemplateComponent2,
+  ...landingPageSections,
 ];
 
 export const customComps = customComponents

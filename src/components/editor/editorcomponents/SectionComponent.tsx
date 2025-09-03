@@ -43,13 +43,13 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
             position: "absolute",
             left: "50%",
             transform: "translateX(-50%)",
-            bottom: -20,
+            bottom: -30,
             zIndex: 10,
           }}
         >
           <Button
             className="h-6"
-            onClick={handleCreateSeciont}
+            onDoubleClick={handleCreateSeciont}
           >
             + Add Section
           </Button>

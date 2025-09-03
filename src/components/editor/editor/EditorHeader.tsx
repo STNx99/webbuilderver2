@@ -2,6 +2,7 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { Viewport } from "@/hooks/useEditor";
+import CssTextareaImporter from "./CssTextareaImporter";
 
 type EditorHeaderProps = {
   handlePageNavigation: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -23,6 +24,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           className="h-6 bg-gray-700"
           onBlur={handlePageNavigation}
         />
+        <CssTextareaImporter/>
       </div>
 
       <div className="flex items-center ">

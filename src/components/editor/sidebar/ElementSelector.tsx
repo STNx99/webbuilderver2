@@ -18,16 +18,26 @@ export function ElementSelector() {
       <CommandList>
         <CommandGroup heading="Default components">
           {elementHolders.map((element) => (
-            <CommandItem key={element.type} value={element.type} className="h-6">
+            <CommandItem
+              key={element.type}
+              value={element.type}
+              className="h-6"
+            >
               <ComponentHolder icon={element.icon} type={element.type} />
             </CommandItem>
           ))}
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Custom components">
-          {customComps.map((customComponent)=>(
-            <CommandItem key={customComponent.name || customComponent.content}>
-              <CustomComponentHolder name={customComponent.name || ""}/>
+          {customComps.map((customComponent, idx) => (
+            <CommandItem
+              key={`${customComponent.name || customComponent.content}-${idx}`}
+              value={customComponent.name || customComponent.content}
+            >
+              <CustomComponentHolder
+                name={customComponent.name || ""}
+                index={idx}
+              />
             </CommandItem>
           ))}
         </CommandGroup>

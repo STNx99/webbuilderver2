@@ -28,15 +28,30 @@ function ResizeHandle({
   currentResizeDirection,
 }: {
   direction: ResizeDirection;
-  onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void;
+  onResizeStart: (direction: ResizeDirection, e: React.PointerEvent) => void;
   element: EditorElement;
   isResizing: boolean;
   currentResizeDirection: ResizeDirection | null;
 }) {
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Only start on primary button
     if (e.button === 0) {
       e.preventDefault();
       e.stopPropagation();
+
+      try {
+        const pid = (e.nativeEvent as PointerEvent)?.pointerId;
+        const targetEl = (e.currentTarget || e.target) as Element | undefined;
+        if (
+          typeof pid === "number" &&
+          targetEl &&
+          typeof targetEl.setPointerCapture === "function"
+        ) {
+          targetEl.setPointerCapture(pid);
+        }
+      } catch {
+      }
+
       onResizeStart(direction, e);
     }
   };
@@ -49,8 +64,8 @@ function ResizeHandle({
     isGapHandle
       ? "bg-green-500 border-white hover:bg-green-600 active:bg-green-700"
       : isMarginHandle
-      ? "bg-orange-500 border-white hover:bg-orange-600 active:bg-orange-700"
-      : "bg-blue-500 border-white hover:bg-blue-600 active:bg-blue-700"
+        ? "bg-orange-500 border-white hover:bg-orange-600 active:bg-orange-700"
+        : "bg-blue-500 border-white hover:bg-blue-600 active:bg-blue-700",
   );
 
   return (
@@ -62,7 +77,7 @@ function ResizeHandle({
     >
       <div
         className={cn(baseClasses, directionalClasses[direction])}
-        onMouseDown={handleMouseDown}
+        onPointerDown={handlePointerDown}
       />
     </ResizeTooltip>
   );
@@ -84,7 +99,7 @@ export default function ResizeHandler({
 
   // Get resize handles, excluding the gap handle
   const resizeHandles: ResizeDirection[] = getResizeHandles(
-    element.styles
+    element.styles,
   ).filter((dir) => dir !== "gap");
 
   // Use imported hasGap to determine if gap handles should be rendered
@@ -96,18 +111,34 @@ export default function ResizeHandler({
     isResizing,
     currentResizeDirection,
   }: {
-    onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void;
+    onResizeStart: (direction: ResizeDirection, e: React.PointerEvent) => void;
     isResizing: boolean;
     currentResizeDirection: ResizeDirection | null;
   }) {
     const baseClasses = cn(
       "absolute rounded-full w-3 h-3 border-2 z-10 active:scale-125 bg-green-500 border-white hover:bg-green-600 active:bg-green-700",
-      "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize"
+      "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize",
     );
-    const handleMouseDown = (e: React.MouseEvent) => {
+    const handlePointerDown = (e: React.PointerEvent) => {
       if (e.button === 0) {
         e.preventDefault();
         e.stopPropagation();
+
+        // Attempt pointer capture on the handle so pointer events remain routed here
+        try {
+          const pid = (e.nativeEvent as PointerEvent)?.pointerId;
+          const targetEl = (e.currentTarget || e.target) as Element | undefined;
+          if (
+            typeof pid === "number" &&
+            targetEl &&
+            typeof targetEl.setPointerCapture === "function"
+          ) {
+            targetEl.setPointerCapture(pid);
+          }
+        } catch {
+          // ignore
+        }
+
         onResizeStart("gap", e);
       }
     };
@@ -118,7 +149,7 @@ export default function ResizeHandler({
         isResizing={isResizing}
         currentResizeDirection={currentResizeDirection}
       >
-        <div className={baseClasses} onMouseDown={handleMouseDown} />
+        <div className={baseClasses} onPointerDown={handlePointerDown} />
       </ResizeTooltip>
     );
   }

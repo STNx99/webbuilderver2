@@ -1,12 +1,13 @@
 export interface Project {
-  id?: string;
+  id: string;
   name: string;
-  description?: string;
-  subdomain?: string;
-  published?: boolean;
-  styles: React.CSSProperties;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
-  views?: number;
+  description?: string | null;
+  subdomain?: string | null;
+  published: boolean;
+  ownerId: string;
+  styles?: Record<string, unknown> | null;
+  customStyles?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
 }

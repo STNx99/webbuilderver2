@@ -16,10 +16,10 @@ export default function FormComponent({ element }: FormComponentProps) {
   const { getCommonProps } = useElementHandler();
   const { addElement, updateElement } = useElementStore<EditorElement>();
   const formElement = element as FormElement;
+  const searhParams = useSearchParams();
   const { id } = useParams();
 
   const handleAddField = () => {
-    const searhParams = useSearchParams();
     const newField = elementHelper.createElement.create<InputElement>(
       "Input",
       id as string,

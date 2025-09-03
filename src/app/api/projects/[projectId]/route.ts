@@ -1,4 +1,5 @@
 import { projectDAL } from "@/data/project";
+import { Project } from "@/interfaces/project.interface";
 import { auth } from "@clerk/nextjs/server";
 
 export async function DELETE(
@@ -26,3 +27,74 @@ export async function DELETE(
     });
   }
 }
+
+/**
+ * PATCH /api/projects/:projectId
+ * Partially updates a project. Only whitelisted fields will be applied.
+ */
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ projectId: string }> },
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const { projectId } = await params;
+    if (!projectId) {
+      return new Response("Project ID is required", { status: 400 });
+    }
+
+    let body: Partial<Project>;
+    try {
+      body = await req.json();
+    } catch (err) {
+      return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (!body || typeof body !== "object") {
+      return new Response(
+        JSON.stringify({ error: "Request body must be an object" }),
+        { status: 400, headers: { "Content-Type": "application/json" } },
+      );
+    }
+    const updated = await projectDAL.updateProject(projectId, userId, body);
+
+    if (!updated) {
+      return new Response(
+        JSON.stringify({ error: "Project not found or not updated" }),
+        { status: 404, headers: { "Content-Type": "application/json" } },
+      );
+    }
+    const newProject: Project = {
+      id: updated.Id,
+      ownerId: updated.OwnerId,
+      name: updated.Name,
+      description: updated.Description,
+      styles: updated.Styles ? JSON.parse(updated.Styles as string) : undefined,
+      customStyles: updated.CustomStyles || undefined,
+      published: updated.Published,
+      subdomain: updated.Subdomain || undefined,
+      createdAt: updated.CreatedAt.toISOString(),
+      updatedAt: updated.UpdatedAt.toISOString(),
+      deletedAt: updated.DeletedAt ? updated.DeletedAt.toISOString() : null,
+    }
+    
+    return new Response(JSON.stringify(newProject), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error updating project:", error);
+    return new Response(JSON.stringify({ error: "Failed to update project" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
+

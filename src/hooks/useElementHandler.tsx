@@ -174,7 +174,7 @@ export function useElementHandler() {
       content: e.currentTarget.textContent || "",
     });
   };
-
+  
   const getStyles = (element: EditorElement): React.CSSProperties => {
     return {
       ...element.styles,

@@ -28,11 +28,12 @@ const ComponentHolder = ({ icon, type }: HolderProps) => {
 
 type CustomComponentHolderProps = {
   name: string;
+  index: number;
 };
 
-export function CustomComponentHolder({ name }: CustomComponentHolderProps) {
+export function CustomComponentHolder({ name, index }: CustomComponentHolderProps) {
   const onDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    e.dataTransfer.setData("customComponentName", name);
+    e.dataTransfer.setData("customComponentName", index.toString());
   };
 
   return (

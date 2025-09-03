@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import EditorHeader from "@/components/editor/editor/EditorHeader";
 import PreviewContainer from "@/components/editor/editor/PreviewContainer";
 import EditorCanvas from "@/components/editor/editor/EditorCanvas";
@@ -14,7 +15,7 @@ export default function Editor({ id, pageId }: EditorProps) {
     currentView,
     setCurrentView,
     isDraggingOver,
-    isLoadingElements,
+    isLoading,
     filteredElements,
     selectedElement,
     handleDrop,
@@ -25,19 +26,19 @@ export default function Editor({ id, pageId }: EditorProps) {
   } = useEditor(id, pageId);
 
   return (
-    <div className="flex h-screen w-full flex-col bg-background text-foreground relative">
+    <div className="flex-1 w-full h-full flex flex-col bg-background text-foreground relative">
       <EditorHeader
         handlePageNavigation={handlePageNavigation}
         currentView={currentView}
         setCurrentView={setCurrentView}
       />
-      <PreviewContainer currentView={currentView}>
+      <PreviewContainer currentView={currentView} isLoading={isLoading}>
         <EditorCanvas
           isDraggingOver={isDraggingOver}
           handleDrop={handleDrop}
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
-          isLoading={isLoadingElements}
+          isLoading={isLoading}
           elements={filteredElements || []}
           selectedElement={selectedElement || null}
           addNewSection={addNewSection}
