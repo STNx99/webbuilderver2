@@ -37,7 +37,8 @@ function createBaseElement(
     type: state.type,
     projectId: state.projectId,
     src: state.src,
-    parentId: state.parentId,
+    parentId:
+      state.parentId && state.parentId !== "" ? state.parentId : undefined,
     pageId: state.pageId,
     ...state.baseProperties,
     content: "",

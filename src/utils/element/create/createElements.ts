@@ -87,7 +87,7 @@ function baseElementFactory({
     projectId,
     pageId: pageId ?? undefined,
     src: src ?? undefined,
-    parentId: parentId ?? undefined,
+    parentId: parentId && parentId !== "" ? parentId : undefined,
     styles: styles ?? {},
     tailwindStyles: tailwindStyles ?? undefined,
     elements: [], // may be overridden for container elements

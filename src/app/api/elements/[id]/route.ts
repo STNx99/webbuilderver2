@@ -3,194 +3,153 @@ import { EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { auth } from "@clerk/nextjs/server";
 
+interface ApiResponse {
+  success?: boolean;
+  error?: string;
+  message?: string;
+  data?: any;
+}
+
+interface UpdatePayload {
+  element?: Partial<EditorElement>;
+  data?: Partial<EditorElement>;
+  settings?: string;
+  [key: string]: any;
+}
+
+function createErrorResponse(
+  error: string,
+  message: string,
+  status: number,
+): Response {
+  return new Response(JSON.stringify({ error, message } as ApiResponse), {
+    status,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
+function createSuccessResponse(data: any, message: string): Response {
+  return new Response(
+    JSON.stringify({
+      success: true,
+      message,
+      data,
+    } as ApiResponse),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
+}
+
+async function parseRequestBody(req: Request): Promise<UpdatePayload> {
+  try {
+    return await req.json();
+  } catch {
+    throw new Error("Invalid JSON in request body");
+  }
+}
+
+function normalizeElementData(payload: UpdatePayload): Partial<EditorElement> {
+  if (payload.element) return payload.element;
+  if (payload.data) return payload.data;
+  const { element, data, settings, ...elementData } = payload;
+  return elementData as Partial<EditorElement>;
+}
+
+function validateElementData(element: Partial<EditorElement>): void {
+  if (!element || typeof element !== "object") {
+    throw new Error("Element data must be a valid object");
+  }
+
+  if (element.type !== undefined && typeof element.type !== "string") {
+    throw new Error("Element type must be a string if provided");
+  }
+}
+
 export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    // Authentication check
     const { userId } = await auth();
     if (!userId) {
-      return new Response(
-        JSON.stringify({
-          error: "Unauthorized",
-          message: "You must be logged in to update elements",
-        }),
-        { status: 401 },
+      return createErrorResponse(
+        "Unauthorized",
+        "You must be logged in to update elements",
+        401,
       );
     }
 
-    // Parse and validate element ID from params
     const { id: elementId } = await params;
-    if (
-      !elementId ||
-      typeof elementId !== "string" ||
-      elementId.trim() === ""
-    ) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid element ID",
-          message: "Element ID is required and must be a valid string",
-        }),
-        { status: 400 },
+    if (!elementId?.trim()) {
+      return createErrorResponse(
+        "Invalid element ID",
+        "Element ID is required and must be a valid string",
+        400,
       );
     }
 
-    // Parse request body and normalize payload.
-    // Accept shapes:
-    //  - { element: { ... }, settings: ... }
-    //  - { data: { ... } }
-    //  - raw element object
-    let payload;
-    try {
-      payload = await req.json();
-    } catch {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid JSON",
-          message: "Request body must be valid JSON",
-        }),
-        { status: 400 },
-      );
-    }
+    const payload = await parseRequestBody(req);
+    const element = normalizeElementData(payload);
 
-    // Normalize element payload (element field takes precedence, then data, then raw)
-    const maybeElement =
-      payload && typeof payload === "object"
-        ? "element" in payload
-          ? (payload as any).element
-          : "data" in payload
-            ? (payload as any).data
-            : payload
-        : undefined;
+    validateElementData(element);
 
-    const element: Partial<EditorElement> =
-      (maybeElement as Partial<EditorElement>) ??
-      ({} as Partial<EditorElement>);
-
-    if (!element || typeof element !== "object") {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid element data",
-          message: "Request body must be an object",
-        }),
-        { status: 400 },
-      );
-    }
-
-    // Ensure element ID matches the URL parameter if provided; otherwise set it
     if (element.id && element.id !== elementId) {
-      return new Response(
-        JSON.stringify({
-          error: "Element ID mismatch",
-          message: "Element ID in body does not match URL parameter",
-        }),
-        { status: 400 },
+      return createErrorResponse(
+        "Element ID mismatch",
+        "Element ID in body does not match URL parameter",
+        400,
       );
     }
     element.id = elementId;
 
-    // Minimal type check: if provided, it must be a string
-    if (element.type !== undefined && typeof element.type !== "string") {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid element type",
-          message: "If provided, element.type must be a string",
-        }),
-        { status: 400 },
-      );
-    }
-
-    // Determine settings: prefer explicit settings in the request payload if present,
-    // otherwise compute from the element using elementHelper.
-    const payloadSettings =
-      payload && typeof payload === "object" && "settings" in payload
-        ? (payload as any).settings
-        : undefined;
-
+    // Determine settings (explicit or computed)
     const settings =
-      payloadSettings !== undefined
-        ? payloadSettings
+      payload.settings !== undefined
+        ? payload.settings
         : elementHelper.getElementSettings(element as EditorElement);
 
-    // Update the element (pass undefined when settings intentionally absent)
+    // Update element using DAL
     const updatedElement = await ElementDAL.updateElement(
       element as EditorElement,
       settings ?? undefined,
     );
 
-    if (!updatedElement) {
-      return new Response(
-        JSON.stringify({
-          error: "Update failed",
-          message:
-            "Element could not be updated. It may not exist or you may not have permission to modify it.",
-        }),
-        { status: 404 },
-      );
-    }
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: `Element with ID ${elementId} updated successfully`,
-        data: {
-          id: elementId,
-          type: element.type,
-          updatedAt: new Date().toISOString(),
-        },
-      }),
+    // Return success response with updated element info
+    return createSuccessResponse(
       {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
-        },
+        id: elementId,
+        type: element.type,
+        updatedAt: new Date().toISOString(),
       },
+      `Element with ID ${elementId} updated successfully`,
     );
   } catch (error) {
     console.error("Error in PUT /api/elements/[id]:", error);
 
     // Handle specific error types
-    if (error instanceof SyntaxError) {
-      return new Response(
-        JSON.stringify({
-          error: "Invalid JSON",
-          message: "Request body contains invalid JSON",
-        }),
-        { status: 400 },
-      );
-    }
-
-    // Database-related errors
-    if (error && typeof error === "object" && "code" in error) {
-      if (error.code === "P2025") {
-        // Prisma record not found
-        return new Response(
-          JSON.stringify({
-            error: "Element not found",
-            message: "The specified element does not exist",
-          }),
-          { status: 404 },
+    if (error instanceof Error) {
+      if (error.message === "Invalid JSON in request body") {
+        return createErrorResponse(
+          "Invalid JSON",
+          "Request body must be valid JSON",
+          400,
         );
       }
-      if (error.code === "P2002") {
-        // Prisma unique constraint
-        return new Response(
-          JSON.stringify({
-            error: "Constraint violation",
-            message: "Element update violates database constraints",
-          }),
-          { status: 409 },
-        );
+      if (error.message === "Element data must be a valid object") {
+        return createErrorResponse("Invalid element data", error.message, 400);
+      }
+      if (error.message === "Element type must be a string if provided") {
+        return createErrorResponse("Invalid element type", error.message, 400);
       }
     }
 
-    return new Response(
-      JSON.stringify({
-        error: "Internal server error",
-        message: "An unexpected error occurred while updating the element",
-      }),
-      { status: 500 },
+    // Generic error fallback
+    return createErrorResponse(
+      "Internal server error",
+      "An unexpected error occurred while updating the element",
+      500,
     );
   }
 }
@@ -200,38 +159,44 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    // Authentication check
     const { userId } = await auth();
     if (!userId) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-      });
-    }
-    const { id: elementId } = await params;
-
-    if (!elementId) {
-      return new Response(JSON.stringify({ error: "Element ID is required" }), {
-        status: 400,
-      });
-    }
-
-    const response = await ElementDAL.deleteElement(elementId);
-    if (response === false) {
-      return new Response(JSON.stringify({ error: "Element not found" }), {
-        status: 404,
-      });
-    }
-    if (!response) {
-      return new Response(
-        JSON.stringify({ error: "Failed to delete element" }),
-        { status: 500 },
+      return createErrorResponse(
+        "Unauthorized",
+        "You must be logged in to delete elements",
+        401,
       );
     }
+
+    // Validate element ID from URL params
+    const { id: elementId } = await params;
+    if (!elementId?.trim()) {
+      return createErrorResponse(
+        "Invalid element ID",
+        "Element ID is required and must be a valid string",
+        400,
+      );
+    }
+
+    const deleteResult = await ElementDAL.deleteElement(elementId);
+
+    if (deleteResult === false) {
+      return createErrorResponse(
+        "Element not found",
+        "The specified element does not exist",
+        404,
+      );
+    }
+
     return new Response(null, { status: 204 });
   } catch (error) {
-    console.error("Error in DELETE request:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to process request" }),
-      { status: 500 },
+    console.error("Error in DELETE /api/elements/[id]:", error);
+
+    return createErrorResponse(
+      "Internal server error",
+      "An unexpected error occurred while deleting the element",
+      500,
     );
   }
 }

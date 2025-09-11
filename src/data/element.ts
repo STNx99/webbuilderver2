@@ -2,58 +2,45 @@ import prisma from "@/lib/prisma";
 import { EditorElement } from "@/types/global.type";
 import type { Prisma, Element } from "@/generated/prisma";
 
+// Field mapping from EditorElement to Prisma Element
+const FIELD_MAPPING: Record<string, keyof Element> = {
+  type: "Type",
+  name: "Name",
+  content: "Content",
+  parentId: "ParentId",
+  src: "Src",
+  href: "Href",
+  tailwindStyles: "TailwindStyles",
+  projectId: "ProjectId",
+  pageId: "PageId",
+};
+
 /**
- * Build a Prisma.ElementUncheckedUpdateInput using Object.fromEntries.
- * Only include keys that are explicitly provided on the incoming element object.
- * - If a property is not present (=== undefined) it's omitted.
- * - If a property is present and explicitly `null`, it will be included so nullable DB fields can be cleared.
- * - `styles` is JSON-serialized when provided.
+ * Build a Prisma.ElementUncheckedUpdateInput from a partial EditorElement.
+ * Only includes fields that are explicitly provided (not undefined).
+ * Handles special cases like styles JSON serialization.
  */
 function buildUpdateData(
   element: Partial<EditorElement>,
 ): Prisma.ElementUncheckedUpdateInput {
-  const entries: Array<[keyof Element, unknown]> = [];
+  const updateData: Record<string, unknown> = {};
 
-  if (element.type !== undefined) entries.push(["Type", element.type]);
+  // Handle regular fields using the mapping
+  Object.entries(FIELD_MAPPING).forEach(([editorField, dbField]) => {
+    const value = (element as any)[editorField];
+    if (value !== undefined) {
+      updateData[dbField] = value;
+    }
+  });
 
-  if (element.name !== undefined) entries.push(["Name", element.name]);
-
-  if ("styles" in element) {
-    const stylesValue: Prisma.InputJsonValue | undefined =
-      element.styles === undefined
-        ? undefined
-        : element.styles
-          ? (JSON.parse(
-              JSON.stringify(element.styles),
-            ) as unknown as Prisma.InputJsonValue)
-          : ({} as Prisma.InputJsonValue);
-
-    if (stylesValue !== undefined) entries.push(["Styles", stylesValue]);
+  // Handle styles separately (JSON serialization)
+  if ("styles" in element && element.styles !== undefined) {
+    updateData.Styles = element.styles
+      ? (JSON.parse(JSON.stringify(element.styles)) as Prisma.InputJsonValue)
+      : ({} as Prisma.InputJsonValue);
   }
 
-  if (element.content !== undefined) entries.push(["Content", element.content]);
-
-  if ("parentId" in element)
-    entries.push(["ParentId", element.parentId as string | null | undefined]);
-
-  if (element.src !== undefined)
-    entries.push(["Src", element.src as string | null | undefined]);
-
-  if (element.href !== undefined)
-    entries.push(["Href", element.href as string | null | undefined]);
-
-  if (element.tailwindStyles !== undefined)
-    entries.push(["TailwindStyles", element.tailwindStyles]);
-
-  if (element.projectId !== undefined)
-    entries.push(["ProjectId", element.projectId]);
-
-  if ("pageId" in element)
-    entries.push(["PageId", element.pageId as string | null | undefined]);
-
-  return Object.fromEntries(
-    entries,
-  ) as unknown as Prisma.ElementUncheckedUpdateInput;
+  return updateData as Prisma.ElementUncheckedUpdateInput;
 }
 
 export const ElementDAL = {
@@ -61,11 +48,11 @@ export const ElementDAL = {
     element: Partial<EditorElement>,
     settings?: string | null,
   ): Promise<Element> {
-    if (!element || !element.id) {
+    if (!element?.id) {
       throw new Error("updateElement failed: element id is required");
     }
 
-
+    // Update settings if provided
     if (settings !== undefined) {
       await prisma.setting.updateMany({
         where: { ElementId: element.id },
@@ -73,21 +60,22 @@ export const ElementDAL = {
       });
     }
 
-    const data = buildUpdateData(element);
+    const updateData = buildUpdateData(element);
 
-    if (!data || Object.keys(data).length === 0) {
+    if (Object.keys(updateData).length === 0) {
       throw new Error("No update fields provided");
     }
 
     try {
-      const updated = await prisma.element.update({
+      return await prisma.element.update({
         where: { Id: element.id },
-        data,
+        data: updateData,
       });
-      return updated;
-    } catch (err) {
-      console.error("[ElementDAL.updateElement] update error:", err);
-      throw err;
+    } catch (error) {
+      console.error("[ElementDAL.updateElement] update error:", error);
+      throw new Error(
+        `Failed to update element: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   },
 
@@ -95,16 +83,19 @@ export const ElementDAL = {
     try {
       await prisma.element.delete({ where: { Id: id } });
       return true;
-    } catch (err: unknown) {
+    } catch (error: unknown) {
       if (
-        err &&
-        typeof err === "object" &&
-        "code" in err &&
-        (err as { code?: string }).code === "P2025"
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        (error as { code?: string }).code === "P2025"
       ) {
         return false;
       }
-      throw err;
+      console.error("[ElementDAL.deleteElement] delete error:", error);
+      throw new Error(
+        `Failed to delete element: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     }
   },
 };

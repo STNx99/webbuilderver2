@@ -126,8 +126,6 @@ const createElementStore = <TElement extends EditorElement>() => {
       let d = debouncers.get(id);
       if (d) return d;
 
-      // createRebounce is generic; supply a strongly-typed callback here so
-      // the returned debouncer has the right parameter types.
       d = createRebounce<(payload: UpdatePayload<TElement>) => Promise<void>>(
         async (payload) => {
           try {
@@ -184,7 +182,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           (k) => !UI_FLAGS.includes(k as UiFlagKey),
         );
 
-        // Apply update locally (optimistic)
         const updatedTree = mapUpdateById(
           elements as EditorElement[],
           id,
@@ -322,6 +319,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements as EditorElement[],
         ) as TElement[];
 
+            console.log("Creating element", ...newElements)
         set({
           elements: updatedTree,
           selectedElement: newElements[0] ?? undefined,

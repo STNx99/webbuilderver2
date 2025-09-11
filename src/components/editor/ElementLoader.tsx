@@ -1,52 +1,26 @@
 import { EditorElement } from "@/types/global.type";
 import React from "react";
-import {
-  BaseComponent,
-  CarouselComponent,
-  FormComponent,
-  FrameComponent,
-  ButtonComponent,
-  InputComponent,
-  ListComponent,
-  SelectComponent,
-  SectionComponent,
-  ImageComponent,
-} from "@/types/editor";
+import { getComponentMap } from "@/constants/elements";
 import ResizeHandler from "./resizehandler/ResizeHandler";
 import EditorContextMenu from "./EditorContextMenu";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
 
 type Props = {
   elements: EditorElement[];
 };
-
+// Load element from the provided element array EditorElement[] base on the type
+// 
 export default function ElementLoader({ elements }: Props) {
   const renderElement = (element: EditorElement) => {
-    const commonProps = {
+    const commonProps: EditorComponentProps = {
       element,
     };
 
-    switch (element.type) {
-      case "Image":
-        return <ImageComponent key={element.id} {...commonProps} />;
-      case "Frame":
-        return <FrameComponent key={element.id} {...commonProps} />;
-      case "Form":
-        return <FormComponent key={element.id} {...commonProps} />;
-      case "Carousel":
-        return <CarouselComponent key={element.id} {...commonProps} />;
-      case "Button":
-        return <ButtonComponent key={element.id} {...commonProps} />;
-      case "Input":
-        return <InputComponent key={element.id} {...commonProps} />;
-      case "List":
-        return <ListComponent key={element.id} {...commonProps} />;
-      case "Select":
-        return <SelectComponent key={element.id} {...commonProps} />;
-      case "Section":
-        return <SectionComponent key={element.id} {...commonProps} />;
-      default:
-        return <BaseComponent key={element.id} {...commonProps} />;
+    const Component = getComponentMap(commonProps);
+    if (Component) {
+      return <Component {...commonProps} />;
     }
+    return null;
   };
   return (
     <>
