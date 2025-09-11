@@ -13,9 +13,12 @@ export function renderChildElement(
     if (excludes.includes(element.type as ElementType)) {
       return null;
     }
-    const Component = getComponentMap(props);
+    const childProps: EditorComponentProps = {
+      element,
+    };
+    const Component = getComponentMap(childProps);
     if (Component) {
-      return <Component {...props} />;
+      return <Component {...childProps} />;
     }
     return null;
   };

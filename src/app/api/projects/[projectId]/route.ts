@@ -2,6 +2,53 @@ import { projectDAL } from "@/data/project";
 import { Project } from "@/interfaces/project.interface";
 import { auth } from "@clerk/nextjs/server";
 
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ projectId: string }> },
+) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const { projectId } = await params;
+    if (!projectId) {
+      return new Response("Project ID is required", { status: 400 });
+    }
+
+    const project = await projectDAL.getProject(projectId, userId);
+    if (!project) {
+      return new Response("Project not found", { status: 404 });
+    }
+
+    const projectData: Project = {
+      id: project.Id,
+      ownerId: project.OwnerId,
+      name: project.Name,
+      description: project.Description,
+      styles: project.Styles ? JSON.parse(project.Styles as string) : undefined,
+      customStyles: project.CustomStyles || undefined,
+      published: project.Published,
+      subdomain: project.Subdomain || undefined,
+      createdAt: project.CreatedAt.toISOString(),
+      updatedAt: project.UpdatedAt.toISOString(),
+      deletedAt: project.DeletedAt ? project.DeletedAt.toISOString() : null,
+    };
+
+    return new Response(JSON.stringify(projectData), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    return new Response(JSON.stringify({ error: "Failed to fetch project" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
+
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ projectId: string }> },
@@ -83,8 +130,8 @@ export async function PATCH(
       createdAt: updated.CreatedAt.toISOString(),
       updatedAt: updated.UpdatedAt.toISOString(),
       deletedAt: updated.DeletedAt ? updated.DeletedAt.toISOString() : null,
-    }
-    
+    };
+
     return new Response(JSON.stringify(newProject), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -97,4 +144,3 @@ export async function PATCH(
     });
   }
 }
-

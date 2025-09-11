@@ -57,7 +57,10 @@ export const useEditor = (id: string, pageId: string) => {
 
   useEffect(() => {
     if (project) {
-      // ensure the project is loaded into the global project store
+      if (!project || project.deletedAt) {
+        router.push("/dashboard");
+        return;
+      };
       loadProject(project as Project);
     }
   }, [project, loadProject]);
@@ -81,7 +84,7 @@ export const useEditor = (id: string, pageId: string) => {
         pageId,
       );
     } else if (customElement) {
-      const customComp = customComps[parseInt(customElement)]
+      const customComp = customComps[parseInt(customElement)];
       if (customComp) {
         newElement = elementHelper.createElement.createFromTemplate(
           customComp,

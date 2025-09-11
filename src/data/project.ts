@@ -51,6 +51,27 @@ export const projectDAL = {
     });
   },
 
+  // Get a specific project by ID with ownership check
+  getProject: async (projectId: string, userId: string) => {
+    if (!projectId) {
+      throw new Error("Project Id is required");
+    }
+    try {
+      const project = await prisma?.project.findUnique({
+        where: { Id: projectId },
+      });
+
+      if (!project) return null;
+      if (project.OwnerId !== userId) return null;
+      if (project.DeletedAt !== null) return null;
+
+      return project;
+    } catch (err) {
+      console.error("projectDAL.getProject error:", err);
+      return null;
+    }
+  },
+
   /**
    * Update a project.
    *
@@ -89,7 +110,7 @@ export const projectDAL = {
               ? updates.published
               : existing.Published,
           Subdomain: updates.subdomain ?? existing.Subdomain,
-        }
+        },
       });
 
       return updated || null;

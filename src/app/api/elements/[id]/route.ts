@@ -7,14 +7,13 @@ interface ApiResponse {
   success?: boolean;
   error?: string;
   message?: string;
-  data?: any;
+  
 }
 
 interface UpdatePayload {
   element?: Partial<EditorElement>;
   data?: Partial<EditorElement>;
   settings?: string;
-  [key: string]: any;
 }
 
 function createErrorResponse(
@@ -28,7 +27,7 @@ function createErrorResponse(
   });
 }
 
-function createSuccessResponse(data: any, message: string): Response {
+function createSuccessResponse(data: Partial<EditorElement>, message: string): Response {
   return new Response(
     JSON.stringify({
       success: true,
@@ -120,8 +119,7 @@ export async function PUT(
     return createSuccessResponse(
       {
         id: elementId,
-        type: element.type,
-        updatedAt: new Date().toISOString(),
+        type: element.type ?? undefined,
       },
       `Element with ID ${elementId} updated successfully`,
     );
