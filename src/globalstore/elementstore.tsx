@@ -2,14 +2,17 @@ import { create } from "zustand";
 import { ContainerElement, EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { elementService } from "@/services/element";
-import { createRebounce } from "@/utils/rebounce";
+import { debounce } from "lodash";
+import { cloneDeep, find, reject } from "lodash";
 
 type ElementStore<TElement extends EditorElement> = {
+  // States
   elements: TElement[];
   selectedElement: TElement | undefined;
   selectedElements: TElement[] | undefined;
   draggingElement: TElement | undefined;
-
+  
+  // Actions
   setSelectedElements: (elements: TElement[] | undefined) => void;
   setDraggingElement: (element: TElement | undefined) => void;
   setSelectedElement: (element: TElement | undefined) => void;
@@ -45,7 +48,7 @@ type UpdatePayload<TElement extends EditorElement> = {
 };
 
 type Debouncer<TElement extends EditorElement> = ReturnType<
-  typeof createRebounce<(payload: UpdatePayload<TElement>) => Promise<void>>
+  typeof debounce<(payload: UpdatePayload<TElement>) => Promise<void>>
 >;
 
 const createElementStore = <TElement extends EditorElement>() => {
@@ -56,14 +59,14 @@ const createElementStore = <TElement extends EditorElement>() => {
       els: EditorElement[],
       id: string,
     ): EditorElement | undefined => {
-      for (const el of els) {
-        if (el.id === id) return el;
+      return find(els, (el) => {
+        if (el.id === id) return true;
         if (elementHelper.isContainerElement(el)) {
           const found = findById((el as ContainerElement).elements, id);
-          if (found) return found;
+          return !!found;
         }
-      }
-      return undefined;
+        return false;
+      });
     };
 
     const mapUpdateById = (
@@ -86,19 +89,15 @@ const createElementStore = <TElement extends EditorElement>() => {
       els: EditorElement[],
       id: string,
     ): EditorElement[] => {
-      const out: EditorElement[] = [];
-      for (const el of els) {
-        if (el.id === id) continue;
+      return reject(els, (el) => el.id === id).map((el) => {
         if (elementHelper.isContainerElement(el)) {
-          out.push({
+          return {
             ...el,
             elements: mapDeleteById(el.elements, id),
-          } as EditorElement);
-        } else {
-          out.push(el);
+          } as EditorElement;
         }
-      }
-      return out;
+        return el;
+      });
     };
 
     const mapInsertAfterId = (
@@ -108,7 +107,9 @@ const createElementStore = <TElement extends EditorElement>() => {
     ): EditorElement[] => {
       const idx = els.findIndex((e) => e.id === targetId);
       if (idx !== -1) {
-        return [...els.slice(0, idx + 1), toInsert, ...els.slice(idx + 1)];
+        const newEls = [...els];
+        newEls.splice(idx + 1, 0, toInsert);
+        return newEls;
       }
       return els.map((el) => {
         if (elementHelper.isContainerElement(el)) {
@@ -126,33 +127,29 @@ const createElementStore = <TElement extends EditorElement>() => {
       let d = debouncers.get(id);
       if (d) return d;
 
-      d = createRebounce<(payload: UpdatePayload<TElement>) => Promise<void>>(
-        async (payload) => {
-          try {
-            // elementService.updateElement expects an EditorElement.
-            // Our PersistElement omits UI-only flags; cast through unknown to
-            // EditorElement to satisfy the service signature without using `any`.
-            await elementService.updateElement(
-              payload.element as unknown as EditorElement,
-              payload.settings ?? null,
-            );
-          } catch (err) {
-            // revert the optimistic change on failure
-            // eslint-disable-next-line no-console
-            console.error("Failed to persist element update, reverting:", err);
-            if (payload.prevElements) {
-              set({ elements: payload.prevElements });
-            }
+      d = debounce(async (payload: UpdatePayload<TElement>) => {
+        try {
+          // elementService.updateElement expects an EditorElement.
+          // Our PersistElement omits UI-only flags; cast through unknown to
+          // EditorElement to satisfy the service signature without using `any`.
+          await elementService.updateElement(
+            payload.element as unknown as EditorElement,
+            payload.settings ?? null,
+          );
+        } catch (err) {
+          // revert the optimistic change on failure
+          // eslint-disable-next-line no-console
+          console.error("Failed to persist element update, reverting:", err);
+          if (payload.prevElements) {
+            set({ elements: payload.prevElements });
           }
-        },
-        300,
-      ) as Debouncer<TElement>;
+        }
+      }, 300) as Debouncer<TElement>;
 
       debouncers.set(id, d);
       return d;
     };
 
-    // UI-only flags that should not by themselves trigger persistence
     const UI_FLAGS = ["isSelected", "isHovered", "isDraggedOver"] as const;
     type UiFlagKey = (typeof UI_FLAGS)[number];
 
@@ -171,10 +168,8 @@ const createElementStore = <TElement extends EditorElement>() => {
       updateElement: (id, updatedElement) => {
         const { elements, selectedElement } = get();
 
-        // shallow snapshot for revert
-        const prevElements = elements.slice();
+        const prevElements = cloneDeep(elements);
 
-        // Determine if the update contains non-UI changes.
         const updatedKeys = Object.keys(
           updatedElement,
         ) as (keyof typeof updatedElement)[];
@@ -231,7 +226,7 @@ const createElementStore = <TElement extends EditorElement>() => {
 
         // Trigger a per-element debounced persistence
         const db = getDebouncerForId(id);
-        db.trigger({
+        db({
           element: persistElement,
           prevElements,
           settings: settingsPayload,
@@ -241,7 +236,7 @@ const createElementStore = <TElement extends EditorElement>() => {
       deleteElement: (id) => {
         const { elements } = get();
 
-        const prevElements = elements.slice();
+        const prevElements = cloneDeep(elements);
         const updatedTree = mapDeleteById(
           elements as EditorElement[],
           id,
@@ -279,7 +274,7 @@ const createElementStore = <TElement extends EditorElement>() => {
 
       addElement: (...newElements) => {
         const { elements } = get();
-        const prevElements = elements.slice();
+        const prevElements = cloneDeep(elements);
 
         const insertOne = (
           tree: EditorElement[],
@@ -319,7 +314,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements as EditorElement[],
         ) as TElement[];
 
-            console.log("Creating element", ...newElements)
+        console.log("Creating element", ...newElements);
         set({
           elements: updatedTree,
           selectedElement: newElements[0] ?? undefined,

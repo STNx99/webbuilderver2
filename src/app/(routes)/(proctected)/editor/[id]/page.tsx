@@ -11,9 +11,11 @@ export default async function EditorPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page: string }>;
 }) {
-  const { id } = await params;
-  const { page } = await searchParams;
-
+  const [id, page] = await Promise.all([params, searchParams]).then(
+    ([p, s]) => [p.id, s.page],
+  );
+  
+  
   const queryClient = getQueryClient();
   await Promise.all([
     queryClient.prefetchQuery({

@@ -31,15 +31,6 @@ export const pageDAL = {
     page: Partial<Page>,
     userId: string,
   ): Promise<Page | null> => {
-    // This is a placeholder implementation
-    console.log(
-      "Updating page:",
-      pageId,
-      "for user:",
-      userId,
-      "with data:",
-      page,
-    );
     return null;
   },
 

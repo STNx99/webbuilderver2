@@ -1,9 +1,10 @@
 import { ContainerElement, EditorElement } from "@/types/global.type";
 import { v4 as uuidv4 } from "uuid";
+import { map, isArray, has } from "lodash";
 
 export function prepareElements(
-    element: Partial<EditorElement>,
-    parentId: string | undefined = undefined
+  element: Partial<EditorElement>,
+  parentId: string | undefined = undefined,
 ): EditorElement {
   const preparedElement: EditorElement = {
     ...element,
@@ -11,12 +12,11 @@ export function prepareElements(
     parentId: parentId || undefined,
   } as EditorElement;
 
-  // Check if this element can contain child elements
-  if ('elements' in element && Array.isArray(element.elements)) {
+  if (has(element, "elements") && isArray(element.elements)) {
     const containerElement = preparedElement as ContainerElement;
-    containerElement.elements = element.elements.map((childElement) => {
-      return prepareElements(childElement, preparedElement.id);
-    });
+    containerElement.elements = map(element.elements, (childElement) =>
+      prepareElements(childElement, preparedElement.id),
+    );
   }
 
   return preparedElement;

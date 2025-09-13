@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { get, merge, clamp } from "lodash";
 import type { EditorElement } from "@/types/global.type";
 import type { ResizeDirection } from "@/constants/direciton";
 import { CSSStyles } from "@/interfaces/elements.interface";
@@ -27,7 +28,8 @@ const directionToCursor = (dir: ResizeDirection) => {
   // Map our directional tokens to standard cursors
   if (dir === "gap") return "ns-resize";
   if (dir.startsWith("padding-") || dir.startsWith("margin-")) return "pointer";
-  const map: Record<string, string> = {
+
+  const cursorMap: Record<string, string> = {
     n: "ns-resize",
     s: "ns-resize",
     e: "ew-resize",
@@ -37,9 +39,10 @@ const directionToCursor = (dir: ResizeDirection) => {
     se: "nwse-resize",
     sw: "nesw-resize",
   };
+
   // For compound directions like 'n-e' or 'ne', normalize by removing separators
   const key = dir.replace(/[-_]/g, "");
-  return map[key] ?? `${dir}-resize`;
+  return get(cursorMap, key, `${dir}-resize`);
 };
 
 export function useResizeHandler({
@@ -91,9 +94,7 @@ export function useResizeHandler({
     startPos: { x: number; y: number },
     element: EditorElement,
   ): Partial<CSSStyles> | null {
-    let updatedStyles: Partial<CSSStyles> = {
-      ...element.styles,
-    };
+    const updatedStyles = { ...element.styles };
 
     // Helper for padding/margin resize
     const handleSpacingResize = (
@@ -109,34 +110,34 @@ export function useResizeHandler({
       const prop = propMap[dir as keyof typeof propMap];
       if (!prop) return false;
 
-      const initialValue = parseInt(
-        element.styles?.[prop]?.toString() || "0",
-        10,
-      );
-      let delta = 0;
-      if (dir === "n") delta = clientY - startPos.y;
-      if (dir === "s") delta = startPos.y - clientY;
-      if (dir === "e") delta = startPos.x - clientX;
-      if (dir === "w") delta = clientX - startPos.x;
-      updatedStyles[prop] = `${Math.max(0, initialValue + delta)}px`;
+      const initialValue = parseInt(String(element.styles?.[prop] || "0"), 10);
+      const deltaMap = {
+        n: clientY - startPos.y,
+        s: startPos.y - clientY,
+        e: startPos.x - clientX,
+        w: clientX - startPos.x,
+      };
+
+      const delta = deltaMap[dir as keyof typeof deltaMap] || 0;
+      updatedStyles[prop] = `${clamp(initialValue + delta, 0, Infinity)}px`;
       return true;
     };
 
-    // Gap
+    // Gap resize
     if (direction === "gap") {
       const delta = clientY - startPos.y;
-      const initialGap = parseInt(element.styles?.gap?.toString() || "0", 10);
-      updatedStyles.gap = `${Math.max(0, initialGap + delta)}px`;
+      const initialGap = parseInt(String(get(element.styles, "gap", "0")), 10);
+      updatedStyles.gap = `${clamp(initialGap + delta, 0, Infinity)}px`;
       return updatedStyles;
     }
 
-    // Padding
+    // Padding resize
     if (direction.startsWith("padding-")) {
       const dir = direction.split("-")[1];
       if (handleSpacingResize("padding", dir)) return updatedStyles;
     }
 
-    // Margin
+    // Margin resize
     if (direction.startsWith("margin-")) {
       const dir = direction.split("-")[1];
       if (handleSpacingResize("margin", dir)) return updatedStyles;
@@ -174,72 +175,82 @@ export function useResizeHandler({
     let newTop = startRect.top;
     let newLeft = startRect.left;
 
-    if (direction.includes("e")) newWidth = clientX - startRect.left;
-    if (direction.includes("w")) {
-      newWidth = startRect.right - clientX;
-      newLeft = clientX;
-    }
-    if (direction.includes("s")) newHeight = clientY - startRect.top;
-    if (direction.includes("n")) {
-      newHeight = startRect.bottom - clientY;
-      newTop = clientY;
-    }
+    // Calculate new dimensions based on direction
+    const directionOps = {
+      e: () => (newWidth = clientX - startRect.left),
+      w: () => {
+        newWidth = startRect.right - clientX;
+        newLeft = clientX;
+      },
+      s: () => (newHeight = clientY - startRect.top),
+      n: () => {
+        newHeight = startRect.bottom - clientY;
+        newTop = clientY;
+      },
+    };
 
-    // Aspect ratio locking when Shift is held (PointerEvent supports shiftKey)
+    // Apply directional changes
+    Object.keys(directionOps).forEach((dir) => {
+      if (direction.includes(dir)) {
+        directionOps[dir as keyof typeof directionOps]();
+      }
+    });
+
+    // Aspect ratio locking when Shift is held
     const aspectLock = Boolean(e.shiftKey) && typeof aspectRatio === "number";
     if (aspectLock && aspectRatio) {
       // Preserve ratio based on dominant delta
       const widthDelta = Math.abs(newWidth - startRect.width);
       const heightDelta = Math.abs(newHeight - startRect.height);
+
       if (widthDelta > heightDelta) {
-        newHeight = Math.max(MIN_SIZE, newWidth / aspectRatio);
-        // if resizing from north, adjust top according to newHeight
+        newHeight = clamp(newWidth / aspectRatio, MIN_SIZE, Infinity);
         if (direction.includes("n")) {
           newTop = startRect.bottom - newHeight;
         }
       } else {
-        newWidth = Math.max(MIN_SIZE, newHeight * aspectRatio);
+        newWidth = clamp(newHeight * aspectRatio, MIN_SIZE, Infinity);
         if (direction.includes("w")) {
           newLeft = startRect.right - newWidth;
         }
       }
     }
 
-    const minSize = MIN_SIZE;
-    newWidth = Math.max(minSize, newWidth);
-    newHeight = Math.max(minSize, newHeight);
+    // Apply minimum size constraints
+    newWidth = clamp(newWidth, MIN_SIZE, Infinity);
+    newHeight = clamp(newHeight, MIN_SIZE, Infinity);
 
     const parentRect = parentElement.getBoundingClientRect();
-    const updatedStyles: Partial<CSSStyles> = {
-      ...element.styles,
-    };
+    const parentContentWidth = get(
+      parentElement,
+      "clientWidth",
+      parentRect.width,
+    );
+    const parentContentHeight = get(
+      parentElement,
+      "clientHeight",
+      parentRect.height,
+    );
 
-    const parentContentWidth = parentElement.clientWidth || parentRect.width;
-    const parentContentHeight = parentElement.clientHeight || parentRect.height;
+    const baseStyles = { ...element.styles };
+    const updatedStyles = merge({}, baseStyles, {
+      width: `${clamp((newWidth / parentContentWidth) * MAX_PERCENT, 0, MAX_PERCENT).toFixed(2)}%`,
+      height: `${clamp((newHeight / parentContentHeight) * MAX_PERCENT, 0, MAX_PERCENT).toFixed(2)}%`,
+    });
 
-    updatedStyles.width = `${Math.min(
-      (newWidth / parentContentWidth) * MAX_PERCENT,
-      MAX_PERCENT,
-    ).toFixed(2)}%`;
-    updatedStyles.height = `${Math.min(
-      (newHeight / parentContentHeight) * MAX_PERCENT,
-      MAX_PERCENT,
-    ).toFixed(2)}%`;
+    // Preserve original dimensions for single-axis resizes
+    if (direction === "s" || direction === "n") {
+      updatedStyles.width = String(get(element.styles, "width", "auto"));
+    } else if (direction === "e" || direction === "w") {
+      updatedStyles.height = String(get(element.styles, "height", "auto"));
+    }
 
-    if (direction === "s" || direction === "n")
-      updatedStyles.width = element.styles?.width;
-    else if (direction === "e" || direction === "w")
-      updatedStyles.height = element.styles?.height;
-
-    if (element.styles?.position === "absolute") {
-      updatedStyles.left = `${(
-        ((newLeft - parentRect.left) / parentContentWidth) *
-        MAX_PERCENT
-      ).toFixed(2)}%`;
-      updatedStyles.top = `${(
-        ((newTop - parentRect.top) / parentContentHeight) *
-        MAX_PERCENT
-      ).toFixed(2)}%`;
+    // Handle absolute positioning
+    if (get(element.styles, "position") === "absolute") {
+      merge(updatedStyles, {
+        left: `${(((newLeft - parentRect.left) / parentContentWidth) * MAX_PERCENT).toFixed(2)}%`,
+        top: `${(((newTop - parentRect.top) / parentContentHeight) * MAX_PERCENT).toFixed(2)}%`,
+      });
     }
 
     // Batch updates

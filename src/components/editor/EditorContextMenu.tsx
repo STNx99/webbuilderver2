@@ -45,29 +45,29 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
 }) => {
   const { setSelectedElement, updateElement, deselectAll } = useElementStore();
 
-  const onCopy = React.useCallback(() => {
+  const onCopy = () => {
     keyboardEventHandler.copyElement();
-  }, []);
+  };
 
-  const onCut = React.useCallback(() => {
+  const onCut = () => {
     keyboardEventHandler.cutElement();
-  }, []);
+  };
 
-  const onPaste = React.useCallback(() => {
+  const onPaste = () => {
     keyboardEventHandler.pasteElement();
-  }, []);
+  };
 
-  const onBringToFront = React.useCallback(() => {
+  const onBringToFront = () => {
     keyboardEventHandler.bringToFront();
-  }, []);
+  };
 
-  const onSendToBack = React.useCallback(() => {
+  const onSendToBack = () => {
     keyboardEventHandler.sendToBack();
-  }, []);
+  };
 
-  const onDelete = React.useCallback(() => {
+  const onDelete = () => {
     keyboardEventHandler.deleteElement();
-  }, []);
+  };
 
   // Ref to the trigger wrapper so we can inspect its ownerDocument (iframe vs top doc).
   const triggerRef = React.useRef<HTMLDivElement | null>(null);

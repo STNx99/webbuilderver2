@@ -39,7 +39,6 @@ export default function Editor({ id, pageId }: EditorProps) {
           handleDragOver={handleDragOver}
           handleDragLeave={handleDragLeave}
           isLoading={isLoading}
-          elements={filteredElements || []}
           selectedElement={selectedElement || null}
           addNewSection={addNewSection}
         />

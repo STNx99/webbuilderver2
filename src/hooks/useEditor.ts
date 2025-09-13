@@ -21,7 +21,7 @@ export const useEditor = (id: string, pageId: string) => {
   const router = useRouter();
 
   const { addElement, loadElements, selectedElement } = useElementStore();
-  const { pages, loadPages } = usePageStore();
+  const { pages, loadPages, setCurrentPage } = usePageStore();
   const { loadProject } = useProjectStore();
 
   const { data: projectPages, isLoading: isLoadingPages } = useQuery({
@@ -101,7 +101,8 @@ export const useEditor = (id: string, pageId: string) => {
   const handlePageNavigation = (e: React.FocusEvent<HTMLInputElement>) => {
     const pageName = e.currentTarget.value.slice(1);
     const page = pages.find((p) => p.Name === pageName);
-
+    
+    new Promise(()=> setCurrentPage(page || null))
     if (page) {
       router.push(`/editor/${id}?page=${page.Id}`);
     } else {

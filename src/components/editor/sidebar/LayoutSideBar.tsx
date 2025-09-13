@@ -37,6 +37,9 @@ function LayoutSideBar() {
   };
   const { elements, selectedElement } = useElementStore();
   const searchParams = useSearchParams();
+  const filteredElements = elementHelper.filterElementByPageId(
+    searchParams.get("page") || undefined,
+  );
   return (
     <Sidebar side="right">
       <SidebarContent>
@@ -55,10 +58,8 @@ function LayoutSideBar() {
               <AccordionContent>
                 <SidebarGroupContent>
                   <div className="max-h-60 overflow-y-auto">
-                    {elementHelper.filterElementByPageId(
-                      searchParams.get("page") || undefined,
-                    ).length > 0 ? (
-                      elements.map((element) => (
+                    {filteredElements.length > 0 ? (
+                      filteredElements.map((element) => (
                         <ElementTreeItem
                           key={element.id || Math.random()}
                           element={element}

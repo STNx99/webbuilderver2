@@ -10,7 +10,6 @@ type EditorCanvasProps = {
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   handleDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
   isLoading: boolean;
-  elements: EditorElement[];
   selectedElement: EditorElement | null;
   addNewSection: () => void;
 };
@@ -21,7 +20,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   handleDragOver,
   handleDragLeave,
   isLoading,
-  elements,
   selectedElement,
   addNewSection,
 }) => {
@@ -38,7 +36,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       {isLoading ? (
         <ElementLoading count={6} variant="mixed" />
       ) : (
-        <ElementLoader elements={elements} />
+        <ElementLoader />
       )}
       {!selectedElement && (
         <Button className="w-full h-6" onClick={addNewSection}>

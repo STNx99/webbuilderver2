@@ -17,10 +17,7 @@ export function renderChildElement(
       element,
     };
     const Component = getComponentMap(childProps);
-    if (Component) {
-      return <Component {...childProps} />;
-    }
-    return null;
+    return Component ? <Component {...childProps} /> : null;
   };
   return (
     <ResizeHandler element={element} key={element.id}>
