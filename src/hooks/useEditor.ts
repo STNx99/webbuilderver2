@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { usePageStore } from "@/globalstore/pagestore";
 import { useProjectStore } from "@/globalstore/projectstore";
 import { projectService } from "@/services/project";
@@ -20,7 +21,8 @@ export const useEditor = (id: string, pageId: string) => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const router = useRouter();
 
-  const { addElement, loadElements, selectedElement } = useElementStore();
+  const { addElement, loadElements } = useElementStore();
+  const { selectedElement } = useSelectionStore();
   const { pages, loadPages, setCurrentPage } = usePageStore();
   const { loadProject } = useProjectStore();
 
@@ -60,7 +62,7 @@ export const useEditor = (id: string, pageId: string) => {
       if (!project || project.deletedAt) {
         router.push("/dashboard");
         return;
-      };
+      }
       loadProject(project as Project);
     }
   }, [project, loadProject]);
@@ -101,8 +103,8 @@ export const useEditor = (id: string, pageId: string) => {
   const handlePageNavigation = (e: React.FocusEvent<HTMLInputElement>) => {
     const pageName = e.currentTarget.value.slice(1);
     const page = pages.find((p) => p.Name === pageName);
-    
-    new Promise(()=> setCurrentPage(page || null))
+
+    new Promise(() => setCurrentPage(page || null));
     if (page) {
       router.push(`/editor/${id}?page=${page.Id}`);
     } else {

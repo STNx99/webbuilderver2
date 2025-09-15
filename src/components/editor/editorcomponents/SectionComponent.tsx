@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { elementHelper } from "@/utils/element/elementhelper";
 import { useElementHandler } from "@/hooks/useElementHandler";
@@ -15,6 +15,15 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
   const searchParams = useSearchParams();
 
   const { getCommonProps } = useElementHandler();
+
+  // Defensive check: ensure styles is a valid object
+  const safeStyles =
+    sectionElement.styles &&
+    typeof sectionElement.styles === "object" &&
+    !Array.isArray(sectionElement.styles)
+      ? sectionElement.styles
+      : {};
+
   const handleCreateSeciont = () => {
     const newElement = elementHelper.createElement.create<SectionElement>(
       "Section",
@@ -28,7 +37,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
     <div
       {...getCommonProps(sectionElement)}
       style={{
-        ...(sectionElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
         position: "relative",
@@ -47,10 +56,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
             zIndex: 10,
           }}
         >
-          <Button
-            className="h-6"
-            onDoubleClick={handleCreateSeciont}
-          >
+          <Button className="h-6" onDoubleClick={handleCreateSeciont}>
             + Add Section
           </Button>
         </div>

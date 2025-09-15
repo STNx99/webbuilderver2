@@ -1,59 +1,34 @@
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { elementHelper } from "@/utils/element/elementhelper";
 
 export function useElementHandler() {
+  const { addElement, updateElement, deselectAll, dehoverAll } =
+    useElementStore();
   const {
-    draggingElement,
-    addElement,
-    selectedElements,
+    selectedElement,
     setSelectedElement,
-    setSelectedElements,
     setDraggingElement,
-    updateElement,
-    deselectAll,
-    dehoverAll,
-  } = useElementStore();
+    draggingElement,
+  } = useSelectionStore();
 
   const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
+    e.preventDefault();
     e.stopPropagation();
-    const isMultiSelect = e.ctrlKey || e.metaKey;
 
-    if (
-      !isMultiSelect &&
-      Array.isArray(selectedElements) &&
-      selectedElements.length === 1 &&
-      selectedElements[0].id === element.id
-    ) {
-      // If the element is already selected and it's a single selection, deselect it
+    // If clicking on the already selected element, deselect it
+    if (selectedElement && selectedElement.id === element.id) {
       setSelectedElement(undefined);
-      setSelectedElements([]);
       updateElement(element.id, { isSelected: false });
       return;
     }
 
+    // Select the new element
+    deselectAll();
+    updateElement(element.id, { isSelected: true });
     setSelectedElement(element);
-
-    if (!isMultiSelect || !Array.isArray(selectedElements)) {
-      deselectAll();
-      updateElement(element.id, { isSelected: true });
-      setSelectedElement(element);
-      setSelectedElements([element]);
-    } else {
-      const alreadySelected = selectedElements.some(
-        (el: EditorElement) => el.id === element.id,
-      );
-      if (alreadySelected) {
-        updateElement(element.id, { isSelected: false });
-        setSelectedElements(
-          selectedElements.filter((el: EditorElement) => el.id !== element.id),
-        );
-      } else {
-        updateElement(element.id, { isSelected: true });
-        setSelectedElements([...selectedElements, element]);
-      }
-    }
   };
 
   const handleDrop = (
@@ -142,6 +117,11 @@ export function useElementHandler() {
       return;
     }
 
+    // Only allow hovering on the currently selected element to prevent changing selection
+    if (selectedElement && selectedElement.id !== element.id) {
+      return;
+    }
+
     dehoverAll(); // Clear hover states from all other elements
     // Clear hover states from all other elements, then set this one as hovered
     updateElement(element.id, { isHovered: true });
@@ -174,8 +154,16 @@ export function useElementHandler() {
       content: e.currentTarget.textContent || "",
     });
   };
-  
+
   const getStyles = (element: EditorElement): React.CSSProperties => {
+    // Defensive check: ensure styles is a valid object
+    if (
+      !element.styles ||
+      typeof element.styles !== "object" ||
+      Array.isArray(element.styles)
+    ) {
+      return {};
+    }
     return {
       ...element.styles,
     };

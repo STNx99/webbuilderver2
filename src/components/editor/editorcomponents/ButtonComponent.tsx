@@ -7,12 +7,21 @@ import { ButtonElement } from "@/interfaces/elements.interface";
 const ButtonComponent = ({ element }: EditorComponentProps) => {
   const buttonElement = element as ButtonElement;
   const { getCommonProps } = useElementHandler();
+
+  // Defensive check: ensure styles is a valid object
+  const safeStyles =
+    buttonElement.styles &&
+    typeof buttonElement.styles === "object" &&
+    !Array.isArray(buttonElement.styles)
+      ? buttonElement.styles
+      : {};
+
   return (
     <button
       {...getCommonProps(buttonElement)}
       type={"button"}
       style={{
-        ...(buttonElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}

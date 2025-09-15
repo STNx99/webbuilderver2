@@ -2,6 +2,7 @@ import { ContainerElement, EditorElement } from "@/types/global.type";
 import { v4 as uuidv4 } from "uuid";
 import { elementHelper } from "./elementhelper";
 import { ElementStore } from "@/globalstore/elementstore";
+import { SelectionStore } from "@/globalstore/selectionstore";
 
 export interface IKeyboardEvent {
   copyElement: () => void;
@@ -14,18 +15,17 @@ export interface IKeyboardEvent {
 
 export class KeyboardEvent implements IKeyboardEvent {
   public copyElement = () => {
-    const { selectedElement } = ElementStore.getState();
+    const selectedElement = SelectionStore.getState().selectedElement;
     if (!selectedElement) return;
     sessionStorage.setItem("copiedElement", JSON.stringify(selectedElement));
   };
 
   public cutElement = () => {
-    const { selectedElement, deleteElement, setSelectedElement } =
-      ElementStore.getState();
+    const selectedElement = SelectionStore.getState().selectedElement;
     if (!selectedElement) return;
     sessionStorage.setItem("copiedElement", JSON.stringify(selectedElement));
-    deleteElement(selectedElement.id);
-    setSelectedElement(undefined);
+    ElementStore.getState().deleteElement(selectedElement.id);
+    SelectionStore.getState().setSelectedElement(undefined);
   };
 
   public pasteElement = () => {
@@ -35,16 +35,16 @@ export class KeyboardEvent implements IKeyboardEvent {
     const elementData = JSON.parse(copiedElement) as EditorElement;
     const newElement = { ...elementData, id: uuidv4() };
 
-    const { selectedElement, addElement, updateElement } =
-      ElementStore.getState();
+    const elementState = ElementStore.getState();
+    const selectedElement = SelectionStore.getState().selectedElement;
 
     if (!selectedElement) {
-      addElement(newElement);
+      elementState.addElement(newElement);
       return;
     }
 
     if (elementHelper.isContainerElement(selectedElement)) {
-      updateElement(selectedElement.id, {
+      elementState.updateElement(selectedElement.id, {
         elements: [
           ...(selectedElement as ContainerElement).elements,
           newElement,
@@ -54,8 +54,10 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public bringToFront = () => {
-    const { selectedElement, elements, setElements } = ElementStore.getState();
+    const selectedElement = SelectionStore.getState().selectedElement;
     if (!selectedElement) return;
+    const elementState = ElementStore.getState();
+    const elements = elementState.elements;
     const idx = elements.findIndex(
       (el: EditorElement) => el.id === selectedElement.id,
     );
@@ -63,12 +65,14 @@ export class KeyboardEvent implements IKeyboardEvent {
     const newElements = [...elements];
     const [removed] = newElements.splice(idx, 1);
     newElements.push(removed);
-    setElements(newElements);
+    elementState.setElements(newElements);
   };
 
   public sendToBack = () => {
-    const { selectedElement, elements, setElements } = ElementStore.getState();
+    const selectedElement = SelectionStore.getState().selectedElement;
     if (!selectedElement) return;
+    const elementState = ElementStore.getState();
+    const elements = elementState.elements;
     const idx = elements.findIndex(
       (el: EditorElement) => el.id === selectedElement.id,
     );
@@ -76,14 +80,13 @@ export class KeyboardEvent implements IKeyboardEvent {
     const newElements = [...elements];
     const [removed] = newElements.splice(idx, 1);
     newElements.unshift(removed);
-    setElements(newElements);
+    elementState.setElements(newElements);
   };
 
   public deleteElement = () => {
-    const { selectedElement, deleteElement, setSelectedElement } =
-      ElementStore.getState();
+    const selectedElement = SelectionStore.getState().selectedElement;
     if (!selectedElement) return;
-    deleteElement(selectedElement.id);
-    setSelectedElement(undefined);
+    ElementStore.getState().deleteElement(selectedElement.id);
+    SelectionStore.getState().setSelectedElement(undefined);
   };
 }

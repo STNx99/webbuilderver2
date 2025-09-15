@@ -38,12 +38,20 @@ export default function FormComponent({ element }: FormComponentProps) {
 
   const isEditing = formElement.isSelected;
 
+  // Defensive check: ensure styles is a valid object
+  const safeStyles =
+    formElement.styles &&
+    typeof formElement.styles === "object" &&
+    !Array.isArray(formElement.styles)
+      ? formElement.styles
+      : {};
+
   return (
     <form
       {...getCommonProps(formElement)}
       className="flex flex-col gap-4 p-4 border rounded-lg"
       style={{
-        ...(formElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}

@@ -8,11 +8,19 @@ const FrameComponent = ({ element }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
   const { getCommonProps } = useElementHandler();
 
+  // Defensive check: ensure styles is a valid object
+  const safeStyles =
+    frameElement.styles &&
+    typeof frameElement.styles === "object" &&
+    !Array.isArray(frameElement.styles)
+      ? frameElement.styles
+      : {};
+
   return (
     <div
       {...getCommonProps(frameElement)}
       style={{
-        ...(frameElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}

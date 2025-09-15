@@ -17,6 +17,7 @@ import {
 import { elementHelper } from "@/utils/element/elementhelper";
 import React, { useEffect, useState } from "react";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 
 type AppearanceStyles = Pick<
   React.CSSProperties,
@@ -88,7 +89,8 @@ type AppearanceStyles = Pick<
 >;
 
 export const AppearanceAccordion = () => {
-  const { selectedElement, updateElement } = useElementStore();
+  const { updateElement } = useElementStore();
+  const { selectedElement } = useSelectionStore();
 
   const styles: AppearanceStyles = selectedElement?.styles ?? {};
   const updateStyle = <K extends keyof AppearanceStyles>(

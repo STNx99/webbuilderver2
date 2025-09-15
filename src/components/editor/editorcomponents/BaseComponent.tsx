@@ -8,10 +8,19 @@ const BaseComponent = ({ element }: EditorComponentProps) => {
   const baseElement = element as TextElement;
 
   const { getCommonProps } = useElementHandler();
+
+  // Defensive check: ensure styles is a valid object
+  const safeStyles =
+    baseElement.styles &&
+    typeof baseElement.styles === "object" &&
+    !Array.isArray(baseElement.styles)
+      ? baseElement.styles
+      : {};
+
   return (
     <div
       {...getCommonProps(baseElement)}
-      style={{ ...(baseElement.styles || {}), width: "100%", height: "100%" }}
+      style={{ ...safeStyles, width: "100%", height: "100%" }}
       suppressContentEditableWarning={true}
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(element.content || ""),

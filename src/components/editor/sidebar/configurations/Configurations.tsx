@@ -6,12 +6,12 @@ import { TypographyAccordion } from "./TypographyAccordion";
 import { LinkConfigurationAccordion } from "./LinkConfiguration";
 import { FormConfigurationAccordion } from "./FormConfiguration";
 import InputConfiguration from "./InputConfiguration";
-import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import CarouselConfigurationAccordion from "./CarouselConfiguration";
 import TailwindAccordion from "./TailwindAccordion";
 
 export default function Configurations() {
-  const { selectedElement } = useElementStore();
+  const { selectedElement } = useSelectionStore();
 
   const renderChildElement = (type: ElementType): React.ReactNode => {
     if (!type) {
@@ -38,7 +38,7 @@ export default function Configurations() {
     return null;
   }
   return (
-    <Accordion type="multiple"  className="w-full ">
+    <Accordion type="multiple" className="w-full ">
       <AppearanceAccordion />
       {renderChildElement(selectedElement.type)}
       <TailwindAccordion />

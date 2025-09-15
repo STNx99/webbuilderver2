@@ -24,6 +24,7 @@ import ElementTreeItem from "./ElementTreeItem";
 import { Square } from "lucide-react";
 import { useAiChat } from "@/providers/aiprovider";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { elementHelper } from "@/utils/element/elementhelper";
 // import Chat from "@/components/ChatModel";
 
@@ -35,7 +36,8 @@ function LayoutSideBar() {
     // const subdomainUrl = getProjectSubdomainUrl(projectId);
     // window.open(subdomainUrl, "_blank");
   };
-  const { elements, selectedElement } = useElementStore();
+  const { elements } = useElementStore();
+  const { selectedElement } = useSelectionStore();
   const searchParams = useSearchParams();
   const filteredElements = elementHelper.filterElementByPageId(
     searchParams.get("page") || undefined,

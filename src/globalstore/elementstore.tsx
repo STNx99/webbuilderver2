@@ -4,18 +4,13 @@ import { elementHelper } from "@/utils/element/elementhelper";
 import { elementService } from "@/services/element";
 import { debounce } from "lodash";
 import { cloneDeep, find, reject } from "lodash";
+import { useSelectionStore } from "./selectionstore";
 
 type ElementStore<TElement extends EditorElement> = {
   // States
   elements: TElement[];
-  selectedElement: TElement | undefined;
-  selectedElements: TElement[] | undefined;
-  draggingElement: TElement | undefined;
-  
+
   // Actions
-  setSelectedElements: (elements: TElement[] | undefined) => void;
-  setDraggingElement: (element: TElement | undefined) => void;
-  setSelectedElement: (element: TElement | undefined) => void;
   setElements: (elements: TElement[]) => void;
   loadElements: (elements: TElement[]) => void;
   updateElement: (id: string, updatedElement: Partial<TElement>) => void;
@@ -129,9 +124,6 @@ const createElementStore = <TElement extends EditorElement>() => {
 
       d = debounce(async (payload: UpdatePayload<TElement>) => {
         try {
-          // elementService.updateElement expects an EditorElement.
-          // Our PersistElement omits UI-only flags; cast through unknown to
-          // EditorElement to satisfy the service signature without using `any`.
           await elementService.updateElement(
             payload.element as unknown as EditorElement,
             payload.settings ?? null,
@@ -155,18 +147,12 @@ const createElementStore = <TElement extends EditorElement>() => {
 
     return {
       elements: [],
-      selectedElement: undefined,
-      selectedElements: undefined,
-      draggingElement: undefined,
 
       setElements: (elements) => set({ elements }),
-      setDraggingElement: (element) => set({ draggingElement: element }),
-      setSelectedElement: (element) => set({ selectedElement: element }),
-      setSelectedElements: (elements) => set({ selectedElements: elements }),
       loadElements: (elements: TElement[]) => set({ elements }),
 
       updateElement: (id, updatedElement) => {
-        const { elements, selectedElement } = get();
+        const { elements } = get();
 
         const prevElements = cloneDeep(elements);
 
@@ -186,17 +172,8 @@ const createElementStore = <TElement extends EditorElement>() => {
           }),
         ) as TElement[];
 
-        // Update selected element reference if needed
-        let updatedSelected = selectedElement;
-        if (selectedElement && selectedElement.id === id) {
-          updatedSelected = findById(updatedTree as EditorElement[], id) as
-            | TElement
-            | undefined;
-        }
-
         set({
           elements: updatedTree,
-          selectedElement: updatedSelected,
         });
 
         // If update is UI-only, we intentionally skip persistence entirely.
@@ -245,9 +222,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         // optimistic
         set({
           elements: updatedTree,
-          selectedElement: undefined,
-          selectedElements: undefined,
-          draggingElement: undefined,
         });
 
         (async () => {
@@ -317,8 +291,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         console.log("Creating element", ...newElements);
         set({
           elements: updatedTree,
-          selectedElement: newElements[0] ?? undefined,
-          selectedElements: newElements.length ? [...newElements] : undefined,
         });
 
         (async () => {
@@ -337,8 +309,6 @@ const createElementStore = <TElement extends EditorElement>() => {
             );
             set({
               elements: prevElements,
-              selectedElement: undefined,
-              selectedElements: undefined,
             });
           }
         })();
@@ -350,7 +320,14 @@ const createElementStore = <TElement extends EditorElement>() => {
           const updated = { ...el };
           Object.assign(updated, update);
           if (update.styles) {
-            updated.styles = { ...el.styles, ...update.styles };
+            // Defensive check: ensure el.styles is a valid object
+            const safeElStyles =
+              el.styles &&
+              typeof el.styles === "object" &&
+              !Array.isArray(el.styles)
+                ? el.styles
+                : {};
+            updated.styles = { ...safeElStyles, ...update.styles };
           }
           if (elementHelper.isContainerElement(el)) {
             return {
@@ -366,7 +343,6 @@ const createElementStore = <TElement extends EditorElement>() => {
 
       deselectAll: () => {
         get().updateAllElements({ isSelected: false, isHovered: false });
-        set({ selectedElements: undefined, selectedElement: undefined });
       },
 
       dehoverAll: () => {
@@ -376,7 +352,11 @@ const createElementStore = <TElement extends EditorElement>() => {
   });
 };
 
-const useElementStoreImplementation = createElementStore();
+// Create a vanilla store instance for static access (used by keyboard events)
+const elementStoreInstance = createElementStore();
+
+// Create the hook version
+const useElementStoreImplementation = elementStoreInstance;
 
 export const useElementStore = useElementStoreImplementation as {
   <TElement extends EditorElement>(): ElementStore<TElement>;
@@ -385,4 +365,5 @@ export const useElementStore = useElementStoreImplementation as {
   ): U;
 };
 
-export const ElementStore = useElementStoreImplementation;
+// Export the vanilla store instance for static access
+export const ElementStore = elementStoreInstance;

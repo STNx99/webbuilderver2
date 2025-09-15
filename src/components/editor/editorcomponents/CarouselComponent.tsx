@@ -31,13 +31,21 @@ const CarouselComponent = ({ element }: Props) => {
   const carouselSettings: CarouselSettings = element.settings ?? {};
   const hasNavigation = carouselSettings.withNavigation ?? true;
 
+  // Defensive check: ensure styles is a valid object
+  const safeStyles =
+    element.styles &&
+    typeof element.styles === "object" &&
+    !Array.isArray(element.styles)
+      ? element.styles
+      : {};
+
   return (
     <Carousel
       {...getCommonProps(element)}
       opts={carouselSettings}
       className={cn("w-full h-full")}
       style={{
-        ...(element.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}

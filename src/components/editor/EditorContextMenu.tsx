@@ -14,6 +14,7 @@ import { Copy, Trash2, Layers, ArrowUp, ArrowDown } from "lucide-react";
 import { KeyboardEvent as EditorKeyboardEvent } from "@/utils/element/keyBoardEvents";
 import { EditorElement } from "@/types/global.type";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 
 interface EditorContextMenuProps {
   children: React.ReactNode;
@@ -43,7 +44,8 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
   children,
   element,
 }) => {
-  const { setSelectedElement, updateElement, deselectAll } = useElementStore();
+  const { updateElement, deselectAll } = useElementStore();
+  const { setSelectedElement } = useSelectionStore();
 
   const onCopy = () => {
     keyboardEventHandler.copyElement();
