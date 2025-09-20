@@ -9,10 +9,12 @@ import {
 import { useElementStore } from "@/globalstore/elementstore";
 import type { EditorElement } from "@/types/global.type";
 import { Textarea } from "@/components/ui/textarea";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 
 
 export default function TailwindAccordion() {
-  const { selectedElement, updateElement } = useElementStore<EditorElement>();
+  const { updateElement } = useElementStore<EditorElement>();
+  const { selectedElement } = useSelectionStore();
   const [value, setValue] = useState<string>(
     selectedElement?.tailwindStyles ?? "",
   );

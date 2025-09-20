@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { ContainerElement, EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { elementService } from "@/services/element";
 import { debounce } from "lodash";
 import { cloneDeep, find, reject } from "lodash";

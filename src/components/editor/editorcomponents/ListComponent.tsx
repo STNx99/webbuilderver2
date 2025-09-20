@@ -1,6 +1,6 @@
 import React from "react";
 import { useElementHandler } from "@/hooks/useElementHandler";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { ListElement } from "@/interfaces/elements.interface";
 

@@ -6,14 +6,13 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useElementHandler } from "@/hooks/useElementHandler";
-import { EditorComponentProps } from "@/interfaces/editor.interface";
 import {
   CarouselElement,
   CarouselSettings,
 } from "@/interfaces/elements.interface";
 import { cn } from "@/lib/utils";
 import { EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import React from "react";
 
 interface Props {

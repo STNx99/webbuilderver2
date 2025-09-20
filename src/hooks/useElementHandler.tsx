@@ -2,7 +2,7 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
 import { EditorElement, ElementType } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 export function useElementHandler() {
   const { addElement, updateElement, deselectAll, dehoverAll } =

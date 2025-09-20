@@ -25,7 +25,7 @@ import { Square } from "lucide-react";
 import { useAiChat } from "@/providers/aiprovider";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 // import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {

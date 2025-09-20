@@ -8,7 +8,7 @@ import { usePageStore } from "@/globalstore/pagestore";
 import { useProjectStore } from "@/globalstore/projectstore";
 import { projectService } from "@/services/project";
 import { elementService } from "@/services/element";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";

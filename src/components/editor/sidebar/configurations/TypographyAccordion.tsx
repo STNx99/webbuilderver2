@@ -16,9 +16,10 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { useElementStore } from "@/globalstore/elementstore";
 import { projectService } from "@/services/project";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 
 type TypographyStyles = Partial<React.CSSProperties>;
 
@@ -65,7 +66,8 @@ const TEXT_TRANSFORM_OPTIONS: TextTransform[] = [
 ];
 
 export const TypographyAccordion = () => {
-  const { selectedElement, updateElement } = useElementStore();
+  const { updateElement } = useElementStore();
+  const {selectedElement} = useSelectionStore();
   const [fonts, setFonts] = useState<string[]>(FONT_FAMILIES);
 
   const { data, isLoading } = useQuery({

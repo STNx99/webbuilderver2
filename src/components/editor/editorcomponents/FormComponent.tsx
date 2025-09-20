@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
 import { FormElement, InputElement } from "@/interfaces/elements.interface";

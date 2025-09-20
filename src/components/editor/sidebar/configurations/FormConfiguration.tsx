@@ -14,11 +14,13 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { FormElement, FormSettings } from "@/interfaces/elements.interface";
 import React, { ChangeEvent } from "react";
 
 export const FormConfigurationAccordion = () => {
-  const { selectedElement, updateElement } = useElementStore<FormElement>();
+  const { updateElement } = useElementStore<FormElement>();
+  const {selectedElement} = useSelectionStore()
 
   if (!selectedElement || selectedElement.type !== "Form") {
     return <AccordionItem value="form-settings"></AccordionItem>;

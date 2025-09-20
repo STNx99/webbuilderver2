@@ -1,4 +1,4 @@
-import GetUrl, { GetNextJSURL } from "@/utils/geturl";
+import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
 import { IProjectService } from "@/interfaces/service.interface";
 import getToken from "./token";
 import { Page } from "@/generated/prisma";

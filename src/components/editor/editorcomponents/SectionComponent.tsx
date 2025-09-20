@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { SectionElement } from "@/interfaces/elements.interface";
 import { EditorComponentProps } from "@/interfaces/editor.interface";

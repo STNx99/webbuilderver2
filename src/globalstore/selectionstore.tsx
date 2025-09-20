@@ -1,20 +1,30 @@
 import { create } from "zustand";
 import { EditorElement } from "@/types/global.type";
 
-type SelectionStore = {
-  selectedElement: EditorElement | undefined;
-  draggingElement: EditorElement | undefined;
-  setSelectedElement: (element: EditorElement | undefined) => void;
-  setDraggingElement: (element: EditorElement | undefined) => void;
+type SelectionStore<TElement extends EditorElement> = {
+  selectedElement: TElement | undefined;
+  draggingElement: TElement | undefined;
+  setSelectedElement: (element: TElement | undefined) => void;
+  setDraggingElement: (element: TElement | undefined) => void;
 };
 
-const selectionStoreInstance = create<SelectionStore>((set) => ({
-  selectedElement: undefined,
-  draggingElement: undefined,
-  setSelectedElement: (element) => set({ selectedElement: element }),
-  setDraggingElement: (element) => set({ draggingElement: element }),
-}));
+const createSelectionStore = <TElement extends EditorElement>() =>
+  create<SelectionStore<TElement>>((set) => ({
+    selectedElement: undefined,
+    draggingElement: undefined,
+    setSelectedElement: (element: TElement | undefined) =>
+      set({ selectedElement: element }),
+    setDraggingElement: (element: TElement | undefined) =>
+      set({ draggingElement: element }),
+  }));
 
-export const useSelectionStore = selectionStoreInstance;
+const useSelectionStoreImplementation = createSelectionStore();
 
-export const SelectionStore = selectionStoreInstance;
+export const useSelectionStore = useSelectionStoreImplementation as unknown as {
+  <TElement extends EditorElement>(): SelectionStore<TElement>;
+  <TElement extends EditorElement, U>(
+    selector: (state: SelectionStore<TElement>) => U,
+  ): U;
+};
+
+export const SelectionStore = useSelectionStoreImplementation;

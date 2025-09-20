@@ -1,6 +1,6 @@
 import { ElementDAL } from "@/data/element";
 import { EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { auth } from "@clerk/nextjs/server";
 
 interface ApiResponse {

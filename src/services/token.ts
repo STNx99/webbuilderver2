@@ -1,4 +1,4 @@
-import { GetNextJSURL } from "@/utils/geturl";
+import { GetNextJSURL } from "@/lib/utils/geturl";
 
 export default async function getToken(): Promise<string> {
   let url = "/api/gettoken";

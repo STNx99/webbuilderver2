@@ -6,7 +6,7 @@ import EditorContextMenu from "./EditorContextMenu";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { useElementStore } from "@/globalstore/elementstore";
 import { usePageStore } from "@/globalstore/pagestore";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 // Load element from the provided element array EditorElement[] base on the type
 //

@@ -6,11 +6,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { BaseElement } from "@/interfaces/elements.interface";
 import React, { ChangeEvent } from "react";
 
 export const LinkConfigurationAccordion = () => {
-  const { selectedElement, updateElement } = useElementStore<BaseElement>();
+  const { updateElement } = useElementStore<BaseElement>();
+  const { selectedElement } = useSelectionStore<BaseElement>();
 
   if (!selectedElement || selectedElement.type !== "Link") {
     return <AccordionItem value="link-settings"></AccordionItem>;

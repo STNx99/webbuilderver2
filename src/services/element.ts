@@ -1,5 +1,5 @@
 import { EditorElement } from "@/types/global.type";
-import GetUrl, { GetNextJSURL } from "@/utils/geturl";
+import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
 import {
   fetchWithAuth,
   fetchPublic,
