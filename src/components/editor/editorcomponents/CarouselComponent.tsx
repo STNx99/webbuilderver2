@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import React from "react";
+import ElementLoader from "../ElementLoader";
 
 interface Props {
   element: EditorElement;
@@ -55,7 +56,7 @@ const CarouselComponent = ({ element }: Props) => {
         {element.elements.map((slide) => (
           <CarouselItem key={slide.id}>
             <div className="p-1 h-full w-full">
-              {elementHelper.renderChildElement(slide, {})}
+              <ElementLoader elements={[slide]} />
             </div>
           </CarouselItem>
         ))}

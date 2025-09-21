@@ -7,6 +7,7 @@ import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { Button } from "@/components/ui/button";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
+import ElementLoader from "../ElementLoader";
 
 const SectionComponent = ({ element }: EditorComponentProps) => {
   const sectionElement = element as SectionElement;
@@ -16,7 +17,6 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
 
   const { getCommonProps } = useElementHandler();
 
-  // Defensive check: ensure styles is a valid object
   const safeStyles =
     sectionElement.styles &&
     typeof sectionElement.styles === "object" &&
@@ -31,6 +31,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
       undefined,
       searchParams.get("page") || undefined,
     );
+    console.log("New Section Element:", newElement);
     if (newElement) insertElement(element, newElement);
   };
   return (
@@ -43,9 +44,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
         position: "relative",
       }}
     >
-      {sectionElement.elements.map((childElement) => {
-        return elementHelper.renderChildElement(childElement, {});
-      })}
+      <ElementLoader elements={sectionElement.elements} />
       {sectionElement.isSelected && (
         <div
           style={{

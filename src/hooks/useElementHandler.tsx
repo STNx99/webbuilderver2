@@ -3,29 +3,37 @@ import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { CSSStyles } from "@/interfaces/elements.interface";
 
 export function useElementHandler() {
-  const { addElement, updateElement, deselectAll, dehoverAll } =
-    useElementStore();
+  const {
+    addElement,
+    updateElement,
+    deselectAll,
+    dehoverAll,
+    elements,
+    setElements,
+    updateAllElements,
+  } = useElementStore();
   const {
     selectedElement,
     setSelectedElement,
     setDraggingElement,
     draggingElement,
+    draggedOverElement,
+    setDraggedOverElement,
   } = useSelectionStore();
 
   const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // If clicking on the already selected element, deselect it
     if (selectedElement && selectedElement.id === element.id) {
       setSelectedElement(undefined);
       updateElement(element.id, { isSelected: false });
       return;
     }
 
-    // Select the new element
     deselectAll();
     updateElement(element.id, { isSelected: true });
     setSelectedElement(element);
@@ -54,7 +62,6 @@ export function useElementHandler() {
         parentElement.id,
         parentElement.pageId,
       );
-      // console.log(newElement?.pageId)
 
       if (!newElement) {
         return;
@@ -63,14 +70,14 @@ export function useElementHandler() {
 
       setSelectedElement(newElement);
     } else if (draggingElement) {
-      elementHelper.handleSwap(draggingElement, parentElement, updateElement);
-      updateElement(draggingElement.id, {
-        isDraggedOver: false,
-      });
+      elementHelper.handleSwap(
+        draggingElement,
+        parentElement,
+        elements,
+        setElements,
+      );
+      setDraggedOverElement(undefined);
     }
-    updateElement(parentElement.id, {
-      isDraggedOver: false,
-    });
     setDraggingElement(undefined);
   };
 
@@ -82,23 +89,26 @@ export function useElementHandler() {
   const handleDragOver = (e: React.DragEvent, element: EditorElement) => {
     e.preventDefault();
     e.stopPropagation();
-    if (element.isDraggedOver || draggingElement?.id === element.id) return;
-    updateElement(element.id, {
-      isDraggedOver: true,
-    });
+    if (
+      draggingElement?.id === element.id ||
+      draggingElement?.parentId === element.id
+    )
+      return;
+    if (!draggingElement && !elementHelper.isContainerElement(element)) return;
+    setDraggedOverElement(element);
   };
 
   const handleDragLeave = (e: React.DragEvent, element: EditorElement) => {
     e.stopPropagation();
-    if (!element.isDraggedOver) return;
-    updateElement(element.id, {
-      isDraggedOver: false,
-    });
+    if (draggedOverElement?.id === element.id) {
+      setDraggedOverElement(undefined);
+    }
   };
 
   const handleDragEnd = (e: React.DragEvent, hoveredElement: EditorElement) => {
     e.stopPropagation();
     setDraggingElement(undefined);
+    setDraggedOverElement(undefined);
   };
 
   const getTailwindStyles = (element: EditorElement) => {
@@ -106,10 +116,8 @@ export function useElementHandler() {
   };
 
   const handleMouseEnter = (e: React.MouseEvent, element: EditorElement) => {
-    // Prevent event from bubbling to parent elements
     e.stopPropagation();
     e.preventDefault();
-    // Don't interfere if any contentEditable element is currently focused
     if (
       document.activeElement &&
       (document.activeElement as HTMLElement).contentEditable === "true"
@@ -117,28 +125,23 @@ export function useElementHandler() {
       return;
     }
 
-    // Only allow hovering on the currently selected element to prevent changing selection
     if (selectedElement && selectedElement.id !== element.id) {
       return;
     }
 
-    dehoverAll(); // Clear hover states from all other elements
-    // Clear hover states from all other elements, then set this one as hovered
+    dehoverAll();
     updateElement(element.id, { isHovered: true });
   };
 
   const handleMouseLeave = (e: React.MouseEvent, element: EditorElement) => {
-    // Prevent event from bubbling to parent elements
     e.stopPropagation();
 
-    // Don't interfere if any contentEditable element is currently focused
     if (
       document.activeElement &&
       (document.activeElement as HTMLElement).contentEditable === "true"
     ) {
       return;
     }
-    // Clear hover state for this element
     updateElement(element.id, { isHovered: false });
   };
 
@@ -149,14 +152,12 @@ export function useElementHandler() {
     if (!elementHelper.isEditableElement(element)) {
       return;
     }
-    // Handle text change logic here, if needed
     updateElement(element.id, {
       content: e.currentTarget.textContent || "",
     });
   };
 
-  const getStyles = (element: EditorElement): React.CSSProperties => {
-    // Defensive check: ensure styles is a valid object
+  const getStyles = (element: EditorElement): CSSStyles => {
     if (
       !element.styles ||
       typeof element.styles !== "object" ||
@@ -186,19 +187,15 @@ export function useElementHandler() {
       onDragLeave: (e: React.DragEvent) => handleDragLeave(e, element),
       onDragEnd: (e: React.DragEvent) => handleDragEnd(e, element),
 
-      onDragOver: isEditableElement
-        ? undefined
-        : (e: React.DragEvent) => handleDragOver(e, element),
+      onDragOver: (e: React.DragEvent) => handleDragOver(e, element),
       onDrop: isEditableElement
         ? undefined
         : (e: React.DragEvent) => handleDrop(e, element.projectId, element),
 
-      // Mouse event handlers
       onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
       onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(e, element),
       onMouseLeave: (e: React.MouseEvent) => handleMouseLeave(e, element),
 
-      // Text editing handler (fires when element loses focus)
       onBlur: (e: React.FocusEvent) => handleTextChange(e, element),
     };
   };

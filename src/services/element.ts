@@ -8,6 +8,7 @@ import {
   updateWithAuth,
 } from "./api";
 import { IElementService } from "@/interfaces/service.interface";
+import { API_ENDPOINTS, NEXT_API_ENDPOINTS } from "@/constants/endpoints";
 
 /**
  * Element service for communicating with backend element endpoints.
@@ -22,12 +23,14 @@ import { IElementService } from "@/interfaces/service.interface";
  */
 export const elementService: IElementService = {
   getElements: async (projectId: string): Promise<EditorElement[]> => {
-    return fetchWithAuth<EditorElement[]>(GetUrl(`/elements/${projectId}`));
+    return fetchWithAuth<EditorElement[]>(
+      GetUrl(API_ENDPOINTS.ELEMENTS.GET(projectId)),
+    );
   },
 
   getElementsPublic: async (projectId: string): Promise<EditorElement[]> => {
     return fetchPublic<EditorElement[]>(
-      GetUrl(`/elements/public/${projectId}`),
+      GetUrl(API_ENDPOINTS.ELEMENTS.GET_PUBLIC(projectId)),
     );
   },
 
@@ -38,7 +41,10 @@ export const elementService: IElementService = {
     if (!Array.isArray(elements) || elements.length === 0) return;
 
     try {
-      await postWithAuth(GetUrl(`/elements/${projectId}`), elements);
+      await postWithAuth(
+        GetUrl(API_ENDPOINTS.ELEMENTS.CREATE(projectId)),
+        elements,
+      );
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       throw new Error(`createElement failed: ${message}`);
@@ -55,7 +61,7 @@ export const elementService: IElementService = {
 
     try {
       const resp = await updateWithAuth<Record<string, unknown>>(
-        GetNextJSURL(`/api/elements/${element.id}`),
+        GetNextJSURL(NEXT_API_ENDPOINTS.ELEMENTS.UPDATE(element.id)),
         { element, settings },
       );
       return resp as unknown as EditorElement;
@@ -67,10 +73,25 @@ export const elementService: IElementService = {
 
   deleteElement: async (id: string): Promise<boolean> => {
     try {
-      return await deleteWithAuth(GetNextJSURL(`/api/elements/${id}`));
+      return await deleteWithAuth(
+        GetNextJSURL(NEXT_API_ENDPOINTS.ELEMENTS.DELETE(id)),
+      );
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       throw new Error(`deleteElement failed: ${message}`);
+    }
+  },
+
+  insertElement: async (
+    projectId: string,
+    targetId: string,
+    elementToBeInserted: EditorElement,
+  ): Promise<void> => {
+    try {
+      await postWithAuth(GetUrl(API_ENDPOINTS.ELEMENTS.INSERT(projectId, targetId)), elementToBeInserted);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(`insertElement failed: ${message}`);
     }
   },
 };

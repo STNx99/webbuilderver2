@@ -10,7 +10,6 @@ import { handleSwap } from "./handleSwap";
 import { findElement } from "./findElement";
 import { getElementSettings } from "./getElementSettings";
 import { updateElementStyle } from "./updateElementStyle";
-import { renderChildElement } from "../renderElements";
 import computeTailwindFromStyles from "./computeTailwindFromStyles";
 import React from "react";
 import {
@@ -44,7 +43,8 @@ interface ElementHelper {
   handleSwap: (
     draggingElement: EditorElement,
     hoveredElement: EditorElement,
-    updateElement: (id: string, updatedElement: Partial<EditorElement>) => void,
+    elements: EditorElement[],
+    setElements: (elements: EditorElement[]) => void,
   ) => void;
 
   filterElementByPageId: (id?: string) => EditorElement[];
@@ -56,12 +56,6 @@ interface ElementHelper {
   isContainerElement: (element: EditorElement) => element is ContainerElement;
 
   isEditableElement: (element: EditorElement) => boolean;
-
-  renderChildElement: (
-    element: EditorElement,
-    props: any,
-    excludes?: ElementType[],
-  ) => React.ReactNode;
 
   computeTailwindFromStyles: (styles: Partial<React.CSSProperties>) => string;
 
@@ -90,7 +84,6 @@ export const elementHelper: ElementHelper = {
   isEditableElement: (element: EditorElement): boolean => {
     return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);
   },
-  renderChildElement: renderChildElement,
   computeTailwindFromStyles: computeTailwindFromStyles,
   updateElementStyle: updateElementStyle,
 };

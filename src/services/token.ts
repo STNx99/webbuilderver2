@@ -1,14 +1,15 @@
 import { GetNextJSURL } from "@/lib/utils/geturl";
+import { NEXT_API_ENDPOINTS } from "@/constants/endpoints";
 
 export default async function getToken(): Promise<string> {
-  let url = "/api/gettoken";
-  GetNextJSURL(url);
+  const url = GetNextJSURL(NEXT_API_ENDPOINTS.TOKEN.GET);
 
   const response = await fetch(url, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
   });
 
   if (!response.ok) {

@@ -1,8 +1,8 @@
 import React from "react";
 import { useElementHandler } from "@/hooks/useElementHandler";
-import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { FrameElement } from "@/interfaces/elements.interface";
+import ElementLoader from "../ElementLoader";
 
 const FrameComponent = ({ element }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
@@ -25,9 +25,7 @@ const FrameComponent = ({ element }: EditorComponentProps) => {
         height: "100%",
       }}
     >
-      {frameElement.elements?.map((child) =>
-        elementHelper.renderChildElement(child, {}),
-      )}
+      <ElementLoader elements={frameElement.elements} />
     </div>
   );
 };

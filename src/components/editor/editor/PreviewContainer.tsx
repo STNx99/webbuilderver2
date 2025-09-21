@@ -100,7 +100,7 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
     ${viewportHtml}
     ${headHtml}
     ${projectHead || ""}
-    <style>html,body,#react-iframe-root{height:100%;margin:0;padding:0;background:transparent}</style>
+    <style>html,body,#react-iframe-root{height:100%;margin:0;padding:0;background:transparent;overflow:hidden}</style>
   </head>
   <body>
     <div id="react-iframe-root" style="height:100%;width:100%"></div>
@@ -110,7 +110,7 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
       setSrcDoc(doc);
     } catch {
       setSrcDoc(
-        `<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>${projectHead || ""}<style>html,body,#react-iframe-root{height:100%;margin:0;padding:0;background:transparent}</style></head><body><div id="react-iframe-root" style="height:100%;width:100%"></div></body></html>`,
+        `<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>${projectHead || ""}<style>html,body,#react-iframe-root{height:100%;margin:0;padding:0;background:transparent;overflow:hidden}</style></head><body><div id="react-iframe-root" style="height:100%;width:100%"></div></body></html>`,
       );
     }
   }, [projectHead]);
@@ -237,8 +237,7 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
               if (imported && imported.setAttribute)
                 imported.setAttribute("data-wbv2-custom", "1");
               doc.head.appendChild(imported);
-            } catch {
-            }
+            } catch {}
             return;
           }
 
@@ -285,7 +284,7 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
   const iframePortal = mountNode ? createPortal(content, mountNode) : null;
 
   return (
-    <div className="overflow-auto h-full flex items-center justify-center">
+    <div className="overflow-hidden h-full flex items-center justify-center">
       <div className={cn(containerClasses)} style={containerStyle}>
         <iframe
           ref={iframeRef}
@@ -304,9 +303,7 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
           }}
         />
         {!mountNode && isLoading && (
-          <div className="absolute inset-0 overflow-auto p-2">
-            <ElementLoading count={6} variant="mixed" />
-          </div>
+          <ElementLoading count={6} variant="mixed" />
         )}
         {iframePortal}
       </div>

@@ -4,37 +4,39 @@ import getToken from "./token";
 import { Page } from "@/generated/prisma";
 import { fetchPublic, fetchWithAuth, updateWithAuth } from "./api";
 import { Project } from "@/interfaces/project.interface";
-
-
+import { API_ENDPOINTS, NEXT_API_ENDPOINTS } from "@/constants/endpoints";
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    return fetchPublic<Project []>(GetUrl("/projects/public"));
+    return fetchPublic<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC));
   },
 
   getUserProjects: async (): Promise<Project[]> => {
-    return fetchWithAuth<Project[]>(GetUrl("/projects/user"));
+    return fetchWithAuth<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_USER));
   },
 
   getProjectById: async (id: string): Promise<Project> => {
-    return fetchWithAuth<Project>(GetUrl(`/projects/${id}`));
+    return fetchWithAuth<Project>(GetUrl(API_ENDPOINTS.PROJECTS.GET_BY_ID(id)));
   },
 
   deleteProject: async (id: string): Promise<boolean> => {
     const token = await getToken();
-    const response = await fetch(GetNextJSURL(`/api/projects/${id}`), {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    const response = await fetch(
+      GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.DELETE(id)),
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       },
-    });
+    );
     if (response.status === 204) return true;
     return false;
   },
 
   getProjectPages: async (id: string): Promise<Page[]> => {
-    return fetchWithAuth<Page[]>(GetUrl(`/projects/${id}/pages`));
+    return fetchWithAuth<Page[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PAGES(id)));
   },
 
   updateProject: async (
@@ -43,15 +45,17 @@ export const projectService: IProjectService = {
   ): Promise<Project> => {
     const token = await getToken();
     try {
-      const response = await fetch(GetNextJSURL(`/api/projects/${projectId}`), {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      const response = await fetch(
+        GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(project),
         },
-        body: JSON.stringify(project),
-      });
-
+      );
 
       if (!response.ok) {
         let txt = "";
@@ -92,13 +96,16 @@ export const projectService: IProjectService = {
     pageId: string,
   ): Promise<boolean> => {
     const token = await getToken();
-    const response = await fetch(`/api/projects/${projectId}/pages/${pageId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    const response = await fetch(
+      GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId)),
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       },
-    });
+    );
     return response.status === 204;
   },
 

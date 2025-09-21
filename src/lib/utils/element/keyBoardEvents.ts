@@ -33,24 +33,26 @@ export class KeyboardEvent implements IKeyboardEvent {
     if (!copiedElement) return;
 
     const elementData = JSON.parse(copiedElement) as EditorElement;
-    const newElement = { ...elementData, id: uuidv4() };
+    let newElement = { ...elementData, id: uuidv4() };
+    
+    if (elementHelper.isContainerElement(newElement)) { 
+      const updateIdsRecursively = (element: ContainerElement): ContainerElement => {
+        const updatedElements = element.elements.map((child) => {
+          const newChild = { ...child, id: uuidv4() };
+          if (elementHelper.isContainerElement(newChild)) {
+            return updateIdsRecursively(newChild);
+          }
+          return newChild;
+        });
+        return { ...element, elements: updatedElements };
+      };
+      newElement = updateIdsRecursively(newElement as ContainerElement);
+    }
 
     const elementState = ElementStore.getState();
-    const selectedElement = SelectionStore.getState().selectedElement;
 
-    if (!selectedElement) {
-      elementState.addElement(newElement);
-      return;
-    }
-
-    if (elementHelper.isContainerElement(selectedElement)) {
-      elementState.updateElement(selectedElement.id, {
-        elements: [
-          ...(selectedElement as ContainerElement).elements,
-          newElement,
-        ],
-      });
-    }
+    elementState.addElement(newElement);
+    
   };
 
   public bringToFront = () => {

@@ -1,8 +1,9 @@
 import React from "react";
 import { useElementHandler } from "@/hooks/useElementHandler";
-import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { ListElement } from "@/interfaces/elements.interface";
+import { LayoutGroup } from "framer-motion";
+import ElementLoader from "../ElementLoader";
 
 const ListComponent = ({ element }: EditorComponentProps) => {
   const listElement = element as ListElement;
@@ -25,11 +26,13 @@ const ListComponent = ({ element }: EditorComponentProps) => {
         height: "100%",
       }}
     >
-      {listElement.elements?.map((item, index) => (
-        <li key={index} className="list-item">
-          {elementHelper.renderChildElement(item, {})}
-        </li>
-      ))}
+      <LayoutGroup>
+        {listElement.elements?.map((item, index) => (
+          <li key={index} className="list-item">
+            <ElementLoader elements={[item]} />
+          </li>
+        ))}
+      </LayoutGroup>
     </ul>
   );
 };

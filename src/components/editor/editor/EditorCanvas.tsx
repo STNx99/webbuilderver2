@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { EditorElement } from "@/types/global.type";
 import ElementLoader from "@/components/editor/ElementLoader";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";
 import { Button } from "@/components/ui/button";
+import { KeyboardEvent as KeyboardEventClass } from "@/lib/utils/element/keyBoardEvents";
 
 type EditorCanvasProps = {
   isDraggingOver: boolean;
@@ -23,26 +24,69 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   selectedElement,
   addNewSection,
 }) => {
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const keyboardEvent = new KeyboardEventClass();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case "c":
+            e.preventDefault();
+            keyboardEvent.copyElement();
+            break;
+          case "v":
+            e.preventDefault();
+            keyboardEvent.pasteElement();
+            break;
+          case "x":
+            e.preventDefault();
+            keyboardEvent.cutElement();
+            break;
+        }
+      } else if (e.key === "Delete") {
+        e.preventDefault();
+        keyboardEvent.deleteElement();
+      }
+    };
+
+    canvas.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      canvas.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [keyboardEvent]);
+
   return (
     <div
-      className={`h-full w-full overflow-auto bg-background p-2 ${
+      ref={canvasRef}
+      className={`h-full w-full flex flex-col bg-background p-2 ${
         isDraggingOver ? "bg-primary/10" : ""
       }`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       id="canvas"
+      tabIndex={0}
     >
-      {isLoading ? (
-        <ElementLoading count={6} variant="mixed" />
-      ) : (
-        <ElementLoader />
-      )}
-      {!selectedElement && (
-        <Button className="w-full h-6" onClick={addNewSection}>
-          + Add new section
-        </Button>
-      )}
+      <div className="flex-1 overflow-auto">
+        {isLoading ? (
+          <ElementLoading count={6} variant="mixed" />
+        ) : (
+          <ElementLoader />
+        )}
+        {!selectedElement && (
+          <Button
+            className="fixed bottom-2 left-2 right-2 h-6 z-10"
+            onClick={addNewSection}
+          >
+            + Add new section
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

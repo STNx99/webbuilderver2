@@ -3,15 +3,22 @@ import { EditorElement } from "@/types/global.type";
 export function handleSwap(
   draggingElement: EditorElement,
   hoveredElement: EditorElement,
-  updateElement: (id: string, updatedElement: Partial<EditorElement>) => void
+  elements: EditorElement[],
+  setElements: (elements: EditorElement[]) => void,
 ) {
   if (!hoveredElement || draggingElement.id === hoveredElement.id) {
     return;
   }
 
-  const { id: dragId, ...dragRest } = draggingElement;
-  const { id: hoverId, ...hoverRest } = hoveredElement;
+  const idx1 = elements.findIndex((e) => e.id === draggingElement.id);
+  const idx2 = elements.findIndex((e) => e.id === hoveredElement.id);
 
-  updateElement(draggingElement.id, hoverRest);
-  updateElement(hoveredElement.id, dragRest);
+  if (idx1 !== -1 && idx2 !== -1) {
+    const newElements = [...elements];
+    [newElements[idx1], newElements[idx2]] = [
+      newElements[idx2],
+      newElements[idx1],
+    ];
+    setElements(newElements);
+  }
 }

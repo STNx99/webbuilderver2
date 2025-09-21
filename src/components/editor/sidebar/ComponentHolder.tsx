@@ -31,7 +31,10 @@ type CustomComponentHolderProps = {
   index: number;
 };
 
-export function CustomComponentHolder({ name, index }: CustomComponentHolderProps) {
+export function CustomComponentHolder({
+  name,
+  index,
+}: CustomComponentHolderProps) {
   const onDragStart = (e: React.DragEvent<HTMLDivElement>) => {
     e.dataTransfer.setData("customComponentName", index.toString());
   };

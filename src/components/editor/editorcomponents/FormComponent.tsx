@@ -7,6 +7,7 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
 import { FormElement, InputElement } from "@/interfaces/elements.interface";
+import ElementLoader from "../ElementLoader";
 
 type FormComponentProps = {
   element: EditorElement;
@@ -56,13 +57,7 @@ export default function FormComponent({ element }: FormComponentProps) {
         height: "100%",
       }}
     >
-      {formElement.elements?.map((child, index) =>
-        elementHelper.renderChildElement(child, {
-          isEditing,
-          onChange: (updatedChild: EditorElement) =>
-            handleChildChange(index, updatedChild),
-        }),
-      )}
+      <ElementLoader elements={formElement.elements} />
 
       <div className="flex flex-row w-full">
         {isEditing && (

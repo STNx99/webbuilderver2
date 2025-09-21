@@ -1,5 +1,6 @@
 import React from "react";
 import { EditorElement } from "@/types/global.type";
+import Image from "next/image";
 
 type Props = {
   element: EditorElement;
@@ -15,17 +16,25 @@ const ImageComponent: React.FC<Props> = ({ element }) => {
     ...containerRest
   } = styles as React.CSSProperties;
 
+  const imageWidth =
+    typeof rawWidth === "number"
+      ? rawWidth
+      : parseFloat(rawWidth as string) || 100;
+  const imageHeight =
+    typeof rawHeight === "number"
+      ? rawHeight
+      : parseFloat(rawHeight as string) || 100;
+
   const containerStyle: React.CSSProperties = {
     width: rawWidth ?? "100%",
     height: rawHeight ?? "100%",
     display: "block",
     overflow: "hidden",
+    position: "relative",
     ...containerRest,
   };
 
   const imageStyle: React.CSSProperties = {
-    width: "100%",
-    height: "100%",
     objectFit: (rawObjectFit as React.CSSProperties["objectFit"]) ?? "cover",
     display: "block",
   };
@@ -34,7 +43,10 @@ const ImageComponent: React.FC<Props> = ({ element }) => {
 
   return (
     <div style={containerStyle} aria-label={name ?? "image-wrapper"}>
-      <img
+      <Image
+        className="object-cover"
+        width={imageWidth}
+        height={imageHeight}
         src={imageSrc}
         alt={name ?? "Image"}
         style={imageStyle}

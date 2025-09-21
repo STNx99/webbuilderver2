@@ -4,7 +4,6 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { elementService } from "@/services/element";
 import { debounce } from "lodash";
 import { cloneDeep, find, reject } from "lodash";
-import { useSelectionStore } from "./selectionstore";
 
 type ElementStore<TElement extends EditorElement> = {
   // States
@@ -19,14 +18,12 @@ type ElementStore<TElement extends EditorElement> = {
   deselectAll: () => void;
   dehoverAll: () => void;
   updateAllElements: (update: Partial<EditorElement>) => void;
-  insertElement: (element: TElement, elementToBeInserted: TElement) => void;
+  insertElement: (
+    parentElement: TElement,
+    elementToBeInserted: TElement,
+  ) => void;
 };
 
-/**
- * Payload used by the per-element debouncer for persisted updates.
- * `PersistElement` intentionally omits UI-only flags so the debounced payload
- * only contains fields intended for persistence.
- */
 type PersistElement = Omit<
   EditorElement,
   "isSelected" | "isHovered" | "isDraggedOver"
@@ -117,7 +114,6 @@ const createElementStore = <TElement extends EditorElement>() => {
       });
     };
 
-    // --- Debouncer factory (per-element) ---
     const getDebouncerForId = (id: string): Debouncer<TElement> => {
       let d = debouncers.get(id);
       if (d) return d;
@@ -129,8 +125,6 @@ const createElementStore = <TElement extends EditorElement>() => {
             payload.settings ?? null,
           );
         } catch (err) {
-          // revert the optimistic change on failure
-          // eslint-disable-next-line no-console
           console.error("Failed to persist element update, reverting:", err);
           if (payload.prevElements) {
             set({ elements: payload.prevElements });
@@ -183,9 +177,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         const elementToPersist = findById(updatedTree as EditorElement[], id);
         if (!elementToPersist) return;
 
-        // Build a PersistElement by removing UI-only flags via destructuring.
-        // The rest object will be the payload we persist.
-        // No `any` usage -- types derive from EditorElement.
         const {
           isSelected: _isSelected,
           isHovered: _isHovered,
@@ -236,14 +227,35 @@ const createElementStore = <TElement extends EditorElement>() => {
         })();
       },
 
-      insertElement: (element, elementToBeInserted) => {
+      insertElement: (parentElement, elementToBeInserted) => {
         const { elements } = get();
+        const prevElements = cloneDeep(elements);
         const updated = mapInsertAfterId(
           elements as EditorElement[],
-          element.id,
+          parentElement.id,
           elementToBeInserted,
         ) as TElement[];
+
+        console.log("Inserting element", elementToBeInserted);
         set({ elements: updated });
+
+        (async () => {
+          try {
+            const projectId = elementToBeInserted.projectId;
+            if (!projectId) return;
+            await elementService.insertElement(
+              projectId,
+              parentElement.id,
+              elementToBeInserted as EditorElement,
+            );
+          } catch (err) {
+            console.error(
+              "Failed to persist inserted element, reverting:",
+              err,
+            );
+            set({ elements: prevElements });
+          }
+        })();
       },
 
       addElement: (...newElements) => {

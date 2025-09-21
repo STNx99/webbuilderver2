@@ -7,7 +7,6 @@ interface CachedToken {
 }
 
 const tokenCache = new Map<string, CachedToken>();
-// Cache for 45 seconds (15-second safety buffer before JWT expires)
 const CACHE_TTL_MS = 45 * 1000;
 
 function getCachedToken(sessionId: string): string | null {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { useResizeHandler } from "@/hooks/useResizeHandler";
 import { cn } from "@/lib/utils";
@@ -49,8 +50,7 @@ function ResizeHandle({
         ) {
           targetEl.setPointerCapture(pid);
         }
-      } catch {
-      }
+      } catch {}
 
       onResizeStart(direction, e);
     }
@@ -89,6 +89,7 @@ export default function ResizeHandler({
 }: ResizeHandlerProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const { updateElement } = useElementStore();
+  const { draggedOverElement } = useSelectionStore();
   const { handleDoubleClick } = useElementHandler();
   const { handleResizeStart, isResizing, currentResizeDirection } =
     useResizeHandler({
@@ -161,6 +162,7 @@ export default function ResizeHandler({
       style={{
         width: element.styles?.width || "auto",
         height: element.styles?.height || "auto",
+        position: "relative",
       }}
       id={element.id}
       onDoubleClick={(e) => {
@@ -205,10 +207,12 @@ export default function ResizeHandler({
           <div className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none" />
         </>
       )}
-      {element.isHovered && !element.isDraggedOver && !element.isSelected && (
-        <div className="pointer-events-none absolute inset-0 border border-black z-20" />
-      )}
-      {element.isDraggedOver && !element.isSelected && (
+      {element.isHovered &&
+        !(draggedOverElement?.id === element.id) &&
+        !element.isSelected && (
+          <div className="pointer-events-none absolute inset-0 border border-black z-20" />
+        )}
+      {draggedOverElement?.id === element.id && !element.isSelected && (
         <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
       )}
     </div>

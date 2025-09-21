@@ -86,6 +86,8 @@ interface IElementService {
    *          for exceptional conditions.
    */
   deleteElement: (id: string) => Promise<boolean>;
+  
+  insertElement: (projectId: string, targetId: string, elementToBeInserted : EditorElement) => Promise<void>;
 }
 
 /**

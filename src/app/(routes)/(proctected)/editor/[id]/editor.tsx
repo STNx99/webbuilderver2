@@ -16,7 +16,6 @@ export default function Editor({ id, pageId }: EditorProps) {
     setCurrentView,
     isDraggingOver,
     isLoading,
-    filteredElements,
     selectedElement,
     handleDrop,
     handlePageNavigation,

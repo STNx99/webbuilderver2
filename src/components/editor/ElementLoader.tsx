@@ -4,18 +4,22 @@ import { getComponentMap } from "@/constants/elements";
 import ResizeHandler from "./resizehandler/ResizeHandler";
 import EditorContextMenu from "./EditorContextMenu";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
-import { useElementStore } from "@/globalstore/elementstore";
 import { usePageStore } from "@/globalstore/pagestore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 
-// Load element from the provided element array EditorElement[] base on the type
-//
-export default function ElementLoader() {
+interface ElementLoaderProps {
+  elements?: EditorElement[];
+}
+
+export default function ElementLoader({ elements }: ElementLoaderProps = {}) {
   const { currentPage } = usePageStore();
+  const { draggedOverElement, draggingElement } = useSelectionStore();
 
-  const filteredElements = elementHelper.filterElementByPageId(
-    currentPage?.Id || undefined,
-  );
+  const filteredElements =
+    elements ||
+    elementHelper.filterElementByPageId(currentPage?.Id || undefined);
   const renderElement = (element: EditorElement) => {
     const commonProps: EditorComponentProps = {
       element,
@@ -25,14 +29,33 @@ export default function ElementLoader() {
     return Component ? <Component {...commonProps} /> : null;
   };
   return (
-    <>
+    <LayoutGroup>
       {filteredElements.map((element) => (
-        <ResizeHandler element={element} key={element.id}>
-          <EditorContextMenu element={element}>
-            {renderElement(element)}
-          </EditorContextMenu>
-        </ResizeHandler>
+        <motion.div key={element.id} layout="position">
+          <AnimatePresence>
+            {draggedOverElement?.id === element.id && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{
+                  opacity: 0.7,
+                  height: 50,
+                }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="bg-blue-400 border-2 border-dashed border-blue-600 flex items-center justify-center text-blue-800 font-semibold"
+                style={{ width: "100%" }}
+              >
+                {draggingElement ? "Swap Here" : "Drop Here"}
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <ResizeHandler element={element}>
+            <EditorContextMenu element={element}>
+              {renderElement(element)}
+            </EditorContextMenu>
+          </ResizeHandler>
+        </motion.div>
       ))}
-    </>
+    </LayoutGroup>
   );
 }
