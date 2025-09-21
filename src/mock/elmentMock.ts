@@ -8,9 +8,6 @@ export const mockElements: EditorElement[] = [
     projectId: "demo-project",
     content: "",
     name: "Hero Section",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
     elements: [
       {
         id: "demo-text-1",
@@ -19,9 +16,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-1",
         content: "Welcome to Visual Editor",
         name: "Hero Title",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           fontSize: "clamp(24px, 5vw, 48px)",
           fontWeight: "bold",
@@ -41,9 +35,6 @@ export const mockElements: EditorElement[] = [
         content:
           "Build beautiful pages with our drag-and-drop editor. Create responsive designs that work on all devices.",
         name: "Hero Subtitle",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           fontSize: "clamp(14px, 2.5vw, 20px)",
           textAlign: "center",
@@ -63,9 +54,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-1",
         content: "Get Started",
         name: "CTA Button",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           backgroundColor: "#3b82f6",
           color: "#ffffff",
@@ -104,9 +92,6 @@ export const mockElements: EditorElement[] = [
     projectId: "demo-project",
     content: "",
     name: "Features Section",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
     elements: [
       {
         id: "demo-text-5",
@@ -115,9 +100,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-2",
         content: "Features",
         name: "Features Title",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           fontSize: "clamp(20px, 4vw, 32px)",
           fontWeight: "bold",
@@ -125,7 +107,8 @@ export const mockElements: EditorElement[] = [
           color: "#1f2937",
           textAlign: "center",
         },
-        tailwindStyles: "text-xl md:text-2xl lg:text-3xl font-bold mb-4 md:mb-6 text-gray-800 text-center",
+        tailwindStyles:
+          "text-xl md:text-2xl lg:text-3xl font-bold mb-4 md:mb-6 text-gray-800 text-center",
       },
       {
         id: "demo-frame-grid",
@@ -134,9 +117,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-2",
         content: "",
         name: "Features Grid",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         elements: [
           {
             id: "demo-frame-1",
@@ -145,9 +125,6 @@ export const mockElements: EditorElement[] = [
             parentId: "demo-frame-grid",
             content: "",
             name: "Feature Card 1",
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
             elements: [
               {
                 id: "demo-text-3",
@@ -156,33 +133,30 @@ export const mockElements: EditorElement[] = [
                 parentId: "demo-frame-1",
                 content: "🎨 Drag & Drop",
                 name: "Feature 1 Title",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
                 styles: {
                   fontSize: "clamp(16px, 3vw, 20px)",
                   fontWeight: "bold",
                   marginBottom: "8px",
                   color: "#1f2937",
                 },
-                tailwindStyles: "text-base md:text-lg font-bold mb-2 text-gray-800",
+                tailwindStyles:
+                  "text-base md:text-lg font-bold mb-2 text-gray-800",
               },
               {
                 id: "demo-text-4",
                 type: "Text",
                 projectId: "demo-project",
                 parentId: "demo-frame-1",
-                content: "Intuitive drag and drop interface for building layouts quickly",
+                content:
+                  "Intuitive drag and drop interface for building layouts quickly",
                 name: "Feature 1 Description",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
                 styles: {
                   fontSize: "clamp(12px, 2vw, 14px)",
                   lineHeight: "1.5",
                   color: "#4b5563",
                 },
-                tailwindStyles: "text-xs md:text-sm leading-relaxed text-gray-700",
+                tailwindStyles:
+                  "text-xs md:text-sm leading-relaxed text-gray-700",
               },
             ],
             styles: {
@@ -203,9 +177,6 @@ export const mockElements: EditorElement[] = [
             parentId: "demo-frame-grid",
             content: "",
             name: "Feature Card 2",
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
             elements: [
               {
                 id: "demo-text-6",
@@ -214,33 +185,30 @@ export const mockElements: EditorElement[] = [
                 parentId: "demo-frame-2",
                 content: "📱 Responsive",
                 name: "Feature 2 Title",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
                 styles: {
                   fontSize: "clamp(16px, 3vw, 20px)",
                   fontWeight: "bold",
                   marginBottom: "8px",
                   color: "#1f2937",
                 },
-                tailwindStyles: "text-base md:text-lg font-bold mb-2 text-gray-800",
+                tailwindStyles:
+                  "text-base md:text-lg font-bold mb-2 text-gray-800",
               },
               {
                 id: "demo-text-7",
                 type: "Text",
                 projectId: "demo-project",
                 parentId: "demo-frame-2",
-                content: "Designs automatically adapt to mobile, tablet, and desktop screens",
+                content:
+                  "Designs automatically adapt to mobile, tablet, and desktop screens",
                 name: "Feature 2 Description",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
                 styles: {
                   fontSize: "clamp(12px, 2vw, 14px)",
                   lineHeight: "1.5",
                   color: "#4b5563",
                 },
-                tailwindStyles: "text-xs md:text-sm leading-relaxed text-gray-700",
+                tailwindStyles:
+                  "text-xs md:text-sm leading-relaxed text-gray-700",
               },
             ],
             styles: {
@@ -261,9 +229,6 @@ export const mockElements: EditorElement[] = [
             parentId: "demo-frame-grid",
             content: "",
             name: "Feature Card 3",
-            isSelected: false,
-            isHovered: false,
-            isDraggedOver: false,
             elements: [
               {
                 id: "demo-text-8",
@@ -272,33 +237,30 @@ export const mockElements: EditorElement[] = [
                 parentId: "demo-frame-3",
                 content: "⚡ Real-time",
                 name: "Feature 3 Title",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
                 styles: {
                   fontSize: "clamp(16px, 3vw, 20px)",
                   fontWeight: "bold",
                   marginBottom: "8px",
                   color: "#1f2937",
                 },
-                tailwindStyles: "text-base md:text-lg font-bold mb-2 text-gray-800",
+                tailwindStyles:
+                  "text-base md:text-lg font-bold mb-2 text-gray-800",
               },
               {
                 id: "demo-text-9",
                 type: "Text",
                 projectId: "demo-project",
                 parentId: "demo-frame-3",
-                content: "See changes instantly as you build and customize your designs",
+                content:
+                  "See changes instantly as you build and customize your designs",
                 name: "Feature 3 Description",
-                isSelected: false,
-                isHovered: false,
-                isDraggedOver: false,
                 styles: {
                   fontSize: "clamp(12px, 2vw, 14px)",
                   lineHeight: "1.5",
                   color: "#4b5563",
                 },
-                tailwindStyles: "text-xs md:text-sm leading-relaxed text-gray-700",
+                tailwindStyles:
+                  "text-xs md:text-sm leading-relaxed text-gray-700",
               },
             ],
             styles: {
@@ -320,7 +282,8 @@ export const mockElements: EditorElement[] = [
           gap: "clamp(16px, 3vw, 24px)",
           padding: "0",
         },
-        tailwindStyles: "w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6",
+        tailwindStyles:
+          "w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6",
       },
     ],
     styles: {
@@ -336,9 +299,6 @@ export const mockElements: EditorElement[] = [
     projectId: "demo-project",
     content: "",
     name: "CTA Section",
-    isSelected: false,
-    isHovered: false,
-    isDraggedOver: false,
     elements: [
       {
         id: "demo-text-10",
@@ -347,9 +307,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-3",
         content: "Ready to get started?",
         name: "CTA Title",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           fontSize: "clamp(20px, 4vw, 28px)",
           fontWeight: "bold",
@@ -357,7 +314,8 @@ export const mockElements: EditorElement[] = [
           color: "#ffffff",
           textAlign: "center",
         },
-        tailwindStyles: "text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-white text-center",
+        tailwindStyles:
+          "text-xl md:text-2xl lg:text-3xl font-bold mb-3 md:mb-4 text-white text-center",
       },
       {
         id: "demo-text-11",
@@ -366,9 +324,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-3",
         content: "Join thousands of users creating amazing websites",
         name: "CTA Subtitle",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           fontSize: "clamp(14px, 2.5vw, 18px)",
           textAlign: "center",
@@ -377,7 +332,8 @@ export const mockElements: EditorElement[] = [
           maxWidth: "500px",
           margin: "0 auto clamp(20px, 4vw, 32px) auto",
         },
-        tailwindStyles: "text-sm md:text-base lg:text-lg text-center mb-5 md:mb-8 text-gray-200 max-w-lg mx-auto px-4",
+        tailwindStyles:
+          "text-sm md:text-base lg:text-lg text-center mb-5 md:mb-8 text-gray-200 max-w-lg mx-auto px-4",
       },
       {
         id: "demo-button-2",
@@ -386,9 +342,6 @@ export const mockElements: EditorElement[] = [
         parentId: "demo-section-3",
         content: "Start Building",
         name: "CTA Button",
-        isSelected: false,
-        isHovered: false,
-        isDraggedOver: false,
         styles: {
           backgroundColor: "#ffffff",
           color: "#3b82f6",
@@ -421,4 +374,4 @@ export const mockElements: EditorElement[] = [
     tailwindStyles:
       "w-full min-h-[200px] md:min-h-[250px] lg:min-h-[300px] bg-blue-500 py-10 md:py-15 px-4 md:px-6 text-center flex flex-col justify-center items-center",
   },
-]
+];

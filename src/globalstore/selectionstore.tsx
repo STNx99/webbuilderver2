@@ -5,9 +5,11 @@ type SelectionStore<TElement extends EditorElement> = {
   selectedElement: TElement | undefined;
   draggingElement: TElement | undefined;
   draggedOverElement: TElement | undefined;
+  hoveredElement: TElement | undefined;
   setSelectedElement: (element: TElement | undefined) => void;
   setDraggingElement: (element: TElement | undefined) => void;
   setDraggedOverElement: (element: TElement | undefined) => void;
+  setHoveredElement: (element: TElement | undefined) => void;
 };
 
 const createSelectionStore = <TElement extends EditorElement>() =>
@@ -15,12 +17,15 @@ const createSelectionStore = <TElement extends EditorElement>() =>
     selectedElement: undefined,
     draggingElement: undefined,
     draggedOverElement: undefined,
+    hoveredElement: undefined,
     setSelectedElement: (element: TElement | undefined) =>
       set({ selectedElement: element }),
     setDraggingElement: (element: TElement | undefined) =>
       set({ draggingElement: element }),
     setDraggedOverElement: (element: TElement | undefined) =>
       set({ draggedOverElement: element }),
+    setHoveredElement: (element: TElement | undefined) =>
+      set({ hoveredElement: element }),
   }));
 
 const useSelectionStoreImplementation = createSelectionStore();

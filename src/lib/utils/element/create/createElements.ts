@@ -8,7 +8,6 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { getElementStrategy } from "./elementStrategyMap";
 import { BuilderState } from "./elementCreateStrategy";
-import { ElementStore } from "@/globalstore/elementstore";
 import { SelectionStore } from "@/globalstore/selectionstore";
 import { CSSStyles } from "@/interfaces/elements.interface";
 
@@ -95,9 +94,6 @@ function baseElementFactory({
     href: href ?? undefined,
     settings: {},
     content: content ?? undefined,
-    isDraggedOver: false,
-    isSelected: false,
-    isHovered: false,
   } as EditorElement;
 }
 
@@ -134,16 +130,10 @@ export function createElement<T extends EditorElement>(
       tailwindStyles: undefined,
       href: undefined,
       content: undefined,
-      baseProperties: {
-        isDraggedOver: false,
-        isSelected: true,
-        isHovered: false,
-      },
     };
 
     const newElement = buildWithStrategy(state);
 
-    ElementStore.getState().deselectAll();
     SelectionStore.getState().setSelectedElement(newElement as T);
 
     return newElement as T;
@@ -205,8 +195,6 @@ export function createElementFromTemplate<T extends EditorElement>(
     };
 
     const root = recursivelyCreate(element, undefined);
-    root.isSelected = true;
-    ElementStore.getState().deselectAll();
     SelectionStore.getState().setSelectedElement(root as T);
 
     return root as T;

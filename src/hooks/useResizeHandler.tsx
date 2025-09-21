@@ -56,7 +56,6 @@ export function useResizeHandler({
     startPos: { x: number; y: number };
     parentElement: HTMLElement;
     aspectRatio?: number;
-    pointerId?: number;
     ownerDocument?: Document | null;
     ownerWindow?: Window | null;
   } | null>(null);
@@ -146,7 +145,7 @@ export function useResizeHandler({
     return null;
   }
 
-  const onPointerMove = (e: PointerEvent) => {
+  const onMouseMove = (e: MouseEvent) => {
     if (!resizeState.current) return;
 
     const { direction, startRect, startPos, parentElement, aspectRatio } =
@@ -258,31 +257,19 @@ export function useResizeHandler({
     scheduleFlush();
   };
 
-  const onPointerUp = (e?: PointerEvent) => {
-    // release pointer capture if we set it earlier
-    const lastDoc = lastOwnerDocRef.current || document;
-
-    try {
-      if (
-        resizeState.current?.pointerId != null &&
-        targetRef.current?.releasePointerCapture
-      ) {
-        targetRef.current.releasePointerCapture(resizeState.current.pointerId);
-      }
-    } catch {
-      // best-effort release; ignore errors (e.g. pointer already released)
-    }
-
+  const onMouseUp = (e?: MouseEvent) => {
     // finalize
     resizeState.current = null;
 
+    const lastDoc = lastOwnerDocRef.current || document;
+
     // remove listeners from the owner document (or fallback to global document)
     try {
-      lastDoc.removeEventListener("pointermove", onPointerMove);
-      lastDoc.removeEventListener("pointerup", onPointerUp as EventListener);
+      lastDoc.removeEventListener("mousemove", onMouseMove);
+      lastDoc.removeEventListener("mouseup", onMouseUp as EventListener);
     } catch {
-      document.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("pointerup", onPointerUp as EventListener);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("mouseup", onMouseUp as EventListener);
     }
 
     cancelFlush();
@@ -308,7 +295,7 @@ export function useResizeHandler({
 
   const handleResizeStart = (
     direction: ResizeDirection,
-    e: React.MouseEvent | React.TouchEvent,
+    e: React.MouseEvent,
   ) => {
     if (!targetRef.current) return;
 
@@ -320,7 +307,7 @@ export function useResizeHandler({
     lastOwnerDocRef.current = ownerDoc;
     lastOwnerWindowRef.current = ownerWin;
 
-    // Prefer pointer events if available. Scope parent lookup to ownerDoc.
+    // Scope parent lookup to ownerDoc.
     const parentElement =
       targetRef.current.parentElement ??
       ownerDoc.getElementById("preview-iframe") ??
@@ -328,9 +315,6 @@ export function useResizeHandler({
     if (!parentElement) return;
 
     const extractPos = (evt: any) => {
-      if (evt.touches && evt.touches[0]) {
-        return { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
-      }
       // React synthetic events may expose nativeEvent
       const native = evt?.nativeEvent ?? evt;
       if (native && native.clientX !== undefined) {
@@ -357,31 +341,17 @@ export function useResizeHandler({
       ownerWindow: ownerWin,
     };
 
-    // Try to obtain a pointerId if this began from a PointerEvent (or nativeEvent exposes it)
-    const nativeEv = (e as any).nativeEvent ?? (e as any);
-    const pointerId =
-      nativeEv &&
-      (nativeEv.pointerId !== undefined ? nativeEv.pointerId : undefined);
-    if (typeof pointerId === "number" && targetRef.current.setPointerCapture) {
-      try {
-        targetRef.current.setPointerCapture(pointerId);
-        resizeState.current.pointerId = pointerId;
-      } catch {
-        // ignore if unavailable
-      }
-    }
-
-    // Add pointer listeners on the owner document so events are received even
-    // while the pointer moves outside the iframe element but within its document.
+    // Add mouse listeners on the owner document so events are received even
+    // while the mouse moves outside the iframe element but within its document.
     try {
-      ownerDoc.addEventListener("pointermove", onPointerMove);
-      ownerDoc.addEventListener("pointerup", onPointerUp as EventListener, {
+      ownerDoc.addEventListener("mousemove", onMouseMove);
+      ownerDoc.addEventListener("mouseup", onMouseUp as EventListener, {
         once: true,
       });
     } catch {
       // fallback to global document
-      document.addEventListener("pointermove", onPointerMove);
-      document.addEventListener("pointerup", onPointerUp as EventListener, {
+      document.addEventListener("mousemove", onMouseMove);
+      document.addEventListener("mouseup", onMouseUp as EventListener, {
         once: true,
       });
     }
@@ -413,12 +383,12 @@ export function useResizeHandler({
       const lastDoc = lastOwnerDocRef.current || document;
 
       try {
-        lastDoc.removeEventListener("pointermove", onPointerMove);
-        lastDoc.removeEventListener("pointerup", onPointerUp as EventListener);
+        lastDoc.removeEventListener("mousemove", onMouseMove);
+        lastDoc.removeEventListener("mouseup", onMouseUp as EventListener);
       } catch {
         // fallback to global
-        document.removeEventListener("pointermove", onPointerMove);
-        document.removeEventListener("pointerup", onPointerUp as EventListener);
+        document.removeEventListener("mousemove", onMouseMove);
+        document.removeEventListener("mouseup", onMouseUp as EventListener);
       }
 
       cancelFlush();

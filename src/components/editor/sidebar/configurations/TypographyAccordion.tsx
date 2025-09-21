@@ -20,6 +20,7 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { useSelectionStore } from "@/globalstore/selectionstore";
+import { cn } from "@/lib/utils";
 
 type TypographyStyles = Partial<React.CSSProperties>;
 
@@ -93,7 +94,7 @@ export const TypographyAccordion = () => {
     elementHelper.updateElementStyle(selectedElement, newStyles);
 
     try {
-      const newTailwind = elementHelper.computeTailwindFromStyles(newStyles);
+      const newTailwind = cn(selectedElement.tailwindStyles, elementHelper.computeTailwindFromStyles(newStyles)) 
       updateElement(selectedElement.id, { tailwindStyles: newTailwind });
     } catch (err) {
       console.error(

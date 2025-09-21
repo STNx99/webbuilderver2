@@ -4,6 +4,7 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { elementService } from "@/services/element";
 import { debounce } from "lodash";
 import { cloneDeep, find, reject } from "lodash";
+import { SelectionStore } from "./selectionstore";
 
 type ElementStore<TElement extends EditorElement> = {
   // States
@@ -15,8 +16,6 @@ type ElementStore<TElement extends EditorElement> = {
   updateElement: (id: string, updatedElement: Partial<TElement>) => void;
   deleteElement: (id: string) => void;
   addElement: (...newElements: TElement[]) => void;
-  deselectAll: () => void;
-  dehoverAll: () => void;
   updateAllElements: (update: Partial<EditorElement>) => void;
   insertElement: (
     parentElement: TElement,
@@ -24,14 +23,7 @@ type ElementStore<TElement extends EditorElement> = {
   ) => void;
 };
 
-type PersistElement = Omit<
-  EditorElement,
-  "isSelected" | "isHovered" | "isDraggedOver"
-> & {
-  isSelected?: boolean;
-  isHovered?: boolean;
-  isDraggedOver?: boolean;
-};
+type PersistElement = EditorElement;
 
 type UpdatePayload<TElement extends EditorElement> = {
   element: PersistElement;
@@ -51,14 +43,14 @@ const createElementStore = <TElement extends EditorElement>() => {
       els: EditorElement[],
       id: string,
     ): EditorElement | undefined => {
-      return find(els, (el) => {
-        if (el.id === id) return true;
+      for (const el of els) {
+        if (el.id === id) return el;
         if (elementHelper.isContainerElement(el)) {
           const found = findById((el as ContainerElement).elements, id);
-          return !!found;
+          if (found) return found;
         }
-        return false;
-      });
+      }
+      return undefined;
     };
 
     const mapUpdateById = (
@@ -126,18 +118,12 @@ const createElementStore = <TElement extends EditorElement>() => {
           );
         } catch (err) {
           console.error("Failed to persist element update, reverting:", err);
-          if (payload.prevElements) {
-            set({ elements: payload.prevElements });
-          }
         }
       }, 300) as Debouncer<TElement>;
 
       debouncers.set(id, d);
       return d;
     };
-
-    const UI_FLAGS = ["isSelected", "isHovered", "isDraggedOver"] as const;
-    type UiFlagKey = (typeof UI_FLAGS)[number];
 
     return {
       elements: [],
@@ -149,14 +135,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         const { elements } = get();
 
         const prevElements = cloneDeep(elements);
-
-        const updatedKeys = Object.keys(
-          updatedElement,
-        ) as (keyof typeof updatedElement)[];
-        const hasNonUiChange = updatedKeys.some(
-          (k) => !UI_FLAGS.includes(k as UiFlagKey),
-        );
-
         const updatedTree = mapUpdateById(
           elements as EditorElement[],
           id,
@@ -166,30 +144,32 @@ const createElementStore = <TElement extends EditorElement>() => {
           }),
         ) as TElement[];
 
-        set({
-          elements: updatedTree,
-        });
-
-        // If update is UI-only, we intentionally skip persistence entirely.
-        if (!hasNonUiChange) return;
+        set({ elements: updatedTree });
+        
+        // Update selectedElement if it matches the updated element
+        const { selectedElement } = SelectionStore.getState();
+        console.log("element before update", selectedElement)
+        if (selectedElement?.id === id) {
+          const updatedSelected = findById(updatedTree as EditorElement[], id);
+          if (updatedSelected) {
+            SelectionStore.setState({
+              selectedElement: updatedSelected as TElement,
+            });
+          }
+        }
+        console.log("element after update", selectedElement)
 
         // Find the element to persist
         const elementToPersist = findById(updatedTree as EditorElement[], id);
         if (!elementToPersist) return;
 
-        const {
-          isSelected: _isSelected,
-          isHovered: _isHovered,
-          isDraggedOver: _isDraggedOver,
-          ...persistObj
-        } = elementToPersist as EditorElement;
-        const persistElement = persistObj as PersistElement;
+        const persistElement = elementToPersist as PersistElement;
 
         // Determine settings payload if it's a string
         const settingsPayload =
           "settings" in persistElement &&
-          typeof (persistElement as any).settings === "string"
-            ? ((persistElement as any).settings as string)
+          typeof (persistElement as EditorElement).settings === "string"
+            ? ((persistElement as EditorElement).settings as string)
             : undefined;
 
         // Trigger a per-element debounced persistence
@@ -351,14 +331,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         };
         const updated = elements.map((e) => recursivelyUpdate(e) as TElement);
         set({ elements: updated });
-      },
-
-      deselectAll: () => {
-        get().updateAllElements({ isSelected: false, isHovered: false });
-      },
-
-      dehoverAll: () => {
-        get().updateAllElements({ isHovered: false });
       },
     };
   });

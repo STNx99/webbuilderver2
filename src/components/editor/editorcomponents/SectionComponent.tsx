@@ -7,11 +7,13 @@ import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { Button } from "@/components/ui/button";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import ElementLoader from "../ElementLoader";
 
 const SectionComponent = ({ element }: EditorComponentProps) => {
   const sectionElement = element as SectionElement;
   const { insertElement } = useElementStore();
+  const { selectedElement } = useSelectionStore();
   const { id } = useParams();
   const searchParams = useSearchParams();
 
@@ -45,7 +47,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
       }}
     >
       <ElementLoader elements={sectionElement.elements} />
-      {sectionElement.isSelected && (
+      {selectedElement?.id === sectionElement.id && (
         <div
           style={{
             position: "absolute",

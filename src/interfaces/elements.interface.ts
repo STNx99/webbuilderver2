@@ -5,25 +5,20 @@ import { EmblaOptionsType } from "embla-carousel";
 type CSSStyles = React.CSSProperties
 
 // Interface from
-interface DBElement<Settings = undefined> {
-  type: ElementType;
-  id: string;
-  content: string;
-  name?: string;
-  styles?: CSSStyles
-  tailwindStyles?: string;
-  src?: string;
-  href?: string;
-  parentId?: string;
-  pageId?: string;
-  projectId: string;
-  settings?: Settings | null;
-}
 
-interface Element<Settings = undefined> extends DBElement<Settings> {
-  isSelected: boolean;
-  isHovered: boolean;
-  isDraggedOver: boolean;
+interface Element<Settings = undefined> {
+  type: ElementType;
+    id: string;
+    content: string;
+    name?: string;
+    styles?: CSSStyles
+    tailwindStyles?: string;
+    src?: string;
+    href?: string;
+    parentId?: string;
+    pageId?: string;
+    projectId: string;
+    settings?: Settings | null;
 }
 
 interface BaseElement extends Element {}

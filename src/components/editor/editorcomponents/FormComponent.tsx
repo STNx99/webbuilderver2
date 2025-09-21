@@ -6,6 +6,7 @@ import { EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { FormElement, InputElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";
 
@@ -37,7 +38,8 @@ export default function FormComponent({ element }: FormComponentProps) {
     updateElement(formElement.id, { ...formElement, elements: updated });
   };
 
-  const isEditing = formElement.isSelected;
+  const { selectedElement } = useSelectionStore();
+  const isEditing = selectedElement?.id === formElement.id;
 
   // Defensive check: ensure styles is a valid object
   const safeStyles =

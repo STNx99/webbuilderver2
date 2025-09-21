@@ -48,14 +48,7 @@ type ElementType =
   | "Image"
   | "Link";
 
-type ExcludeType =
-  | "isSelected"
-  | "isHovered"
-  | "isDraggedOver"
-  | "id"
-  | "pageId"
-  | "projectId"
-  | "parentId";
+type ExcludeType = "id" | "pageId" | "projectId" | "parentId";
 
 type ContainerElementTemplate = Partial<Omit<EditorElement, ExcludeType>> & {
   type: ContainerElementType;

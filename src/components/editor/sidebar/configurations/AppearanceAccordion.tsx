@@ -18,6 +18,7 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import React, { useEffect, useState } from "react";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
+import { cn } from "@/lib/utils";
 
 type AppearanceStyles = Pick<
   React.CSSProperties,
@@ -101,7 +102,7 @@ export const AppearanceAccordion = () => {
     const newStyles = { ...styles, [property]: value };
 
     elementHelper.updateElementStyle(selectedElement, newStyles);
-    const newTailwind = elementHelper.computeTailwindFromStyles(newStyles);
+    const newTailwind = cn(selectedElement.tailwindStyles, elementHelper.computeTailwindFromStyles(newStyles)) 
 
     updateElement(selectedElement.id, { tailwindStyles: newTailwind });
   };

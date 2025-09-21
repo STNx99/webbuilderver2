@@ -88,13 +88,14 @@ export default function ElementTreeItem({
   level?: number;
 }) {
   const { updateElement } = useElementStore();
-  const { setSelectedElement } = useSelectionStore();
+  const { selectedElement, setSelectedElement } = useSelectionStore();
   const [isOpen, setIsOpen] = React.useState(true);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    updateElement(element.id, { isSelected: !element.isSelected });
-    setSelectedElement(element.isSelected ? undefined : element);
+    setSelectedElement(
+      selectedElement?.id === element.id ? undefined : element,
+    );
   };
 
   const displayName = element.name || element.content || element.type;
@@ -111,7 +112,7 @@ export default function ElementTreeItem({
             className={cn(
               "flex items-center flex-1 p-2 cursor-pointer text-xs hover:bg-accent hover:rounded-md transition-colors",
               {
-                "bg-accent rounded-md": element.isSelected,
+                "bg-accent rounded-md": selectedElement?.id === element.id,
               },
             )}
             style={{ paddingLeft: `${level * 16 + 8}px` }}

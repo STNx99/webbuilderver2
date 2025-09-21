@@ -9,8 +9,6 @@ export function useElementHandler() {
   const {
     addElement,
     updateElement,
-    deselectAll,
-    dehoverAll,
     elements,
     setElements,
     updateAllElements,
@@ -22,6 +20,7 @@ export function useElementHandler() {
     draggingElement,
     draggedOverElement,
     setDraggedOverElement,
+    setHoveredElement,
   } = useSelectionStore();
 
   const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
@@ -30,12 +29,9 @@ export function useElementHandler() {
 
     if (selectedElement && selectedElement.id === element.id) {
       setSelectedElement(undefined);
-      updateElement(element.id, { isSelected: false });
       return;
     }
 
-    deselectAll();
-    updateElement(element.id, { isSelected: true });
     setSelectedElement(element);
   };
 
@@ -46,7 +42,7 @@ export function useElementHandler() {
   ) => {
     e.stopPropagation();
     e.preventDefault();
-    deselectAll();
+    setSelectedElement(undefined);
     const data = e.dataTransfer.getData("elementType");
 
     if (data) {
@@ -129,8 +125,7 @@ export function useElementHandler() {
       return;
     }
 
-    dehoverAll();
-    updateElement(element.id, { isHovered: true });
+    setHoveredElement(element);
   };
 
   const handleMouseLeave = (e: React.MouseEvent, element: EditorElement) => {
@@ -142,7 +137,7 @@ export function useElementHandler() {
     ) {
       return;
     }
-    updateElement(element.id, { isHovered: false });
+    setHoveredElement(undefined);
   };
 
   const handleTextChange = (e: React.FocusEvent, element: EditorElement) => {
@@ -180,7 +175,8 @@ export function useElementHandler() {
       draggable: true,
       className: tailwindStyles,
       contentEditable:
-        elementHelper.isEditableElement(element) && element.isSelected,
+        elementHelper.isEditableElement(element) &&
+        selectedElement?.id === element.id,
       suppressContentEditableWarning: true,
 
       onDragStart: (e: React.DragEvent) => handleDragStart(e, element),

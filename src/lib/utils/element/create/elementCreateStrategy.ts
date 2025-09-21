@@ -17,11 +17,6 @@ export type BuilderState = {
   tailwindStyles?: string;
   href?: string;
   content?: string;
-  baseProperties: {
-    isSelected: boolean;
-    isHovered: boolean;
-    isDraggedOver: boolean;
-  };
 };
 
 export interface ElementCreateStrategy {
@@ -40,7 +35,6 @@ function createBaseElement(
     parentId:
       state.parentId && state.parentId !== "" ? state.parentId : undefined,
     pageId: state.pageId,
-    ...state.baseProperties,
     content: "",
     styles: {},
     tailwindStyles: "",

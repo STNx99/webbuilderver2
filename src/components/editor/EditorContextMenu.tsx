@@ -44,7 +44,7 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
   children,
   element,
 }) => {
-  const { updateElement, deselectAll } = useElementStore();
+  const { updateElement } = useElementStore();
   const { setSelectedElement } = useSelectionStore();
 
   const onCopy = () => {
@@ -88,9 +88,7 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
 
           setPortalContainer(container);
 
-          deselectAll();
           setSelectedElement(element);
-          updateElement(element.id, { isSelected: true });
         } else {
           setPortalContainer(null);
         }
