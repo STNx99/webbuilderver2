@@ -77,7 +77,7 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => {
       set({ project: optimistic, isUpdating: true, errorMessage: null });
 
       try {
-        const serverProject = await projectService.updateProject(
+        const serverProject = await projectService.updateProjectPartial(
           projectId,
           updates,
         );

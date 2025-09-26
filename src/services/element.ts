@@ -1,35 +1,36 @@
 import { EditorElement } from "@/types/global.type";
 import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
-import {
-  fetchWithAuth,
-  fetchPublic,
-  postWithAuth,
-  deleteWithAuth,
-  updateWithAuth,
-} from "./api";
-import { IElementService } from "@/interfaces/service.interface";
+import apiClient from "./apiclient";
 import { API_ENDPOINTS, NEXT_API_ENDPOINTS } from "@/constants/endpoints";
 
-/**
- * Element service for communicating with backend element endpoints.
- *
- * Methods:
- * - getElements: authenticated fetch of elements for a project
- * - getElementsPublic: public fetch for published rendering
- * - createElement: create one or more elements for a project
- * - updateElement: update an element (sends { element, settings } payload,
- *                  uses permissive request typing and casts response to EditorElement)
- * - deleteElement: delete an element by id
- */
+interface IElementService {
+  getElements: (projectId: string) => Promise<EditorElement[]>;
+  getElementsPublic: (projectId: string) => Promise<EditorElement[]>;
+  createElement: (
+    projectId: string,
+    ...elements: EditorElement[]
+  ) => Promise<void>;
+  updateElement: (
+    element: EditorElement,
+    settings?: string | null,
+  ) => Promise<EditorElement>;
+  deleteElement: (id: string) => Promise<boolean>;
+  insertElement: (
+    projectId: string,
+    targetId: string,
+    elementToBeInserted: EditorElement,
+  ) => Promise<void>;
+}
+
 export const elementService: IElementService = {
   getElements: async (projectId: string): Promise<EditorElement[]> => {
-    return fetchWithAuth<EditorElement[]>(
+    return apiClient.get<EditorElement[]>(
       GetUrl(API_ENDPOINTS.ELEMENTS.GET(projectId)),
     );
   },
 
   getElementsPublic: async (projectId: string): Promise<EditorElement[]> => {
-    return fetchPublic<EditorElement[]>(
+    return apiClient.getPublic<EditorElement[]>(
       GetUrl(API_ENDPOINTS.ELEMENTS.GET_PUBLIC(projectId)),
     );
   },
@@ -41,7 +42,7 @@ export const elementService: IElementService = {
     if (!Array.isArray(elements) || elements.length === 0) return;
 
     try {
-      await postWithAuth(
+      await apiClient.post(
         GetUrl(API_ENDPOINTS.ELEMENTS.CREATE(projectId)),
         elements,
       );
@@ -60,7 +61,7 @@ export const elementService: IElementService = {
     }
 
     try {
-      const resp = await updateWithAuth<Record<string, unknown>>(
+      const resp = await apiClient.put<Record<string, unknown>>(
         GetNextJSURL(NEXT_API_ENDPOINTS.ELEMENTS.UPDATE(element.id)),
         { element, settings },
       );
@@ -73,7 +74,7 @@ export const elementService: IElementService = {
 
   deleteElement: async (id: string): Promise<boolean> => {
     try {
-      return await deleteWithAuth(
+      return await apiClient.delete(
         GetNextJSURL(NEXT_API_ENDPOINTS.ELEMENTS.DELETE(id)),
       );
     } catch (err: unknown) {
@@ -88,7 +89,10 @@ export const elementService: IElementService = {
     elementToBeInserted: EditorElement,
   ): Promise<void> => {
     try {
-      await postWithAuth(GetUrl(API_ENDPOINTS.ELEMENTS.INSERT(projectId, targetId)), elementToBeInserted);
+      await apiClient.post(
+        GetUrl(API_ENDPOINTS.ELEMENTS.INSERT(projectId, targetId)),
+        elementToBeInserted,
+      );
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       throw new Error(`insertElement failed: ${message}`);

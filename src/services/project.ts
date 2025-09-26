@@ -1,112 +1,76 @@
 import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
-import { IProjectService } from "@/interfaces/service.interface";
-import getToken from "./token";
 import { Page } from "@/generated/prisma";
-import { fetchPublic, fetchWithAuth, updateWithAuth } from "./api";
 import { Project } from "@/interfaces/project.interface";
+import apiClient from "./apiclient";
 import { API_ENDPOINTS, NEXT_API_ENDPOINTS } from "@/constants/endpoints";
+
+interface IProjectService {
+  getProjects: () => Promise<Project[]>;
+  getUserProjects: () => Promise<Project[]>;
+  getProjectById: (id: string) => Promise<Project>;
+  createProject: (project: Project) => Promise<Project>;
+  updateProject: (project: Project) => Promise<Project>;
+  updateProjectPartial: (
+    projectId: string,
+    project: Partial<Project>,
+  ) => Promise<Project>;
+  deleteProject: (id: string) => Promise<boolean>;
+  getProjectPages: (id: string) => Promise<Page[]>;
+  deleteProjectPage: (projectId: string, pageId: string) => Promise<boolean>;
+  getFonts: () => Promise<string[]>;
+}
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    return fetchPublic<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC));
+    return apiClient.getPublic<Project[]>(GetUrl("/projects/public"));
   },
 
   getUserProjects: async (): Promise<Project[]> => {
-    return fetchWithAuth<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_USER));
+    return apiClient.get<Project[]>(GetUrl("/projects/user"));
   },
 
   getProjectById: async (id: string): Promise<Project> => {
-    return fetchWithAuth<Project>(GetUrl(API_ENDPOINTS.PROJECTS.GET_BY_ID(id)));
+    return apiClient.get<Project>(GetUrl(`/projects/${id}`));
   },
 
   deleteProject: async (id: string): Promise<boolean> => {
-    const token = await getToken();
-    const response = await fetch(
+    return apiClient.delete(
       GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.DELETE(id)),
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      },
     );
-    if (response.status === 204) return true;
-    return false;
+  },
+
+  createProject: async (project: Project) => {
+    return await apiClient.post<Project>(GetUrl("/projects"), project);
+  },
+
+  updateProject: async (project: Project) => {
+    return await apiClient.put<Project>(
+      GetUrl(`/projects/${project.id}`),
+      project,
+    );
   },
 
   getProjectPages: async (id: string): Promise<Page[]> => {
-    return fetchWithAuth<Page[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PAGES(id)));
+    return apiClient.get<Page[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PAGES(id)));
   },
 
-  updateProject: async (
+  updateProjectPartial: async (
     projectId: string,
     project: Partial<Project>,
   ): Promise<Project> => {
-    const token = await getToken();
-    try {
-      const response = await fetch(
-        GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: JSON.stringify(project),
-        },
-      );
-
-      if (!response.ok) {
-        let txt = "";
-        try {
-          txt = await response.text();
-        } catch (e) {
-          txt = String(e ?? "failed to read response body");
-        }
-        console.error(
-          "projectService.updateProject: server responded with error",
-          {
-            projectId,
-            status: response.status,
-            body: txt,
-          },
-        );
-        throw new Error(`Failed to update project: ${response.status} ${txt}`);
-      }
-
-      const data = await response.json();
-      console.debug("projectService.updateProject: server returned data", {
-        projectId,
-        data,
-      });
-      return data as Project;
-    } catch (err) {
-      console.error("projectService.updateProject: network/error", {
-        projectId,
-        error: err,
-        project,
-      });
-      throw err;
-    }
+    return apiClient.patch<Project>(
+      GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
+      project,
+    );
   },
 
   deleteProjectPage: async (
     projectId: string,
     pageId: string,
   ): Promise<boolean> => {
-    const token = await getToken();
-    const response = await fetch(
+    return apiClient.delete(
       GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId)),
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      },
     );
-    return response.status === 204;
   },
 
   getFonts: async (): Promise<string[]> => {
