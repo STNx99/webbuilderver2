@@ -1,8 +1,8 @@
-import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
+import GetUrl from "@/lib/utils/geturl";
 import { Page } from "@/generated/prisma";
 import { Project } from "@/interfaces/project.interface";
 import apiClient from "./apiclient";
-import { API_ENDPOINTS, NEXT_API_ENDPOINTS } from "@/constants/endpoints";
+import { API_ENDPOINTS } from "@/constants/endpoints";
 
 interface IProjectService {
   getProjects: () => Promise<Project[]>;
@@ -22,30 +22,33 @@ interface IProjectService {
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    return apiClient.getPublic<Project[]>(GetUrl("/projects/public"));
-  },
-
-  getUserProjects: async (): Promise<Project[]> => {
-    return apiClient.get<Project[]>(GetUrl("/projects/user"));
-  },
-
-  getProjectById: async (id: string): Promise<Project> => {
-    return apiClient.get<Project>(GetUrl(`/projects/${id}`));
-  },
-
-  deleteProject: async (id: string): Promise<boolean> => {
-    return apiClient.delete(
-      GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.DELETE(id)),
+    return apiClient.getPublic<Project[]>(
+      GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC),
     );
   },
 
+  getUserProjects: async (): Promise<Project[]> => {
+    return apiClient.get<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_USER));
+  },
+
+  getProjectById: async (id: string): Promise<Project> => {
+    return apiClient.get<Project>(GetUrl(API_ENDPOINTS.PROJECTS.GET_BY_ID(id)));
+  },
+
+  deleteProject: async (id: string): Promise<boolean> => {
+    return apiClient.delete(GetUrl(API_ENDPOINTS.PROJECTS.DELETE(id)));
+  },
+
   createProject: async (project: Project) => {
-    return await apiClient.post<Project>(GetUrl("/projects"), project);
+    return await apiClient.post<Project>(
+      GetUrl(API_ENDPOINTS.PROJECTS.CREATE),
+      project,
+    );
   },
 
   updateProject: async (project: Project) => {
     return await apiClient.put<Project>(
-      GetUrl(`/projects/${project.id}`),
+      GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(project.id)),
       project,
     );
   },
@@ -59,7 +62,7 @@ export const projectService: IProjectService = {
     project: Partial<Project>,
   ): Promise<Project> => {
     return apiClient.patch<Project>(
-      GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
+      GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
       project,
     );
   },
@@ -69,7 +72,7 @@ export const projectService: IProjectService = {
     pageId: string,
   ): Promise<boolean> => {
     return apiClient.delete(
-      GetNextJSURL(NEXT_API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId)),
+      GetUrl(API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId)),
     );
   },
 

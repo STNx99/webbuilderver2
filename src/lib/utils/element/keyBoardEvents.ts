@@ -15,13 +15,17 @@ export interface IKeyboardEvent {
 
 export class KeyboardEvent implements IKeyboardEvent {
   public copyElement = () => {
-    const selectedElement = SelectionStore.getState().selectedElement;
+    const selectedElement =
+      SelectionStore.getState().selectedElement ||
+      SelectionStore.getState().hoveredElement;
     if (!selectedElement) return;
     sessionStorage.setItem("copiedElement", JSON.stringify(selectedElement));
   };
 
   public cutElement = () => {
-    const selectedElement = SelectionStore.getState().selectedElement;
+    const selectedElement =
+      SelectionStore.getState().selectedElement ||
+      SelectionStore.getState().hoveredElement;
     if (!selectedElement) return;
     sessionStorage.setItem("copiedElement", JSON.stringify(selectedElement));
     ElementStore.getState().deleteElement(selectedElement.id);
@@ -34,9 +38,11 @@ export class KeyboardEvent implements IKeyboardEvent {
 
     const elementData = JSON.parse(copiedElement) as EditorElement;
     let newElement = { ...elementData, id: uuidv4() };
-    
-    if (elementHelper.isContainerElement(newElement)) { 
-      const updateIdsRecursively = (element: ContainerElement): ContainerElement => {
+
+    if (elementHelper.isContainerElement(newElement)) {
+      const updateIdsRecursively = (
+        element: ContainerElement,
+      ): ContainerElement => {
         const updatedElements = element.elements.map((child) => {
           const newChild = { ...child, id: uuidv4() };
           if (elementHelper.isContainerElement(newChild)) {
@@ -52,11 +58,12 @@ export class KeyboardEvent implements IKeyboardEvent {
     const elementState = ElementStore.getState();
 
     elementState.addElement(newElement);
-    
   };
 
   public bringToFront = () => {
-    const selectedElement = SelectionStore.getState().selectedElement;
+    const selectedElement =
+      SelectionStore.getState().selectedElement ||
+      SelectionStore.getState().hoveredElement;
     if (!selectedElement) return;
     const elementState = ElementStore.getState();
     const elements = elementState.elements;
@@ -71,7 +78,9 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public sendToBack = () => {
-    const selectedElement = SelectionStore.getState().selectedElement;
+    const selectedElement =
+      SelectionStore.getState().selectedElement ||
+      SelectionStore.getState().hoveredElement;
     if (!selectedElement) return;
     const elementState = ElementStore.getState();
     const elements = elementState.elements;
@@ -86,9 +95,23 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public deleteElement = () => {
-    const selectedElement = SelectionStore.getState().selectedElement;
+    const selectedElement =
+      SelectionStore.getState().selectedElement ||
+      SelectionStore.getState().hoveredElement;
     if (!selectedElement) return;
     ElementStore.getState().deleteElement(selectedElement.id);
     SelectionStore.getState().setSelectedElement(undefined);
+  };
+
+  public deselectAll = () => {
+    SelectionStore.getState().setSelectedElement(undefined);
+  };
+
+  public undo = () => {
+    ElementStore.getState().undo();
+  };
+
+  public redo = () => {
+    ElementStore.getState().redo();
   };
 }

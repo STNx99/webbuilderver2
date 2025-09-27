@@ -32,6 +32,16 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     if (!canvas) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      console.log(
+        "Key pressed:",
+        e.key,
+        "Ctrl:",
+        e.ctrlKey,
+        "Meta:",
+        e.metaKey,
+        "Key:",
+        e.key,
+      );
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "c":
@@ -46,10 +56,21 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
             e.preventDefault();
             keyboardEvent.cutElement();
             break;
+          case "z":
+            e.preventDefault();
+            keyboardEvent.undo();
+            break;
+          case "y":
+            e.preventDefault();
+            keyboardEvent.redo();
+            break;
         }
       } else if (e.key === "Delete") {
         e.preventDefault();
         keyboardEvent.deleteElement();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        keyboardEvent.deselectAll();
       }
     };
 

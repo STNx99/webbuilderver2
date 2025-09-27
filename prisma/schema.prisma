@@ -47,19 +47,20 @@ model Image {
 
 model Project {
   Description  String?
-  Id           String    @id(map: "PK_Projects")
+  Id           String           @id(map: "PK_Projects")
   Name         String
   OwnerId      String
-  Published    Boolean   @default(false)
+  Published    Boolean          @default(false)
   Subdomain    String?
-  CreatedAt    DateTime  @db.Timestamp(6)
-  DeletedAt    DateTime? @db.Timestamp(6)
-  UpdatedAt    DateTime  @db.Timestamp(6)
+  CreatedAt    DateTime         @db.Timestamp(6)
+  DeletedAt    DateTime?        @db.Timestamp(6)
+  UpdatedAt    DateTime         @db.Timestamp(6)
   Styles       Json?
   CustomStyles String?
   Elements     Element[]
   Pages        Page[]
-  Owner        User      @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+  Owner        User             @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+  Snapshots    Snapshot[]
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -89,6 +90,17 @@ model Setting {
   Element     Element @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
 
   @@index([ElementId], map: "IX_Settings_ElementId")
+}
+
+model Snapshot {
+  Id          String           @id @map("Id")
+  ProjectId   String
+  Elements    Json
+  Timestamp   BigInt
+  CreatedAt   DateTime         @default(now()) @db.Timestamp(6)
+  Project     Project          @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@index([ProjectId, Timestamp])
 }
 
 model User {

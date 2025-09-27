@@ -14,6 +14,7 @@ export function useElementHandler() {
     updateAllElements,
   } = useElementStore();
   const {
+    hoveredElement,
     selectedElement,
     setSelectedElement,
     setDraggingElement,
@@ -65,6 +66,7 @@ export function useElementHandler() {
       addElement(newElement as EditorElement);
 
       setSelectedElement(newElement);
+      setDraggedOverElement(undefined);
     } else if (draggingElement) {
       elementHelper.handleSwap(
         draggingElement,
@@ -74,6 +76,7 @@ export function useElementHandler() {
       );
       setDraggedOverElement(undefined);
     }
+    setHoveredElement(undefined);
     setDraggingElement(undefined);
   };
 
@@ -90,7 +93,7 @@ export function useElementHandler() {
       draggingElement?.parentId === element.id
     )
       return;
-    if (!draggingElement && !elementHelper.isContainerElement(element)) return;
+    if (!elementHelper.isContainerElement(element)) return;
     setDraggedOverElement(element);
   };
 

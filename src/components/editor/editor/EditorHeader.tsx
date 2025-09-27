@@ -25,7 +25,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           className="h-6 bg-gray-700"
           onBlur={handlePageNavigation}
         />
-        <CssTextareaImporter/>
+        <CssTextareaImporter />
       </div>
 
       <div className="flex items-center ">
