@@ -3,7 +3,7 @@ import { ContainerElement, EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { elementService } from "@/services/element";
 import { debounce } from "lodash";
-import { cloneDeep, find, reject } from "lodash";
+import { cloneDeep } from "lodash";
 import { SelectionStore } from "./selectionstore";
 import { Snapshot } from "@/interfaces/snapshot.interface";
 
@@ -24,6 +24,7 @@ type ElementStore<TElement extends EditorElement> = {
     parentElement: TElement,
     elementToBeInserted: TElement,
   ) => ElementStore<TElement>;
+  swapElement: (id1: string, id2: string) => ElementStore<TElement>;
   undo: () => ElementStore<TElement>;
   redo: () => ElementStore<TElement>;
   clearHistory: () => ElementStore<TElement>;
@@ -44,73 +45,6 @@ type Debouncer<TElement extends EditorElement> = ReturnType<
 const createElementStore = <TElement extends EditorElement>() => {
   return create<ElementStore<TElement>>((set, get) => {
     const debouncers = new Map<string, Debouncer<TElement>>();
-
-    const findById = (
-      els: EditorElement[],
-      id: string,
-    ): EditorElement | undefined => {
-      for (const el of els) {
-        if (el.id === id) return el;
-        if (elementHelper.isContainerElement(el)) {
-          const found = findById((el as ContainerElement).elements, id);
-          if (found) return found;
-        }
-      }
-      return undefined;
-    };
-
-    const mapUpdateById = (
-      els: EditorElement[],
-      id: string,
-      updater: (el: EditorElement) => EditorElement,
-    ): EditorElement[] =>
-      els.map((el) => {
-        if (el.id === id) return updater(el);
-        if (elementHelper.isContainerElement(el)) {
-          return {
-            ...el,
-            elements: mapUpdateById(el.elements, id, updater),
-          } as EditorElement;
-        }
-        return el;
-      });
-
-    const mapDeleteById = (
-      els: EditorElement[],
-      id: string,
-    ): EditorElement[] => {
-      return reject(els, (el) => el.id === id).map((el) => {
-        if (elementHelper.isContainerElement(el)) {
-          return {
-            ...el,
-            elements: mapDeleteById(el.elements, id),
-          } as EditorElement;
-        }
-        return el;
-      });
-    };
-
-    const mapInsertAfterId = (
-      els: EditorElement[],
-      targetId: string,
-      toInsert: EditorElement,
-    ): EditorElement[] => {
-      const idx = els.findIndex((e) => e.id === targetId);
-      if (idx !== -1) {
-        const newEls = [...els];
-        newEls.splice(idx + 1, 0, toInsert);
-        return newEls;
-      }
-      return els.map((el) => {
-        if (elementHelper.isContainerElement(el)) {
-          return {
-            ...el,
-            elements: mapInsertAfterId(el.elements, targetId, toInsert),
-          } as EditorElement;
-        }
-        return el;
-      });
-    };
 
     const getDebouncerForId = (id: string): Debouncer<TElement> => {
       let d = debouncers.get(id);
@@ -181,7 +115,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         const { elements } = get();
 
         const prevElements = cloneDeep(elements);
-        const updatedTree = mapUpdateById(
+        const updatedTree = elementHelper.mapUpdateById(
           elements as EditorElement[],
           id,
           (el) => ({
@@ -195,7 +129,10 @@ const createElementStore = <TElement extends EditorElement>() => {
         const { selectedElement } = SelectionStore.getState();
         console.log("element before update", selectedElement);
         if (selectedElement?.id === id) {
-          const updatedSelected = findById(updatedTree as EditorElement[], id);
+          const updatedSelected = elementHelper.findById(
+            updatedTree as EditorElement[],
+            id,
+          );
           if (updatedSelected) {
             SelectionStore.setState({
               selectedElement: updatedSelected as TElement,
@@ -204,7 +141,10 @@ const createElementStore = <TElement extends EditorElement>() => {
         }
         console.log("element after update", selectedElement);
 
-        const elementToPersist = findById(updatedTree as EditorElement[], id);
+        const elementToPersist = elementHelper.findById(
+          updatedTree as EditorElement[],
+          id,
+        );
         if (!elementToPersist) return get();
 
         const persistElement = elementToPersist as PersistElement;
@@ -229,7 +169,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         const { elements } = get();
 
         const prevElements = cloneDeep(elements);
-        const updatedTree = mapDeleteById(
+        const updatedTree = elementHelper.mapDeleteById(
           elements as EditorElement[],
           id,
         ) as TElement[];
@@ -257,7 +197,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         takeSnapshot();
         const { elements } = get();
         const prevElements = cloneDeep(elements);
-        const updated = mapInsertAfterId(
+        const updated = elementHelper.mapInsertAfterId(
           elements as EditorElement[],
           parentElement.id,
           elementToBeInserted,
@@ -411,6 +351,81 @@ const createElementStore = <TElement extends EditorElement>() => {
           future: newFuture,
         });
         saveSnapshotToApi(next as EditorElement[]);
+        return get();
+      },
+
+      swapElement: (id1: string, id2: string) => {
+        takeSnapshot();
+        const { elements } = get();
+        const prevElements = cloneDeep(elements);
+
+        const el1 = elementHelper.findById(elements, id1);
+        const el2 = elementHelper.findById(elements, id2);
+
+        if (!el1 || !el2 || el1.parentId !== el2.parentId) return get();
+
+        const parentId = el1.parentId;
+
+        if (parentId) {
+          // Nested elements
+          const parent = elementHelper.findById(elements, parentId);
+          if (!parent || !elementHelper.isContainerElement(parent))
+            return get();
+
+          const targetElements = (parent as ContainerElement).elements;
+          const idx1 = targetElements.findIndex((e) => e.id === id1);
+          const idx2 = targetElements.findIndex((e) => e.id === id2);
+
+          if (idx1 === -1 || idx2 === -1) return get();
+
+          const newTargetElements = [...targetElements];
+          [newTargetElements[idx1], newTargetElements[idx2]] = [
+            newTargetElements[idx2],
+            newTargetElements[idx1],
+          ];
+
+          // Update the parent element
+          const updatedParent = {
+            ...parent,
+            elements: newTargetElements,
+          } as EditorElement;
+
+          const updatedTree = elementHelper.mapUpdateById(
+            elements as EditorElement[],
+            parentId,
+            () => updatedParent,
+          ) as TElement[];
+
+          set({ elements: updatedTree });
+        } else {
+          // Top-level elements
+          const idx1 = elements.findIndex((e) => e.id === id1);
+          const idx2 = elements.findIndex((e) => e.id === id2);
+
+          if (idx1 === -1 || idx2 === -1) return get();
+
+          const newElements = [...elements];
+          [newElements[idx1], newElements[idx2]] = [
+            newElements[idx2],
+            newElements[idx1],
+          ];
+
+          set({ elements: newElements });
+        }
+
+        // Persist the swap to the API
+        const projectId = elements[0]?.projectId;
+        if (projectId) {
+          (async () => {
+            try {
+              await elementService.swapElement(projectId, id1, id2);
+            } catch (err) {
+              console.error("Failed to persist swap, reverting:", err);
+              set({ elements: prevElements });
+            }
+          })();
+        }
+
         return get();
       },
 

@@ -21,7 +21,7 @@ export const useEditor = (id: string, pageId: string) => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const router = useRouter();
 
-  const { addElement, loadElements } = useElementStore();
+  const { addElement, loadElements, elements } = useElementStore();
   const { selectedElement } = useSelectionStore();
   const { pages, loadPages, setCurrentPage } = usePageStore();
   const { loadProject } = useProjectStore();
@@ -67,7 +67,10 @@ export const useEditor = (id: string, pageId: string) => {
     }
   }, [project, loadProject]);
 
-  const filteredElements = elementHelper.filterElementByPageId(pageId);
+  const filteredElements = elementHelper.filterElementByPageId(
+    elements,
+    pageId,
+  );
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();

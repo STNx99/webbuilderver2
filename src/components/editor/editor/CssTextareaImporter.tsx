@@ -38,11 +38,13 @@ export default function CssTextareaImporter({
   const [info, setInfo] = useState<string | null>(null);
   const blobUrlRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [css, setCss] = useState<string>(() => project?.customStyles ?? "");
+  const [css, setCss] = useState<string>(
+    () => project?.header?.cssStyles ?? "",
+  );
 
   useEffect(() => {
-    setCss(project?.customStyles ?? "");
-  }, [project?.customStyles]);
+    setCss(project?.header?.cssStyles ?? "");
+  }, [project?.header?.cssStyles]);
 
   useEffect(() => {
     return () => {
@@ -95,22 +97,25 @@ export default function CssTextareaImporter({
           "CssTextareaImporter: about to call updateProject (inline)",
           {
             projectId: project?.id,
-            updates: { customStyles: css },
+            updates: { header: { cssStyles: css } },
           },
         );
-        const res = await updateProject({ customStyles: css }, project?.id);
+        const res = await updateProject(
+          { header: { cssStyles: css } },
+          project?.id,
+        );
         console.debug("CssTextareaImporter: updateProject (inline) returned", {
           res,
         });
 
         if (res) {
-          if (typeof res.customStyles !== "undefined") {
-            setCss(res.customStyles ?? "");
+          if (res.header?.cssStyles !== undefined) {
+            setCss(res.header.cssStyles ?? "");
           } else {
           }
         }
         setInfo(
-          "Injected CSS inline into preview (stored in project.customStyles).",
+          "Injected CSS inline into preview (stored in project.header.cssStyles).",
         );
         if (blobUrlRef.current) {
           try {
@@ -142,18 +147,18 @@ export default function CssTextareaImporter({
         const linkHtml = `<link rel="stylesheet" href="${url}">`;
 
         const res = await updateProject(
-          { customStyles: linkHtml },
+          { header: { cssStyles: linkHtml } },
           project?.id,
         );
         if (res) {
-          if (typeof res.customStyles !== "undefined") {
-            setCss(res.customStyles ?? linkHtml);
+          if (res.header?.cssStyles !== undefined) {
+            setCss(res.header.cssStyles ?? linkHtml);
           } else {
             if (!css) setCss(linkHtml);
           }
         }
         setInfo(
-          "Created blob URL and injected as <link> into preview (stored in project.customStyles).",
+          "Created blob URL and injected as <link> into preview (stored in project.header.cssStyles).",
         );
       } catch (e) {
         setError("Failed to create blob URL for CSS.");
@@ -167,14 +172,19 @@ export default function CssTextareaImporter({
 
     try {
       const res = updateProject
-        ? await updateProject({ customStyles: "" }, project?.id)
+        ? await updateProject({ header: { cssStyles: "" } }, project?.id)
         : null;
-      console.debug("CssTextareaImporter: clear customStyles result", { res });
-      setCss(res?.customStyles ?? "");
+      console.debug("CssTextareaImporter: clear header.cssStyles result", {
+        res,
+      });
+      setCss(res?.header?.cssStyles ?? "");
       setInfo("Cleared injected CSS.");
     } catch (err) {
-      console.error("CssTextareaImporter: failed to clear customStyles", err);
-      setError(String(err ?? "Failed to clear project CSS."));
+      console.error(
+        "CssTextareaImporter: failed to clear header.cssStyles",
+        err,
+      );
+      setError(String(err ?? "Failed to clear project header CSS."));
     }
 
     if (blobUrlRef.current) {

@@ -84,7 +84,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   return (
     <div
       ref={canvasRef}
-      className={`h-full w-full flex flex-col bg-background p-2 ${
+      className={`h-full  flex flex-col bg-background  ${
         isDraggingOver ? "bg-primary/10" : ""
       }`}
       onDrop={handleDrop}
@@ -93,7 +93,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       id="canvas"
       tabIndex={0}
     >
-      <div className="flex-1 overflow-auto">
+      <div className="overflow-x-hidden h-full w-full p-4">
         {isLoading ? (
           <ElementLoading count={6} variant="mixed" />
         ) : (
@@ -101,7 +101,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         )}
         {!selectedElement && (
           <Button
-            className="fixed bottom-2 left-2 right-2 h-6 z-10"
+            className="mb-4 w-full"
             onClick={addNewSection}
           >
             + Add new section

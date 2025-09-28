@@ -71,7 +71,6 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
     keyboardEventHandler.deleteElement();
   };
 
-  // Ref to the trigger wrapper so we can inspect its ownerDocument (iframe vs top doc).
   const triggerRef = React.useRef<HTMLDivElement | null>(null);
 
   const [portalContainer, setPortalContainer] =
@@ -94,7 +93,6 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
         }
       }}
     >
-      {/* Trigger wraps the element that should open the context menu on right-click */}
       <ContextMenuTrigger asChild>
         <div
           ref={triggerRef}

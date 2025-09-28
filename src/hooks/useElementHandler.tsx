@@ -9,9 +9,7 @@ export function useElementHandler() {
   const {
     addElement,
     updateElement,
-    elements,
-    setElements,
-    updateAllElements,
+    swapElement,
   } = useElementStore();
   const {
     hoveredElement,
@@ -68,12 +66,7 @@ export function useElementHandler() {
       setSelectedElement(newElement);
       setDraggedOverElement(undefined);
     } else if (draggingElement) {
-      elementHelper.handleSwap(
-        draggingElement,
-        parentElement,
-        elements,
-        setElements,
-      );
+      swapElement(draggingElement.id, parentElement.id);
       setDraggedOverElement(undefined);
     }
     setHoveredElement(undefined);

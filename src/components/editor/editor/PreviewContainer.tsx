@@ -36,8 +36,6 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
   children,
   isLoading = false,
 }) => {
-  // Calculate container size based on selected viewport. The iframe itself is
-  // always used regardless of desktop/mobile/tablet.
   const containerStyle: React.CSSProperties = {
     width: viewportSizes[currentView].width,
     height: viewportSizes[currentView].height,
@@ -57,12 +55,12 @@ const PreviewContainer: React.FC<PreviewContainerProps> = ({
   const { project } = useProjectStore();
 
   const projectHead = useMemo(() => {
-    const cs = (project?.customStyles ?? "").trim();
+    const cs = (project?.header?.cssStyles ?? "").trim();
     if (!cs) return "";
     const looksLikeHtml =
       cs.startsWith("<") || /<link\b|<style\b|<meta\b|<script\b/i.test(cs);
     return looksLikeHtml ? cs : `<style>${cs}</style>`;
-  }, [project?.customStyles]);
+  }, [project?.header?.cssStyles]);
 
   const loadProjectHead = useCallback(() => {
     if (typeof document === "undefined") return;

@@ -17,6 +17,11 @@ interface IElementService {
     settings?: string | null,
   ) => Promise<EditorElement>;
   deleteElement: (id: string) => Promise<boolean>;
+  swapElement: (
+    projectId: string,
+    element1Id: string,
+    element2Id: string,
+  ) => Promise<void>;
   insertElement: (
     projectId: string,
     targetId: string,
@@ -58,12 +63,11 @@ export const elementService: IElementService = {
   updateElement: async (
     id: string,
     updates: Partial<EditorElement>,
-    settings?: string | null,
   ): Promise<EditorElement> => {
     try {
       const resp = await apiClient.patch<Record<string, unknown>>(
         GetUrl(API_ENDPOINTS.ELEMENTS.UPDATE(id)),
-        { updates, settings },
+        { updates },
       );
       return resp as unknown as EditorElement;
     } catch (err: unknown) {
@@ -78,6 +82,18 @@ export const elementService: IElementService = {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       throw new Error(`deleteElement failed: ${message}`);
+    }
+  },
+
+  swapElement: async (projectId : string, elementId1: string, elementId2: string) => {
+    try{
+     return await apiClient.post(GetUrl(API_ENDPOINTS.ELEMENTS.SWAP(projectId)), {
+       elementId1,
+      elementId2
+     }) 
+    }catch(err: unknown){
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(`swapElement failed: ${message}`);
     }
   },
 

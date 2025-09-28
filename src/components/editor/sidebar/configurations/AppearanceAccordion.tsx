@@ -101,8 +101,11 @@ export const AppearanceAccordion = () => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
 
-    elementHelper.updateElementStyle(selectedElement, newStyles);
-    const newTailwind = cn(selectedElement.tailwindStyles, elementHelper.computeTailwindFromStyles(newStyles)) 
+    elementHelper.updateElementStyle(selectedElement, newStyles, updateElement);
+    const newTailwind = cn(
+      selectedElement.tailwindStyles,
+      elementHelper.computeTailwindFromStyles(newStyles),
+    );
 
     updateElement(selectedElement.id, { tailwindStyles: newTailwind });
   };

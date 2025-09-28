@@ -8,17 +8,18 @@ type CSSStyles = React.CSSProperties
 
 interface Element<Settings = undefined> {
   type: ElementType;
-    id: string;
-    content: string;
-    name?: string;
-    styles?: CSSStyles
-    tailwindStyles?: string;
-    src?: string;
-    href?: string;
-    parentId?: string;
-    pageId?: string;
-    projectId: string;
-    settings?: Settings | null;
+  id: string;
+  content: string;
+  name?: string;
+  styles?: CSSStyles
+  tailwindStyles?: string;
+  src?: string;
+  href?: string;
+  parentId?: string;
+  pageId?: string;
+  projectId: string;
+  settings?: Settings | null;
+  order?: number;
 }
 
 interface BaseElement extends Element {}

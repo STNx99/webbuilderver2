@@ -85,10 +85,13 @@ export const useProjectStore = create<ProjectStoreState>((set, get) => {
         if (serverProject) {
           const mergedProject: Project = {
             ...serverProject,
-            ...(typeof serverProject.customStyles === "undefined" &&
-            typeof optimistic.customStyles !== "undefined"
-              ? { customStyles: optimistic.customStyles }
-              : {}),
+            header: {
+              ...serverProject.header,
+              ...(typeof serverProject.header?.cssStyles === "undefined" &&
+              typeof optimistic.header?.cssStyles !== "undefined"
+                ? { cssStyles: optimistic.header.cssStyles }
+                : {}),
+            },
           };
 
           set({

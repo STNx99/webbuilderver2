@@ -68,7 +68,7 @@ const TEXT_TRANSFORM_OPTIONS: TextTransform[] = [
 
 export const TypographyAccordion = () => {
   const { updateElement } = useElementStore();
-  const {selectedElement} = useSelectionStore();
+  const { selectedElement } = useSelectionStore();
   const [fonts, setFonts] = useState<string[]>(FONT_FAMILIES);
 
   const { data, isLoading } = useQuery({
@@ -91,10 +91,13 @@ export const TypographyAccordion = () => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
 
-    elementHelper.updateElementStyle(selectedElement, newStyles);
+    elementHelper.updateElementStyle(selectedElement, newStyles, updateElement);
 
     try {
-      const newTailwind = cn(selectedElement.tailwindStyles, elementHelper.computeTailwindFromStyles(newStyles)) 
+      const newTailwind = cn(
+        selectedElement.tailwindStyles,
+        elementHelper.computeTailwindFromStyles(newStyles),
+      );
       updateElement(selectedElement.id, { tailwindStyles: newTailwind });
     } catch (err) {
       console.error(

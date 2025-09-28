@@ -76,7 +76,7 @@ export const projectDAL = {
    * Update a project.
    *
    * Performs an ownership check and ensures the project is not soft-deleted.
-   * Accepts a partial `updates` object containing fields to change (e.g. Name, Description, Styles, Published, Subdomain, CustomStyles).
+   * Accepts a partial `updates` object containing fields to change (e.g. Name, Description, Styles, Published, Subdomain, Header).
    *
    * Returns the updated project object on success, or null if the project was not found / not owned by the user / deleted.
    */
@@ -102,7 +102,9 @@ export const projectDAL = {
         data: {
           UpdatedAt: new Date(),
           Styles: JSON.stringify(updates.styles ?? existing.Styles),
-          CustomStyles: updates.customStyles ?? existing.CustomStyles,
+          Header: updates.header
+            ? (JSON.stringify(updates.header) as any)
+            : existing.Header,
           Name: updates.name ?? existing.Name,
           Description: updates.description ?? existing.Description,
           Published:

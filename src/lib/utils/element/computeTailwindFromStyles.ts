@@ -1,38 +1,9 @@
-/*
-  webbuilderv2/src/utils/element/computeTailwindFromStyles.ts
-
-  Refactored helper to compute a conservative set of Tailwind v4 utility
-  classes from inline style values.
-
-  Key changes:
-  - Preserve CSS variable references (e.g. `var(--foo)`) as-is so emitted
-    arbitrary classes reference the same variable.
-  - Improved sanitization for arbitrary values:
-    - Removes characters that break class parsing (`[` and `]`) and newlines.
-    - When the value contains whitespace or quotes, it is emitted quoted
-      inside the Tailwind brackets (e.g. `bg-['rgb(255 0 0 / 0.5)']`) which
-      preserves the original formatting safely.
-    - Keeps hex colors and simple tokens unquoted for readability.
-  - Centralized helpers for normalization / sanitization and a small set of
-    conservative mappings for common CSS properties.
-  - Optimized with lodash for cleaner property access and conditional logic.
-*/
-
 import type { CSSProperties } from "react";
 import { get, isUndefined, isNull, isString, isNumber, includes } from "lodash";
 
-/**
- * Detects whether a string is a CSS variable reference of the form:
- *   var(--some-name)
- * Allows optional whitespace inside the parentheses.
- */
 const isCssVar = (val: string): boolean =>
   /^var\(\s*--[a-zA-Z0-9\-_]+\s*\)$/.test(val.trim());
 
-/**
- * Clean a raw string value by removing newlines and any bracket characters
- * that would break Tailwind class tokenization.
- */
 const basicClean = (val: string): string =>
   String(val)
     .replace(/\r?\n|\r/g, " ")
@@ -41,45 +12,26 @@ const basicClean = (val: string): string =>
     .replace(/\]/g, "")
     .trim();
 
-/**
- * Check if a value is effectively empty/undefined for our purposes
- */
 const isEmptyValue = (val: unknown): boolean =>
   isUndefined(val) || isNull(val) || val === "";
 
-/**
- * Produce a safe string to insert inside Tailwind's arbitrary-value brackets.
- *
- * Rules:
- * - If value is a CSS variable (e.g. `var(--foo)`) return it unchanged after
- *   a light clean. This preserves the variable reference and avoids quoting.
- * - If the cleaned value contains whitespace or any quote characters, return
- *   a single-quoted version where single-quotes are escaped (e.g.
- *   `'rgb(255 0 0 / 0.5)'`) because Tailwind supports quoting inside brackets.
- * - Otherwise return the cleaned value verbatim (for hex colors, numbers, etc).
- */
 function sanitizeForArbitrary(raw: string | number): string {
   const asStr = String(raw);
-  // remove problematic characters / normalize whitespace first
   const cleaned = basicClean(asStr);
 
   if (cleaned.length === 0) return "";
 
-  // Keep CSS variable references as-is (safe after basicClean)
   if (isCssVar(cleaned)) return cleaned;
 
-  // If it contains whitespace or quotes, wrap in single quotes (escape inner ')
   const containsWhitespace = /\s/.test(cleaned);
   const containsSingleQuote = /'/.test(cleaned);
   const containsDoubleQuote = /"/.test(cleaned);
 
   if (containsWhitespace || containsSingleQuote || containsDoubleQuote) {
-    // escape single quotes inside the value
     const escaped = cleaned.replace(/'/g, "\\'");
     return `'${escaped}'`;
   }
 
-  // Otherwise return the cleaned token (hex colors, identifiers, numbers)
   return cleaned;
 }
 
@@ -89,9 +41,6 @@ const pushIf = (arr: string[], cls?: string | false | null) => {
   if (n.length) arr.push(n);
 };
 
-/**
- * Create lookup maps for common CSS property values to Tailwind classes
- */
 const DISPLAY_MAP = {
   flex: "flex",
   grid: "grid",
@@ -163,10 +112,6 @@ const FONT_WEIGHT_MAP = {
   900: "font-black",
 } as const;
 
-/**
- * Compute Tailwind classes from a partial CSSProperties object.
- * Returns a space-separated string of classes.
- */
 export function computeTailwindFromStyles(
   styles: Partial<CSSProperties> | undefined,
 ): string {
@@ -179,7 +124,6 @@ export function computeTailwindFromStyles(
 
     let normalized: string;
     if (isNumber(raw)) {
-      // Most numeric uses in this UI imply pixels
       normalized = `${raw}px`;
     } else {
       normalized = String(raw);
@@ -190,9 +134,6 @@ export function computeTailwindFromStyles(
     classes.push(`${prefix}-[${safe}]`);
   };
 
-  /**
-   * Get a mapped class or fallback to arbitrary value
-   */
   const getMappedClass = (
     value: unknown,
     map: Record<string, string>,
@@ -209,7 +150,6 @@ export function computeTailwindFromStyles(
     );
   };
 
-  // Size
   const width = get(styles, "width");
   if (!isEmptyValue(width)) {
     width === "auto" ? classes.push("w-auto") : pushArbitrary("w", width);
@@ -220,7 +160,6 @@ export function computeTailwindFromStyles(
     height === "auto" ? classes.push("h-auto") : pushArbitrary("h", height);
   }
 
-  // Background & text color
   const bgColor = get(styles, "backgroundColor");
   if (bgColor) {
     pushIf(classes, `bg-[${sanitizeForArbitrary(bgColor)}]`);
@@ -231,7 +170,6 @@ export function computeTailwindFromStyles(
     pushIf(classes, `text-[${sanitizeForArbitrary(color)}]`);
   }
 
-  // Border radius
   const borderRadius = get(styles, "borderRadius");
   if (!isEmptyValue(borderRadius)) {
     const val = isNumber(borderRadius)
@@ -240,7 +178,6 @@ export function computeTailwindFromStyles(
     pushIf(classes, `rounded-[${sanitizeForArbitrary(val)}]`);
   }
 
-  // Border width & color
   const borderWidth = get(styles, "borderWidth");
   if (!isEmptyValue(borderWidth)) {
     const val = isNumber(borderWidth)
@@ -254,7 +191,6 @@ export function computeTailwindFromStyles(
     pushIf(classes, `border-[${sanitizeForArbitrary(borderColor)}]`);
   }
 
-  // Opacity
   const opacity = get(styles, "opacity");
   if (!isEmptyValue(opacity)) {
     let normalized: string;
@@ -267,7 +203,6 @@ export function computeTailwindFromStyles(
     pushIf(classes, `opacity-[${sanitizeForArbitrary(normalized)}]`);
   }
 
-  // Spacing: padding / margin
   const spacingProps = [
     "padding",
     "paddingTop",
@@ -302,21 +237,18 @@ export function computeTailwindFromStyles(
     }
   });
 
-  // Display
   const display = get(styles, "display");
   if (display) {
     const displayClass = get(DISPLAY_MAP, String(display).trim());
     displayClass ? classes.push(displayClass) : pushIf(classes, "block");
   }
 
-  // Flex direction
   const flexDirection = get(styles, "flexDirection");
   if (flexDirection) {
     const flexClass = getMappedClass(flexDirection, FLEX_DIRECTION_MAP, "flex");
     if (flexClass) classes.push(flexClass);
   }
 
-  // Justify / Align items
   const justifyContent = get(styles, "justifyContent");
   if (justifyContent) {
     const justifyClass = getMappedClass(
@@ -333,7 +265,6 @@ export function computeTailwindFromStyles(
     if (alignClass) classes.push(alignClass);
   }
 
-  // Gap properties
   const gapProps = ["gap", "rowGap", "columnGap"];
   const gapPrefixes = { gap: "gap", rowGap: "row-gap", columnGap: "col-gap" };
 
@@ -345,7 +276,6 @@ export function computeTailwindFromStyles(
     }
   });
 
-  // Typography mappings
   const fontSize = get(styles, "fontSize");
   if (!isEmptyValue(fontSize)) {
     pushArbitrary("text", fontSize);
@@ -367,26 +297,22 @@ export function computeTailwindFromStyles(
     }
   }
 
-  // Line-height -> leading-[...]
   const lineHeight = get(styles, "lineHeight");
   if (!isEmptyValue(lineHeight)) {
     pushArbitrary("leading", lineHeight);
   }
 
-  // Letter-spacing -> tracking-[...]
   const letterSpacing = get(styles, "letterSpacing");
   if (!isEmptyValue(letterSpacing)) {
     pushArbitrary("tracking", letterSpacing);
   }
 
-  // Text align
   const textAlign = get(styles, "textAlign");
   if (textAlign) {
     const alignClass = getMappedClass(textAlign, TEXT_ALIGN_MAP, "text");
     if (alignClass) classes.push(alignClass);
   }
 
-  // Text transform
   const textTransform = get(styles, "textTransform");
   if (textTransform) {
     const transformClass = getMappedClass(
@@ -397,7 +323,6 @@ export function computeTailwindFromStyles(
     if (transformClass) classes.push(transformClass);
   }
 
-  // Text decoration
   const textDecoration = get(styles, "textDecoration");
   if (textDecoration) {
     const decorationClass = getMappedClass(
@@ -408,15 +333,12 @@ export function computeTailwindFromStyles(
     if (decorationClass) classes.push(decorationClass);
   }
 
-  // Font style
   const fontStyle = get(styles, "fontStyle");
   if (fontStyle) {
     const styleStr = String(fontStyle).trim();
     if (includes(["italic", "oblique"], styleStr)) classes.push("italic");
-    // normal is no-op
   }
 
-  // Font family
   const fontFamily = get(styles, "fontFamily");
   if (fontFamily) {
     const ffRaw = String(fontFamily).trim();
@@ -430,13 +352,11 @@ export function computeTailwindFromStyles(
     }
   }
 
-  // z-index
   const zIndex = get(styles, "zIndex");
   if (!isEmptyValue(zIndex)) {
     classes.push(`z-[${String(zIndex)}]`);
   }
 
-  // Position offsets
   const offsetProps = ["top", "bottom", "left", "right"];
   offsetProps.forEach((prop) => {
     const value = get(styles, prop);

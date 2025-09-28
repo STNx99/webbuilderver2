@@ -40,6 +40,7 @@ function LayoutSideBar() {
   const { selectedElement } = useSelectionStore();
   const searchParams = useSearchParams();
   const filteredElements = elementHelper.filterElementByPageId(
+    elements,
     searchParams.get("page") || undefined,
   );
   return (

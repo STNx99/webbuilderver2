@@ -1,3 +1,7 @@
+interface Header {
+  cssStyles?: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -6,7 +10,7 @@ export interface Project {
   published: boolean;
   ownerId: string;
   styles?: Record<string, unknown> | null;
-  customStyles?: string | null;
+  header?: Header | null;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;

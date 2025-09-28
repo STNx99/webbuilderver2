@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/api/v1/elements/${id}`,
     INSERT: (projectId: string, previousID: string) =>
       `/api/v1/elements/${projectId}/insert/${previousID}`,
+    SWAP: (projectId: string) => `/api/v1/elements/${projectId}/swap`,
   },
   PROJECTS: {
     GET_PUBLIC: "/api/v1/projects/public",
