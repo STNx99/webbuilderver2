@@ -2,6 +2,7 @@ import { ElementType } from "@/types/global.type";
 import {
   ButtonElementCreateStrategy,
   CarouselElementCreateStrategy,
+  DataLoaderElementCreateStrategy,
   ElementCreateStrategy,
   FormElementCreateStrategy,
   FrameElementCreateStrategy,
@@ -25,6 +26,7 @@ export const ElementStrategyMap: Map<ElementType, ElementCreateStrategy> =
     ["Form", new FormElementCreateStrategy()],
     ["Section", new SectionElementCreateStrategy()],
     ["Carousel", new CarouselElementCreateStrategy()],
+    ["DataLoader", new DataLoaderElementCreateStrategy()],
   ]);
 
 export const getElementStrategy = (

@@ -11,6 +11,7 @@ import {
   Link,
   SlidersHorizontal,
   List,
+  Database,
 } from "lucide-react";
 import React from "react";
 import BaseComponent from "@/components/editor/editorcomponents/BaseComponent";
@@ -23,6 +24,7 @@ import InputComponent from "@/components/editor/editorcomponents/InputComponent"
 import ListComponent from "@/components/editor/editorcomponents/ListComponent";
 import SectionComponent from "@/components/editor/editorcomponents/SectionComponent";
 import SelectComponent from "@/components/editor/editorcomponents/SelectComponent";
+import DataLoaderComponent from "@/components/editor/editorcomponents/DataLoaderComponent";
 
 interface ElementHolder {
   type: ElementType;
@@ -35,6 +37,7 @@ export const CONTAINER_ELEMENT_TYPES = [
   "List",
   "Section",
   "Carousel",
+  "DataLoader",
 ] as const;
 
 export const EDITABLE_ELEMENT_TYPES = [
@@ -90,6 +93,10 @@ export const elementHolders: ElementHolder[] = [
     type: "List",
     icon: <List className="w-4 h-4" />,
   },
+  {
+    type: "DataLoader",
+    icon: <Database className="w-4 h-4" />,
+  },
 ] as const;
 
 const ComponentMap = new Map<
@@ -107,6 +114,7 @@ const ComponentMap = new Map<
   ["Frame", FrameComponent],
   ["Carousel", CarouselComponent],
   ["List", ListComponent],
+  ["DataLoader", DataLoaderComponent],
 ]);
 
 export const getComponentMap = (

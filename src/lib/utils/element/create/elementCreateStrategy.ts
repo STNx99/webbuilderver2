@@ -1,6 +1,7 @@
 import {
   CarouselElement,
   CSSStyles,
+  DataLoaderElement,
   FormElement,
   InputElement,
 } from "@/interfaces/elements.interface";
@@ -39,7 +40,7 @@ function createBaseElement(
     styles: {},
     tailwindStyles: "",
     elements: [],
-    settings: {},
+    settings: null,
     ...overrides,
   };
 }
@@ -231,5 +232,26 @@ export class CarouselElementCreateStrategy implements ElementCreateStrategy {
       tailwindStyles:
         "w-full h-90 md:h-[360px] rounded-xl border border-gray-200 bg-white p-4 shadow-md overflow-hidden",
     }) as CarouselElement;
+  }
+}
+
+export class DataLoaderElementCreateStrategy implements ElementCreateStrategy {
+  buildElement(state: BuilderState): DataLoaderElement {
+    return createBaseElement(state, {
+      settings: {
+        apiUrl: "",
+        method: "GET",
+      },
+      styles: {
+        width: "100%",
+        minHeight: "160px",
+        backgroundColor: "var(--bg-surface, #ffffff)",
+        border: "1px solid rgba(15,23,42,0.06)",
+        borderRadius: "8px",
+        padding: "16px",
+      },
+      tailwindStyles:
+        "w-full min-h-[160px] rounded-lg p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm",
+    }) as DataLoaderElement;
   }
 }

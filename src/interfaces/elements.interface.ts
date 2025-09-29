@@ -2,7 +2,7 @@ import { EditorElement, ElementType } from "@/types/global.type";
 import { ValidationRule } from "./validate.interface";
 import { EmblaOptionsType } from "embla-carousel";
 
-type CSSStyles = React.CSSProperties
+type CSSStyles = React.CSSProperties;
 
 // Interface from
 
@@ -11,7 +11,7 @@ interface Element<Settings = undefined> {
   id: string;
   content: string;
   name?: string;
-  styles?: CSSStyles
+  styles?: CSSStyles;
   tailwindStyles?: string;
   src?: string;
   href?: string;
@@ -91,6 +91,18 @@ interface FormElement extends Element<FormSettings> {
   elements: EditorElement[];
 }
 
+interface DataLoaderSettings {
+  apiUrl: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  headers?: Record<string, string>;
+  body?: string;
+  authToken?: string;
+}
+
+interface DataLoaderElement extends Element<DataLoaderSettings> {
+  elements: EditorElement[];
+}
+
 export type {
   BaseElement,
   TextElement,
@@ -102,7 +114,13 @@ export type {
   SelectElement,
   FormElement,
   CarouselElement,
+  DataLoaderElement,
 };
 //Export settings
-export type { CarouselSettings, FormSettings, InputSettings };
-export type {CSSStyles}
+export type {
+  CarouselSettings,
+  FormSettings,
+  InputSettings,
+  DataLoaderSettings,
+};
+export type { CSSStyles };

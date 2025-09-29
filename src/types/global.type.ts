@@ -13,6 +13,7 @@ import {
   SelectElement,
   TextElement,
   CarouselElement,
+  DataLoaderElement,
 } from "@/interfaces/elements.interface";
 
 type ContainerElement =
@@ -20,7 +21,8 @@ type ContainerElement =
   | SectionElement
   | FormElement
   | ListElement
-  | CarouselElement;
+  | CarouselElement
+  | DataLoaderElement;
 
 type EditorElement =
   | BaseElement
@@ -32,7 +34,8 @@ type EditorElement =
   | FormElement
   | SectionElement
   | TextElement
-  | CarouselElement;
+  | CarouselElement
+  | DataLoaderElement;
 
 type ElementType =
   | "Frame"
@@ -46,7 +49,8 @@ type ElementType =
   | "Carousel"
   | "Base"
   | "Image"
-  | "Link";
+  | "Link"
+  | "DataLoader";
 
 type ExcludeType = "id" | "pageId" | "projectId" | "parentId";
 
