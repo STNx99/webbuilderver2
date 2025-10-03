@@ -10,7 +10,7 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import ElementLoader from "../ElementLoader";
 
-const SectionComponent = ({ element }: EditorComponentProps) => {
+const SectionComponent = ({ element, data }: EditorComponentProps) => {
   const sectionElement = element as SectionElement;
   const { insertElement } = useElementStore();
   const { selectedElement } = useSelectionStore();
@@ -46,7 +46,7 @@ const SectionComponent = ({ element }: EditorComponentProps) => {
         position: "relative",
       }}
     >
-      <ElementLoader elements={sectionElement.elements} />
+      <ElementLoader elements={sectionElement.elements} data={data} />
       {selectedElement?.id === sectionElement.id && (
         <div
           style={{

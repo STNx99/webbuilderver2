@@ -1,118 +1,8 @@
 import type { CSSProperties } from "react";
 import { get, isUndefined, isNull, isString, isNumber, includes } from "lodash";
+import { ResponsiveStyles } from "@/interfaces/elements.interface";
 
-const isCssVar = (val: string): boolean =>
-  /^var\(\s*--[a-zA-Z0-9\-_]+\s*\)$/.test(val.trim());
-
-const basicClean = (val: string): string =>
-  String(val)
-    .replace(/\r?\n|\r/g, " ")
-    .replace(/\s+/g, " ")
-    .replace(/\[/g, "")
-    .replace(/\]/g, "")
-    .trim();
-
-const isEmptyValue = (val: unknown): boolean =>
-  isUndefined(val) || isNull(val) || val === "";
-
-function sanitizeForArbitrary(raw: string | number): string {
-  const asStr = String(raw);
-  const cleaned = basicClean(asStr);
-
-  if (cleaned.length === 0) return "";
-
-  if (isCssVar(cleaned)) return cleaned;
-
-  const containsWhitespace = /\s/.test(cleaned);
-  const containsSingleQuote = /'/.test(cleaned);
-  const containsDoubleQuote = /"/.test(cleaned);
-
-  if (containsWhitespace || containsSingleQuote || containsDoubleQuote) {
-    const escaped = cleaned.replace(/'/g, "\\'");
-    return `'${escaped}'`;
-  }
-
-  return cleaned;
-}
-
-const pushIf = (arr: string[], cls?: string | false | null) => {
-  if (!cls) return;
-  const n = String(cls).trim();
-  if (n.length) arr.push(n);
-};
-
-const DISPLAY_MAP = {
-  flex: "flex",
-  grid: "grid",
-  none: "hidden",
-  "inline-block": "inline-block",
-  block: "block",
-} as const;
-
-const FLEX_DIRECTION_MAP = {
-  column: "flex-col",
-  "column-reverse": "flex-col-reverse",
-  row: "flex-row",
-  "row-reverse": "flex-row-reverse",
-} as const;
-
-const JUSTIFY_CONTENT_MAP = {
-  center: "justify-center",
-  "flex-start": "justify-start",
-  start: "justify-start",
-  "flex-end": "justify-end",
-  end: "justify-end",
-  "space-between": "justify-between",
-  "space-around": "justify-around",
-  "space-evenly": "justify-evenly",
-} as const;
-
-const ALIGN_ITEMS_MAP = {
-  center: "items-center",
-  "flex-start": "items-start",
-  start: "items-start",
-  "flex-end": "items-end",
-  end: "items-end",
-  stretch: "items-stretch",
-} as const;
-
-const TEXT_ALIGN_MAP = {
-  center: "text-center",
-  right: "text-right",
-  left: "text-left",
-  justify: "text-justify",
-  start: "text-left",
-  end: "text-right",
-} as const;
-
-const TEXT_TRANSFORM_MAP = {
-  uppercase: "uppercase",
-  lowercase: "lowercase",
-  capitalize: "capitalize",
-  none: "normal-case",
-} as const;
-
-const TEXT_DECORATION_MAP = {
-  underline: "underline",
-  overline: "overline",
-  "line-through": "line-through",
-  lineThrough: "line-through",
-  none: "no-underline",
-} as const;
-
-const FONT_WEIGHT_MAP = {
-  100: "font-thin",
-  200: "font-extralight",
-  300: "font-light",
-  400: "font-normal",
-  500: "font-medium",
-  600: "font-semibold",
-  700: "font-bold",
-  800: "font-extrabold",
-  900: "font-black",
-} as const;
-
-export function computeTailwindFromStyles(
+function computeTailwindFromStylesSingle(
   styles: Partial<CSSProperties> | undefined,
 ): string {
   if (!styles) return "";
@@ -368,4 +258,144 @@ export function computeTailwindFromStyles(
   return classes.join(" ").trim();
 }
 
+const isCssVar = (val: string): boolean =>
+  /^var\(\s*--[a-zA-Z0-9\-_]+\s*\)$/.test(val.trim());
+
+const basicClean = (val: string): string =>
+  String(val)
+    .replace(/\r?\n|\r/g, " ")
+    .replace(/\s+/g, " ")
+    .replace(/\[/g, "")
+    .replace(/\]/g, "")
+    .trim();
+
+const isEmptyValue = (val: unknown): boolean =>
+  isUndefined(val) || isNull(val) || val === "";
+
+function sanitizeForArbitrary(raw: string | number): string {
+  const asStr = String(raw);
+  const cleaned = basicClean(asStr);
+
+  if (cleaned.length === 0) return "";
+
+  if (isCssVar(cleaned)) return cleaned;
+
+  const containsWhitespace = /\s/.test(cleaned);
+  const containsSingleQuote = /'/.test(cleaned);
+  const containsDoubleQuote = /"/.test(cleaned);
+
+  if (containsWhitespace || containsSingleQuote || containsDoubleQuote) {
+    const escaped = cleaned.replace(/'/g, "\\'");
+    return `'${escaped}'`;
+  }
+
+  return cleaned;
+}
+
+const pushIf = (arr: string[], cls?: string | false | null) => {
+  if (!cls) return;
+  const n = String(cls).trim();
+  if (n.length) arr.push(n);
+};
+
+const DISPLAY_MAP = {
+  flex: "flex",
+  grid: "grid",
+  none: "hidden",
+  "inline-block": "inline-block",
+  block: "block",
+} as const;
+
+const FLEX_DIRECTION_MAP = {
+  column: "flex-col",
+  "column-reverse": "flex-col-reverse",
+  row: "flex-row",
+  "row-reverse": "flex-row-reverse",
+} as const;
+
+const JUSTIFY_CONTENT_MAP = {
+  center: "justify-center",
+  "flex-start": "justify-start",
+  start: "justify-start",
+  "flex-end": "justify-end",
+  end: "justify-end",
+  "space-between": "justify-between",
+  "space-around": "justify-around",
+  "space-evenly": "justify-evenly",
+} as const;
+
+const ALIGN_ITEMS_MAP = {
+  center: "items-center",
+  "flex-start": "items-start",
+  start: "items-start",
+  "flex-end": "items-end",
+  end: "items-end",
+  stretch: "items-stretch",
+} as const;
+
+const TEXT_ALIGN_MAP = {
+  center: "text-center",
+  right: "text-right",
+  left: "text-left",
+  justify: "text-justify",
+  start: "text-left",
+  end: "text-right",
+} as const;
+
+const TEXT_TRANSFORM_MAP = {
+  uppercase: "uppercase",
+  lowercase: "lowercase",
+  capitalize: "capitalize",
+  none: "normal-case",
+} as const;
+
+const TEXT_DECORATION_MAP = {
+  underline: "underline",
+  overline: "overline",
+  "line-through": "line-through",
+  lineThrough: "line-through",
+  none: "no-underline",
+} as const;
+
+const FONT_WEIGHT_MAP = {
+  100: "font-thin",
+  200: "font-extralight",
+  300: "font-light",
+  400: "font-normal",
+  500: "font-medium",
+  600: "font-semibold",
+  700: "font-bold",
+  800: "font-extrabold",
+  900: "font-black",
+} as const;
+
+export function computeTailwindFromStyles(
+  styles: ResponsiveStyles | undefined,
+): string {
+  if (!styles) return "";
+
+  const classes: string[] = [];
+  const breakpoints: (keyof ResponsiveStyles)[] = [
+    "default",
+    "sm",
+    "md",
+    "lg",
+    "xl",
+  ];
+
+  breakpoints.forEach((bp) => {
+    const bpStyles = styles[bp];
+    if (bpStyles) {
+      const prefix = bp === "default" ? "" : `${bp}:`;
+      const bpClasses = computeTailwindFromStylesSingle(bpStyles);
+      bpClasses.split(" ").forEach((cls) => {
+        if (cls) classes.push(`${prefix}${cls}`);
+      });
+    }
+  });
+
+  return classes.join(" ");
+}
+
 export default computeTailwindFromStyles;
+export { computeTailwindFromStylesSingle };

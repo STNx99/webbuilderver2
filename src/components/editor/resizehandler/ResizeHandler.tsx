@@ -88,11 +88,11 @@ export default function ResizeHandler({
 
   // Get resize handles, excluding the gap handle
   const resizeHandles: ResizeDirection[] = getResizeHandles(
-    element.styles,
+    element.styles?.default,
   ).filter((dir) => dir !== "gap");
 
   // Use imported hasGap to determine if gap handles should be rendered
-  const showGapHandles = hasGap(element.styles);
+  const showGapHandles = hasGap(element.styles?.default);
 
   // Helper for rendering gap handle in the center
   function GapHandle({
@@ -133,8 +133,8 @@ export default function ResizeHandler({
       ref={targetRef}
       className="relative"
       style={{
-        width: element.styles?.width || "auto",
-        height: element.styles?.height || "auto",
+        width: element.styles?.default?.width || "auto",
+        height: element.styles?.default?.height || "auto",
         position: "relative",
       }}
       id={element.id}

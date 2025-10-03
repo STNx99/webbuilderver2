@@ -8,13 +8,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { FormElement, InputElement } from "@/interfaces/elements.interface";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
 import ElementLoader from "../ElementLoader";
 
-type FormComponentProps = {
-  element: EditorElement;
-};
-
-export default function FormComponent({ element }: FormComponentProps) {
+export default function FormComponent({ element, data }: EditorComponentProps) {
   const { getCommonProps } = useElementHandler();
   const { addElement, updateElement } = useElementStore<EditorElement>();
   const formElement = element as FormElement;
@@ -59,7 +56,7 @@ export default function FormComponent({ element }: FormComponentProps) {
         height: "100%",
       }}
     >
-      <ElementLoader elements={formElement.elements} />
+      <ElementLoader elements={formElement.elements} data={data} />
 
       <div className="flex flex-row w-full">
         {isEditing && (

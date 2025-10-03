@@ -4,7 +4,7 @@ import { useRef, useEffect } from "react";
 import { get, merge, clamp } from "lodash";
 import type { EditorElement } from "@/types/global.type";
 import type { ResizeDirection } from "@/constants/direciton";
-import { CSSStyles } from "@/interfaces/elements.interface";
+import { CSSStyles, ResponsiveStyles } from "@/interfaces/elements.interface";
 
 /**
  * Improvements made:
@@ -60,7 +60,7 @@ export function useResizeHandler({
     ownerWindow?: Window | null;
   } | null>(null);
 
-  const pendingStylesRef = useRef<Partial<CSSStyles> | null>(null);
+  const pendingStylesRef = useRef<ResponsiveStyles | null>(null);
   const rafRef = useRef<number | null>(null);
 
   const lastOwnerDocRef = useRef<Document | null>(null);
@@ -92,8 +92,8 @@ export function useResizeHandler({
     clientY: number,
     startPos: { x: number; y: number },
     element: EditorElement,
-  ): Partial<CSSStyles> | null {
-    const updatedStyles = { ...element.styles };
+  ): ResponsiveStyles | null {
+    const defaultStyles = element.styles?.default || {};
 
     // Helper for padding/margin resize
     const handleSpacingResize = (
@@ -109,7 +109,7 @@ export function useResizeHandler({
       const prop = propMap[dir as keyof typeof propMap];
       if (!prop) return false;
 
-      const initialValue = parseInt(String(element.styles?.[prop] || "0"), 10);
+      const initialValue = parseInt(String(defaultStyles[prop] || "0"), 10);
       const deltaMap = {
         n: clientY - startPos.y,
         s: startPos.y - clientY,
@@ -118,28 +118,70 @@ export function useResizeHandler({
       };
 
       const delta = deltaMap[dir as keyof typeof deltaMap] || 0;
-      updatedStyles[prop] = `${clamp(initialValue + delta, 0, Infinity)}px`;
+      const updatedDefault = {
+        ...defaultStyles,
+        [prop]: `${clamp(initialValue + delta, 0, Infinity)}px`,
+      };
       return true;
     };
 
     // Gap resize
     if (direction === "gap") {
       const delta = clientY - startPos.y;
-      const initialGap = parseInt(String(get(element.styles, "gap", "0")), 10);
-      updatedStyles.gap = `${clamp(initialGap + delta, 0, Infinity)}px`;
-      return updatedStyles;
+      const initialGap = parseInt(String(get(defaultStyles, "gap", "0")), 10);
+      const updatedDefault = {
+        ...defaultStyles,
+        gap: `${clamp(initialGap + delta, 0, Infinity)}px`,
+      };
+      return { ...element.styles, default: updatedDefault };
     }
 
     // Padding resize
     if (direction.startsWith("padding-")) {
       const dir = direction.split("-")[1];
-      if (handleSpacingResize("padding", dir)) return updatedStyles;
+      if (handleSpacingResize("padding", dir)) {
+        const prop = `padding${dir.charAt(0).toUpperCase() + dir.slice(1)}`;
+        const initialValue = parseInt(
+          String(defaultStyles[prop as keyof typeof defaultStyles] || "0"),
+          10,
+        );
+        const deltaMap = {
+          n: clientY - startPos.y,
+          s: startPos.y - clientY,
+          e: startPos.x - clientX,
+          w: clientX - startPos.x,
+        };
+        const delta = deltaMap[dir as keyof typeof deltaMap] || 0;
+        const updatedDefault = {
+          ...defaultStyles,
+          [prop]: `${clamp(initialValue + delta, 0, Infinity)}px`,
+        };
+        return { ...element.styles, default: updatedDefault };
+      }
     }
 
     // Margin resize
     if (direction.startsWith("margin-")) {
       const dir = direction.split("-")[1];
-      if (handleSpacingResize("margin", dir)) return updatedStyles;
+      if (handleSpacingResize("margin", dir)) {
+        const prop = `margin${dir.charAt(0).toUpperCase() + dir.slice(1)}`;
+        const initialValue = parseInt(
+          String(defaultStyles[prop as keyof typeof defaultStyles] || "0"),
+          10,
+        );
+        const deltaMap = {
+          n: clientY - startPos.y,
+          s: startPos.y - clientY,
+          e: startPos.x - clientX,
+          w: clientX - startPos.x,
+        };
+        const delta = deltaMap[dir as keyof typeof deltaMap] || 0;
+        const updatedDefault = {
+          ...defaultStyles,
+          [prop]: `${clamp(initialValue + delta, 0, Infinity)}px`,
+        };
+        return { ...element.styles, default: updatedDefault };
+      }
     }
 
     return null;
@@ -163,7 +205,7 @@ export function useResizeHandler({
       element,
     );
     if (specialResize) {
-      pendingStylesRef.current = { ...element.styles, ...specialResize };
+      pendingStylesRef.current = specialResize;
       scheduleFlush();
       return;
     }
@@ -231,29 +273,30 @@ export function useResizeHandler({
       parentRect.height,
     );
 
-    const baseStyles = { ...element.styles };
-    const updatedStyles = merge({}, baseStyles, {
+    const defaultStyles = element.styles?.default || {};
+    const updatedDefault = {
+      ...defaultStyles,
       width: `${clamp((newWidth / parentContentWidth) * MAX_PERCENT, 0, MAX_PERCENT).toFixed(2)}%`,
       height: `${clamp((newHeight / parentContentHeight) * MAX_PERCENT, 0, MAX_PERCENT).toFixed(2)}%`,
-    });
+    };
 
     // Preserve original dimensions for single-axis resizes
     if (direction === "s" || direction === "n") {
-      updatedStyles.width = String(get(element.styles, "width", "auto"));
+      updatedDefault.width = String(get(defaultStyles, "width", "auto"));
     } else if (direction === "e" || direction === "w") {
-      updatedStyles.height = String(get(element.styles, "height", "auto"));
+      updatedDefault.height = String(get(defaultStyles, "height", "auto"));
     }
 
     // Handle absolute positioning
-    if (get(element.styles, "position") === "absolute") {
-      merge(updatedStyles, {
+    if (get(defaultStyles, "position") === "absolute") {
+      Object.assign(updatedDefault, {
         left: `${(((newLeft - parentRect.left) / parentContentWidth) * MAX_PERCENT).toFixed(2)}%`,
         top: `${(((newTop - parentRect.top) / parentContentHeight) * MAX_PERCENT).toFixed(2)}%`,
       });
     }
 
     // Batch updates
-    pendingStylesRef.current = updatedStyles;
+    pendingStylesRef.current = { ...element.styles, default: updatedDefault };
     scheduleFlush();
   };
 

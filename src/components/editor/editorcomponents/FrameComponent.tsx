@@ -4,7 +4,7 @@ import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { FrameElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";
 
-const FrameComponent = ({ element }: EditorComponentProps) => {
+const FrameComponent = ({ element, data }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
   const { getCommonProps } = useElementHandler();
 
@@ -25,7 +25,7 @@ const FrameComponent = ({ element }: EditorComponentProps) => {
         height: "100%",
       }}
     >
-      <ElementLoader elements={frameElement.elements} />
+      <ElementLoader elements={frameElement.elements} data={data} />
     </div>
   );
 };

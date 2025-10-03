@@ -19,6 +19,7 @@ import React, { useEffect, useState } from "react";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
+import { ResponsiveStyles } from "@/interfaces/elements.interface";
 
 type AppearanceStyles = Pick<
   React.CSSProperties,
@@ -89,26 +90,86 @@ type AppearanceStyles = Pick<
   | "justifyItems"
 >;
 
-export const AppearanceAccordion = () => {
+interface AppearanceAccordionProps {
+  currentBreakpoint: "default" | "sm" | "md" | "lg" | "xl";
+}
+
+export const AppearanceAccordion = ({
+  currentBreakpoint,
+}: AppearanceAccordionProps) => {
   const { updateElement } = useElementStore();
   const { selectedElement } = useSelectionStore();
 
-  const styles: AppearanceStyles = selectedElement?.styles ?? {};
+  const responsiveStyles: ResponsiveStyles = selectedElement?.styles ?? {};
+  const styles: AppearanceStyles = responsiveStyles[currentBreakpoint] ?? {};
   const updateStyle = <K extends keyof AppearanceStyles>(
     property: K,
     value: AppearanceStyles[K],
   ) => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
+    const newResponsiveStyles = {
+      ...responsiveStyles,
+      [currentBreakpoint]: newStyles,
+    };
 
-    elementHelper.updateElementStyle(selectedElement, newStyles, updateElement);
+    elementHelper.updateElementStyle(
+      selectedElement,
+      newStyles,
+      currentBreakpoint,
+      updateElement,
+    );
     const newTailwind = cn(
       selectedElement.tailwindStyles,
-      elementHelper.computeTailwindFromStyles(newStyles),
+      elementHelper.computeTailwindFromStyles(newResponsiveStyles),
     );
 
     updateElement(selectedElement.id, { tailwindStyles: newTailwind });
   };
+
+  const [bgSelectValue, setBgSelectValue] = useState<string>(() => {
+    if (!styles.backgroundColor) return "default";
+    if (styles.backgroundColor.startsWith("var("))
+      return styles.backgroundColor;
+    return "custom";
+  });
+
+  const [textSelectValue, setTextSelectValue] = useState<string>(() => {
+    if (!styles.color) return "default";
+    if (styles.color.startsWith("var(")) return styles.color;
+    return "custom";
+  });
+
+  const [borderSelectValue, setBorderSelectValue] = useState<string>(() => {
+    if (!styles.borderColor) return "default";
+    if (styles.borderColor.startsWith("var(")) return styles.borderColor;
+    return "custom";
+  });
+
+  useEffect(() => {
+    setBgSelectValue(() => {
+      if (!styles.backgroundColor) return "default";
+      if (styles.backgroundColor.startsWith("var("))
+        return styles.backgroundColor;
+      return "custom";
+    });
+  }, [currentBreakpoint, styles.backgroundColor]);
+
+  useEffect(() => {
+    setTextSelectValue(() => {
+      if (!styles.color) return "default";
+      if (styles.color.startsWith("var(")) return styles.color;
+      return "custom";
+    });
+  }, [currentBreakpoint, styles.color]);
+
+  useEffect(() => {
+    setBorderSelectValue(() => {
+      if (!styles.borderColor) return "default";
+      if (styles.borderColor.startsWith("var(")) return styles.borderColor;
+      return "custom";
+    });
+  }, [currentBreakpoint, styles.borderColor]);
 
   if (!selectedElement) {
     return <AccordionItem value="appearance"></AccordionItem>;
@@ -124,6 +185,7 @@ export const AppearanceAccordion = () => {
             "size",
             "colors",
             "border",
+            "box-shadow",
             "opacity",
             "padding",
             "margin",
@@ -136,58 +198,21 @@ export const AppearanceAccordion = () => {
           <AccordionItem value="size">
             <AccordionTrigger>Size</AccordionTrigger>
             <AccordionContent className="space-y-2 p-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-5">
                 <Label>Width</Label>
-                <div className="flex flex-col gap-2 items-center">
-                  <Input
-                    value={styles.width || "auto"}
-                    onChange={(e) => updateStyle("width", e.target.value)}
-                    className="w-24 h-8"
-                  />
-                  <Slider
-                    min={0}
-                    max={1000}
-                    step={1}
-                    value={[
-                      typeof styles.width === "string"
-                        ? parseInt(styles.width, 10) || 0
-                        : typeof styles.width === "number"
-                          ? styles.width
-                          : 0,
-                    ]}
-                    onValueChange={(vals) =>
-                      updateStyle("width", `${vals[0]}px`)
-                    }
-                    className="flex-1"
-                  />
-                </div>
+                <Input
+                  value={styles.width || "auto"}
+                  onChange={(e) => updateStyle("width", e.target.value)}
+                  className="w-full sm:w-24 h-8"
+                />
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-5">
                 <Label>Height</Label>
-
-                <div className="flex flex-col gap-2 items-center">
-                  <Input
-                    value={styles.height || "auto"}
-                    onChange={(e) => updateStyle("height", e.target.value)}
-                    className="w-24 h-8"
-                  />
-                  <Slider
-                    min={0}
-                    max={1000}
-                    step={1}
-                    value={[
-                      typeof styles.height === "string"
-                        ? parseInt(styles.height, 10) || 0
-                        : typeof styles.height === "number"
-                          ? styles.height
-                          : 0,
-                    ]}
-                    onValueChange={(vals) =>
-                      updateStyle("height", `${vals[0]}px`)
-                    }
-                    className="flex-1"
-                  />
-                </div>
+                <Input
+                  value={styles.height || "auto"}
+                  onChange={(e) => updateStyle("height", e.target.value)}
+                  className="w-full sm:w-24 h-8"
+                />
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -196,57 +221,153 @@ export const AppearanceAccordion = () => {
             <AccordionTrigger className="text-xs">Colors</AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-2 py-1">
-                <div className="flex items-center gap-5">
-                  <Label htmlFor="backgroundColor" className="text-xs w-16">
-                    Background
-                  </Label>
-                  <Input
-                    id="backgroundColor"
-                    value={styles.backgroundColor || ""}
-                    type="color"
-                    onChange={(e) =>
-                      updateStyle("backgroundColor", e.target.value)
-                    }
-                    className="w-6 h-6 p-0 border-none bg-transparent"
-                  />
-                  <Input
-                    id="backgroundColorHex"
-                    type="text"
-                    value={styles.backgroundColor || ""}
-                    maxLength={7}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (/^#([0-9A-Fa-f]{0,6})$/.test(val)) {
-                        updateStyle("backgroundColor", val);
-                      }
-                    }}
-                    className="w-16 h-6 px-1 py-0 text-xs border"
-                  />
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="backgroundColor" className="text-xs w-16">
+                      Background
+                    </Label>
+                    <Select
+                      value={bgSelectValue}
+                      onValueChange={(value) => {
+                        setBgSelectValue(value);
+                        updateStyle(
+                          "backgroundColor",
+                          value === "default"
+                            ? undefined
+                            : value === "custom"
+                              ? ""
+                              : value,
+                        );
+                      }}
+                    >
+                      <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                        <SelectItem value="var(--background)">
+                          Background
+                        </SelectItem>
+                        <SelectItem value="var(--card)">Card</SelectItem>
+                        <SelectItem value="var(--primary)">Primary</SelectItem>
+                        <SelectItem value="var(--secondary)">
+                          Secondary
+                        </SelectItem>
+                        <SelectItem value="var(--muted)">Muted</SelectItem>
+                        <SelectItem value="var(--accent)">Accent</SelectItem>
+                        <SelectItem value="var(--destructive)">
+                          Destructive
+                        </SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {bgSelectValue === "custom" && (
+                    <div className="flex items-center gap-5 ml-20">
+                      <Input
+                        id="backgroundColor"
+                        value={styles.backgroundColor || ""}
+                        type="color"
+                        onChange={(e) => {
+                          updateStyle("backgroundColor", e.target.value);
+                          setBgSelectValue("custom");
+                        }}
+                        className="w-6 h-6 p-0 border-none bg-transparent"
+                      />
+                      <Input
+                        id="backgroundColorHex"
+                        type="text"
+                        value={styles.backgroundColor || ""}
+                        maxLength={7}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (/^#([0-9A-Fa-f]{0,6})$/.test(val)) {
+                            updateStyle("backgroundColor", val);
+                            setBgSelectValue("custom");
+                          }
+                        }}
+                        className="w-16 h-6 px-1 py-0 text-xs border"
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center gap-5">
-                  <Label htmlFor="textColor" className="text-xs w-16">
-                    Text
-                  </Label>
-                  <Input
-                    id="textColor"
-                    type="color"
-                    value={styles.color || ""}
-                    onChange={(e) => updateStyle("color", e.target.value)}
-                    className="w-6 h-6 p-0 border-none bg-transparent"
-                  />
-                  <Input
-                    id="textColorHex"
-                    type="text"
-                    value={styles.color || ""}
-                    maxLength={7}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (/^#([0-9A-Fa-f]{0,6})$/.test(val)) {
-                        updateStyle("color", val);
-                      }
-                    }}
-                    className="w-16 h-6 px-1 py-0 text-xs border"
-                  />
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="textColor" className="text-xs w-16">
+                      Text
+                    </Label>
+                    <Select
+                      value={textSelectValue}
+                      onValueChange={(value) => {
+                        setTextSelectValue(value);
+                        updateStyle(
+                          "color",
+                          value === "default"
+                            ? undefined
+                            : value === "custom"
+                              ? ""
+                              : value,
+                        );
+                      }}
+                    >
+                      <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                        <SelectItem value="var(--foreground)">
+                          Foreground
+                        </SelectItem>
+                        <SelectItem value="var(--card-foreground)">
+                          Card Foreground
+                        </SelectItem>
+                        <SelectItem value="var(--primary-foreground)">
+                          Primary Foreground
+                        </SelectItem>
+                        <SelectItem value="var(--secondary-foreground)">
+                          Secondary Foreground
+                        </SelectItem>
+                        <SelectItem value="var(--muted-foreground)">
+                          Muted Foreground
+                        </SelectItem>
+                        <SelectItem value="var(--accent-foreground)">
+                          Accent Foreground
+                        </SelectItem>
+                        <SelectItem value="var(--destructive-foreground)">
+                          Destructive Foreground
+                        </SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {textSelectValue === "custom" && (
+                    <div className="flex items-center gap-5 ml-20">
+                      <Input
+                        id="textColor"
+                        type="color"
+                        value={styles.color || ""}
+                        onChange={(e) => {
+                          updateStyle("color", e.target.value);
+                          setTextSelectValue("custom");
+                        }}
+                        className="w-6 h-6 p-0 border-none bg-transparent"
+                      />
+                      <Input
+                        id="textColorHex"
+                        type="text"
+                        value={styles.color || ""}
+                        maxLength={7}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (/^#([0-9A-Fa-f]{0,6})$/.test(val)) {
+                            updateStyle("color", val);
+                            setTextSelectValue("custom");
+                          }
+                        }}
+                        className="w-16 h-6 px-1 py-0 text-xs border"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </AccordionContent>
@@ -257,17 +378,72 @@ export const AppearanceAccordion = () => {
             <AccordionTrigger className="text-xs">Border</AccordionTrigger>
             <AccordionContent>
               <div className="flex flex-col gap-2 py-1">
-                <div className="flex items-center gap-5">
-                  <Label htmlFor="borderColor" className="text-xs w-16">
-                    Color
-                  </Label>
-                  <Input
-                    id="borderColor"
-                    type="color"
-                    value={styles.borderColor || ""}
-                    onChange={(e) => updateStyle("borderColor", e.target.value)}
-                    className="w-6 h-6 p-0 border-none bg-transparent"
-                  />
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="borderColor" className="text-xs w-16">
+                      Color
+                    </Label>
+                    <Select
+                      value={borderSelectValue}
+                      onValueChange={(value) => {
+                        setBorderSelectValue(value);
+                        updateStyle(
+                          "borderColor",
+                          value === "default"
+                            ? undefined
+                            : value === "custom"
+                              ? ""
+                              : value,
+                        );
+                      }}
+                    >
+                      <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                        <SelectValue placeholder="Select color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                        <SelectItem value="var(--border)">Border</SelectItem>
+                        <SelectItem value="var(--primary)">Primary</SelectItem>
+                        <SelectItem value="var(--secondary)">
+                          Secondary
+                        </SelectItem>
+                        <SelectItem value="var(--muted)">Muted</SelectItem>
+                        <SelectItem value="var(--accent)">Accent</SelectItem>
+                        <SelectItem value="var(--destructive)">
+                          Destructive
+                        </SelectItem>
+                        <SelectItem value="custom">Custom</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {borderSelectValue === "custom" && (
+                    <div className="flex items-center gap-5 ml-20">
+                      <Input
+                        id="borderColor"
+                        type="color"
+                        value={styles.borderColor || ""}
+                        onChange={(e) => {
+                          updateStyle("borderColor", e.target.value);
+                          setBorderSelectValue("custom");
+                        }}
+                        className="w-6 h-6 p-0 border-none bg-transparent"
+                      />
+                      <Input
+                        id="borderColorHex"
+                        type="text"
+                        value={styles.borderColor || ""}
+                        maxLength={7}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (/^#([0-9A-Fa-f]{0,6})$/.test(val)) {
+                            updateStyle("borderColor", val);
+                            setBorderSelectValue("custom");
+                          }
+                        }}
+                        className="w-16 h-6 px-1 py-0 text-xs border"
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-5">
                   <Label htmlFor="borderWidth" className="text-xs w-16">
@@ -315,6 +491,42 @@ export const AppearanceAccordion = () => {
                     {styles.borderRadius}
                   </span>
                 </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Box Shadow Section */}
+          <AccordionItem value="box-shadow">
+            <AccordionTrigger className="text-xs">Box Shadow</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex items-center gap-5 py-1">
+                <Label htmlFor="boxShadow" className="text-xs w-16">
+                  Shadow
+                </Label>
+                <Select
+                  value={styles.boxShadow ? styles.boxShadow : "none"}
+                  onValueChange={(value) =>
+                    updateStyle(
+                      "boxShadow",
+                      value === "none" ? undefined : value,
+                    )
+                  }
+                >
+                  <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                    <SelectValue placeholder="Select shadow" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="var(--shadow-2xs)">2xs</SelectItem>
+                    <SelectItem value="var(--shadow-xs)">xs</SelectItem>
+                    <SelectItem value="var(--shadow-sm)">sm</SelectItem>
+                    <SelectItem value="var(--shadow)">default</SelectItem>
+                    <SelectItem value="var(--shadow-md)">md</SelectItem>
+                    <SelectItem value="var(--shadow-lg)">lg</SelectItem>
+                    <SelectItem value="var(--shadow-xl)">xl</SelectItem>
+                    <SelectItem value="var(--shadow-2xl)">2xl</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -928,70 +1140,70 @@ export const AppearanceAccordion = () => {
           </AccordionItem>
 
           {/* Position Values Section */}
-          {selectedElement.styles?.position === "absolute" ||
-            (selectedElement.styles?.position === "relative" && (
-              <AccordionItem value="position-values">
-                <AccordionTrigger className="text-xs">
-                  Position Values
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="flex flex-col gap-2 py-1">
-                    <div className="flex items-center gap-5">
-                      <Label htmlFor="top" className="text-xs w-16">
-                        Top
-                      </Label>
-                      <Input
-                        id="top"
-                        type="text"
-                        value={styles.top || ""}
-                        placeholder="e.g. 10px"
-                        onChange={(e) => updateStyle("top", e.target.value)}
-                        className="w-20 h-6 px-1 py-0 text-xs border"
-                      />
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <Label htmlFor="bottom" className="text-xs w-16">
-                        Bottom
-                      </Label>
-                      <Input
-                        id="bottom"
-                        type="text"
-                        value={styles.bottom || ""}
-                        placeholder="e.g. 10px"
-                        onChange={(e) => updateStyle("bottom", e.target.value)}
-                        className="w-20 h-6 px-1 py-0 text-xs border"
-                      />
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <Label htmlFor="left" className="text-xs w-16">
-                        Left
-                      </Label>
-                      <Input
-                        id="left"
-                        type="text"
-                        value={styles.left || ""}
-                        placeholder="e.g. 10px"
-                        onChange={(e) => updateStyle("left", e.target.value)}
-                        className="w-20 h-6 px-1 py-0 text-xs border"
-                      />
-                    </div>
-                    <div className="flex items-center gap-5">
-                      <Label htmlFor="right" className="text-xs w-16">
-                        Right
-                      </Label>
-                      <Input
-                        id="right"
-                        type="text"
-                        value={styles.right || ""}
-                        placeholder="e.g. 10px"
-                        onChange={(e) => updateStyle("right", e.target.value)}
-                        className="w-20 h-6 px-1 py-0 text-xs border"
-                      />
-                    </div>
+          {(styles.position === "absolute" ||
+            styles.position === "relative") && (
+            <AccordionItem value="position-values">
+              <AccordionTrigger className="text-xs">
+                Position Values
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="flex flex-col gap-2 py-1">
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="top" className="text-xs w-16">
+                      Top
+                    </Label>
+                    <Input
+                      id="top"
+                      type="text"
+                      value={styles.top || ""}
+                      placeholder="e.g. 10px"
+                      onChange={(e) => updateStyle("top", e.target.value)}
+                      className="w-20 h-6 px-1 py-0 text-xs border"
+                    />
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="bottom" className="text-xs w-16">
+                      Bottom
+                    </Label>
+                    <Input
+                      id="bottom"
+                      type="text"
+                      value={styles.bottom || ""}
+                      placeholder="e.g. 10px"
+                      onChange={(e) => updateStyle("bottom", e.target.value)}
+                      className="w-20 h-6 px-1 py-0 text-xs border"
+                    />
+                  </div>
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="left" className="text-xs w-16">
+                      Left
+                    </Label>
+                    <Input
+                      id="left"
+                      type="text"
+                      value={styles.left || ""}
+                      placeholder="e.g. 10px"
+                      onChange={(e) => updateStyle("left", e.target.value)}
+                      className="w-20 h-6 px-1 py-0 text-xs border"
+                    />
+                  </div>
+                  <div className="flex items-center gap-5">
+                    <Label htmlFor="right" className="text-xs w-16">
+                      Right
+                    </Label>
+                    <Input
+                      id="right"
+                      type="text"
+                      value={styles.right || ""}
+                      placeholder="e.g. 10px"
+                      onChange={(e) => updateStyle("right", e.target.value)}
+                      className="w-20 h-6 px-1 py-0 text-xs border"
+                    />
+                  </div>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
         </Accordion>
       </AccordionContent>
     </AccordionItem>

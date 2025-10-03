@@ -24,6 +24,42 @@ export const API_ENDPOINTS = {
   SNAPSHOTS: {
     SAVE: (projectId: string) => `/api/v1/snapshots/${projectId}/save`,
   },
+  CMS: {
+    CONTENT_TYPES: {
+      GET: "/api/v1/content-types",
+      CREATE: "/api/v1/content-types",
+      GET_BY_ID: (id: string) => `/api/v1/content-types/${id}`,
+      UPDATE: (id: string) => `/api/v1/content-types/${id}`,
+      DELETE: (id: string) => `/api/v1/content-types/${id}`,
+    },
+    CONTENT_FIELDS: {
+      GET_BY_CONTENT_TYPE: (contentTypeId: string) =>
+        `/api/v1/content-types/${contentTypeId}/fields`,
+      CREATE: (contentTypeId: string) =>
+        `/api/v1/content-types/${contentTypeId}/fields`,
+      GET_BY_ID: (contentTypeId: string, fieldId: string) =>
+        `/api/v1/content-types/${contentTypeId}/fields/${fieldId}`,
+      UPDATE: (contentTypeId: string, fieldId: string) =>
+        `/api/v1/content-types/${contentTypeId}/fields/${fieldId}`,
+      DELETE: (contentTypeId: string, fieldId: string) =>
+        `/api/v1/content-types/${contentTypeId}/fields/${fieldId}`,
+    },
+    CONTENT_ITEMS: {
+      GET_BY_CONTENT_TYPE: (contentTypeId: string) =>
+        `/api/v1/content-types/${contentTypeId}/items`,
+      CREATE: (contentTypeId: string) =>
+        `/api/v1/content-types/${contentTypeId}/items`,
+      GET_BY_ID: (contentTypeId: string, itemId: string) =>
+        `/api/v1/content-types/${contentTypeId}/items/${itemId}`,
+      UPDATE: (contentTypeId: string, itemId: string) =>
+        `/api/v1/content-types/${contentTypeId}/items/${itemId}`,
+      DELETE: (contentTypeId: string, itemId: string) =>
+        `/api/v1/content-types/${contentTypeId}/items/${itemId}`,
+    },
+    PUBLIC_CONTENT: {
+      GET: "/api/v1/public/content",
+    },
+  },
 };
 
 export const NEXT_API_ENDPOINTS = {

@@ -5,7 +5,7 @@ import { ListElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
 import ElementLoader from "../ElementLoader";
 
-const ListComponent = ({ element }: EditorComponentProps) => {
+const ListComponent = ({ element, data }: EditorComponentProps) => {
   const listElement = element as ListElement;
 
   const { getCommonProps } = useElementHandler();
@@ -17,6 +17,9 @@ const ListComponent = ({ element }: EditorComponentProps) => {
       ? listElement.styles
       : {};
 
+  // If data is an array, render each item using child elements as template
+  const itemsToRender = Array.isArray(data) ? data : listElement.elements || [];
+
   return (
     <ul
       {...getCommonProps(listElement)}
@@ -27,9 +30,15 @@ const ListComponent = ({ element }: EditorComponentProps) => {
       }}
     >
       <LayoutGroup>
-        {listElement.elements?.map((item, index) => (
+        {itemsToRender.map((item, index) => (
           <li key={index} className="list-item">
-            <ElementLoader elements={[item]} />
+            {Array.isArray(data) ? (
+              // If data is array, pass the item data to child elements
+              <ElementLoader elements={listElement.elements} data={item} />
+            ) : (
+              // Otherwise, render the element directly
+              <ElementLoader elements={[item]} />
+            )}
           </li>
         ))}
       </LayoutGroup>

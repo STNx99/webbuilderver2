@@ -21,17 +21,20 @@ const DataLoaderComponent = ({ element }: EditorComponentProps) => {
     const fetchData = async () => {
       try {
         const options: RequestInit = {
-          method: settings.method || 'GET',
+          method: settings.method || "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             ...settings.headers,
-            ...(settings.authToken && { 'Authorization': `Bearer ${settings.authToken}` }),
+            ...(settings.authToken && {
+              Authorization: `Bearer ${settings.authToken}`,
+            }),
           },
           ...(settings.body && { body: settings.body }),
         };
 
         const response = await fetch(settings.apiUrl, options);
-        if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+        if (!response.ok)
+          throw new Error(`Failed to fetch: ${response.statusText}`);
         const result = await response.json();
         setData(result);
       } catch (err: any) {
@@ -42,7 +45,13 @@ const DataLoaderComponent = ({ element }: EditorComponentProps) => {
     };
 
     fetchData();
-  }, [dataLoaderElement.settings?.apiUrl, dataLoaderElement.settings?.method, dataLoaderElement.settings?.headers, dataLoaderElement.settings?.body, dataLoaderElement.settings?.authToken]);
+  }, [
+    dataLoaderElement.settings?.apiUrl,
+    dataLoaderElement.settings?.method,
+    dataLoaderElement.settings?.headers,
+    dataLoaderElement.settings?.body,
+    dataLoaderElement.settings?.authToken,
+  ]);
 
   const safeStyles =
     dataLoaderElement.styles &&
@@ -62,7 +71,9 @@ const DataLoaderComponent = ({ element }: EditorComponentProps) => {
     >
       {loading && <div>Loading data...</div>}
       {error && <div>Error: {error}</div>}
-      {data && <ElementLoader elements={dataLoaderElement.elements} />}
+      {data && (
+        <ElementLoader elements={dataLoaderElement.elements} data={data} />
+      )}
     </div>
   );
 };

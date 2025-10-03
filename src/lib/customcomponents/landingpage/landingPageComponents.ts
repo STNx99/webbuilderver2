@@ -137,7 +137,9 @@ function createPricingCard(
     name: mkId(title),
     content: "",
     tailwindStyles: `p-6 rounded-lg border ${featured ? "border-primary bg-card" : "border-border bg-background"}`,
-    styles: featured ? { borderColor: "var(--color-primary)" } : {},
+    styles: featured
+      ? { default: { borderColor: "var(--color-primary)" } }
+      : {},
     elements: [
       {
         type: "Text",
@@ -169,8 +171,10 @@ function createPricingCard(
           : "mt-4 px-4 py-2 rounded-md border border-border text-foreground",
         styles: featured
           ? {
-              backgroundColor: "var(--color-primary)",
-              color: "var(--color-primary-foreground)",
+              default: {
+                backgroundColor: "var(--color-primary)",
+                color: "var(--color-primary-foreground)",
+              },
             }
           : {},
         href: "/signup",
@@ -295,7 +299,7 @@ export const NavbarSectionComponent = {
             href: "/signin",
             buttonType: "button",
             tailwindStyles: "px-3 py-2 rounded-md text-foreground",
-            styles: { backgroundColor: "transparent" },
+            styles: { default: { backgroundColor: "transparent" } },
           },
           {
             type: "Button",
@@ -305,8 +309,10 @@ export const NavbarSectionComponent = {
             tailwindStyles:
               "px-4 py-2 rounded-md bg-primary text-primary-foreground",
             styles: {
-              backgroundColor: "var(--color-primary)",
-              color: "var(--color-primary-foreground)",
+              default: {
+                backgroundColor: "var(--color-primary)",
+                color: "var(--color-primary-foreground)",
+              },
             },
           },
         ],
@@ -329,7 +335,7 @@ export const HeroSectionComponent = {
     ariaLabel: "Hero section",
     content: "",
     tailwindStyles: "w-full py-16 px-4 md:px-8 bg-muted",
-    styles: { backgroundColor: "var(--color-muted)" },
+    styles: { default: { backgroundColor: "var(--color-muted)" } },
     elements: [
       {
         type: "Frame",
@@ -371,8 +377,10 @@ export const HeroSectionComponent = {
                     tailwindStyles:
                       "bg-primary text-primary-foreground px-5 py-3 rounded-md",
                     styles: {
-                      backgroundColor: "var(--color-primary)",
-                      color: "var(--color-primary-foreground)",
+                      default: {
+                        backgroundColor: "var(--color-primary)",
+                        color: "var(--color-primary-foreground)",
+                      },
                     },
                   },
                   {
@@ -452,7 +460,7 @@ export const FeaturesSectionComponent = {
     ariaLabel: "Key features",
     content: "",
     tailwindStyles: "w-full py-16 px-4 md:px-8",
-    styles: { backgroundColor: "var(--color-background)" },
+    styles: { default: { backgroundColor: "var(--color-background)" } },
     elements: [
       {
         type: "Frame",
@@ -493,7 +501,7 @@ export const StatsSectionComponent = {
     ariaLabel: "Product statistics",
     content: "",
     tailwindStyles: "w-full py-12 px-4 md:px-8 bg-card",
-    styles: { backgroundColor: "var(--color-card)" },
+    styles: { default: { backgroundColor: "var(--color-card)" } },
     elements: [
       {
         type: "Frame",
@@ -583,7 +591,7 @@ export const PricingSectionComponent = {
     ariaLabel: "Pricing plans",
     content: "",
     tailwindStyles: "w-full py-16 px-4 md:px-8 bg-muted",
-    styles: { backgroundColor: "var(--color-muted)" },
+    styles: { default: { backgroundColor: "var(--color-muted)" } },
     elements: [
       {
         type: "Frame",
@@ -730,8 +738,10 @@ export const NewsletterSectionComponent = {
                 tailwindStyles:
                   "bg-primary text-primary-foreground px-4 py-2 rounded-md",
                 styles: {
-                  backgroundColor: "var(--color-primary)",
-                  color: "var(--color-primary-foreground)",
+                  default: {
+                    backgroundColor: "var(--color-primary)",
+                    color: "var(--color-primary-foreground)",
+                  },
                 },
               },
             ],
@@ -756,7 +766,7 @@ export const FooterSectionComponent = {
     ariaLabel: "Website footer",
     content: "",
     tailwindStyles: "w-full py-12 px-4 md:px-8 bg-card",
-    styles: { backgroundColor: "var(--color-card)" },
+    styles: { default: { backgroundColor: "var(--color-card)" } },
     elements: [
       {
         type: "Frame",

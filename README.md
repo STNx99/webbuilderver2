@@ -86,6 +86,52 @@ The visual editor supports multiple element types:
 - ChartElement: Data visualizations (bar, line, pie, etc.)
 - DataTableElement: Tabular data with sorting/filtering
 - FormElement: Form containers with validation
+- DataLoaderElement: API data binding and fetching
+```
+
+### 🔗 Databinding
+
+The DataLoaderElement enables dynamic data binding by fetching data from APIs and binding it to child elements:
+
+#### Basic Usage
+
+1. **Add a DataLoaderElement** to your canvas
+2. **Configure API settings** in the sidebar:
+   - API URL (e.g., `https://jsonplaceholder.typicode.com/posts`)
+   - HTTP Method (GET, POST, PUT, DELETE)
+   - Authorization token (optional)
+   - Request headers and body (optional)
+3. **Add child elements** like Text, List, or Frame elements
+4. **Bind data** by placing elements that can consume data (Text elements display data values, List elements iterate over arrays)
+
+#### Data Binding Examples
+
+**Simple Text Binding:**
+- Add a Text element inside DataLoader
+- The Text element will display the fetched data as a string
+
+**List Binding:**
+- Add a List element inside DataLoader
+- If API returns an array, each item becomes a list item
+- Add Text elements inside the List to display item properties
+
+**Complex Binding:**
+```json
+// API Response: { "title": "Hello World", "items": ["item1", "item2"] }
+{
+  "DataLoader": {
+    "settings": { "apiUrl": "https://api.example.com/data" },
+    "elements": [
+      { "type": "Text", "content": "" }, // Displays: Hello World
+      {
+        "type": "List",
+        "elements": [
+          { "type": "Text", "content": "" } // Displays: item1, item2
+        ]
+      }
+    ]
+  }
+}
 ```
 
 ### 🔄 Data Flow

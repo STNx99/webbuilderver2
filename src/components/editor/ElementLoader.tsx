@@ -11,9 +11,13 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 interface ElementLoaderProps {
   elements?: EditorElement[];
+  data?: any;
 }
 
-export default function ElementLoader({ elements }: ElementLoaderProps = {}) {
+export default function ElementLoader({
+  elements,
+  data,
+}: ElementLoaderProps = {}) {
   const { currentPage } = usePageStore();
   const {
     draggedOverElement,
@@ -33,6 +37,7 @@ export default function ElementLoader({ elements }: ElementLoaderProps = {}) {
   const renderElement = (element: EditorElement) => {
     const commonProps: EditorComponentProps = {
       element,
+      data,
     };
 
     const Component = getComponentMap(commonProps);

@@ -6,11 +6,7 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { CSSStyles } from "@/interfaces/elements.interface";
 
 export function useElementHandler() {
-  const {
-    addElement,
-    updateElement,
-    swapElement,
-  } = useElementStore();
+  const { addElement, updateElement, swapElement } = useElementStore();
   const {
     hoveredElement,
     selectedElement,
@@ -128,8 +124,10 @@ export function useElementHandler() {
     e.stopPropagation();
 
     if (
-      document.activeElement &&
-      (document.activeElement as HTMLElement).contentEditable === "true"
+      (document.activeElement &&
+        (document.activeElement as HTMLElement).contentEditable === "true") ||
+      (hoveredElement && hoveredElement.id !== element.id) ||
+      (selectedElement && selectedElement.id === element.id)
     ) {
       return;
     }
@@ -148,7 +146,7 @@ export function useElementHandler() {
     });
   };
 
-  const getStyles = (element: EditorElement): CSSStyles => {
+  const getStyles = (element: EditorElement): React.CSSProperties => {
     if (
       !element.styles ||
       typeof element.styles !== "object" ||
@@ -156,9 +154,21 @@ export function useElementHandler() {
     ) {
       return {};
     }
-    return {
-      ...element.styles,
-    };
+    const merged: React.CSSProperties = {};
+    const styles = element.styles;
+    const breakpoints: (keyof typeof styles)[] = [
+      "default",
+      "sm",
+      "md",
+      "lg",
+      "xl",
+    ];
+    breakpoints.forEach((bp) => {
+      if (styles[bp]) {
+        Object.assign(merged, styles[bp]);
+      }
+    });
+    return merged;
   };
 
   const getCommonProps = (element: EditorElement) => {
