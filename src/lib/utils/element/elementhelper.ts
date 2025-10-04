@@ -18,6 +18,7 @@ import {
   createElement,
   createElementFromTemplate,
 } from "./create/createElements";
+import { ResponsiveStyles } from "@/interfaces/elements.interface";
 
 const findById = (
   els: EditorElement[],
@@ -124,11 +125,12 @@ interface ElementHelper {
 
   isEditableElement: (element: EditorElement) => boolean;
 
-  computeTailwindFromStyles: (styles: Partial<React.CSSProperties>) => string;
+  computeTailwindFromStyles: (styles: ResponsiveStyles | undefined) => string;
 
   updateElementStyle: (
     element: EditorElement,
     styles: React.CSSProperties,
+    breakpoint: "default" | "sm" | "md" | "lg" | "xl",
     updateElement: (id: string, updates: Partial<EditorElement>) => void,
   ) => void;
 
@@ -194,9 +196,12 @@ const getElementSettings = (element: EditorElement): string | null => {
 const updateElementStyle = (
   element: EditorElement,
   styles: React.CSSProperties,
+  breakpoint: "default" | "sm" | "md" | "lg" | "xl",
   updateElement: (id: string, updates: Partial<EditorElement>) => void,
 ): void => {
-  updateElement(element.id, { styles });
+  const currentStyles = element.styles || {};
+  const newStyles = { ...currentStyles, [breakpoint]: styles };
+  updateElement(element.id, { styles: newStyles });
 };
 
 export const elementHelper: ElementHelper = {

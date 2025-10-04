@@ -4,7 +4,7 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { TextElement } from "@/interfaces/elements.interface";
 
-const BaseComponent = ({ element }: EditorComponentProps) => {
+const BaseComponent = ({ element, data }: EditorComponentProps) => {
   const baseElement = element as TextElement;
 
   const { getCommonProps } = useElementHandler();
@@ -17,13 +17,16 @@ const BaseComponent = ({ element }: EditorComponentProps) => {
       ? baseElement.styles
       : {};
 
+  // Use data for content if available, otherwise fall back to element.content
+  const content = data !== undefined ? String(data) : element.content || "";
+
   return (
     <div
       {...getCommonProps(baseElement)}
       style={{ ...safeStyles, width: "100%", height: "100%" }}
       suppressContentEditableWarning={true}
       dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(element.content || ""),
+        __html: DOMPurify.sanitize(content),
       }}
     ></div>
   );

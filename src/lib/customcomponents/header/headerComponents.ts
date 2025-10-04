@@ -7,15 +7,17 @@ export const headerComponent: CustomComponent = {
     name: "Header",
     content: "",
     styles: {
-      height: "70px",
-      width: "100%",
-      backgroundColor: "#e3f2fd",
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "0 20px",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      default: {
+        height: "70px",
+        width: "100%",
+        backgroundColor: "#e3f2fd",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "0 20px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      },
     },
     tailwindStyles:
       "flex flex-col md:flex-row items-center justify-between w-full h-[70px] p-4 bg-blue-100 shadow-md gap-2 md:gap-0",
@@ -24,9 +26,11 @@ export const headerComponent: CustomComponent = {
         type: "Base",
         content: "My Portfolio",
         styles: {
-          color: "#0d47a1",
-          fontSize: "28px",
-          fontWeight: "bold",
+          default: {
+            color: "#0d47a1",
+            fontSize: "28px",
+            fontWeight: "bold",
+          },
         },
         tailwindStyles:
           "text-blue-900 text-3xl font-bold text-center md:text-left",
@@ -37,9 +41,11 @@ export const headerComponent: CustomComponent = {
         type: "Base",
         content: "Home",
         styles: {
-          color: "#0d47a1",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "#0d47a1",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
@@ -50,9 +56,11 @@ export const headerComponent: CustomComponent = {
         type: "Base",
         content: "Projects",
         styles: {
-          color: "#0d47a1",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "#0d47a1",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
@@ -63,9 +71,11 @@ export const headerComponent: CustomComponent = {
         type: "Base",
         content: "Contact",
         styles: {
-          color: "#0d47a1",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "#0d47a1",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-blue-900 text-lg text-center md:text-left hover:text-blue-700 hover:underline transition-all",
@@ -85,15 +95,17 @@ export const headerComponent2: CustomComponent = {
     content: "",
 
     styles: {
-      height: "70px",
-      width: "100%",
-      backgroundColor: "#343a40",
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "0 20px",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      default: {
+        height: "70px",
+        width: "100%",
+        backgroundColor: "#343a40",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "0 20px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      },
     },
     tailwindStyles:
       "flex flex-col md:flex-row items-center justify-center w-full p-4 bg-gray-900 shadow-md gap-2 md:gap-0",
@@ -103,9 +115,11 @@ export const headerComponent2: CustomComponent = {
         content: "Brothers Inc",
 
         styles: {
-          color: "white",
-          fontSize: "28px",
-          fontWeight: "bold",
+          default: {
+            color: "white",
+            fontSize: "28px",
+            fontWeight: "bold",
+          },
         },
         tailwindStyles:
           "text-white text-3xl font-bold text-center md:text-left",
@@ -117,9 +131,11 @@ export const headerComponent2: CustomComponent = {
         content: "Home",
 
         styles: {
-          color: "white",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "white",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-white text-lg text-center md:text-left hover:text-gray-300 transition-colors",
@@ -131,9 +147,11 @@ export const headerComponent2: CustomComponent = {
         content: "Portfolio",
 
         styles: {
-          color: "white",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "white",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-white text-lg text-center md:text-left hover:text-gray-300 transition-colors",
@@ -153,15 +171,17 @@ export const headerComponent3: CustomComponent = {
     content: "",
 
     styles: {
-      height: "80px",
-      width: "100%",
-      backgroundColor: "#4caf50",
-      display: "flex",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      padding: "0 20px",
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      default: {
+        height: "80px",
+        width: "100%",
+        backgroundColor: "#4caf50",
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        padding: "0 20px",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      },
     },
     tailwindStyles:
       "flex flex-col md:flex-row items-center justify-start w-full p-4 bg-green-500 shadow-md gap-2 md:gap-0",
@@ -171,9 +191,11 @@ export const headerComponent3: CustomComponent = {
         content: "Welcome to My Site",
 
         styles: {
-          color: "#1b5e20",
-          fontSize: "28px",
-          fontWeight: "bold",
+          default: {
+            color: "#1b5e20",
+            fontSize: "28px",
+            fontWeight: "bold",
+          },
         },
         tailwindStyles:
           "text-green-900 text-3xl font-bold text-center md:text-left",
@@ -185,9 +207,11 @@ export const headerComponent3: CustomComponent = {
         content: "Home",
 
         styles: {
-          color: "#1b5e20",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "#1b5e20",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-green-900 text-lg text-center md:text-left hover:text-green-700 transition-colors",
@@ -199,9 +223,11 @@ export const headerComponent3: CustomComponent = {
         content: "Pricing",
 
         styles: {
-          color: "#1b5e20",
-          margin: "0 10px",
-          fontSize: "18px",
+          default: {
+            color: "#1b5e20",
+            margin: "0 10px",
+            fontSize: "18px",
+          },
         },
         tailwindStyles:
           "m-2 text-green-900 text-lg text-center md:text-left hover:text-green-700 transition-colors",

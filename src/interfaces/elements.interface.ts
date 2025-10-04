@@ -4,6 +4,14 @@ import { EmblaOptionsType } from "embla-carousel";
 
 type CSSStyles = React.CSSProperties;
 
+type ResponsiveStyles = {
+  default?: React.CSSProperties;
+  sm?: React.CSSProperties;
+  md?: React.CSSProperties;
+  lg?: React.CSSProperties;
+  xl?: React.CSSProperties;
+};
+
 // Interface from
 
 interface Element<Settings = undefined> {
@@ -11,7 +19,7 @@ interface Element<Settings = undefined> {
   id: string;
   content: string;
   name?: string;
-  styles?: CSSStyles;
+  styles?: ResponsiveStyles;
   tailwindStyles?: string;
   src?: string;
   href?: string;
@@ -123,4 +131,4 @@ export type {
   InputSettings,
   DataLoaderSettings,
 };
-export type { CSSStyles };
+export type { CSSStyles, ResponsiveStyles };

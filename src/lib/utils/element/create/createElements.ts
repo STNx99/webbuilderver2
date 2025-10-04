@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getElementStrategy } from "./elementStrategyMap";
 import { BuilderState } from "./elementCreateStrategy";
 import { SelectionStore } from "@/globalstore/selectionstore";
-import { CSSStyles } from "@/interfaces/elements.interface";
+import { ResponsiveStyles } from "@/interfaces/elements.interface";
 
 /**
  * Lightweight utilities and improved typings for creating elements.
@@ -75,7 +75,7 @@ function baseElementFactory({
   projectId: string;
   pageId?: string;
   parentId?: string;
-  styles?: CSSStyles;
+  styles?: ResponsiveStyles;
   tailwindStyles?: string;
   src?: string;
   href?: string;

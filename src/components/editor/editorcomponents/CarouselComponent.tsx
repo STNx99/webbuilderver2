@@ -6,6 +6,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { useElementHandler } from "@/hooks/useElementHandler";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
 import {
   CarouselElement,
   CarouselSettings,
@@ -16,11 +17,7 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 import React from "react";
 import ElementLoader from "../ElementLoader";
 
-interface Props {
-  element: EditorElement;
-}
-
-const CarouselComponent = ({ element }: Props) => {
+const CarouselComponent = ({ element, data }: EditorComponentProps) => {
   const { getCommonProps } = useElementHandler();
 
   element = element as CarouselElement;
@@ -56,7 +53,7 @@ const CarouselComponent = ({ element }: Props) => {
         {element.elements.map((slide) => (
           <CarouselItem key={slide.id}>
             <div className="p-1 h-full w-full">
-              <ElementLoader elements={[slide]} />
+              <ElementLoader elements={[slide]} data={data} />
             </div>
           </CarouselItem>
         ))}

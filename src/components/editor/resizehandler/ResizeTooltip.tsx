@@ -12,12 +12,12 @@ import type React from "react";
 
 function getHandleTooltip(
   direction: ResizeDirection,
-  styles: CSSStyles | undefined
+  styles: CSSStyles | undefined,
 ): string {
   // Helper for margin/padding tooltip
   const getSpacingTooltip = (
     type: "margin" | "padding",
-    dir: string
+    dir: string,
   ): string => {
     const propMap = {
       n: `${type}Top`,
@@ -99,7 +99,7 @@ export default function ResizeTooltip({
     <Tooltip open={isResizing ? true : undefined}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
       <TooltipContent side="top">
-        {getHandleTooltip(direction, element.styles)}
+        {getHandleTooltip(direction, element.styles?.default)}
       </TooltipContent>
     </Tooltip>
   );
