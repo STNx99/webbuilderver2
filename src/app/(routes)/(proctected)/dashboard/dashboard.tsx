@@ -176,8 +176,15 @@ export default function Dashboard() {
                   (window.location.href = `/analytics/${project.id}`)
                 }
               >
-                <BarChart3 className="mr-2 h-4 w-4" />
+                <BarChart3 className="mr-2 h-4 w-4"/>
                 View Analytics
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  (window.location.href = `/projectsettings/${project.id}`)
+                }
+              >
+                View Project Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
