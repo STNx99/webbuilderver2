@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -47,18 +46,20 @@ model Image {
 
 model Project {
   Description String?
-  Id          String    @id(map: "PK_Projects")
+  Id          String     @id(map: "PK_Projects")
   Name        String
   OwnerId     String
-  Published   Boolean   @default(false)
+  Published   Boolean    @default(false)
   Subdomain   String?
-  CreatedAt   DateTime  @db.Timestamp(6)
-  DeletedAt   DateTime? @db.Timestamp(6)
-  UpdatedAt   DateTime  @db.Timestamp(6)
+  CreatedAt   DateTime   @db.Timestamp(6)
+  DeletedAt   DateTime?  @db.Timestamp(6)
+  UpdatedAt   DateTime   @db.Timestamp(6)
   Styles      Json?
+  Header      Json?
   Elements    Element[]
   Pages       Page[]
-  Owner       User      @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+  Owner       User       @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+  Snapshots   Snapshot[]
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -80,14 +81,25 @@ model Page {
 }
 
 model Setting {
-  ElementId   String    @unique
-  Id          String    @id(map: "PK_Settings")
+  ElementId   String  @unique
+  Id          String  @id(map: "PK_Settings")
   Name        String
   SettingType String
   Settings    Json
-  Element     Element   @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
+  Element     Element @relation("ElementSettings", fields: [ElementId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Settings_Elements_ElementId")
 
   @@index([ElementId], map: "IX_Settings_ElementId")
+}
+
+model Snapshot {
+  Id        String   @id @map("Id")
+  ProjectId String
+  Elements  Json
+  Timestamp BigInt
+  CreatedAt DateTime @default(now()) @db.Timestamp(6)
+  Project   Project  @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@index([ProjectId, Timestamp])
 }
 
 model User {
@@ -100,4 +112,49 @@ model User {
   UpdatedAt DateTime  @db.Timestamptz(6)
   Images    Image[]
   Projects  Project[]
+}
+
+model ContentType {
+  CreatedAt   DateTime       @default(now())
+  Description String?
+  Id          String         @id @default(cuid())
+  Name        String         @unique
+  UpdatedAt   DateTime       @updatedAt
+  Fields      ContentField[]
+  Items       ContentItem[]
+}
+
+model ContentField {
+  ContentTypeId String
+  Id            String              @id @default(cuid())
+  Name          String
+  Required      Boolean             @default(false)
+  Type          String
+  ContentType   ContentType         @relation(fields: [ContentTypeId], references: [Id], onDelete: Cascade)
+  Values        ContentFieldValue[]
+
+  @@unique([ContentTypeId, Name])
+}
+
+model ContentFieldValue {
+  ContentItemId String
+  FieldId       String
+  Id            String       @id @default(cuid())
+  Value         String?
+  ContentItem   ContentItem  @relation(fields: [ContentItemId], references: [Id], onDelete: Cascade)
+  Field         ContentField @relation(fields: [FieldId], references: [Id], onDelete: Cascade)
+
+  @@unique([ContentItemId, FieldId])
+}
+
+model ContentItem {
+  ContentTypeId String
+  CreatedAt     DateTime            @default(now())
+  Id            String              @id @default(cuid())
+  Published     Boolean             @default(false)
+  Slug          String              @unique
+  Title         String
+  UpdatedAt     DateTime            @updatedAt
+  FieldValues   ContentFieldValue[]
+  ContentType   ContentType         @relation(fields: [ContentTypeId], references: [Id], onDelete: Cascade)
 }

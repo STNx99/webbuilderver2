@@ -13,14 +13,11 @@ import {
 } from "@/interfaces/elements.interface";
 import { cn } from "@/lib/utils";
 import { EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import React from "react";
+import ElementLoader from "../ElementLoader";
 
-interface Props {
-  element: EditorElement;
-}
-
-const CarouselComponent = ({ element }: Props) => {
+const CarouselComponent = ({ element, data }: EditorComponentProps) => {
   const { getCommonProps } = useElementHandler();
 
   element = element as CarouselElement;
@@ -31,13 +28,15 @@ const CarouselComponent = ({ element }: Props) => {
   const carouselSettings: CarouselSettings = element.settings ?? {};
   const hasNavigation = carouselSettings.withNavigation ?? true;
 
+  const safeStyles = elementHelper.getSafeStyles(element);
+
   return (
     <Carousel
       {...getCommonProps(element)}
       opts={carouselSettings}
       className={cn("w-full h-full")}
       style={{
-        ...(element.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}
@@ -48,7 +47,7 @@ const CarouselComponent = ({ element }: Props) => {
         {element.elements.map((slide) => (
           <CarouselItem key={slide.id}>
             <div className="p-1 h-full w-full">
-              {elementHelper.renderChildElement(slide, {})}
+              <ElementLoader elements={[slide]} data={data} />
             </div>
           </CarouselItem>
         ))}

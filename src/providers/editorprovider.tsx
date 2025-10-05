@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import React from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { EditorSideBar } from "@/components/editor/sidebar/EditorSideBar";
@@ -13,7 +14,7 @@ interface EditorProviderProps {
 
 function EditorLayout({ children }: EditorProviderProps) {
   const { chatOpen } = useAiChat();
-  
+
   return (
     <SidebarProvider className="flex h-screen w-screen overflow-hidden">
       <EditorSideBar />

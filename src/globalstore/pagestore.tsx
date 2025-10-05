@@ -1,4 +1,4 @@
-import { Page } from "@/generated/prisma";
+import { Page } from "@/interfaces/page.interface";
 import { projectService } from "@/services/project";
 import { create } from "zustand";
 
@@ -6,12 +6,16 @@ import { create } from "zustand";
  * Type definition for the Zustand PageStore.
  */
 type PageStore = {
+  // State
   pages: Page[];
+
+  currentPage: Page | null;
   /**
    * Update a page by its ID with new styles/data.
    * @param updatedPage The updated Page object.
    * @param id The ID of the page to update.
    */
+  // Actions
   addPage: (newPage: Page) => void;
 
   updatePage: (updatedPage: Page, id: string) => void;
@@ -26,14 +30,17 @@ type PageStore = {
    * @param pages The array of Page objects to load.
    */
   loadPages: (pages: Page[]) => void;
+
+  setCurrentPage: (page: Page | null) => void;
 };
 
 export const usePageStore = create<PageStore>((set, get) => ({
-  pages: [],
+  pages: [], // initial state
+  currentPage: null,
   updatePage: (updatedPage, id) => {
     set((state) => ({
       pages: state.pages.map((page) =>
-        page.Id === id ? { ...page, ...updatedPage } : page,
+        page.Id === id ? { ...page, ...updatedPage } : page
       ),
     }));
     // TODO: Optionally, call an API to persist the update
@@ -53,7 +60,7 @@ export const usePageStore = create<PageStore>((set, get) => ({
     if (pageToDelete) {
       const result = await projectService.deleteProjectPage(
         pageToDelete?.ProjectId,
-        id,
+        id
       );
       if (!result) set({ pages: pagesCopy });
     }
@@ -66,5 +73,9 @@ export const usePageStore = create<PageStore>((set, get) => ({
   loadPages: (pages) => {
     set({ pages });
     // TODO: Optionally, call an API to fetch pages if needed
+  },
+
+  setCurrentPage: (page) => {
+    set({ currentPage: page });
   },
 }));

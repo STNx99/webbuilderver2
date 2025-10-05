@@ -2,6 +2,8 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { Viewport } from "@/hooks/useEditor";
+import CssTextareaImporter from "./CssTextareaImporter";
+import { Button } from "@/components/ui/button";
 
 type EditorHeaderProps = {
   handlePageNavigation: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -23,12 +25,13 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           className="h-6 bg-gray-700"
           onBlur={handlePageNavigation}
         />
+        <CssTextareaImporter />
       </div>
 
       <div className="flex items-center ">
         <div className="flex gap-4">
           {(["mobile", "tablet", "desktop"] as const).map((view) => (
-            <button
+            <Button
               key={view}
               onClick={() => setCurrentView(view)}
               className={`flex rounded-md p-1 font-medium transition-colors font-sans items-center ${
@@ -40,7 +43,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
               {view === "mobile" && <Smartphone className="w-5" />}
               {view === "tablet" && <Tablet className="w-5" />}
               {view === "desktop" && <Monitor className="w-5" />}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

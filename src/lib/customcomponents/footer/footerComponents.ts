@@ -7,15 +7,17 @@ export const footerComponent: CustomComponent = {
     name: "Footer",
     content: "",
     styles: {
-      position: "relative",
-      width: "100%",
-      marginTop: "auto",
-      height: "auto",
-      backgroundColor: "#f8f9fa",
-      display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
-      gap: "20px",
-      padding: "40px",
+      default: {
+        position: "relative",
+        width: "100%",
+        marginTop: "auto",
+        height: "auto",
+        backgroundColor: "#f8f9fa",
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "20px",
+        padding: "40px",
+      },
     },
     tailwindStyles:
       "w-full mt-auto bg-[#f8f9fa] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 py-6 px-4 sm:py-8 sm:px-6 md:py-10 md:px-8",
@@ -24,9 +26,11 @@ export const footerComponent: CustomComponent = {
         type: "Frame",
         content: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-4",
         elements: [
@@ -35,7 +39,7 @@ export const footerComponent: CustomComponent = {
             content: "Logo",
             href: "",
             src: "",
-            styles: { width: "80px", height: "80px" },
+            styles: { default: { width: "80px", height: "80px" } },
             tailwindStyles: "w-20 h-20",
           },
           {
@@ -44,7 +48,7 @@ export const footerComponent: CustomComponent = {
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             href: "",
             src: "",
-            styles: { color: "#6c757d", fontSize: "14px" },
+            styles: { default: { color: "#6c757d", fontSize: "14px" } },
             tailwindStyles: "text-gray-600 text-sm",
           },
         ],
@@ -55,9 +59,11 @@ export const footerComponent: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -66,7 +72,7 @@ export const footerComponent: CustomComponent = {
             content: "Services",
             href: "",
             src: "",
-            styles: { color: "#ff6f61", fontWeight: "bold" },
+            styles: { default: { color: "#ff6f61", fontWeight: "bold" } },
             tailwindStyles: "text-[#ff6f61] font-bold",
           },
           {
@@ -74,7 +80,7 @@ export const footerComponent: CustomComponent = {
             content: "Email Marketing",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -82,7 +88,7 @@ export const footerComponent: CustomComponent = {
             content: "Campaigns",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -90,7 +96,7 @@ export const footerComponent: CustomComponent = {
             content: "Branding",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -98,7 +104,7 @@ export const footerComponent: CustomComponent = {
             content: "Offline",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
         ],
@@ -109,9 +115,11 @@ export const footerComponent: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -120,7 +128,7 @@ export const footerComponent: CustomComponent = {
             content: "About",
             href: "",
             src: "",
-            styles: { color: "#ff6f61", fontWeight: "bold" },
+            styles: { default: { color: "#ff6f61", fontWeight: "bold" } },
             tailwindStyles: "text-[#ff6f61] font-bold",
           },
           {
@@ -128,7 +136,7 @@ export const footerComponent: CustomComponent = {
             content: "Our Story",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -136,7 +144,7 @@ export const footerComponent: CustomComponent = {
             content: "Benefits",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -144,7 +152,7 @@ export const footerComponent: CustomComponent = {
             content: "Team",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -152,7 +160,7 @@ export const footerComponent: CustomComponent = {
             content: "Careers",
             href: "/",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
         ],
@@ -163,9 +171,11 @@ export const footerComponent: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -174,7 +184,7 @@ export const footerComponent: CustomComponent = {
             content: "Follow Us",
             href: "",
             src: "",
-            styles: { color: "#ff6f61", fontWeight: "bold" },
+            styles: { default: { color: "#ff6f61", fontWeight: "bold" } },
             tailwindStyles: "text-[#ff6f61] font-bold",
           },
           {
@@ -182,7 +192,7 @@ export const footerComponent: CustomComponent = {
             content: "Facebook",
             href: "https://facebook.com",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -190,7 +200,7 @@ export const footerComponent: CustomComponent = {
             content: "Twitter",
             href: "https://twitter.com",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
           {
@@ -198,7 +208,7 @@ export const footerComponent: CustomComponent = {
             content: "Instagram",
             href: "https://instagram.com",
             src: "",
-            styles: { color: "#333" },
+            styles: { default: { color: "#333" } },
             tailwindStyles: "text-[#333] hover:underline",
           },
         ],
@@ -215,15 +225,17 @@ export const footerComponent2: CustomComponent = {
     name: "Footer2",
     content: "",
     styles: {
-      position: "relative",
-      width: "100%",
-      marginTop: "auto",
-      height: "auto",
-      backgroundColor: "#f8f9fa",
-      display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
-      gap: "20px",
-      padding: "20px",
+      default: {
+        position: "relative",
+        width: "100%",
+        marginTop: "auto",
+        height: "auto",
+        backgroundColor: "#f8f9fa",
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "20px",
+        padding: "20px",
+      },
     },
     tailwindStyles:
       "w-full mt-auto bg-gray-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 py-5 px-4 sm:px-6",
@@ -232,9 +244,11 @@ export const footerComponent2: CustomComponent = {
         type: "Frame",
         content: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -242,8 +256,10 @@ export const footerComponent2: CustomComponent = {
             type: "Text",
             content: "COMPANY NAME",
             styles: {
-              color: "#000",
-              fontWeight: "bold",
+              default: {
+                color: "#000",
+                fontWeight: "bold",
+              },
             },
             tailwindStyles: "text-black font-bold",
           },
@@ -255,7 +271,9 @@ export const footerComponent2: CustomComponent = {
             href: "",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 text-sm",
           },
@@ -267,9 +285,11 @@ export const footerComponent2: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -277,8 +297,10 @@ export const footerComponent2: CustomComponent = {
             type: "Text",
             content: "PRODUCTS",
             styles: {
-              color: "#000",
-              fontWeight: "bold",
+              default: {
+                color: "#000",
+                fontWeight: "bold",
+              },
             },
             tailwindStyles: "text-black font-bold",
           },
@@ -288,7 +310,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -298,7 +322,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -308,7 +334,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -318,7 +346,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -330,9 +360,11 @@ export const footerComponent2: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -342,8 +374,10 @@ export const footerComponent2: CustomComponent = {
             href: "",
             src: "",
             styles: {
-              color: "#000",
-              fontWeight: "bold",
+              default: {
+                color: "#000",
+                fontWeight: "bold",
+              },
             },
             tailwindStyles: "text-black font-bold",
           },
@@ -353,7 +387,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -363,7 +399,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -373,7 +411,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -383,7 +423,9 @@ export const footerComponent2: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#6c757d",
+              default: {
+                color: "#6c757d",
+              },
             },
             tailwindStyles: "text-gray-600 hover:underline",
           },
@@ -396,9 +438,11 @@ export const footerComponent2: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start gap-2",
         elements: [
@@ -406,8 +450,10 @@ export const footerComponent2: CustomComponent = {
             type: "Text",
             content: "USEFUL LINKS",
             styles: {
-              color: "#000",
-              fontWeight: "bold",
+              default: {
+                color: "#000",
+                fontWeight: "bold",
+              },
             },
             tailwindStyles: "text-black font-bold",
           },
@@ -417,10 +463,12 @@ export const footerComponent2: CustomComponent = {
             href: "",
             src: "",
             styles: {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
+              default: {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "10px",
+              },
             },
             tailwindStyles: "flex flex-row items-center gap-2",
 
@@ -432,9 +480,11 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
                 styles: {
-                  width: "24px",
-                  height: "24px",
-                  objectFit: "contain",
+                  default: {
+                    width: "24px",
+                    height: "24px",
+                    objectFit: "contain",
+                  },
                 },
                 tailwindStyles: "w-6 h-6 object-contain",
               },
@@ -445,7 +495,9 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#6c757d",
+                  default: {
+                    color: "#6c757d",
+                  },
                 },
                 tailwindStyles: "text-gray-600",
               },
@@ -455,10 +507,12 @@ export const footerComponent2: CustomComponent = {
             type: "Frame",
             content: "",
             styles: {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
+              default: {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "10px",
+              },
             },
             tailwindStyles: "flex flex-row items-center gap-2",
             elements: [
@@ -468,9 +522,11 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
                 styles: {
-                  width: "24px",
-                  height: "24px",
-                  objectFit: "contain",
+                  default: {
+                    width: "24px",
+                    height: "24px",
+                    objectFit: "contain",
+                  },
                 },
                 tailwindStyles: "w-6 h-6 object-contain",
               },
@@ -480,7 +536,9 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#6c757d",
+                  default: {
+                    color: "#6c757d",
+                  },
                 },
                 tailwindStyles: "text-gray-600",
               },
@@ -490,10 +548,12 @@ export const footerComponent2: CustomComponent = {
             type: "Frame",
             content: "",
             styles: {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
+              default: {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "10px",
+              },
             },
             tailwindStyles: "flex flex-row items-center gap-2",
             elements: [
@@ -503,9 +563,11 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/732/732200.png",
                 styles: {
-                  width: "24px",
-                  height: "24px",
-                  objectFit: "contain",
+                  default: {
+                    width: "24px",
+                    height: "24px",
+                    objectFit: "contain",
+                  },
                 },
                 tailwindStyles: "w-6 h-6 object-contain",
               },
@@ -515,7 +577,9 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#6c757d",
+                  default: {
+                    color: "#6c757d",
+                  },
                 },
                 tailwindStyles: "text-gray-600",
               },
@@ -525,10 +589,12 @@ export const footerComponent2: CustomComponent = {
             type: "Frame",
             content: "",
             styles: {
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: "10px",
+              default: {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "10px",
+              },
             },
             tailwindStyles: "flex flex-row items-center gap-2",
             elements: [
@@ -538,9 +604,11 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "https://cdn-icons-png.flaticon.com/512/724/724664.png",
                 styles: {
-                  width: "24px",
-                  height: "24px",
-                  objectFit: "contain",
+                  default: {
+                    width: "24px",
+                    height: "24px",
+                    objectFit: "contain",
+                  },
                 },
                 tailwindStyles: "w-6 h-6 object-contain",
               },
@@ -551,7 +619,9 @@ export const footerComponent2: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#6c757d",
+                  default: {
+                    color: "#6c757d",
+                  },
                 },
                 tailwindStyles: "text-gray-600",
               },
@@ -570,16 +640,18 @@ export const footerComponent3: CustomComponent = {
     content: "",
 
     styles: {
-      position: "relative",
-      width: "100%",
-      marginTop: "auto",
-      height: "auto",
-      backgroundColor: "#1a202c",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "20px 0",
+      default: {
+        position: "relative",
+        width: "100%",
+        marginTop: "auto",
+        height: "auto",
+        backgroundColor: "#1a202c",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px 0",
+      },
     },
     tailwindStyles:
       "w-full mt-auto bg-[#1a202c] flex flex-col items-center justify-center py-5 gap-5",
@@ -591,11 +663,13 @@ export const footerComponent3: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-around",
-          width: "100%",
-          maxWidth: "1200px",
+          default: {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            width: "100%",
+            maxWidth: "1200px",
+          },
         },
         tailwindStyles:
           "flex flex-row justify-around w-full max-w-[1200px] gap-10",
@@ -608,9 +682,11 @@ export const footerComponent3: CustomComponent = {
             href: "",
             src: "",
             styles: {
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
+              default: {
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              },
             },
             tailwindStyles: "flex flex-col items-start gap-2",
 
@@ -622,8 +698,10 @@ export const footerComponent3: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#ffffff",
-                  fontWeight: "bold",
+                  default: {
+                    color: "#ffffff",
+                    fontWeight: "bold",
+                  },
                 },
                 tailwindStyles: "text-white font-bold",
               },
@@ -634,7 +712,9 @@ export const footerComponent3: CustomComponent = {
                 href: "/",
                 src: "",
                 styles: {
-                  color: "#a0aec0",
+                  default: {
+                    color: "#a0aec0",
+                  },
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
               },
@@ -645,7 +725,9 @@ export const footerComponent3: CustomComponent = {
                 href: "/",
                 src: "",
                 styles: {
-                  color: "#a0aec0",
+                  default: {
+                    color: "#a0aec0",
+                  },
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
               },
@@ -658,9 +740,11 @@ export const footerComponent3: CustomComponent = {
             href: "",
             src: "",
             styles: {
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
+              default: {
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              },
             },
             tailwindStyles: "flex flex-col items-start gap-2",
 
@@ -672,8 +756,10 @@ export const footerComponent3: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#ffffff",
-                  fontWeight: "bold",
+                  default: {
+                    color: "#ffffff",
+                    fontWeight: "bold",
+                  },
                 },
                 tailwindStyles: "text-white font-bold",
               },
@@ -684,7 +770,9 @@ export const footerComponent3: CustomComponent = {
                 href: "https://github.com",
                 src: "",
                 styles: {
-                  color: "#a0aec0",
+                  default: {
+                    color: "#a0aec0",
+                  },
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
               },
@@ -695,7 +783,9 @@ export const footerComponent3: CustomComponent = {
                 href: "https://discord.com",
                 src: "",
                 styles: {
-                  color: "#a0aec0",
+                  default: {
+                    color: "#a0aec0",
+                  },
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
               },
@@ -708,9 +798,11 @@ export const footerComponent3: CustomComponent = {
             href: "",
             src: "",
             styles: {
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
+              default: {
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+              },
             },
             tailwindStyles: "flex flex-col items-start gap-2",
 
@@ -722,8 +814,10 @@ export const footerComponent3: CustomComponent = {
                 href: "",
                 src: "",
                 styles: {
-                  color: "#ffffff",
-                  fontWeight: "bold",
+                  default: {
+                    color: "#ffffff",
+                    fontWeight: "bold",
+                  },
                 },
                 tailwindStyles: "text-white font-bold",
               },
@@ -734,7 +828,9 @@ export const footerComponent3: CustomComponent = {
                 href: "/privacy-policy",
                 src: "",
                 styles: {
-                  color: "#a0aec0",
+                  default: {
+                    color: "#a0aec0",
+                  },
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
               },
@@ -745,7 +841,9 @@ export const footerComponent3: CustomComponent = {
                 href: "/terms",
                 src: "",
                 styles: {
-                  color: "#a0aec0",
+                  default: {
+                    color: "#a0aec0",
+                  },
                 },
                 tailwindStyles: "text-gray-400 hover:text-white",
               },
@@ -760,9 +858,11 @@ export const footerComponent3: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          color: "#ffffff",
-          fontSize: "14px",
-          textAlign: "center",
+          default: {
+            color: "#ffffff",
+            fontSize: "14px",
+            textAlign: "center",
+          },
         },
         tailwindStyles: "text-white text-sm text-center mt-5",
       },
@@ -773,10 +873,12 @@ export const footerComponent3: CustomComponent = {
         href: "",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-          gap: "15px",
+          default: {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: "15px",
+          },
         },
         tailwindStyles: "flex flex-row justify-center gap-4 mt-3",
 
@@ -788,8 +890,10 @@ export const footerComponent3: CustomComponent = {
             href: "https://facebook.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733547.png",
             styles: {
-              width: "24px",
-              height: "24px",
+              default: {
+                width: "24px",
+                height: "24px",
+              },
             },
             tailwindStyles: "w-6 h-6",
           },
@@ -800,8 +904,10 @@ export const footerComponent3: CustomComponent = {
             href: "https://discord.com",
             src: "https://cdn-icons-png.flaticon.com/512/2111/2111370.png",
             styles: {
-              width: "24px",
-              height: "24px",
+              default: {
+                width: "24px",
+                height: "24px",
+              },
             },
             tailwindStyles: "w-6 h-6",
           },
@@ -812,8 +918,10 @@ export const footerComponent3: CustomComponent = {
             href: "https://twitter.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733579.png",
             styles: {
-              width: "24px",
-              height: "24px",
+              default: {
+                width: "24px",
+                height: "24px",
+              },
             },
             tailwindStyles: "w-6 h-6",
           },
@@ -824,8 +932,10 @@ export const footerComponent3: CustomComponent = {
             href: "https://github.com",
             src: "https://cdn-icons-png.flaticon.com/512/733/733553.png",
             styles: {
-              width: "24px",
-              height: "24px",
+              default: {
+                width: "24px",
+                height: "24px",
+              },
             },
             tailwindStyles: "w-6 h-6",
           },
@@ -843,15 +953,17 @@ export const footerComponent4: CustomComponent = {
     name: "Footer4",
     content: "",
     styles: {
-      position: "relative",
-      width: "100%",
-      marginTop: "auto",
-      height: "auto",
-      backgroundColor: "#fbeee6",
-      display: "grid",
-      gridTemplateColumns: "repeat(4, 1fr)",
-      gap: "20px",
-      padding: "20px",
+      default: {
+        position: "relative",
+        width: "100%",
+        marginTop: "auto",
+        height: "auto",
+        backgroundColor: "#fbeee6",
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "20px",
+        padding: "20px",
+      },
     },
     tailwindStyles:
       "w-full mt-auto bg-[#fbeee6] grid grid-cols-1 md:grid-cols-4 gap-5 py-5 px-4",
@@ -863,9 +975,11 @@ export const footerComponent4: CustomComponent = {
         href: "/",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
 
@@ -877,9 +991,11 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#8b4513",
-              fontWeight: "bold",
-              marginBottom: "10px",
+              default: {
+                color: "#8b4513",
+                fontWeight: "bold",
+                marginBottom: "10px",
+              },
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
           },
@@ -890,7 +1006,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -901,7 +1019,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -912,7 +1032,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -923,7 +1045,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -936,9 +1060,11 @@ export const footerComponent4: CustomComponent = {
         href: "/",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
 
@@ -950,9 +1076,11 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#8b4513",
-              fontWeight: "bold",
-              marginBottom: "10px",
+              default: {
+                color: "#8b4513",
+                fontWeight: "bold",
+                marginBottom: "10px",
+              },
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
           },
@@ -963,7 +1091,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -974,7 +1104,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -985,7 +1117,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -995,7 +1129,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -1007,9 +1143,11 @@ export const footerComponent4: CustomComponent = {
         href: "/",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
         elements: [
@@ -1019,9 +1157,11 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#8b4513",
-              fontWeight: "bold",
-              marginBottom: "10px",
+              default: {
+                color: "#8b4513",
+                fontWeight: "bold",
+                marginBottom: "10px",
+              },
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
           },
@@ -1031,8 +1171,10 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
-              marginBottom: "5px",
+              default: {
+                color: "#333",
+                marginBottom: "5px",
+              },
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
           },
@@ -1042,8 +1184,10 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
-              marginBottom: "5px",
+              default: {
+                color: "#333",
+                marginBottom: "5px",
+              },
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
           },
@@ -1053,8 +1197,10 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
-              marginBottom: "5px",
+              default: {
+                color: "#333",
+                marginBottom: "5px",
+              },
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
           },
@@ -1064,7 +1210,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },
@@ -1076,9 +1224,11 @@ export const footerComponent4: CustomComponent = {
         href: "/",
         src: "",
         styles: {
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
+          default: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+          },
         },
         tailwindStyles: "flex flex-col items-start text-left gap-2",
         elements: [
@@ -1088,9 +1238,11 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#8b4513",
-              fontWeight: "bold",
-              marginBottom: "10px",
+              default: {
+                color: "#8b4513",
+                fontWeight: "bold",
+                marginBottom: "10px",
+              },
             },
             tailwindStyles: "text-[#8b4513] font-bold mb-2",
           },
@@ -1100,8 +1252,10 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
-              marginBottom: "5px",
+              default: {
+                color: "#333",
+                marginBottom: "5px",
+              },
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
           },
@@ -1111,8 +1265,10 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
-              marginBottom: "5px",
+              default: {
+                color: "#333",
+                marginBottom: "5px",
+              },
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
           },
@@ -1122,8 +1278,10 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
-              marginBottom: "5px",
+              default: {
+                color: "#333",
+                marginBottom: "5px",
+              },
             },
             tailwindStyles: "text-[#333] mb-1 hover:underline",
           },
@@ -1133,7 +1291,9 @@ export const footerComponent4: CustomComponent = {
             href: "/",
             src: "",
             styles: {
-              color: "#333",
+              default: {
+                color: "#333",
+              },
             },
             tailwindStyles: "text-[#333] hover:underline",
           },

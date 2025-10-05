@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/sidebar";
 import { Settings } from "lucide-react";
 import Link from "next/link";
-import ComponentHolder from "./ComponentHolder";
 import { useAiChat } from "@/providers/aiprovider";
 import { ProjectPageCommand } from "../ProjectPageCommand";
 import { ElementSelector } from "./ElementSelector";
+import CMSManager from "./cmsmanager/CMSManager";
 
 export function EditorSideBar() {
   const { chatOpen } = useAiChat();
@@ -31,17 +31,19 @@ export function EditorSideBar() {
   return (
     <Sidebar side="left">
       <SidebarContent>
-        <Accordion type="multiple" className="w-full" defaultValue={["components","pages", "imageupload"]}>
+        <Accordion
+          type="multiple"
+          className="w-full"
+          defaultValue={["components", "pages", "imageupload", "cms"]}
+        >
           <AccordionItem value="components">
             <SidebarGroup>
               <SidebarGroupLabel asChild>
-                <AccordionTrigger>
-                  Components
-                </AccordionTrigger>
+                <AccordionTrigger>Components</AccordionTrigger>
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
-                  <ElementSelector/>
+                  <ElementSelector />
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>
@@ -49,9 +51,7 @@ export function EditorSideBar() {
           <AccordionItem value="pages">
             <SidebarGroup>
               <SidebarGroupLabel asChild>
-                <AccordionTrigger>
-                  Project's pages
-                </AccordionTrigger>
+                <AccordionTrigger>Project's pages</AccordionTrigger>
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
@@ -63,13 +63,23 @@ export function EditorSideBar() {
           <AccordionItem value="imageupload">
             <SidebarGroup>
               <SidebarGroupLabel asChild>
-                <AccordionTrigger>
-                  Image Upload
-                </AccordionTrigger>
+                <AccordionTrigger>Image Upload</AccordionTrigger>
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
                   {/* Image upload content here */}
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+          <AccordionItem value="cms">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger>CMS Management</AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  <CMSManager />
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>

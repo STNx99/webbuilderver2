@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Grid,
   List,
@@ -56,10 +56,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import Image from "next/image";
 import CreateProjectDialog from "@/components/dashboard/CreateProjectDialog";
-import { Project } from "@/interfaces/project.interface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { projectService } from "@/services/project";
 import { useQuery } from "@tanstack/react-query";
+import type { Project } from "@/interfaces/project.interface";
 
 type SortOption = "name" | "views" | "created" | "modified";
 type ViewMode = "grid" | "list";
@@ -92,9 +92,13 @@ export default function Dashboard() {
   const filteredAndSortedProjects = (projects ?? [])
     .filter((project) => {
       const matchesSearch =
-        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.description?.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesPublished = !showPublishedOnly || project.published;
+        (project.name ?? "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        (project.description ?? "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
+      const matchesPublished = !showPublishedOnly || !!project.published;
       return matchesSearch && matchesPublished;
     })
     .sort((a, b) => {
@@ -102,24 +106,25 @@ export default function Dashboard() {
       let bValue: string | number;
 
       switch (sortBy) {
-        case "name":
-          aValue = a.name.toLowerCase();
-          bValue = b.name.toLowerCase();
-          break;
         case "views":
-          aValue = a.views ?? 0;
-          bValue = b.views ?? 0;
+          aValue = ((a as any).views ?? 0) as number;
+          bValue = ((b as any).views ?? 0) as number;
+          break;
+        case "name":
+          aValue = (a.name ?? "").toLowerCase();
+          bValue = (b.name ?? "").toLowerCase();
           break;
         case "created":
-          aValue = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-          bValue = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          aValue = a.createdAt ? new Date(String(a.createdAt)).getTime() : 0;
+          bValue = b.createdAt ? new Date(String(b.createdAt)).getTime() : 0;
           break;
         case "modified":
-          aValue = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-          bValue = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+          aValue = a.updatedAt ? new Date(String(a.updatedAt)).getTime() : 0;
+          bValue = b.updatedAt ? new Date(String(b.updatedAt)).getTime() : 0;
           break;
         default:
-          return 0;
+          aValue = 0;
+          bValue = 0;
       }
 
       if (sortOrder === "asc") {
@@ -128,8 +133,6 @@ export default function Dashboard() {
         return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
       }
     });
-
-  // Remove old isDeleting state and handler, use mutation instead
 
   const ProjectCard = ({ project }: { project: Project }) => (
     <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer">
@@ -140,7 +143,7 @@ export default function Dashboard() {
             width={400}
             height={200}
             src={"/placeholder.svg"}
-            alt={project.name}
+            alt={project.name ?? ""}
             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
             onClick={() => (window.location.href = `/analytics/${project.id}`)}
           />
@@ -173,8 +176,15 @@ export default function Dashboard() {
                   (window.location.href = `/analytics/${project.id}`)
                 }
               >
-                <BarChart3 className="mr-2 h-4 w-4" />
+                <BarChart3 className="mr-2 h-4 w-4"/>
                 View Analytics
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  (window.location.href = `/projectsettings/${project.id}`)
+                }
+              >
+                View Project Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -193,12 +203,12 @@ export default function Dashboard() {
         <div className="flex items-center justify-between text-sm text-muted-foreground">
           <div className="flex items-center">
             <Eye className="mr-1 h-4 w-4" />
-            {(project.views ?? 0).toLocaleString()} views
+            {(((project as any).views ?? 0) as number).toLocaleString()} views
           </div>
           <div className="flex items-center">
             <Calendar className="mr-1 h-4 w-4" />
             {project.updatedAt
-              ? new Date(project.updatedAt).toLocaleDateString()
+              ? new Date(String(project.updatedAt)).toLocaleDateString()
               : "—"}
           </div>
         </div>
@@ -212,7 +222,7 @@ export default function Dashboard() {
         <div className="flex items-center space-x-4">
           <img
             src={"/placeholder.svg"}
-            alt={project.name}
+            alt={project.name ?? ""}
             className="w-16 h-16 object-cover rounded-lg cursor-pointer"
             onClick={() => (window.location.href = `/analytics/${project.id}`)}
           />
@@ -229,12 +239,15 @@ export default function Dashboard() {
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <Eye className="mr-1 h-4 w-4" />
-                {(project.views ?? 0).toLocaleString()} views
+                {(
+                  ((project as any).views ?? 0) as number
+                ).toLocaleString()}{" "}
+                views
               </div>
               <div className="flex items-center">
                 <Calendar className="mr-1 h-4 w-4" />
                 {project.updatedAt
-                  ? new Date(project.updatedAt).toLocaleDateString()
+                  ? new Date(String(project.updatedAt)).toLocaleDateString()
                   : "—"}
               </div>
             </div>

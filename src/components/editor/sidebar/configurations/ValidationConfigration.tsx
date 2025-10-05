@@ -12,6 +12,7 @@ import {
   SelectContent,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 
 const ALL_RULES: RuleType[] = [
   "required",
@@ -22,7 +23,8 @@ const ALL_RULES: RuleType[] = [
 ];
 
 export default function ValidationConfiguration() {
-  const { selectedElement, updateElement } = useElementStore<InputElement>();
+  const { updateElement } = useElementStore<InputElement>();
+  const { selectedElement } = useSelectionStore<InputElement>();
   const [newRule, setNewRule] = React.useState<RuleType>("required");
 
   // Local state for validation rules

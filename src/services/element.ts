@@ -1,76 +1,40 @@
 import { EditorElement } from "@/types/global.type";
-import GetUrl, { GetNextJSURL } from "@/utils/geturl";
-import {
-  fetchWithAuth,
-  fetchPublic,
-  postWithAuth,
-  deleteWithAuth,
-  updateWithAuth,
-} from "./api";
-import { IElementService } from "@/interfaces/service.interface";
+import GetUrl from "@/lib/utils/geturl";
+import apiClient from "./apiclient";
+import { API_ENDPOINTS } from "@/constants/endpoints";
+import { Snapshot } from "@/interfaces/snapshot.interface";
 
-/**
- * Element service for communicating with backend element endpoints.
- *
- * Methods:
- * - getElements: authenticated fetch of elements for a project
- * - getElementsPublic: public fetch for published rendering
- * - createElement: create one or more elements for a project
- * - updateElement: update an element (sends { element, settings } payload,
- *                  uses permissive request typing and casts response to EditorElement)
- * - deleteElement: delete an element by id
- */
+interface IElementService {
+  getElements: (projectId: string) => Promise<EditorElement[]>;
+  getElementsPublic: (projectId: string) => Promise<EditorElement[]>;
+  saveSnapshot: (projectId: string, snapshot: Snapshot) => Promise<void>;
+}
+
 export const elementService: IElementService = {
   getElements: async (projectId: string): Promise<EditorElement[]> => {
-    return fetchWithAuth<EditorElement[]>(GetUrl(`/elements/${projectId}`));
-  },
-
-  getElementsPublic: async (projectId: string): Promise<EditorElement[]> => {
-    return fetchPublic<EditorElement[]>(
-      GetUrl(`/elements/public/${projectId}`),
+    return apiClient.get<EditorElement[]>(
+      GetUrl(API_ENDPOINTS.ELEMENTS.GET(projectId)),
     );
   },
 
-  createElement: async (
+  getElementsPublic: async (projectId: string): Promise<EditorElement[]> => {
+    return apiClient.getPublic<EditorElement[]>(
+      GetUrl(API_ENDPOINTS.ELEMENTS.GET_PUBLIC(projectId)),
+    );
+  },
+
+  saveSnapshot: async (
     projectId: string,
-    ...elements: EditorElement[]
+    snapshot: Snapshot,
   ): Promise<void> => {
-    if (!Array.isArray(elements) || elements.length === 0) return;
-
     try {
-      await postWithAuth(GetUrl(`/elements/${projectId}`), elements);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      throw new Error(`createElement failed: ${message}`);
-    }
-  },
-
-  updateElement: async (
-    element: EditorElement,
-    settings?: string | null,
-  ): Promise<EditorElement> => {
-    if (!element?.id) {
-      throw new Error("updateElement failed: element id is required");
-    }
-
-    try {
-      const resp = await updateWithAuth<Record<string, unknown>>(
-        GetNextJSURL(`/api/elements/${element.id}`),
-        { element, settings },
+      await apiClient.post(
+        GetUrl(API_ENDPOINTS.SNAPSHOTS.SAVE(projectId)),
+        snapshot,
       );
-      return resp as unknown as EditorElement;
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      throw new Error(`updateElement failed: ${message}`);
-    }
-  },
-
-  deleteElement: async (id: string): Promise<boolean> => {
-    try {
-      return await deleteWithAuth(GetNextJSURL(`/api/elements/${id}`));
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      throw new Error(`deleteElement failed: ${message}`);
+      throw new Error(`saveSnapshot failed: ${message}`);
     }
   },
 };

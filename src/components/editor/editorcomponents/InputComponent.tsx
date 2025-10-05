@@ -2,10 +2,13 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { InputElement } from "@/interfaces/elements.interface";
 import React from "react";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const InputComponent = ({ element }: EditorComponentProps) => {
   const inputElement = element as InputElement;
   const { getCommonProps } = useElementHandler();
+
+  const safeStyles = elementHelper.getSafeStyles(inputElement);
 
   return (
     <input
@@ -13,7 +16,7 @@ const InputComponent = ({ element }: EditorComponentProps) => {
       placeholder={inputElement.content || "Input field"}
       {...getCommonProps(inputElement)}
       style={{
-        ...(inputElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}

@@ -16,9 +16,12 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { useElementStore } from "@/globalstore/elementstore";
 import { projectService } from "@/services/project";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
+import { useSelectionStore } from "@/globalstore/selectionstore";
+import { cn } from "@/lib/utils";
+import { ResponsiveStyles } from "@/interfaces/elements.interface";
 
 type TypographyStyles = Partial<React.CSSProperties>;
 
@@ -32,6 +35,7 @@ const FONT_FAMILIES = [
   "Roboto",
   "Open Sans",
   "Lato",
+  "Figtree",
 ];
 
 const FONT_WEIGHTS = [
@@ -64,8 +68,15 @@ const TEXT_TRANSFORM_OPTIONS: TextTransform[] = [
   "lowercase",
 ];
 
-export const TypographyAccordion = () => {
-  const { selectedElement } = useElementStore();
+interface TypographyAccordionProps {
+  currentBreakpoint: "default" | "sm" | "md" | "lg" | "xl";
+}
+
+export const TypographyAccordion = ({
+  currentBreakpoint,
+}: TypographyAccordionProps) => {
+  const { updateElement } = useElementStore();
+  const { selectedElement } = useSelectionStore();
   const [fonts, setFonts] = useState<string[]>(FONT_FAMILIES);
 
   const { data, isLoading } = useQuery({
@@ -79,7 +90,24 @@ export const TypographyAccordion = () => {
     }
   }, [data]);
 
-  const styles: TypographyStyles = selectedElement?.styles ?? {};
+  const responsiveStyles: ResponsiveStyles = selectedElement?.styles ?? {};
+  const styles: TypographyStyles = responsiveStyles[currentBreakpoint] ?? {};
+
+  const [textColorSelectValue, setTextColorSelectValue] = useState<string>(
+    () => {
+      if (!styles.color) return "default";
+      if (styles.color.startsWith("var(")) return styles.color;
+      return "custom";
+    },
+  );
+
+  useEffect(() => {
+    setTextColorSelectValue(() => {
+      if (!styles.color) return "default";
+      if (styles.color.startsWith("var(")) return styles.color;
+      return "custom";
+    });
+  }, [currentBreakpoint, styles.color]);
 
   const updateStyle = <K extends keyof TypographyStyles>(
     property: K,
@@ -87,7 +115,30 @@ export const TypographyAccordion = () => {
   ) => {
     if (!selectedElement) return;
     const newStyles = { ...styles, [property]: value };
-    elementHelper.updateElementStyle(selectedElement, newStyles);
+    const newResponsiveStyles = {
+      ...responsiveStyles,
+      [currentBreakpoint]: newStyles,
+    };
+
+    elementHelper.updateElementStyle(
+      selectedElement,
+      newStyles,
+      currentBreakpoint,
+      updateElement,
+    );
+
+    try {
+      const newTailwind = cn(
+        selectedElement.tailwindStyles,
+        elementHelper.computeTailwindFromStyles(newResponsiveStyles),
+      );
+      updateElement(selectedElement.id, { tailwindStyles: newTailwind });
+    } catch (err) {
+      console.error(
+        "Failed to compute tailwind classes from typography styles:",
+        err,
+      );
+    }
   };
 
   if (!selectedElement) {
@@ -103,6 +154,7 @@ export const TypographyAccordion = () => {
           defaultValue={[
             "font-family",
             "font-size",
+            "color",
             "font-weight",
             "line-height",
             "letter-spacing",
@@ -113,7 +165,7 @@ export const TypographyAccordion = () => {
           ]}
         >
           {/* Font Family */}
-          {/* <AccordionItem value="font-family">
+          <AccordionItem value="font-family">
             <AccordionTrigger className="text-xs">Font Family</AccordionTrigger>
             <AccordionContent>
               <div className="flex items-center gap-5 py-1">
@@ -125,28 +177,26 @@ export const TypographyAccordion = () => {
                   onValueChange={(value) => updateStyle("fontFamily", value)}
                   disabled={isLoading}
                 >
-                  <SelectTrigger className="w-32 max-h- px-1 py-0 text-xs border">
+                  <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
                     <SelectValue placeholder="Select font" />
                   </SelectTrigger>
                   <SelectContent>
-                    {
-                      isLoading ? (
-                        <SelectItem value="loading" disabled>
-                          Loading fonts...
+                    {isLoading ? (
+                      <SelectItem value="loading" disabled>
+                        Loading fonts...
+                      </SelectItem>
+                    ) : (
+                      fonts.map((font) => (
+                        <SelectItem key={font} value={font}>
+                          {font}
                         </SelectItem>
-                      ) : (
-                        fonts.map((font) => (
-                          <SelectItem key={font} value={font}>
-                            {font}
-                          </SelectItem>
-                        ))
-                      )
-                    }
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
               </div>
             </AccordionContent>
-          </AccordionItem> */}
+          </AccordionItem>
 
           {/* Font Size */}
           <AccordionItem value="font-size">
@@ -177,6 +227,91 @@ export const TypographyAccordion = () => {
                   onChange={(e) => updateStyle("fontSize", e.target.value)}
                   className="w-16 h-6 px-1 py-0 text-xs border"
                 />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Color Section */}
+          <AccordionItem value="color">
+            <AccordionTrigger className="text-xs">Color</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2 py-1">
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="textColor" className="text-xs w-20">
+                    Text Color
+                  </Label>
+                  <Select
+                    value={textColorSelectValue}
+                    onValueChange={(value) => {
+                      setTextColorSelectValue(value);
+                      updateStyle(
+                        "color",
+                        value === "default"
+                          ? undefined
+                          : value === "custom"
+                            ? ""
+                            : value,
+                      );
+                    }}
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Select color" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default">Default</SelectItem>
+                      <SelectItem value="var(--foreground)">
+                        Foreground
+                      </SelectItem>
+                      <SelectItem value="var(--card-foreground)">
+                        Card Foreground
+                      </SelectItem>
+                      <SelectItem value="var(--primary-foreground)">
+                        Primary Foreground
+                      </SelectItem>
+                      <SelectItem value="var(--secondary-foreground)">
+                        Secondary Foreground
+                      </SelectItem>
+                      <SelectItem value="var(--muted-foreground)">
+                        Muted Foreground
+                      </SelectItem>
+                      <SelectItem value="var(--accent-foreground)">
+                        Accent Foreground
+                      </SelectItem>
+                      <SelectItem value="var(--destructive-foreground)">
+                        Destructive Foreground
+                      </SelectItem>
+                      <SelectItem value="custom">Custom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {textColorSelectValue === "custom" && (
+                  <div className="flex items-center gap-5 ml-24">
+                    <Input
+                      id="textColor"
+                      type="color"
+                      value={styles.color || ""}
+                      onChange={(e) => {
+                        updateStyle("color", e.target.value);
+                        setTextColorSelectValue("custom");
+                      }}
+                      className="w-6 h-6 p-0 border-none bg-transparent"
+                    />
+                    <Input
+                      id="textColorHex"
+                      type="text"
+                      value={styles.color || ""}
+                      maxLength={7}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (/^#([0-9A-Fa-f]{0,6})$/.test(val)) {
+                          updateStyle("color", val);
+                          setTextColorSelectValue("custom");
+                        }
+                      }}
+                      className="w-16 h-6 px-1 py-0 text-xs border"
+                    />
+                  </div>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>

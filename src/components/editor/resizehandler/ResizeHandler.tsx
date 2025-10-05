@@ -1,6 +1,7 @@
 "use client";
 
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { useResizeHandler } from "@/hooks/useResizeHandler";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,7 @@ function ResizeHandle({
     if (e.button === 0) {
       e.preventDefault();
       e.stopPropagation();
+
       onResizeStart(direction, e);
     }
   };
@@ -49,8 +51,8 @@ function ResizeHandle({
     isGapHandle
       ? "bg-green-500 border-white hover:bg-green-600 active:bg-green-700"
       : isMarginHandle
-      ? "bg-orange-500 border-white hover:bg-orange-600 active:bg-orange-700"
-      : "bg-blue-500 border-white hover:bg-blue-600 active:bg-blue-700"
+        ? "bg-orange-500 border-white hover:bg-orange-600 active:bg-orange-700"
+        : "bg-blue-500 border-white hover:bg-blue-600 active:bg-blue-700",
   );
 
   return (
@@ -74,6 +76,8 @@ export default function ResizeHandler({
 }: ResizeHandlerProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const { updateElement } = useElementStore();
+  const { draggedOverElement, selectedElement, hoveredElement } =
+    useSelectionStore();
   const { handleDoubleClick } = useElementHandler();
   const { handleResizeStart, isResizing, currentResizeDirection } =
     useResizeHandler({
@@ -84,11 +88,11 @@ export default function ResizeHandler({
 
   // Get resize handles, excluding the gap handle
   const resizeHandles: ResizeDirection[] = getResizeHandles(
-    element.styles
+    element.styles?.default,
   ).filter((dir) => dir !== "gap");
 
   // Use imported hasGap to determine if gap handles should be rendered
-  const showGapHandles = hasGap(element.styles);
+  const showGapHandles = hasGap(element.styles?.default);
 
   // Helper for rendering gap handle in the center
   function GapHandle({
@@ -102,12 +106,13 @@ export default function ResizeHandler({
   }) {
     const baseClasses = cn(
       "absolute rounded-full w-3 h-3 border-2 z-10 active:scale-125 bg-green-500 border-white hover:bg-green-600 active:bg-green-700",
-      "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize"
+      "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize",
     );
     const handleMouseDown = (e: React.MouseEvent) => {
       if (e.button === 0) {
         e.preventDefault();
         e.stopPropagation();
+
         onResizeStart("gap", e);
       }
     };
@@ -128,16 +133,18 @@ export default function ResizeHandler({
       ref={targetRef}
       className="relative"
       style={{
-        width: element.styles?.width || "auto",
-        height: element.styles?.height || "auto",
+        width: element.styles?.default?.width || "auto",
+        height: element.styles?.default?.height || "auto",
+        position: "relative",
       }}
       id={element.id}
+      onPointerDown={(e) => e.stopPropagation()}
       onDoubleClick={(e) => {
         e.stopPropagation();
         handleDoubleClick(e, element);
       }}
     >
-      {element.isSelected && (
+      {selectedElement?.id === element.id && (
         <div
           className="absolute top-0 left-0 z-30 text-blue-500 text-xs px-1 py-0.5 pointer-events-none select-none"
           style={{
@@ -152,14 +159,14 @@ export default function ResizeHandler({
         </div>
       )}
       {children}
-      {element.isSelected && (
+      {selectedElement?.id === element.id && (
         <>
           {resizeHandles.map((dir) => (
             <ResizeHandle
               key={dir}
               direction={dir}
               onResizeStart={handleResizeStart}
-              element={element}
+              element={selectedElement}
               isResizing={isResizing}
               currentResizeDirection={currentResizeDirection}
             />
@@ -174,12 +181,15 @@ export default function ResizeHandler({
           <div className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none" />
         </>
       )}
-      {element.isHovered && !element.isDraggedOver && !element.isSelected && (
-        <div className="pointer-events-none absolute inset-0 border border-black z-20" />
-      )}
-      {element.isDraggedOver && !element.isSelected && (
-        <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
-      )}
+      {hoveredElement?.id === element.id &&
+        !(draggedOverElement?.id === element.id) &&
+        !(selectedElement?.id === element.id) && (
+          <div className="pointer-events-none absolute inset-0 border border-black z-20" />
+        )}
+      {draggedOverElement?.id === element.id &&
+        !(selectedElement?.id === element.id) && (
+          <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
+        )}
     </div>
   );
 }

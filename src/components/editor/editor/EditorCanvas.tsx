@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { EditorElement } from "@/types/global.type";
 import ElementLoader from "@/components/editor/ElementLoader";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";
 import { Button } from "@/components/ui/button";
+import { KeyboardEvent as KeyboardEventClass } from "@/lib/utils/element/keyBoardEvents";
 
 type EditorCanvasProps = {
   isDraggingOver: boolean;
@@ -10,7 +11,6 @@ type EditorCanvasProps = {
   handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   handleDragLeave: (e: React.DragEvent<HTMLDivElement>) => void;
   isLoading: boolean;
-  elements: EditorElement[];
   selectedElement: EditorElement | null;
   addNewSection: () => void;
 };
@@ -21,30 +21,93 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   handleDragOver,
   handleDragLeave,
   isLoading,
-  elements,
   selectedElement,
   addNewSection,
 }) => {
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const keyboardEvent = new KeyboardEventClass();
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      console.log(
+        "Key pressed:",
+        e.key,
+        "Ctrl:",
+        e.ctrlKey,
+        "Meta:",
+        e.metaKey,
+        "Key:",
+        e.key,
+      );
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case "c":
+            e.preventDefault();
+            keyboardEvent.copyElement();
+            break;
+          case "v":
+            e.preventDefault();
+            keyboardEvent.pasteElement();
+            break;
+          case "x":
+            e.preventDefault();
+            keyboardEvent.cutElement();
+            break;
+          case "z":
+            e.preventDefault();
+            keyboardEvent.undo();
+            break;
+          case "y":
+            e.preventDefault();
+            keyboardEvent.redo();
+            break;
+        }
+      } else if (e.key === "Delete") {
+        e.preventDefault();
+        keyboardEvent.deleteElement();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        keyboardEvent.deselectAll();
+      }
+    };
+
+    canvas.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      canvas.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [keyboardEvent]);
+
   return (
     <div
-      className={`h-full w-full overflow-auto p-2 ${
+      ref={canvasRef}
+      className={`h-full  flex flex-col bg-background  ${
         isDraggingOver ? "bg-primary/10" : ""
       }`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       id="canvas"
+      tabIndex={0}
     >
-      {isLoading ? (
-        <ElementLoading count={6} variant="mixed" />
-      ) : (
-        <ElementLoader elements={elements} />
-      )}
-      {!selectedElement && (
-        <Button className="w-full h-6" onClick={addNewSection}>
-          + Add new section
-        </Button>
-      )}
+      <div className="overflow-x-hidden h-full w-full p-4">
+        {isLoading ? (
+          <ElementLoading count={6} variant="mixed" />
+        ) : (
+          <ElementLoader />
+        )}
+        {!selectedElement && (
+          <Button
+            className="mb-4 w-full "
+            onClick={addNewSection}
+          >
+            + Add new section
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

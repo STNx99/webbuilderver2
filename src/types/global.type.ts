@@ -13,6 +13,10 @@ import {
   SelectElement,
   TextElement,
   CarouselElement,
+  DataLoaderElement,
+  CMSContentListElement,
+  CMSContentItemElement,
+  CMSContentGridElement,
 } from "@/interfaces/elements.interface";
 
 type ContainerElement =
@@ -20,7 +24,8 @@ type ContainerElement =
   | SectionElement
   | FormElement
   | ListElement
-  | CarouselElement;
+  | CarouselElement
+  | DataLoaderElement;
 
 type EditorElement =
   | BaseElement
@@ -32,7 +37,11 @@ type EditorElement =
   | FormElement
   | SectionElement
   | TextElement
-  | CarouselElement;
+  | CarouselElement
+  | DataLoaderElement
+  | CMSContentListElement
+  | CMSContentItemElement
+  | CMSContentGridElement;
 
 type ElementType =
   | "Frame"
@@ -46,16 +55,13 @@ type ElementType =
   | "Carousel"
   | "Base"
   | "Image"
-  | "Link";
+  | "Link"
+  | "DataLoader"
+  | "CMSContentList"
+  | "CMSContentItem"
+  | "CMSContentGrid";
 
-type ExcludeType =
-  | "isSelected"
-  | "isHovered"
-  | "isDraggedOver"
-  | "id"
-  | "pageId"
-  | "projectId"
-  | "parentId";
+type ExcludeType = "id" | "pageId" | "projectId" | "parentId";
 
 type ContainerElementTemplate = Partial<Omit<EditorElement, ExcludeType>> & {
   type: ContainerElementType;

@@ -2,15 +2,24 @@ import { EditorElement, ElementType } from "@/types/global.type";
 import { ValidationRule } from "./validate.interface";
 import { EmblaOptionsType } from "embla-carousel";
 
-type CSSStyles = React.CSSProperties
+type CSSStyles = React.CSSProperties;
+
+type ResponsiveStyles = {
+  default?: React.CSSProperties;
+  sm?: React.CSSProperties;
+  md?: React.CSSProperties;
+  lg?: React.CSSProperties;
+  xl?: React.CSSProperties;
+};
 
 // Interface from
-interface DBElement<Settings = undefined> {
+
+interface Element<Settings = undefined> {
   type: ElementType;
   id: string;
   content: string;
   name?: string;
-  styles?: CSSStyles
+  styles?: ResponsiveStyles;
   tailwindStyles?: string;
   src?: string;
   href?: string;
@@ -18,12 +27,7 @@ interface DBElement<Settings = undefined> {
   pageId?: string;
   projectId: string;
   settings?: Settings | null;
-}
-
-interface Element<Settings = undefined> extends DBElement<Settings> {
-  isSelected: boolean;
-  isHovered: boolean;
-  isDraggedOver: boolean;
+  order?: number;
 }
 
 interface BaseElement extends Element {}
@@ -95,6 +99,41 @@ interface FormElement extends Element<FormSettings> {
   elements: EditorElement[];
 }
 
+interface DataLoaderSettings {
+  apiUrl: string;
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  headers?: Record<string, string>;
+  body?: string;
+  authToken?: string;
+}
+
+interface DataLoaderElement extends Element<DataLoaderSettings> {
+  elements: EditorElement[];
+}
+
+interface CMSContentSettings {
+  contentTypeId?: string;
+  displayMode?: "list" | "grid" | "single";
+  limit?: number;
+  sortBy?: "title" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
+  fieldsToShow?: string[];
+  itemSlug?: string; // For single item display
+  filterBy?: Record<string, any>;
+}
+
+interface CMSContentListElement extends Element<CMSContentSettings> {
+  elements: EditorElement[]; // Template for each item
+}
+
+interface CMSContentItemElement extends Element<CMSContentSettings> {
+  elements: EditorElement[]; // Template for the item
+}
+
+interface CMSContentGridElement extends Element<CMSContentSettings> {
+  elements: EditorElement[]; // Template for each grid item
+}
+
 export type {
   BaseElement,
   TextElement,
@@ -106,7 +145,17 @@ export type {
   SelectElement,
   FormElement,
   CarouselElement,
+  DataLoaderElement,
+  CMSContentListElement,
+  CMSContentItemElement,
+  CMSContentGridElement,
 };
 //Export settings
-export type { CarouselSettings, FormSettings, InputSettings };
-export type {CSSStyles}
+export type {
+  CarouselSettings,
+  FormSettings,
+  InputSettings,
+  DataLoaderSettings,
+  CMSContentSettings,
+};
+export type { CSSStyles, ResponsiveStyles };

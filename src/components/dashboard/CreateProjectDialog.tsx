@@ -49,11 +49,12 @@ export default function CreateProjectDialog({
   const createProjectMutation = useMutation({
     mutationFn: async (data: z.infer<typeof projectSchema>) => {
       await createProject({
-        Name: data.name,
-        Description: data.description ?? "",
-        Subdomain: data.subdomain ?? "",
-        Published: data.published ?? false,
-        Styles: {},
+        name: data.name,
+        description: data.description ?? "",
+        subdomain: data.subdomain ?? "",
+        published: data.published ?? false,
+        styles: {},
+        header: { cssStyles: "" },
       });
     },
     onSuccess: () => {

@@ -1,6 +1,6 @@
 "use server";
 import { projectDAL } from "@/data/project";
-import { Project } from "@/generated/prisma";
+import { Project } from "@/interfaces/project.interface";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
@@ -16,7 +16,7 @@ export default async function createProject(project: Partial<Project>) {
     if (!userId) {
       throw new Error("User not authenticated");
     }
-    project.Id || (project.Id = uuidv4());
+    project.id || (project.id = uuidv4());
 
     await projectDAL.createProject(project as Project, userId);
     revalidatePath("/dashboard");

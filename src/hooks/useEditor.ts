@@ -3,13 +3,16 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { usePageStore } from "@/globalstore/pagestore";
+import { useProjectStore } from "@/globalstore/projectstore";
 import { projectService } from "@/services/project";
 import { elementService } from "@/services/element";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";
+import type { Project } from "@/interfaces/project.interface";
 
 export type Viewport = "mobile" | "tablet" | "desktop";
 
@@ -18,10 +21,12 @@ export const useEditor = (id: string, pageId: string) => {
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const router = useRouter();
 
-  const { addElement, loadElements, selectedElement } = useElementStore();
-  const { pages, loadPages } = usePageStore();
+  const { addElement, loadElements, elements } = useElementStore();
+  const { selectedElement } = useSelectionStore();
+  const { pages, loadPages, setCurrentPage } = usePageStore();
+  const { loadProject } = useProjectStore();
 
-  const { data: projectPages } = useQuery({
+  const { data: projectPages, isLoading: isLoadingPages } = useQuery({
     queryKey: ["pages", id],
     queryFn: () => projectService.getProjectPages(id),
   });
@@ -32,6 +37,13 @@ export const useEditor = (id: string, pageId: string) => {
     queryKey: ["elements", id],
     queryFn: () => elementService.getElements(id),
   });
+
+  const { data: project, isLoading: isLoadingProject } =
+    useQuery<Project | null>({
+      queryKey: ["project", id],
+      queryFn: () => projectService.getProjectById(id),
+      enabled: Boolean(id),
+    });
 
   useEffect(() => {
     if (projectPages && projectPages.length > 0) {
@@ -45,7 +57,20 @@ export const useEditor = (id: string, pageId: string) => {
     }
   }, [fetchedElements, loadElements]);
 
-  const filteredElements = elementHelper.filterElementByPageId(pageId);
+  useEffect(() => {
+    if (project) {
+      if (!project || project.deletedAt) {
+        router.push("/dashboard");
+        return;
+      }
+      loadProject(project as Project);
+    }
+  }, [project, loadProject]);
+
+  const filteredElements = elementHelper.filterElementByPageId(
+    elements,
+    pageId,
+  );
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -64,9 +89,7 @@ export const useEditor = (id: string, pageId: string) => {
         pageId,
       );
     } else if (customElement) {
-      const customComp = customComps.find(
-        (comp) => comp.name === customElement,
-      );
+      const customComp = customComps[parseInt(customElement)];
       if (customComp) {
         newElement = elementHelper.createElement.createFromTemplate(
           customComp,
@@ -84,6 +107,7 @@ export const useEditor = (id: string, pageId: string) => {
     const pageName = e.currentTarget.value.slice(1);
     const page = pages.find((p) => p.Name === pageName);
 
+    new Promise(() => setCurrentPage(page || null));
     if (page) {
       router.push(`/editor/${id}?page=${page.Id}`);
     } else {
@@ -111,11 +135,13 @@ export const useEditor = (id: string, pageId: string) => {
     if (newElement) addElement(newElement);
   };
 
+  const isLoading = isLoadingElements || isLoadingPages || isLoadingProject;
+
   return {
     currentView,
     setCurrentView,
     isDraggingOver,
-    isLoadingElements,
+    isLoading,
     filteredElements,
     selectedElement,
     handleDrop,

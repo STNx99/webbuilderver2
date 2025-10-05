@@ -3,23 +3,22 @@
 import { Button } from "@/components/ui/button";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorElement } from "@/types/global.type";
-import { elementHelper } from "@/utils/element/elementhelper";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
+import { useSelectionStore } from "@/globalstore/selectionstore";
 import { FormElement, InputElement } from "@/interfaces/elements.interface";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
+import ElementLoader from "../ElementLoader";
 
-type FormComponentProps = {
-  element: EditorElement;
-};
-
-export default function FormComponent({ element }: FormComponentProps) {
+export default function FormComponent({ element, data }: EditorComponentProps) {
   const { getCommonProps } = useElementHandler();
   const { addElement, updateElement } = useElementStore<EditorElement>();
   const formElement = element as FormElement;
+  const searhParams = useSearchParams();
   const { id } = useParams();
 
   const handleAddField = () => {
-    const searhParams = useSearchParams();
     const newField = elementHelper.createElement.create<InputElement>(
       "Input",
       id as string,
@@ -36,25 +35,22 @@ export default function FormComponent({ element }: FormComponentProps) {
     updateElement(formElement.id, { ...formElement, elements: updated });
   };
 
-  const isEditing = formElement.isSelected;
+  const { selectedElement } = useSelectionStore();
+  const isEditing = selectedElement?.id === formElement.id;
+
+  const safeStyles = elementHelper.getSafeStyles(formElement);
 
   return (
     <form
       {...getCommonProps(formElement)}
       className="flex flex-col gap-4 p-4 border rounded-lg"
       style={{
-        ...(formElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}
     >
-      {formElement.elements?.map((child, index) =>
-        elementHelper.renderChildElement(child, {
-          isEditing,
-          onChange: (updatedChild: EditorElement) =>
-            handleChildChange(index, updatedChild),
-        }),
-      )}
+      <ElementLoader elements={formElement.elements} data={data} />
 
       <div className="flex flex-row w-full">
         {isEditing && (

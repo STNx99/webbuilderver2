@@ -3,16 +3,20 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import DOMPurify from "dompurify";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { ButtonElement } from "@/interfaces/elements.interface";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const ButtonComponent = ({ element }: EditorComponentProps) => {
   const buttonElement = element as ButtonElement;
   const { getCommonProps } = useElementHandler();
+
+  const safeStyles = elementHelper.getSafeStyles(buttonElement);
+
   return (
     <button
       {...getCommonProps(buttonElement)}
       type={"button"}
       style={{
-        ...(buttonElement.styles || {}),
+        ...safeStyles,
         width: "100%",
         height: "100%",
       }}

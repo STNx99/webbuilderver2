@@ -1,53 +1,79 @@
-import GetUrl, { GetNextJSURL } from "@/utils/geturl";
-import { IProjectService } from "@/interfaces/service.interface";
-import getToken from "./token";
-import { Page } from "@/generated/prisma";
+import GetUrl from "@/lib/utils/geturl";
+import { Page } from "@/interfaces/page.interface";
 import { Project } from "@/interfaces/project.interface";
-import { fetchPublic, fetchWithAuth } from "./api";
+import apiClient from "./apiclient";
+import { API_ENDPOINTS } from "@/constants/endpoints";
+
+interface IProjectService {
+  getProjects: () => Promise<Project[]>;
+  getUserProjects: () => Promise<Project[]>;
+  getProjectById: (id: string) => Promise<Project>;
+  createProject: (project: Project) => Promise<Project>;
+  updateProject: (project: Project) => Promise<Project>;
+  updateProjectPartial: (
+    projectId: string,
+    project: Partial<Project>
+  ) => Promise<Project>;
+  deleteProject: (id: string) => Promise<boolean>;
+  getProjectPages: (id: string) => Promise<Page[]>;
+  deleteProjectPage: (projectId: string, pageId: string) => Promise<boolean>;
+  getFonts: () => Promise<string[]>;
+}
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    return fetchPublic<Project[]>(GetUrl("/projects/public"));
+    return apiClient.getPublic<Project[]>(
+      GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC)
+    );
   },
 
   getUserProjects: async (): Promise<Project[]> => {
-    return fetchWithAuth<Project[]>(GetUrl("/projects/user"));
+    return apiClient.get<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_USER));
   },
 
   getProjectById: async (id: string): Promise<Project> => {
-    return fetchWithAuth<Project>(GetUrl(`/projects/${id}`));
+    return apiClient.get<Project>(GetUrl(API_ENDPOINTS.PROJECTS.GET_BY_ID(id)));
   },
 
   deleteProject: async (id: string): Promise<boolean> => {
-    const token = await getToken();
-    const response = await fetch(GetNextJSURL(`/api/projects/${id}`), {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    if (response.status === 204) return true;
-    return false;
+    return apiClient.delete(GetUrl(API_ENDPOINTS.PROJECTS.DELETE(id)));
+  },
+
+  createProject: async (project: Project) => {
+    return await apiClient.post<Project>(
+      GetUrl(API_ENDPOINTS.PROJECTS.CREATE),
+      project
+    );
+  },
+
+  updateProject: async (project: Project) => {
+    return await apiClient.put<Project>(
+      GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(project.id)),
+      project
+    );
   },
 
   getProjectPages: async (id: string): Promise<Page[]> => {
-    return fetchWithAuth<Page[]>(GetUrl(`/projects/${id}/pages`));
+    return apiClient.get<Page[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PAGES(id)));
+  },
+
+  updateProjectPartial: async (
+    projectId: string,
+    project: Partial<Project>
+  ): Promise<Project> => {
+    return apiClient.patch<Project>(
+      GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
+      project
+    );
   },
 
   deleteProjectPage: async (
     projectId: string,
-    pageId: string,
+    pageId: string
   ): Promise<boolean> => {
-    const token = await getToken();
-    const response = await fetch(`/api/projects/${projectId}/pages/${pageId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-    return response.status === 204;
+    return apiClient.delete(
+      GetUrl(API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId))
+    );
   },
 
   getFonts: async (): Promise<string[]> => {
@@ -59,7 +85,7 @@ export const projectService: IProjectService = {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
     if (!response.ok) {
       throw new Error("Failed to fetch fonts");
