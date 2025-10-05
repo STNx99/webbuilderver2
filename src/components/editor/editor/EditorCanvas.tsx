@@ -101,7 +101,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         )}
         {!selectedElement && (
           <Button
-            className="mb-4 w-full"
+            className="mb-4 w-full "
             onClick={addNewSection}
           >
             + Add new section

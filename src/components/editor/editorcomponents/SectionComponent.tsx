@@ -52,7 +52,7 @@ const SectionComponent = ({ element, data }: EditorComponentProps) => {
             zIndex: 10,
           }}
         >
-          <Button className="h-6" onDoubleClick={handleCreateSeciont}>
+          <Button className="h-6 text-primary-foreground" onDoubleClick={handleCreateSeciont}>
             + Add Section
           </Button>
         </div>

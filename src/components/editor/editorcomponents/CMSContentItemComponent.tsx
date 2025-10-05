@@ -21,42 +21,8 @@ const CMSContentItemComponent = ({ element, data }: EditorComponentProps) => {
     itemSlug || "",
   );
 
-  const mockItem = {
-    id: "1",
-    contentTypeId: "sample",
-    title: "Sample CMS Item",
-    slug: itemSlug || "sample-item",
-    published: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    fieldValues: [
-      {
-        id: "fv1",
-        contentItemId: "1",
-        fieldId: "content",
-        value:
-          "This is sample content for the CMS item. In a real implementation, this would be loaded from your CMS based on the content type and slug.",
-        field: { name: "content" },
-      },
-      {
-        id: "fv2",
-        contentItemId: "1",
-        fieldId: "excerpt",
-        value: "This is a sample excerpt...",
-        field: { name: "excerpt" },
-      },
-      {
-        id: "fv3",
-        contentItemId: "1",
-        fieldId: "author",
-        value: "Sample Author",
-        field: { name: "author" },
-      },
-    ],
-  };
 
-  // Use provided data, CMS content, or mock data
-  const itemToRender = data || contentItem || mockItem;
+  const itemToRender = data || contentItem
 
   if (!contentTypeId) {
     return (
