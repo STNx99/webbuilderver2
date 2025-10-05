@@ -1,5 +1,5 @@
 import GetUrl from "@/lib/utils/geturl";
-import { Page } from "@/generated/prisma";
+import { Page } from "@prisma/client";
 import { Project } from "@/interfaces/project.interface";
 import apiClient from "./apiclient";
 import { API_ENDPOINTS } from "@/constants/endpoints";
@@ -12,7 +12,7 @@ interface IProjectService {
   updateProject: (project: Project) => Promise<Project>;
   updateProjectPartial: (
     projectId: string,
-    project: Partial<Project>,
+    project: Partial<Project>
   ) => Promise<Project>;
   deleteProject: (id: string) => Promise<boolean>;
   getProjectPages: (id: string) => Promise<Page[]>;
@@ -23,7 +23,7 @@ interface IProjectService {
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
     return apiClient.getPublic<Project[]>(
-      GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC),
+      GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC)
     );
   },
 
@@ -42,14 +42,14 @@ export const projectService: IProjectService = {
   createProject: async (project: Project) => {
     return await apiClient.post<Project>(
       GetUrl(API_ENDPOINTS.PROJECTS.CREATE),
-      project,
+      project
     );
   },
 
   updateProject: async (project: Project) => {
     return await apiClient.put<Project>(
       GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(project.id)),
-      project,
+      project
     );
   },
 
@@ -59,20 +59,20 @@ export const projectService: IProjectService = {
 
   updateProjectPartial: async (
     projectId: string,
-    project: Partial<Project>,
+    project: Partial<Project>
   ): Promise<Project> => {
     return apiClient.patch<Project>(
       GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
-      project,
+      project
     );
   },
 
   deleteProjectPage: async (
     projectId: string,
-    pageId: string,
+    pageId: string
   ): Promise<boolean> => {
     return apiClient.delete(
-      GetUrl(API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId)),
+      GetUrl(API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId))
     );
   },
 
@@ -85,7 +85,7 @@ export const projectService: IProjectService = {
         headers: {
           "Content-Type": "application/json",
         },
-      },
+      }
     );
     if (!response.ok) {
       throw new Error("Failed to fetch fonts");

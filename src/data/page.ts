@@ -1,4 +1,4 @@
-import { Page } from "@/generated/prisma";
+import { Page } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/prisma";
 
@@ -29,7 +29,7 @@ export const pageDAL = {
   updatePage: async (
     pageId: string,
     page: Partial<Page>,
-    userId: string,
+    userId: string
   ): Promise<Page | null> => {
     return null;
   },
