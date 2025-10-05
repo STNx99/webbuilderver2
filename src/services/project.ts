@@ -1,5 +1,5 @@
 import GetUrl from "@/lib/utils/geturl";
-import type { Page } from "@prisma/client";
+import { Page } from "@/interfaces/page.interface";
 import { Project } from "@/interfaces/project.interface";
 import apiClient from "./apiclient";
 import { API_ENDPOINTS } from "@/constants/endpoints";

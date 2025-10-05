@@ -1,4 +1,4 @@
-import type { Page } from "@prisma/client";
+import { Page } from "@/interfaces/page.interface";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/prisma";
 
@@ -9,7 +9,7 @@ export const pageDAL = {
         Id: page.Id || uuidv4(),
         Name: page.Name,
         Type: page.Type,
-        Styles: page.Styles || {},
+        Styles: (page.Styles as any) || {},
         ProjectId: page.ProjectId,
         CreatedAt: new Date(),
         UpdatedAt: new Date(),
@@ -17,7 +17,16 @@ export const pageDAL = {
       },
     });
 
-    return createdPage;
+    return {
+      Id: createdPage.Id,
+      Name: createdPage.Name,
+      Type: createdPage.Type,
+      Styles: createdPage.Styles as Record<string, unknown> | null,
+      ProjectId: createdPage.ProjectId,
+      CreatedAt: createdPage.CreatedAt,
+      UpdatedAt: createdPage.UpdatedAt,
+      DeletedAt: createdPage.DeletedAt,
+    };
   },
 
   getPage: async (pageId: string, userId: string): Promise<Page | null> => {

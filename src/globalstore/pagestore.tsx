@@ -1,4 +1,4 @@
-import type { Page } from "@prisma/client";
+import { Page } from "@/interfaces/page.interface";
 import { projectService } from "@/services/project";
 import { create } from "zustand";
 
