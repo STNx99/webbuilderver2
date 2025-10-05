@@ -1,4 +1,4 @@
-import { Page } from "@prisma/client";
+import type { Page } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import prisma from "@/lib/prisma";
 

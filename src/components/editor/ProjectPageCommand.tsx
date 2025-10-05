@@ -42,7 +42,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageSchema } from "@/schema/zod";
-import { Page } from "@prisma/client";
+import type { Page } from "@prisma/client";
 import createPage from "@/app/actions/pageAction";
 
 const createPageSchema = z.object({

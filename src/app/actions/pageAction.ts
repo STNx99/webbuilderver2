@@ -1,6 +1,6 @@
 "use server";
 import { pageDAL } from "@/data/page";
-import { Page } from "@prisma/client";
+import type { Page } from "@prisma/client";
 import { PageSchema } from "@/schema/zod";
 import { auth } from "@clerk/nextjs/server";
 import { v4 as uuidv4 } from "uuid";
