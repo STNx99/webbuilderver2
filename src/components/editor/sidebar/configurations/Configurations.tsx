@@ -11,6 +11,7 @@ import CarouselConfigurationAccordion from "./CarouselConfiguration";
 import TailwindAccordion from "./TailwindAccordion";
 import DataLoaderConfiguration from "./DataLoaderConfiguration";
 import { BreakpointSelector } from "./BreakpointSelector";
+import CMSConfiguration from "./CMSConfiguration";
 
 export default function Configurations() {
   const { selectedElement } = useSelectionStore();
@@ -36,6 +37,12 @@ export default function Configurations() {
         return <CarouselConfigurationAccordion />;
       case "DataLoader":
         return <DataLoaderConfiguration />;
+      case "CMSContentList":
+      case "CMSContentItem":
+      case "CMSContentGrid":
+        return selectedElement ? (
+          <CMSConfiguration elementId={selectedElement.id} />
+        ) : null;
       default:
         return null;
     }

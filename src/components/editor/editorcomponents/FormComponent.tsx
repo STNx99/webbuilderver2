@@ -38,13 +38,7 @@ export default function FormComponent({ element, data }: EditorComponentProps) {
   const { selectedElement } = useSelectionStore();
   const isEditing = selectedElement?.id === formElement.id;
 
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    formElement.styles &&
-    typeof formElement.styles === "object" &&
-    !Array.isArray(formElement.styles)
-      ? formElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(formElement);
 
   return (
     <form

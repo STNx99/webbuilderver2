@@ -9,8 +9,9 @@ import { useSelectionStore } from "@/globalstore/selectionstore";
 import { useElementStore } from "@/globalstore/elementstore";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { customComps } from "@/lib/customcomponents/customComponents";
 interface ElementLoaderProps {
-  elements?: EditorElement[];
+  elements?: EditorElement[]; 
   data?: any;
 }
 
@@ -22,7 +23,6 @@ export default function ElementLoader({
   const {
     draggedOverElement,
     draggingElement,
-    setSelectedElement,
     setDraggingElement,
     setDraggedOverElement,
   } = useSelectionStore();
@@ -53,15 +53,30 @@ export default function ElementLoader({
   const handleDrop = (e: React.DragEvent, element: EditorElement) => {
     e.preventDefault();
     e.stopPropagation();
-    const data = e.dataTransfer.getData("elementType");
-    if (data) {
+    const elementType = e.dataTransfer.getData("elementType");
+    const customElement = e.dataTransfer.getData("customComponentName");
+    if (elementType) {
       const newElement = elementHelper.createElement.create(
-        data as ElementType,
+        elementType as ElementType,
         element.projectId,
         undefined,
         element.pageId,
       );
       if (newElement) insertElement(element, newElement);
+    }
+    if (customElement) {
+      try {
+        const customComp = customComps[parseInt(customElement)];
+        const newElement = elementHelper.createElement.createFromTemplate(
+          customComp,
+          element.projectId,
+          element.pageId,
+        );
+        if (newElement) insertElement(element, newElement);
+        console.log("Inserting custom component:", newElement);
+      } catch (error) {
+        console.error("Failed to parse custom component data:", error);
+      }
     }
     setDraggedOverElement(undefined);
     setDraggingElement(undefined);

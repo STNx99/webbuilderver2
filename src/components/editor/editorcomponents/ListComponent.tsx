@@ -4,18 +4,13 @@ import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { ListElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
 import ElementLoader from "../ElementLoader";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const ListComponent = ({ element, data }: EditorComponentProps) => {
   const listElement = element as ListElement;
 
   const { getCommonProps } = useElementHandler();
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    listElement.styles &&
-    typeof listElement.styles === "object" &&
-    !Array.isArray(listElement.styles)
-      ? listElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(listElement);
 
   // If data is an array, render each item using child elements as template
   const itemsToRender = Array.isArray(data) ? data : listElement.elements || [];

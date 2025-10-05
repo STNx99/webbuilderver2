@@ -3,6 +3,7 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { DataLoaderElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const DataLoaderComponent = ({ element }: EditorComponentProps) => {
   const dataLoaderElement = element as DataLoaderElement;
@@ -53,12 +54,7 @@ const DataLoaderComponent = ({ element }: EditorComponentProps) => {
     dataLoaderElement.settings?.authToken,
   ]);
 
-  const safeStyles =
-    dataLoaderElement.styles &&
-    typeof dataLoaderElement.styles === "object" &&
-    !Array.isArray(dataLoaderElement.styles)
-      ? dataLoaderElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(dataLoaderElement);
 
   return (
     <div

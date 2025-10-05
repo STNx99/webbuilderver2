@@ -38,34 +38,8 @@ type UpdatePayload<TElement extends EditorElement> = {
   settings?: string | null;
 };
 
-type Debouncer<TElement extends EditorElement> = ReturnType<
-  typeof debounce<(payload: UpdatePayload<TElement>) => Promise<void>>
->;
-
 const createElementStore = <TElement extends EditorElement>() => {
   return create<ElementStore<TElement>>((set, get) => {
-    const debouncers = new Map<string, Debouncer<TElement>>();
-
-    const getDebouncerForId = (id: string): Debouncer<TElement> => {
-      let d = debouncers.get(id);
-      if (d) return d;
-
-      d = debounce(async (payload: UpdatePayload<TElement>) => {
-        try {
-          await elementService.updateElement(
-            payload.element.id,
-            payload.element,
-            payload.settings ?? null,
-          );
-        } catch (err) {
-          console.error("Failed to persist element update, reverting:", err);
-        }
-      }, 300) as Debouncer<TElement>;
-
-      debouncers.set(id, d);
-      return d;
-    };
-
     const saveSnapshotToApi = async (elements: EditorElement[]) => {
       try {
         const projectId = elements[0]?.projectId;
@@ -85,6 +59,16 @@ const createElementStore = <TElement extends EditorElement>() => {
       }
     };
 
+    const debouncedSave = debounce(async () => {
+      const clonedElements = cloneDeep(get().elements) as EditorElement[];
+      try {
+        await saveSnapshotToApi(clonedElements);
+      } catch (err) {
+        set({elements: clonedElements as TElement[]})
+        console.error("Failed to autosave snapshot:", err);
+      }
+    }, 2000);
+
     const takeSnapshot = () => {
       const { elements, past } = get();
       set({
@@ -101,20 +85,18 @@ const createElementStore = <TElement extends EditorElement>() => {
       setElements: (elements: TElement[]) => {
         takeSnapshot();
         set({ elements });
-        saveSnapshotToApi(elements as EditorElement[]);
+        debouncedSave();
         return get();
       },
       loadElements: (elements: TElement[]) => {
         set({ elements });
-        saveSnapshotToApi(elements as EditorElement[]);
+        debouncedSave();
         return get();
       },
 
       updateElement: (id: string, updatedElement: Partial<TElement>) => {
         takeSnapshot();
         const { elements } = get();
-
-        const prevElements = cloneDeep(elements);
         const updatedTree = elementHelper.mapUpdateById(
           elements as EditorElement[],
           id,
@@ -125,6 +107,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         ) as TElement[];
 
         set({ elements: updatedTree });
+        debouncedSave();
 
         const { selectedElement } = SelectionStore.getState();
         console.log("element before update", selectedElement);
@@ -141,34 +124,12 @@ const createElementStore = <TElement extends EditorElement>() => {
         }
         console.log("element after update", selectedElement);
 
-        const elementToPersist = elementHelper.findById(
-          updatedTree as EditorElement[],
-          id,
-        );
-        if (!elementToPersist) return get();
-
-        const persistElement = elementToPersist as PersistElement;
-
-        const settingsPayload =
-          "settings" in persistElement &&
-          typeof (persistElement as EditorElement).settings === "string"
-            ? ((persistElement as EditorElement).settings as string)
-            : undefined;
-
-        const db = getDebouncerForId(id);
-        db({
-          element: persistElement,
-          prevElements,
-          settings: settingsPayload,
-        });
         return get();
       },
 
       deleteElement: (id: string) => {
         takeSnapshot();
         const { elements } = get();
-
-        const prevElements = cloneDeep(elements);
         const updatedTree = elementHelper.mapDeleteById(
           elements as EditorElement[],
           id,
@@ -177,16 +138,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({
           elements: updatedTree,
         });
-
-        (async () => {
-          try {
-            const ok = await elementService.deleteElement(id);
-            if (!ok) set({ elements: prevElements });
-          } catch (err) {
-            console.error("Failed to delete element, reverting:", err);
-            set({ elements: prevElements });
-          }
-        })();
+        debouncedSave();
         return get();
       },
 
@@ -196,7 +148,6 @@ const createElementStore = <TElement extends EditorElement>() => {
       ) => {
         takeSnapshot();
         const { elements } = get();
-        const prevElements = cloneDeep(elements);
         const updated = elementHelper.mapInsertAfterId(
           elements as EditorElement[],
           parentElement.id,
@@ -205,32 +156,13 @@ const createElementStore = <TElement extends EditorElement>() => {
 
         console.log("Inserting element", elementToBeInserted);
         set({ elements: updated });
-
-        (async () => {
-          try {
-            const projectId = elementToBeInserted.projectId;
-            if (!projectId) return;
-            await elementService.insertElement(
-              projectId,
-              parentElement.id,
-              elementToBeInserted as EditorElement,
-            );
-          } catch (err) {
-            console.error(
-              "Failed to persist inserted element, reverting:",
-              err,
-            );
-            set({ elements: prevElements });
-          }
-        })();
+        debouncedSave();
         return get();
       },
 
       addElement: (...newElements: TElement[]) => {
         takeSnapshot();
         const { elements } = get();
-        const prevElements = cloneDeep(elements);
-
         const insertOne = (
           tree: EditorElement[],
           newEl: TElement,
@@ -273,25 +205,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({
           elements: updatedTree,
         });
-
-        (async () => {
-          try {
-            const projectId = newElements[0]?.projectId;
-            if (!projectId) return;
-            await elementService.createElement(
-              projectId,
-              ...(newElements as EditorElement[]),
-            );
-          } catch (err) {
-            console.error(
-              "Failed to persist elements, reverting optimistic update:",
-              err,
-            );
-            set({
-              elements: prevElements,
-            });
-          }
-        })();
+        debouncedSave();
         return get();
       },
 
@@ -322,7 +236,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           (e: TElement) => recursivelyUpdate(e) as TElement,
         );
         set({ elements: updated });
-        saveSnapshotToApi(updated as EditorElement[]);
+        debouncedSave();
         return get();
       },
 
@@ -336,7 +250,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements: previous,
           future: [elements, ...future],
         });
-        saveSnapshotToApi(previous as EditorElement[]);
+        debouncedSave();
         return get();
       },
 
@@ -350,15 +264,13 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements: next,
           future: newFuture,
         });
-        saveSnapshotToApi(next as EditorElement[]);
+        debouncedSave();
         return get();
       },
 
       swapElement: (id1: string, id2: string) => {
         takeSnapshot();
         const { elements } = get();
-        const prevElements = cloneDeep(elements);
-
         const el1 = elementHelper.findById(elements, id1);
         const el2 = elementHelper.findById(elements, id2);
 
@@ -397,6 +309,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           ) as TElement[];
 
           set({ elements: updatedTree });
+          debouncedSave();
         } else {
           // Top-level elements
           const idx1 = elements.findIndex((e) => e.id === id1);
@@ -411,19 +324,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           ];
 
           set({ elements: newElements });
-        }
-
-        // Persist the swap to the API
-        const projectId = elements[0]?.projectId;
-        if (projectId) {
-          (async () => {
-            try {
-              await elementService.swapElement(projectId, id1, id2);
-            } catch (err) {
-              console.error("Failed to persist swap, reverting:", err);
-              set({ elements: prevElements });
-            }
-          })();
+          debouncedSave();
         }
 
         return get();

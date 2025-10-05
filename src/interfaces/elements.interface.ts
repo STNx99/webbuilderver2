@@ -111,6 +111,29 @@ interface DataLoaderElement extends Element<DataLoaderSettings> {
   elements: EditorElement[];
 }
 
+interface CMSContentSettings {
+  contentTypeId?: string;
+  displayMode?: "list" | "grid" | "single";
+  limit?: number;
+  sortBy?: "title" | "createdAt" | "updatedAt";
+  sortOrder?: "asc" | "desc";
+  fieldsToShow?: string[];
+  itemSlug?: string; // For single item display
+  filterBy?: Record<string, any>;
+}
+
+interface CMSContentListElement extends Element<CMSContentSettings> {
+  elements: EditorElement[]; // Template for each item
+}
+
+interface CMSContentItemElement extends Element<CMSContentSettings> {
+  elements: EditorElement[]; // Template for the item
+}
+
+interface CMSContentGridElement extends Element<CMSContentSettings> {
+  elements: EditorElement[]; // Template for each grid item
+}
+
 export type {
   BaseElement,
   TextElement,
@@ -123,6 +146,9 @@ export type {
   FormElement,
   CarouselElement,
   DataLoaderElement,
+  CMSContentListElement,
+  CMSContentItemElement,
+  CMSContentGridElement,
 };
 //Export settings
 export type {
@@ -130,5 +156,6 @@ export type {
   FormSettings,
   InputSettings,
   DataLoaderSettings,
+  CMSContentSettings,
 };
 export type { CSSStyles, ResponsiveStyles };

@@ -20,6 +20,65 @@ import {
 } from "./create/createElements";
 import { ResponsiveStyles } from "@/interfaces/elements.interface";
 
+// Helper function to safely extract styles from an element
+const getSafeStyles = (element: EditorElement): React.CSSProperties => {
+  if (
+    !element.styles ||
+    typeof element.styles !== "object" ||
+    Array.isArray(element.styles)
+  ) {
+    return {};
+  }
+  const merged: React.CSSProperties = {};
+  const styles = element.styles;
+  const breakpoints: (keyof typeof styles)[] = [
+    "default",
+    "sm",
+    "md",
+    "lg",
+    "xl",
+  ];
+  breakpoints.forEach((bp) => {
+    if (styles[bp]) {
+      Object.assign(merged, styles[bp]);
+    }
+  });
+  return merged;
+};
+
+// Helper function to replace placeholders like {{field}} with data values
+const replacePlaceholders = (text: string, data: any): string => {
+  if (!data || typeof data !== "object") return text;
+
+  return text.replace(/\{\{([^}]+)\}\}/g, (match, placeholder) => {
+    const [field, filter] = placeholder.split("|");
+    let value = data;
+
+    // Support nested property access using dot notation (e.g., "0.content", "item.title")
+    for (const part of field.split(".")) {
+      if (value && typeof value === "object" && part in value) {
+        value = value[part];
+      } else {
+        value = undefined;
+        break;
+      }
+    }
+
+    if (value === undefined) return match; // Keep placeholder if field not found
+
+    // Apply filters
+    if (filter === "date" && value) {
+      try {
+        value = new Date(value).toLocaleDateString();
+      } catch {
+        // Keep original value if date parsing fails
+      }
+    }
+
+    return String(value);
+  });
+};
+
 const findById = (
   els: EditorElement[],
   id: string,
@@ -149,6 +208,10 @@ interface ElementHelper {
     targetId: string,
     toInsert: EditorElement,
   ) => EditorElement[];
+
+  replacePlaceholders: (text: string, data: any) => string;
+
+  getSafeStyles: (element: EditorElement) => React.CSSProperties;
 }
 
 export const isContainerElement = (
@@ -223,4 +286,6 @@ export const elementHelper: ElementHelper = {
   mapUpdateById: mapUpdateById,
   mapDeleteById: mapDeleteById,
   mapInsertAfterId: mapInsertAfterId,
+  replacePlaceholders: replacePlaceholders,
+  getSafeStyles: getSafeStyles,
 };

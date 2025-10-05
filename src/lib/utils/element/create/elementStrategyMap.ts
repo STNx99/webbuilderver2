@@ -2,6 +2,9 @@ import { ElementType } from "@/types/global.type";
 import {
   ButtonElementCreateStrategy,
   CarouselElementCreateStrategy,
+  CMSContentGridElementCreateStrategy,
+  CMSContentItemElementCreateStrategy,
+  CMSContentListElementCreateStrategy,
   DataLoaderElementCreateStrategy,
   ElementCreateStrategy,
   FormElementCreateStrategy,
@@ -27,6 +30,9 @@ export const ElementStrategyMap: Map<ElementType, ElementCreateStrategy> =
     ["Section", new SectionElementCreateStrategy()],
     ["Carousel", new CarouselElementCreateStrategy()],
     ["DataLoader", new DataLoaderElementCreateStrategy()],
+    ["CMSContentList", new CMSContentListElementCreateStrategy()],
+    ["CMSContentItem", new CMSContentItemElementCreateStrategy()],
+    ["CMSContentGrid", new CMSContentGridElementCreateStrategy()],
   ]);
 
 export const getElementStrategy = (

@@ -28,13 +28,7 @@ const CarouselComponent = ({ element, data }: EditorComponentProps) => {
   const carouselSettings: CarouselSettings = element.settings ?? {};
   const hasNavigation = carouselSettings.withNavigation ?? true;
 
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    element.styles &&
-    typeof element.styles === "object" &&
-    !Array.isArray(element.styles)
-      ? element.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(element);
 
   return (
     <Carousel

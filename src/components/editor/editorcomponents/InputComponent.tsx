@@ -2,18 +2,13 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { InputElement } from "@/interfaces/elements.interface";
 import React from "react";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const InputComponent = ({ element }: EditorComponentProps) => {
   const inputElement = element as InputElement;
   const { getCommonProps } = useElementHandler();
 
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    inputElement.styles &&
-    typeof inputElement.styles === "object" &&
-    !Array.isArray(inputElement.styles)
-      ? inputElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(inputElement);
 
   return (
     <input

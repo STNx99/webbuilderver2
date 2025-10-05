@@ -53,6 +53,10 @@ interface ICmsService<TContext = any> {
     sortBy?: string;
     sortOrder?: string;
   }): Promise<ContentItem[]>;
+  getPublicContentItem(
+    contentTypeId: string,
+    slug: string,
+  ): Promise<ContentItem>;
 }
 
 export const cmsService: ICmsService = {
@@ -201,6 +205,15 @@ export const cmsService: ICmsService = {
     if (params?.sortOrder) query.append("sortOrder", params.sortOrder);
     return apiClient.get(
       GetUrl(`${API_ENDPOINTS.CMS.PUBLIC_CONTENT.GET}?${query.toString()}`),
+    );
+  },
+
+  getPublicContentItem: async (
+    contentTypeId: string,
+    slug: string,
+  ): Promise<ContentItem> => {
+    return apiClient.get(
+      GetUrl(API_ENDPOINTS.CMS.PUBLIC_CONTENT.GET_ITEM(contentTypeId, slug)),
     );
   },
 };

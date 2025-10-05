@@ -3,18 +3,13 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { FrameElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const FrameComponent = ({ element, data }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
   const { getCommonProps } = useElementHandler();
 
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    frameElement.styles &&
-    typeof frameElement.styles === "object" &&
-    !Array.isArray(frameElement.styles)
-      ? frameElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(frameElement);
 
   return (
     <div

@@ -19,12 +19,7 @@ const SectionComponent = ({ element, data }: EditorComponentProps) => {
 
   const { getCommonProps } = useElementHandler();
 
-  const safeStyles =
-    sectionElement.styles &&
-    typeof sectionElement.styles === "object" &&
-    !Array.isArray(sectionElement.styles)
-      ? sectionElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(sectionElement);
 
   const handleCreateSeciont = () => {
     const newElement = elementHelper.createElement.create<SectionElement>(

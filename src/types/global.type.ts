@@ -14,6 +14,9 @@ import {
   TextElement,
   CarouselElement,
   DataLoaderElement,
+  CMSContentListElement,
+  CMSContentItemElement,
+  CMSContentGridElement,
 } from "@/interfaces/elements.interface";
 
 type ContainerElement =
@@ -35,7 +38,10 @@ type EditorElement =
   | SectionElement
   | TextElement
   | CarouselElement
-  | DataLoaderElement;
+  | DataLoaderElement
+  | CMSContentListElement
+  | CMSContentItemElement
+  | CMSContentGridElement;
 
 type ElementType =
   | "Frame"
@@ -50,7 +56,10 @@ type ElementType =
   | "Base"
   | "Image"
   | "Link"
-  | "DataLoader";
+  | "DataLoader"
+  | "CMSContentList"
+  | "CMSContentItem"
+  | "CMSContentGrid";
 
 type ExcludeType = "id" | "pageId" | "projectId" | "parentId";
 

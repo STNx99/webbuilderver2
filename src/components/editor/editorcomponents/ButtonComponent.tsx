@@ -3,18 +3,13 @@ import { useElementHandler } from "@/hooks/useElementHandler";
 import DOMPurify from "dompurify";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { ButtonElement } from "@/interfaces/elements.interface";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const ButtonComponent = ({ element }: EditorComponentProps) => {
   const buttonElement = element as ButtonElement;
   const { getCommonProps } = useElementHandler();
 
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    buttonElement.styles &&
-    typeof buttonElement.styles === "object" &&
-    !Array.isArray(buttonElement.styles)
-      ? buttonElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(buttonElement);
 
   return (
     <button

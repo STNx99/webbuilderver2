@@ -25,6 +25,9 @@ import ListComponent from "@/components/editor/editorcomponents/ListComponent";
 import SectionComponent from "@/components/editor/editorcomponents/SectionComponent";
 import SelectComponent from "@/components/editor/editorcomponents/SelectComponent";
 import DataLoaderComponent from "@/components/editor/editorcomponents/DataLoaderComponent";
+import CMSContentListComponent from "@/components/editor/editorcomponents/CMSContentListComponent";
+import CMSContentItemComponent from "@/components/editor/editorcomponents/CMSContentItemComponent";
+import CMSContentGridComponent from "@/components/editor/editorcomponents/CMSContentGridComponent";
 
 interface ElementHolder {
   type: ElementType;
@@ -38,6 +41,9 @@ export const CONTAINER_ELEMENT_TYPES = [
   "Section",
   "Carousel",
   "DataLoader",
+  "CMSContentList",
+  "CMSContentItem",
+  "CMSContentGrid",
 ] as const;
 
 export const EDITABLE_ELEMENT_TYPES = [
@@ -97,6 +103,18 @@ export const elementHolders: ElementHolder[] = [
     type: "DataLoader",
     icon: <Database className="w-4 h-4" />,
   },
+  {
+    type: "CMSContentList",
+    icon: <List className="w-4 h-4" />,
+  },
+  {
+    type: "CMSContentItem",
+    icon: <Database className="w-4 h-4" />,
+  },
+  {
+    type: "CMSContentGrid",
+    icon: <Database className="w-4 h-4" />,
+  },
 ] as const;
 
 const ComponentMap = new Map<
@@ -115,6 +133,9 @@ const ComponentMap = new Map<
   ["Carousel", CarouselComponent],
   ["List", ListComponent],
   ["DataLoader", DataLoaderComponent],
+  ["CMSContentList", CMSContentListComponent],
+  ["CMSContentItem", CMSContentItemComponent],
+  ["CMSContentGrid", CMSContentGridComponent],
 ]);
 
 export const getComponentMap = (

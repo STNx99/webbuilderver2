@@ -1,17 +1,12 @@
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { SelectElement } from "@/interfaces/elements.interface";
 import React from "react";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const SelectComponent = ({ element }: EditorComponentProps) => {
   const selectElement = element as SelectElement;
 
-  // Defensive check: ensure styles is a valid object
-  const safeStyles =
-    selectElement.styles &&
-    typeof selectElement.styles === "object" &&
-    !Array.isArray(selectElement.styles)
-      ? selectElement.styles
-      : {};
+  const safeStyles = elementHelper.getSafeStyles(selectElement);
 
   return (
     <select

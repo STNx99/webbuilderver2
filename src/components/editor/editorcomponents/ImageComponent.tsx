@@ -1,20 +1,26 @@
 import React from "react";
 import { EditorElement } from "@/types/global.type";
+import { EditorComponentProps } from "@/interfaces/editor.interface";
 import Image from "next/image";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 
-type Props = {
-  element: EditorElement;
-};
+type Props = EditorComponentProps;
 
-const ImageComponent: React.FC<Props> = ({ element }) => {
-  const { styles = {}, src = "", name } = element;
+const ImageComponent: React.FC<Props> = ({ element, data }) => {
+  const { src = "", name } = element;
+  const safeStyles = elementHelper.getSafeStyles(element);
+
+  const processedSrc =
+    data && typeof data === "object"
+      ? elementHelper.replacePlaceholders(src, data)
+      : src;
 
   const {
     objectFit: rawObjectFit,
     width: rawWidth,
     height: rawHeight,
     ...containerRest
-  } = styles as React.CSSProperties;
+  } = safeStyles;
 
   const imageWidth =
     typeof rawWidth === "number"
@@ -39,7 +45,8 @@ const ImageComponent: React.FC<Props> = ({ element }) => {
     display: "block",
   };
 
-  const imageSrc = src && src.length > 0 ? src : "/placeholder.svg";
+  const imageSrc =
+    processedSrc && processedSrc.length > 0 ? processedSrc : "/placeholder.svg";
 
   return (
     <div style={containerStyle} aria-label={name ?? "image-wrapper"}>

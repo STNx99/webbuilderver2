@@ -113,6 +113,10 @@ export function useElementHandler() {
       return;
     }
 
+    if (selectedElement && elementHelper.isEditableElement(selectedElement)) {
+      return;
+    }
+
     if (selectedElement && selectedElement.id !== element.id) {
       return;
     }
@@ -122,6 +126,10 @@ export function useElementHandler() {
 
   const handleMouseLeave = (e: React.MouseEvent, element: EditorElement) => {
     e.stopPropagation();
+
+    if (selectedElement && elementHelper.isEditableElement(selectedElement)) {
+      return;
+    }
 
     if (
       (document.activeElement &&

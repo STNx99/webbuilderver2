@@ -1,5 +1,8 @@
 import {
   CarouselElement,
+  CMSContentGridElement,
+  CMSContentItemElement,
+  CMSContentListElement,
   CSSStyles,
   DataLoaderElement,
   FormElement,
@@ -273,5 +276,87 @@ export class DataLoaderElementCreateStrategy implements ElementCreateStrategy {
       tailwindStyles:
         "w-full min-h-[160px] rounded-lg p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm",
     }) as DataLoaderElement;
+  }
+}
+
+export class CMSContentListElementCreateStrategy
+  implements ElementCreateStrategy
+{
+  buildElement(state: BuilderState): CMSContentListElement {
+    return createBaseElement(state, {
+      settings: {
+        contentTypeId: "",
+        displayMode: "list",
+        limit: 10,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+      },
+      styles: {
+        default: {
+          width: "100%",
+          minHeight: "200px",
+          backgroundColor: "var(--bg-surface, #ffffff)",
+          border: "1px solid rgba(15,23,42,0.06)",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      },
+      tailwindStyles:
+        "w-full min-h-[200px] rounded-lg p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm",
+    }) as CMSContentListElement;
+  }
+}
+
+export class CMSContentItemElementCreateStrategy
+  implements ElementCreateStrategy
+{
+  buildElement(state: BuilderState): CMSContentItemElement {
+    return createBaseElement(state, {
+      settings: {
+        contentTypeId: "",
+        itemSlug: "",
+      },
+      styles: {
+        default: {
+          width: "100%",
+          minHeight: "300px",
+          backgroundColor: "var(--bg-surface, #ffffff)",
+          border: "1px solid rgba(15,23,42,0.06)",
+          borderRadius: "8px",
+          padding: "24px",
+        },
+      },
+      tailwindStyles:
+        "w-full min-h-[300px] rounded-lg p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm",
+    }) as CMSContentItemElement;
+  }
+}
+
+export class CMSContentGridElementCreateStrategy
+  implements ElementCreateStrategy
+{
+  buildElement(state: BuilderState): CMSContentGridElement {
+    return createBaseElement(state, {
+      settings: {
+        contentTypeId: "",
+        displayMode: "grid",
+        limit: 6,
+        sortBy: "createdAt",
+        sortOrder: "desc",
+        fieldsToShow: ["title", "content"],
+      },
+      styles: {
+        default: {
+          width: "100%",
+          minHeight: "400px",
+          backgroundColor: "var(--bg-surface, #ffffff)",
+          border: "1px solid rgba(15,23,42,0.06)",
+          borderRadius: "8px",
+          padding: "16px",
+        },
+      },
+      tailwindStyles:
+        "w-full min-h-[400px] rounded-lg p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm",
+    }) as CMSContentGridElement;
   }
 }

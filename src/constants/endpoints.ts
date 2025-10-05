@@ -3,12 +3,6 @@ export const API_ENDPOINTS = {
   ELEMENTS: {
     GET: (projectId: string) => `/api/v1/elements/${projectId}`,
     GET_PUBLIC: (projectId: string) => `/api/v1/elements/public/${projectId}`,
-    CREATE: (projectId: string) => `/api/v1/elements/${projectId}`,
-    UPDATE: (id: string) => `/api/v1/elements/${id}`,
-    DELETE: (id: string) => `/api/v1/elements/${id}`,
-    INSERT: (projectId: string, previousID: string) =>
-      `/api/v1/elements/${projectId}/insert/${previousID}`,
-    SWAP: (projectId: string) => `/api/v1/elements/${projectId}/swap`,
   },
   PROJECTS: {
     GET_PUBLIC: "/api/v1/projects/public",
@@ -58,6 +52,8 @@ export const API_ENDPOINTS = {
     },
     PUBLIC_CONTENT: {
       GET: "/api/v1/public/content",
+      GET_ITEM: (contentTypeId: string, slug: string) =>
+        `/api/v1/public/content/${contentTypeId}/${slug}`,
     },
   },
 };
