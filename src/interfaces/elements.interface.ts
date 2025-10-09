@@ -48,6 +48,9 @@ interface CarouselSettings extends EmblaOptionsType {
   withNavigation?: boolean;
   autoplay?: boolean;
   autoplaySpeed?: number;
+  slidesToShow?: number;
+  slidesToScroll?: number;
+  breakpoints?: Record<string, Partial<EmblaOptionsType>>;
 }
 
 interface CarouselElement extends Element<CarouselSettings> {
@@ -93,6 +96,8 @@ interface FormSettings {
     | "text/plain";
   validateOnSubmit?: boolean;
   redirectUrl?: string;
+  noValidate?: boolean;
+  acceptCharset?: string;
 }
 
 interface FormElement extends Element<FormSettings> {

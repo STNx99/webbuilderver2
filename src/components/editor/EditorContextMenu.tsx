@@ -21,25 +21,8 @@ interface EditorContextMenuProps {
   element: EditorElement;
 }
 
-/**
- * Shared keyboard handler instance.
- */
 const keyboardEventHandler = new EditorKeyboardEvent();
 
-/**
- * EditorContextMenu
- *
- * Renders the ContextMenu for editor elements. When the trigger lives inside an
- * iframe (i.e. it has a different `ownerDocument` than the top-level `document`)
- * we render the context menu content into that iframe's `body` so the menu is
- * displayed within the iframe. For top-level triggers we use the project's
- * `ContextMenuContent` primitive which handles its own portal.
- *
- * Important notes:
- * - We intentionally avoid modifying `components/ui/context-menu.tsx`.
- * - We detect the correct container at the moment the menu opens by reading
- *   `triggerRef.current?.ownerDocument`.
- */
 export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
   children,
   element,

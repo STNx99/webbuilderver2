@@ -7,28 +7,28 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { shadcn } from "@clerk/themes";
 
 export default function RootProviders({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <ClerkProvider
-            appearance={{
-                baseTheme: shadcn as any,
-            }}
-        >
-            <QueryProvider>
-                <SidebarProvider>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        {children}
-                    </ThemeProvider>
-                </SidebarProvider>
-            </QueryProvider>
-        </ClerkProvider>
-    );
+  return (
+    <ClerkProvider
+      appearance={{
+        baseTheme: shadcn as any,
+      }}
+    >
+      <QueryProvider>
+        <SidebarProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </SidebarProvider>
+      </QueryProvider>
+    </ClerkProvider>
+  );
 }
