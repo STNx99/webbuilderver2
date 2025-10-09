@@ -185,11 +185,15 @@ export default function CanvasLanding() {
             <Button
               variant="ghost"
               className="text-muted-foreground hover:text-foreground transition-all duration-300"
+              asChild
             >
-              Sign In
+              <Link href="/sign-in">Sign In</Link>
             </Button>
-            <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105">
-              Start Free Trial
+            <Button 
+              className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
+              asChild
+            >
+              <Link href="/sign-up">Start Free Trial</Link>
             </Button>
           </div>
 
@@ -236,11 +240,11 @@ export default function CanvasLanding() {
               </Link>
             ))}
             <div className="flex flex-col space-y-3 pt-4 border-t border-border/50">
-              <Button variant="ghost" className="justify-start">
-                Sign In
+              <Button variant="ghost" className="justify-start" asChild>
+                <Link href="/sign-in">Sign In</Link>
               </Button>
-              <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold">
-                Start Free Trial
+              <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
+                <Link href="/sign-up">Start Free Trial</Link>
               </Button>
             </div>
           </div>
@@ -418,9 +422,12 @@ export default function CanvasLanding() {
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 text-primary-foreground font-semibold text-xl px-12 py-6 hover:shadow-xl hover:shadow-primary/25 transition-all duration-300 hover:scale-105 group"
+                asChild
               >
-                Start Your Free Trial
-                <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                <Link href="/sign-up">
+                  Start Your Free Trial
+                  <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                </Link>
               </Button>
               <Button
                 size="lg"
