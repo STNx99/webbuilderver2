@@ -17,27 +17,27 @@ const items = [
   },
   {
     id: '2',
-    title: 'Can I export the code for my project?',
+    title: 'Can I export the code for my website?',
     content:
-      'Yes! With WebBuilder, you can export clean, production-ready React/Next.js code for any project you create. There’s no vendor lock-in—take your code anywhere and continue development in your own workflow.',
+      'Yes! With WebBuilder, you can export clean, production-ready React/Next.js code for any website you create. There\'s no vendor lock-in—download your code and host it anywhere.',
   },
   {
     id: '3',
-    title: 'How does the drag-and-drop builder work?',
+    title: 'Do I need to know how to code?',
     content:
-      'Simply select from our library of prebuilt, customizable components and drag them onto your canvas. Arrange, configure, and preview your layout in real time—no manual coding required.',
+      'Not at all! WebBuilder is designed for everyone. Simply drag and drop components, customize colors and text, and your website is ready. Our visual editor handles all the technical stuff.',
   },
   {
     id: '4',
-    title: 'Are the components customizable?',
+    title: 'Can I customize the design and layout?',
     content:
-      'Absolutely. All components are built with Tailwind CSS and can be customized visually or by editing the exported code. You can adjust styles, layouts, and even extend functionality as needed.',
+      'Absolutely! Every component is fully customizable. Change colors, fonts, spacing, and layouts with our visual editor. You can also add your own images, text, and branding.',
   },
   {
     id: '5',
-    title: 'Is WebBuilder free to use?',
+    title: 'How do I publish my website?',
     content:
-      'WebBuilder offers a free tier for personal and hobby projects. For advanced features and unlimited exports, check out our Pro and Enterprise plans.',
+      'You can publish directly from WebBuilder to get an instant live URL, or export your code to host on your own domain with services like Vercel, Netlify, or any web hosting provider.',
   },
 ];
 
@@ -78,7 +78,7 @@ export default function LandingPageFAQ() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Everything you need to know about WebBuilder’s drag-and-drop builder, code export, and prebuilt components to help you launch your next project quickly.
+            Everything you need to know about WebBuilder's visual editor, component library, and publishing options to get your website online fast.
           </motion.p>
         </div>
 

@@ -10,33 +10,33 @@ import {
 const features = [
   {
     icon: <Palette className="h-6 w-6" />,
-    title: 'One-Message Theme Changes',
-    desc: 'Switch from light to dark or any theme instantly with a simple prompt. No config files, no settings panels.',
+    title: 'Drag & Drop Builder',
+    desc: 'Create websites visually with our intuitive drag-and-drop interface. No coding knowledge required.',
   },
   {
     icon: <Sparkles className="h-6 w-6" />,
-    title: 'Smooth Natural Animations',
-    desc: 'Everything fades, slides, and shifts in ways that feel right. Nothing jerky or overdone.',
-  },
-  {
-    icon: <Search className="h-6 w-6" />,
-    title: 'Built-in SEO Tools',
-    desc: 'Get found on Google with our integrated SEO optimization tools and real-time analytics.',
-  },
-  {
-    icon: <Smartphone className="h-6 w-6" />,
-    title: 'Mobile-Ready Without Effort',
-    desc: 'Looks stunning on phones and tablets out of the box. Responsive design that just works.',
+    title: 'Pre-built Components',
+    desc: 'Choose from hundreds of professionally designed components. Headers, footers, forms, and more.',
   },
   {
     icon: <Code className="h-6 w-6" />,
-    title: 'Quick Start, Easy Edit',
-    desc: "Make it your own in minutes. Clean code that doesn't fall apart when you customize it.",
+    title: 'Clean Code Export',
+    desc: 'Export production-ready React/Next.js code. No vendor lock-in - take your code anywhere.',
+  },
+  {
+    icon: <Smartphone className="h-6 w-6" />,
+    title: 'Mobile Responsive',
+    desc: 'All designs automatically adapt to mobile, tablet, and desktop. Perfect on every device.',
+  },
+  {
+    icon: <Search className="h-6 w-6" />,
+    title: 'SEO Optimized',
+    desc: 'Built-in SEO tools ensure your website ranks well on search engines from day one.',
   },
   {
     icon: <Rocket className="h-6 w-6" />,
-    title: 'Lightning Fast Performance',
-    desc: 'Optimized for speed with under 2-second load times and smooth 60fps animations.',
+    title: 'Fast Publishing',
+    desc: 'Publish your website instantly or export code to deploy anywhere. Go live in minutes.',
   },
 ];
 export default function LandingPageFeature() {
@@ -46,12 +46,11 @@ export default function LandingPageFeature() {
         <div className="relative mx-auto max-w-2xl sm:text-center">
           <div className="relative z-10">
             <h3 className="font-geist mt-4 text-3xl font-normal tracking-tighter sm:text-4xl md:text-5xl">
-              Let’s help build your next project
+              Everything you need to build amazing websites
             </h3>
             <p className="font-geist text-foreground/60 mt-3">
-                A modern UI component library designed to help developers create
-                stunning web applications with minimal effort. Fully customizable,
-                responsive, and accessible.
+                WebBuilder provides all the tools you need to create professional websites 
+                without writing a single line of code. Design, customize, and publish with ease.
             </p>
           </div>
           <div
