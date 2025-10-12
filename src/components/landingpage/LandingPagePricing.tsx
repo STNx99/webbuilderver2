@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Star, Zap, Shield, Check, Sparkles, ArrowRight } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 const plans = [
@@ -19,13 +20,13 @@ const plans = [
       monthly: 'Free forever',
       yearly: 'Free forever',
     },
-    description: 'The perfect starting place for your web app or personal project.',
+    description: 'Perfect for personal projects and trying out WebBuilder.',
     features: [
-      '50 API calls / month',
-      '60 second checks',
-      'Single-user account',
-      '5 monitors',
-      'Basic email support',
+      '3 websites',
+      'Drag & drop builder',
+      'Basic components library',
+      'Mobile responsive design',
+      'Community support',
     ],
     cta: 'Get started for free',
   },
@@ -37,13 +38,13 @@ const plans = [
       monthly: 90,
       yearly: 75,
     },
-    description: 'Everything you need to build and scale your business.',
+    description: 'Everything you need for professional websites and businesses.',
     features: [
-      'Unlimited API calls',
-      '30 second checks',
-      'Multi-user account',
-      '10 monitors',
-      'Priority email support',
+      'Unlimited websites',
+      'Advanced components library',
+      'Code export (React/Next.js)',
+      'Custom domain hosting',
+      'Priority support',
     ],
     cta: 'Subscribe to Pro',
     popular: true,
@@ -56,13 +57,13 @@ const plans = [
       monthly: 'Get in touch for pricing',
       yearly: 'Get in touch for pricing',
     },
-    description: 'Critical security, performance, observability and support.',
+    description: 'Advanced features for agencies and large teams.',
     features: [
-      'You can DDOS our API.',
-      'Nano-second checks.',
-      'Invite your extended family.',
-      'Unlimited monitors.',
-      "We'll sit on your desk.",
+      'Everything in Pro',
+      'Team collaboration',
+      'White-label solution',
+      'Advanced integrations',
+      'Dedicated account manager',
     ],
     cta: 'Contact us',
   },
@@ -276,9 +277,12 @@ export default function LandingPagePricing() {
                         ? 'bg-primary hover:bg-primary/90 hover:shadow-primary/20 hover:shadow-md'
                         : 'hover:border-primary/30 hover:bg-primary/5 hover:text-primary',
                     )}
+                    asChild
                   >
-                    {plan.cta}
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    <Link href={plan.cta === 'Contact us' ? '/contact-us' : '/sign-up'}>
+                      {plan.cta}
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
                   </Button>
                 </CardFooter>
                 {/* Subtle gradient effects */}
