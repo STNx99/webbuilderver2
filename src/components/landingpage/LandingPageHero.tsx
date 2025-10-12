@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight, Github } from "lucide-react";
+import { ArrowRight, ChevronRight} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -88,21 +89,15 @@ export default function LandingPageHero() {
             <Button
               size="lg"
               className="group bg-primary text-primary-foreground hover:shadow-primary/30 relative overflow-hidden rounded-full px-6 shadow-lg transition-all duration-300"
+              asChild
             >
-              <span className="relative z-10 flex items-center">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-              <span className="from-primary via-primary/90 to-primary/80 absolute inset-0 z-0 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-border bg-background/50 flex items-center gap-2 rounded-full backdrop-blur-sm"
-            >
-              <Github className="h-4 w-4" />
-              Star on GitHub
+              <Link href="/sign-up">
+                <span className="relative z-10 flex items-center">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+                <span className="from-primary via-primary/90 to-primary/80 absolute inset-0 z-0 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+              </Link>
             </Button>
           </motion.div>
 

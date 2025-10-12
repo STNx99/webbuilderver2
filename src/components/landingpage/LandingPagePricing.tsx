@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Star, Zap, Shield, Check, Sparkles, ArrowRight } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 const plans = [
@@ -276,9 +277,12 @@ export default function LandingPagePricing() {
                         ? 'bg-primary hover:bg-primary/90 hover:shadow-primary/20 hover:shadow-md'
                         : 'hover:border-primary/30 hover:bg-primary/5 hover:text-primary',
                     )}
+                    asChild
                   >
-                    {plan.cta}
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    <Link href={plan.cta === 'Contact us' ? '/contact-us' : '/sign-up'}>
+                      {plan.cta}
+                      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
                   </Button>
                 </CardFooter>
                 {/* Subtle gradient effects */}
