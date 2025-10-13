@@ -147,10 +147,16 @@ export const useCMSManager = () => {
       queryClient.invalidateQueries({
         queryKey: ["contentItems", selectedTypeId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["cms-public-content"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cms-public-content-item"],
+      });
       console.log("Content item created successfully");
     },
     onError: (error) => {
-      console.error("Failed to create content item");
+      console.error("Failed to create content item:", error);
     },
   });
 
@@ -167,6 +173,12 @@ export const useCMSManager = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["contentItems", selectedTypeId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cms-public-content"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cms-public-content-item"],
       });
       console.log("Content item updated successfully");
     },
@@ -186,6 +198,12 @@ export const useCMSManager = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["contentItems", selectedTypeId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cms-public-content"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["cms-public-content-item"],
       });
       console.log("Content item deleted successfully");
     },

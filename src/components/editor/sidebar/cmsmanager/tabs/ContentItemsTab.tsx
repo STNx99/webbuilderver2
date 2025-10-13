@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +29,7 @@ import {
   ContentField,
   ContentFieldValue,
 } from "@/interfaces/cms.interface";
+import { ContentItemFormSchema } from "@/schema/zod/cms";
 import {
   Plus,
   Edit,
@@ -38,7 +40,20 @@ import {
   Loader2,
   Save,
   X,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
 } from "lucide-react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  ColumnDef,
+  SortingState,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
 
 interface ContentItemsTabProps {
   selectedTypeId: string;
@@ -76,7 +91,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
   onCreateItem,
   onDeleteItem,
 }) => {
-  const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
+  const [editingRows, setEditingRows] = useState<string[]>([]);
   const [newRow, setNewRow] = useState<EditableItem | null>(null);
   const [editedValues, setEditedValues] = useState<{
     [key: string]: {
@@ -86,8 +101,12 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
       fieldValues?: { [fieldId: string]: string };
     };
   }>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
 
-  const selectedType = contentTypes.find((t) => t.id === selectedTypeId);
+  const editingRowsSet = useMemo(() => new Set(editingRows), [editingRows]);
+
+  const columnHelper = createColumnHelper<ContentItem>();
 
   // Create a map of field values for quick lookup
   const fieldValuesMap = useMemo(() => {
@@ -101,34 +120,397 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
     return map;
   }, [contentItems]);
 
-  const startEditing = (itemId: string) => {
-    const item = contentItems.find((i) => i.id === itemId);
-    if (item) {
-      setEditedValues((prev) => ({
-        ...prev,
-        [itemId]: {
-          title: item.title,
-          slug: item.slug,
-          published: item.published,
-          fieldValues: { ...fieldValuesMap[itemId] },
-        },
-      }));
-    }
-    setEditingRows((prev) => new Set([...prev, itemId]));
-  };
+  const updateFieldValue = useCallback(
+    (itemId: string, fieldId: string, value: string) => {
+      if (newRow && newRow.isNew) {
+        setNewRow((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            fieldValues: { ...prev.fieldValues, [fieldId]: value },
+          };
+        });
+      } else {
+        setEditedValues((prev) => ({
+          ...prev,
+          [itemId]: {
+            ...prev[itemId],
+            fieldValues: {
+              ...prev[itemId]?.fieldValues,
+              [fieldId]: value,
+            },
+          },
+        }));
+      }
+    },
+    [newRow],
+  );
 
-  const stopEditing = (itemId: string) => {
-    setEditingRows((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(itemId);
-      return newSet;
-    });
+  const updateItemField = useCallback(
+    (itemId: string, field: string, value: any) => {
+      if (newRow && newRow.isNew) {
+        setNewRow((prev) => {
+          if (!prev) return prev;
+          return { ...prev, [field]: value };
+        });
+      } else {
+        setEditedValues((prev) => ({
+          ...prev,
+          [itemId]: { ...prev[itemId], [field]: value },
+        }));
+      }
+    },
+    [newRow],
+  );
+
+  const startEditing = useCallback(
+    (itemId: string) => {
+      const item = contentItems.find((i) => i.id === itemId);
+      if (item) {
+        setEditedValues((prev) => ({
+          ...prev,
+          [itemId]: {
+            title: item.title,
+            slug: item.slug,
+            published: item.published,
+            fieldValues: { ...fieldValuesMap[itemId] },
+          },
+        }));
+      }
+      setEditingRows((prev) => [...prev, itemId]);
+    },
+    [contentItems, fieldValuesMap],
+  );
+
+  const stopEditing = useCallback((itemId: string) => {
+    setEditingRows((prev) => prev.filter((id) => id !== itemId));
     setEditedValues((prev) => {
       const newValues = { ...prev };
       delete newValues[itemId];
       return newValues;
     });
-  };
+  }, []);
+
+  const saveExistingItem = useCallback(
+    async (itemId: string) => {
+      const editedData = editedValues[itemId];
+      if (!editedData) return;
+
+      const itemData = {
+        title: editedData.title || "",
+        slug: editedData.slug || "",
+        published: editedData.published || false,
+        fieldValues: Object.entries(editedData.fieldValues || {}).map(
+          ([fieldId, value]) => ({
+            fieldId,
+            value,
+          }),
+        ),
+      };
+
+      try {
+        updateItemMutation.mutate({
+          contentTypeId: selectedTypeId,
+          itemId,
+          data: itemData,
+        });
+        stopEditing(itemId);
+      } catch (error) {
+        console.error("Failed to update item:", error);
+      }
+    },
+    [editedValues, updateItemMutation, selectedTypeId, stopEditing],
+  );
+
+  const columns = useMemo<ColumnDef<ContentItem, any>[]>(() => {
+    const baseColumns: ColumnDef<ContentItem, any>[] = [
+      columnHelper.accessor("title", {
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-semibold"
+          >
+            Title
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === "desc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row, table }) => {
+          const item = row.original;
+          const meta = table.options.meta as any;
+          const isEditing = meta?.editingRowsSet?.has(item.id);
+
+          return isEditing ? (
+            <Input
+              value={
+                meta?.editedValues?.[item.id]?.title ?? row.getValue("title")
+              }
+              onChange={(e) =>
+                meta?.updateItemField(item.id, "title", e.target.value)
+              }
+              className="h-8"
+            />
+          ) : (
+            <span className="font-medium">{row.getValue("title")}</span>
+          );
+        },
+      }),
+      columnHelper.accessor("slug", {
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-semibold"
+          >
+            Slug
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === "desc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row, table }) => {
+          const item = row.original;
+          const meta = table.options.meta as any;
+          const isEditing = meta?.editingRowsSet?.has(item.id);
+
+          return isEditing ? (
+            <Input
+              value={
+                meta?.editedValues?.[item.id]?.slug ?? row.getValue("slug")
+              }
+              onChange={(e) =>
+                meta?.updateItemField(item.id, "slug", e.target.value)
+              }
+              className="h-8"
+            />
+          ) : (
+            <span className="text-muted-foreground">
+              {row.getValue("slug")}
+            </span>
+          );
+        },
+      }),
+      columnHelper.accessor("published", {
+        header: "Published",
+        cell: ({ row, table }) => {
+          const item = row.original;
+          const meta = table.options.meta as any;
+          const isEditing = meta?.editingRowsSet?.has(item.id);
+
+          return isEditing ? (
+            <Switch
+              checked={
+                meta?.editedValues?.[item.id]?.published ??
+                row.getValue("published")
+              }
+              onCheckedChange={(checked) =>
+                meta?.updateItemField(item.id, "published", checked)
+              }
+            />
+          ) : (
+            <Badge
+              variant={row.getValue("published") ? "default" : "secondary"}
+              className="gap-1"
+            >
+              {row.getValue("published") ? (
+                <Eye className="h-3 w-3" />
+              ) : (
+                <EyeOff className="h-3 w-3" />
+              )}
+              {row.getValue("published") ? "Published" : "Draft"}
+            </Badge>
+          );
+        },
+      }),
+    ];
+
+    const fieldColumns: ColumnDef<ContentItem, any>[] = contentFields.map(
+      (field) => ({
+        id: `field-${field.id}`,
+        header: () => (
+          <div>
+            {field.name}
+            {field.required && <span className="text-red-500 ml-1">*</span>}
+          </div>
+        ),
+        cell: ({ row, table }) => {
+          const item = row.original;
+          const meta = table.options.meta as any;
+          const isEditing = meta?.editingRowsSet?.has(item.id);
+          const fieldValues = meta?.fieldValuesMap?.[item.id] || {};
+          const editedData = meta?.editedValues?.[item.id];
+
+          if (isEditing) {
+            if (field.type === "richtext") {
+              return (
+                <div className="min-w-[300px]">
+                  <RichTextEditor
+                    value={
+                      editedData?.fieldValues?.[field.id] ??
+                      fieldValues[field.id] ??
+                      ""
+                    }
+                    onChange={(value) =>
+                      meta?.updateFieldValue(item.id, field.id, value)
+                    }
+                    placeholder={`Enter ${field.name.toLowerCase()}`}
+                  />
+                </div>
+              );
+            } else {
+              return (
+                <Input
+                  value={
+                    editedData?.fieldValues?.[field.id] ??
+                    fieldValues[field.id] ??
+                    ""
+                  }
+                  onChange={(e) =>
+                    meta?.updateFieldValue(item.id, field.id, e.target.value)
+                  }
+                  className="h-8"
+                />
+              );
+            }
+          } else {
+            if (field.type === "richtext") {
+              return (
+                <div
+                  className="max-w-xs truncate"
+                  dangerouslySetInnerHTML={{
+                    __html: fieldValues[field.id] || "-",
+                  }}
+                />
+              );
+            } else {
+              return (
+                <span className="max-w-xs truncate block">
+                  {fieldValues[field.id] || "-"}
+                </span>
+              );
+            }
+          }
+        },
+      }),
+    );
+
+    const actionsColumn: ColumnDef<ContentItem, any> = columnHelper.display({
+      id: "actions",
+      header: "Actions",
+      cell: ({ row, table }) => {
+        const item = row.original;
+        const meta = table.options.meta as any;
+        const isEditing = meta?.editingRowsSet?.has(item.id);
+
+        return (
+          <div className="flex gap-1">
+            {isEditing ? (
+              <>
+                <Button
+                  size="sm"
+                  onClick={() => meta?.saveExistingItem(item.id)}
+                  disabled={meta?.updateItemMutation?.isPending}
+                  className="h-8 w-8 p-0"
+                >
+                  <Save className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => meta?.stopEditing(item.id)}
+                  className="h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => meta?.startEditing(item.id)}
+                  className="h-8 w-8 p-0"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="h-8 w-8 p-0"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Delete Content Item</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Are you sure you want to delete "{item.title}"? This
+                        action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() =>
+                          meta?.onDeleteItem(selectedTypeId, item.id)
+                        }
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </>
+            )}
+          </div>
+        );
+      },
+    });
+
+    return [...baseColumns, ...fieldColumns, actionsColumn];
+  }, [contentFields]);
+
+  const table = useReactTable({
+    data: contentItems,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      sorting,
+      globalFilter,
+    },
+    meta: {
+      editingRowsSet,
+      editedValues,
+      fieldValuesMap,
+      updateItemField,
+      updateFieldValue,
+      startEditing,
+      stopEditing,
+      saveExistingItem,
+      updateItemMutation,
+      onDeleteItem,
+    },
+  });
+
+  const selectedType = contentTypes.find((t) => t.id === selectedTypeId);
 
   const addNewRow = () => {
     const newItem: EditableItem = {
@@ -153,6 +535,18 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
   const saveNewRow = async () => {
     if (!newRow) return;
 
+    // Validate required fields
+    const validationResult = ContentItemFormSchema.safeParse({
+      title: newRow.title || "",
+      slug: newRow.slug || "",
+      published: newRow.published || false,
+    });
+
+    if (!validationResult.success) {
+      console.error("Validation failed:", validationResult.error);
+      return;
+    }
+
     const itemData = {
       title: newRow.title || "",
       slug: newRow.slug || "",
@@ -170,65 +564,6 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
       setNewRow(null);
     } catch (error) {
       console.error("Failed to create item:", error);
-    }
-  };
-
-  const updateFieldValue = (itemId: string, fieldId: string, value: string) => {
-    if (newRow && newRow.isNew) {
-      setNewRow((prev) => ({
-        ...prev!,
-        fieldValues: { ...prev!.fieldValues, [fieldId]: value },
-      }));
-    } else {
-      setEditedValues((prev) => ({
-        ...prev,
-        [itemId]: {
-          ...prev[itemId],
-          fieldValues: {
-            ...prev[itemId]?.fieldValues,
-            [fieldId]: value,
-          },
-        },
-      }));
-    }
-  };
-
-  const updateItemField = (itemId: string, field: string, value: any) => {
-    if (newRow && newRow.isNew) {
-      setNewRow((prev) => ({ ...prev!, [field]: value }));
-    } else {
-      setEditedValues((prev) => ({
-        ...prev,
-        [itemId]: { ...prev[itemId], [field]: value },
-      }));
-    }
-  };
-
-  const saveExistingItem = async (itemId: string) => {
-    const editedData = editedValues[itemId];
-    if (!editedData) return;
-
-    const itemData = {
-      title: editedData.title || "",
-      slug: editedData.slug || "",
-      published: editedData.published || false,
-      fieldValues: Object.entries(editedData.fieldValues || {}).map(
-        ([fieldId, value]) => ({
-          fieldId,
-          value,
-        }),
-      ),
-    };
-
-    try {
-      updateItemMutation.mutate({
-        contentTypeId: selectedTypeId,
-        itemId,
-        data: itemData,
-      });
-      stopEditing(itemId);
-    } catch (error) {
-      console.error("Failed to update item:", error);
     }
   };
 
@@ -260,6 +595,16 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
         </Button>
       </div>
 
+      {/* Search Filter */}
+      <div className="flex items-center space-x-2">
+        <Input
+          placeholder="Search content items..."
+          value={globalFilter ?? ""}
+          onChange={(event) => setGlobalFilter(String(event.target.value))}
+          className="max-w-sm"
+        />
+      </div>
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
@@ -268,20 +613,20 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead className="w-48">Title</TableHead>
-                <TableHead className="w-48">Slug</TableHead>
-                <TableHead className="w-24">Published</TableHead>
-                {contentFields.map((field) => (
-                  <TableHead key={field.id} className="min-w-32">
-                    {field.name}
-                    {field.required && (
-                      <span className="text-red-500 ml-1">*</span>
-                    )}
-                  </TableHead>
-                ))}
-                <TableHead className="w-32">Actions</TableHead>
-              </TableRow>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="w-48">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
             </TableHeader>
             <TableBody>
               {/* New Row */}
@@ -317,14 +662,26 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
                   </TableCell>
                   {contentFields.map((field) => (
                     <TableCell key={field.id}>
-                      <Input
-                        value={newRow.fieldValues?.[field.id] || ""}
-                        onChange={(e) =>
-                          updateFieldValue("new", field.id, e.target.value)
-                        }
-                        placeholder={`Enter ${field.name.toLowerCase()}`}
-                        className="h-8"
-                      />
+                      {field.type === "richtext" ? (
+                        <div className="min-w-[300px]">
+                          <RichTextEditor
+                            value={newRow.fieldValues?.[field.id] || ""}
+                            onChange={(value) =>
+                              updateFieldValue("new", field.id, value)
+                            }
+                            placeholder={`Enter ${field.name.toLowerCase()}`}
+                          />
+                        </div>
+                      ) : (
+                        <Input
+                          value={newRow.fieldValues?.[field.id] || ""}
+                          onChange={(e) =>
+                            updateFieldValue("new", field.id, e.target.value)
+                          }
+                          placeholder={`Enter ${field.name.toLowerCase()}`}
+                          className="h-8"
+                        />
+                      )}
                     </TableCell>
                   ))}
                   <TableCell>
@@ -351,155 +708,18 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
               )}
 
               {/* Existing Rows */}
-              {contentItems.map((item) => {
-                const isEditing = editingRows.has(item.id);
-                const fieldValues = fieldValuesMap[item.id] || {};
-                const editedData = editedValues[item.id];
-
-                return (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">
-                      {isEditing ? (
-                        <Input
-                          value={editedData?.title ?? item.title}
-                          onChange={(e) =>
-                            updateItemField(item.id, "title", e.target.value)
-                          }
-                          className="h-8"
-                        />
-                      ) : (
-                        item.title
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {isEditing ? (
-                        <Input
-                          value={editedData?.slug ?? item.slug}
-                          onChange={(e) =>
-                            updateItemField(item.id, "slug", e.target.value)
-                          }
-                          className="h-8"
-                        />
-                      ) : (
-                        item.slug
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isEditing ? (
-                        <Switch
-                          checked={editedData?.published ?? item.published}
-                          onCheckedChange={(checked) =>
-                            updateItemField(item.id, "published", checked)
-                          }
-                        />
-                      ) : (
-                        <Badge
-                          variant={item.published ? "default" : "secondary"}
-                          className="gap-1"
-                        >
-                          {item.published ? (
-                            <Eye className="h-3 w-3" />
-                          ) : (
-                            <EyeOff className="h-3 w-3" />
-                          )}
-                          {item.published ? "Published" : "Draft"}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    {contentFields.map((field) => (
-                      <TableCell key={field.id}>
-                        {isEditing ? (
-                          <Input
-                            value={
-                              editedData?.fieldValues?.[field.id] ??
-                              fieldValues[field.id] ??
-                              ""
-                            }
-                            onChange={(e) =>
-                              updateFieldValue(
-                                item.id,
-                                field.id,
-                                e.target.value,
-                              )
-                            }
-                            className="h-8"
-                          />
-                        ) : (
-                          fieldValues[field.id] || "-"
-                        )}
-                      </TableCell>
-                    ))}
-                    <TableCell>
-                      <div className="flex gap-1">
-                        {isEditing ? (
-                          <>
-                            <Button
-                              size="sm"
-                              onClick={() => saveExistingItem(item.id)}
-                              disabled={updateItemMutation.isPending}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => stopEditing(item.id)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => startEditing(item.id)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  className="h-8 w-8 p-0"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Delete Content Item
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete "
-                                    {item.title}"? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() =>
-                                      onDeleteItem(selectedTypeId, item.id)
-                                    }
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                  ))}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>

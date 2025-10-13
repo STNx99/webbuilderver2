@@ -5,7 +5,7 @@ const ElementSchema = z.object({
   Type: z.string().min(1, "Type is required"),
   Content: z.string().optional().nullable(),
   Name: z.string().optional().nullable(),
-  Styles: z.record(z.unknown()).optional().nullable(), // Json type
+  Styles: z.record(z.string(), z.unknown()).optional().nullable(), // Json type
   TailwindStyles: z.string().optional().nullable(),
   Src: z.string().optional().nullable(),
   Href: z.string().optional().nullable(),

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +22,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ContentType } from "@/interfaces/cms.interface";
-import { Plus, Edit, Trash2, Eye, Loader2, Save, X } from "lucide-react";
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  Loader2,
+  Save,
+  X,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  ColumnDef,
+  SortingState,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
 
 interface ContentTypesTabProps {
   contentTypes: ContentType[];
@@ -58,6 +79,177 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
   const [editedValues, setEditedValues] = useState<{
     [key: string]: EditableType;
   }>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  const columnHelper = createColumnHelper<ContentType>();
+
+  const columns = useMemo<ColumnDef<ContentType, any>[]>(
+    () => [
+      columnHelper.accessor("name", {
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-semibold"
+          >
+            Name
+            {column.getIsSorted() === "asc" ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === "desc" ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        ),
+        cell: ({ row, getValue }) => {
+          const type = row.original;
+          const isEditing = editingRows.has(type.id);
+
+          return isEditing ? (
+            <Input
+              value={editedValues[type.id]?.name ?? getValue()}
+              onChange={(e) => updateTypeField(type.id, "name", e.target.value)}
+              className="h-8"
+            />
+          ) : (
+            <span className="font-medium">{getValue()}</span>
+          );
+        },
+      }),
+      columnHelper.accessor("description", {
+        header: "Description",
+        cell: ({ row, getValue }) => {
+          const type = row.original;
+          const isEditing = editingRows.has(type.id);
+
+          return isEditing ? (
+            <Textarea
+              value={editedValues[type.id]?.description ?? (getValue() || "")}
+              onChange={(e) =>
+                updateTypeField(type.id, "description", e.target.value)
+              }
+              className="h-8 resize-none"
+              rows={1}
+            />
+          ) : (
+            <span className="text-muted-foreground">{getValue() || "-"}</span>
+          );
+        },
+      }),
+      columnHelper.accessor((row) => row.fields?.length || 0, {
+        id: "fields",
+        header: "Fields",
+        cell: ({ getValue }) => <span>{getValue()}</span>,
+      }),
+      columnHelper.accessor((row) => row.items?.length || 0, {
+        id: "items",
+        header: "Items",
+        cell: ({ getValue }) => <span>{getValue()}</span>,
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const type = row.original;
+          const isEditing = editingRows.has(type.id);
+
+          return (
+            <div className="flex gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => onSelectType(type.id)}
+                className="h-8 w-8 p-0"
+                title="View Details"
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+              {isEditing ? (
+                <>
+                  <Button
+                    size="sm"
+                    onClick={() => saveExistingType(type.id)}
+                    disabled={updateTypeMutation.isPending}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => stopEditing(type.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => startEditing(type.id)}
+                    className="h-8 w-8 p-0"
+                    title="Edit"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="h-8 w-8 p-0"
+                        title="Delete"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Content Type</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete "{type.name}"? This
+                          action cannot be undone and will also delete all
+                          associated fields and content items.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => onDeleteType(type.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
+              )}
+            </div>
+          );
+        },
+      }),
+    ],
+    [editingRows, editedValues, updateTypeMutation.isPending],
+  );
+
+  const table = useReactTable({
+    data: contentTypes,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      sorting,
+      globalFilter,
+    },
+  });
 
   const startEditing = (typeId: string) => {
     const type = contentTypes.find((t) => t.id === typeId);
@@ -151,6 +343,16 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
         </Button>
       </div>
 
+      {/* Search Filter */}
+      <div className="flex items-center space-x-2">
+        <Input
+          placeholder="Search content types..."
+          value={globalFilter ?? ""}
+          onChange={(event) => setGlobalFilter(String(event.target.value))}
+          className="max-w-sm"
+        />
+      </div>
+
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
@@ -159,13 +361,20 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead className="w-48">Name</TableHead>
-                <TableHead className="min-w-64">Description</TableHead>
-                <TableHead className="w-20">Fields</TableHead>
-                <TableHead className="w-20">Items</TableHead>
-                <TableHead className="w-32">Actions</TableHead>
-              </TableRow>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="w-48">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
             </TableHeader>
             <TableBody>
               {/* New Row */}
@@ -218,129 +427,18 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
               )}
 
               {/* Existing Rows */}
-              {contentTypes.map((type) => {
-                const isEditing = editingRows.has(type.id);
-
-                return (
-                  <TableRow key={type.id}>
-                    <TableCell className="font-medium">
-                      {isEditing ? (
-                        <Input
-                          value={editedValues[type.id]?.name ?? type.name}
-                          onChange={(e) =>
-                            updateTypeField(type.id, "name", e.target.value)
-                          }
-                          className="h-8"
-                        />
-                      ) : (
-                        type.name
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {isEditing ? (
-                        <Textarea
-                          value={
-                            editedValues[type.id]?.description ??
-                            (type.description || "")
-                          }
-                          onChange={(e) =>
-                            updateTypeField(
-                              type.id,
-                              "description",
-                              e.target.value,
-                            )
-                          }
-                          className="h-8 resize-none"
-                          rows={1}
-                        />
-                      ) : (
-                        type.description || "-"
-                      )}
-                    </TableCell>
-                    <TableCell>{type.fields?.length || 0}</TableCell>
-                    <TableCell>{type.items?.length || 0}</TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onSelectType(type.id)}
-                          className="h-8 w-8 p-0"
-                          title="View Details"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        {isEditing ? (
-                          <>
-                            <Button
-                              size="sm"
-                              onClick={() => saveExistingType(type.id)}
-                              disabled={updateTypeMutation.isPending}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => stopEditing(type.id)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => startEditing(type.id)}
-                              className="h-8 w-8 p-0"
-                              title="Edit"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  className="h-8 w-8 p-0"
-                                  title="Delete"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Delete Content Type
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete "{type.name}
-                                    "? This action cannot be undone and will
-                                    also delete all associated fields and
-                                    content items.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() => onDeleteType(type.id)}
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                  ))}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>

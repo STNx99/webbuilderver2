@@ -21,8 +21,7 @@ const CMSContentItemComponent = ({ element, data }: EditorComponentProps) => {
     itemSlug || "",
   );
 
-
-  const itemToRender = data || contentItem
+  const itemToRender = data || contentItem;
 
   if (!contentTypeId) {
     return (
@@ -52,7 +51,7 @@ const CMSContentItemComponent = ({ element, data }: EditorComponentProps) => {
       {cmsElement.elements && cmsElement.elements.length > 0 ? (
         // Use child elements as template
         <ElementLoader elements={cmsElement.elements} data={itemToRender} />
-      ) : (
+      ) : itemToRender ? (
         // Default rendering
         <article className="max-w-4xl mx-auto">
           <header className="mb-6">
@@ -88,6 +87,10 @@ const CMSContentItemComponent = ({ element, data }: EditorComponentProps) => {
             </div>
           </footer>
         </article>
+      ) : (
+        <div className="flex items-center justify-center text-gray-500">
+          Loading content item...
+        </div>
       )}
     </div>
   );

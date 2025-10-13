@@ -39,7 +39,6 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
       ? contentItems
       : [];
 
-  // Apply limit
   const limitedItems = itemsToRender.slice(0, limit);
 
   if (!contentTypeId) {
