@@ -21,6 +21,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyMedia,
+} from "@/components/ui/empty";
 import { ContentType } from "@/interfaces/cms.interface";
 import {
   Plus,
@@ -33,6 +40,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Database,
 } from "lucide-react";
 import {
   useReactTable,
@@ -357,6 +365,19 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+      ) : contentTypes.length === 0 && !newRow ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Database />
+            </EmptyMedia>
+            <EmptyTitle>No content types yet</EmptyTitle>
+            <EmptyDescription>
+              Get started by creating your first content type to structure your
+              content.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
@@ -379,7 +400,7 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
             <TableBody>
               {/* New Row */}
               {newRow && (
-                <TableRow className="bg-blue-50">
+                <TableRow>
                   <TableCell>
                     <Input
                       value={newRow.name || ""}

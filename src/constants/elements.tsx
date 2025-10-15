@@ -99,10 +99,10 @@ export const elementHolders: ElementHolder[] = [
     type: "List",
     icon: <List className="w-4 h-4" />,
   },
-  {
-    type: "DataLoader",
-    icon: <Database className="w-4 h-4" />,
-  },
+  // {
+  //   type: "DataLoader",
+  //   icon: <Database className="w-4 h-4" />,
+  // },
   {
     type: "CMSContentList",
     icon: <List className="w-4 h-4" />,
@@ -132,7 +132,7 @@ const ComponentMap = new Map<
   ["Frame", FrameComponent],
   ["Carousel", CarouselComponent],
   ["List", ListComponent],
-  ["DataLoader", DataLoaderComponent],
+  // ["DataLoader", DataLoaderComponent],
   ["CMSContentList", CMSContentListComponent],
   ["CMSContentItem", CMSContentItemComponent],
   ["CMSContentGrid", CMSContentGridComponent],

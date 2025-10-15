@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/api/v1/projects/${id}`,
     DELETE_PAGE: (projectId: string, pageId: string) =>
       `/api/v1/projects/${projectId}/pages/${pageId}`,
+    GET_PUBLIC_BY_ID: (id: string) => `/api/v1/projects/public/${id}`,
   },
   SNAPSHOTS: {
     SAVE: (projectId: string) => `/api/v1/snapshots/${projectId}/save`,

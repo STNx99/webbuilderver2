@@ -29,6 +29,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyMedia,
+} from "@/components/ui/empty";
 import { ContentField, ContentType } from "@/interfaces/cms.interface";
 import {
   Plus,
@@ -41,6 +48,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  FileText,
 } from "lucide-react";
 import {
   useReactTable,
@@ -401,13 +409,18 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
   };
   if (!selectedTypeId) {
     return (
-      <div className="text-center py-8">
-        <Database className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">Select a Content Type</h3>
-        <p className="text-muted-foreground">
-          Choose a content type from the Content Types tab to manage its fields.
-        </p>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Database />
+          </EmptyMedia>
+          <EmptyTitle>Select a Content Type</EmptyTitle>
+          <EmptyDescription>
+            Choose a content type from the Content Types tab to manage its
+            fields.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
@@ -440,6 +453,19 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+      ) : contentFields.length === 0 && !newRow ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileText />
+            </EmptyMedia>
+            <EmptyTitle>No fields yet</EmptyTitle>
+            <EmptyDescription>
+              Add your first field to define the structure for this content
+              type.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
@@ -462,7 +488,7 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
             <TableBody>
               {/* New Row */}
               {newRow && (
-                <TableRow className="bg-blue-50">
+                <TableRow>
                   <TableCell>
                     <Input
                       value={newRow.name || ""}

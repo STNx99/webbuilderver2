@@ -1,5 +1,5 @@
 import React from "react";
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import { useElementHandler } from "@/hooks/useElementHandler";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { TextElement } from "@/interfaces/elements.interface";
@@ -23,12 +23,10 @@ const BaseComponent = ({ element, data }: EditorComponentProps) => {
     (typeof element.content === "string" ? element.content : "") ||
     "";
 
-  // Apply placeholder replacement if content is from element.content and data is available
   if (typeof element.content === "string" && data && typeof data === "object") {
     content = elementHelper.replacePlaceholders(element.content, data);
   }
 
-  // Show raw content with placeholders when editing, replaced content when not editing
   const displayContent = isEditing ? element.content : content;
 
   return (

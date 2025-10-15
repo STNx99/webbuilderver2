@@ -22,7 +22,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import createProject from "@/app/actions/projectAction";
 import React from "react";
-import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type CreateProjectDialogProps = {

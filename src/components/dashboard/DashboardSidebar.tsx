@@ -61,6 +61,11 @@ const navigationItems = [
     url: "/notifications",
     icon: Bell,
   },
+  {
+    title: "Market place",
+    url: "/marketplace",
+    icon: Home,
+  }
 ];
 
 const quickActions = [

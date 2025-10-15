@@ -24,6 +24,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyMedia,
+} from "@/components/ui/empty";
+import {
   ContentItem,
   ContentType,
   ContentField,
@@ -43,6 +50,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  FileStack,
 } from "lucide-react";
 import {
   useReactTable,
@@ -108,7 +116,6 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
 
   const columnHelper = createColumnHelper<ContentItem>();
 
-  // Create a map of field values for quick lookup
   const fieldValuesMap = useMemo(() => {
     const map: { [itemId: string]: { [fieldId: string]: string } } = {};
     contentItems.forEach((item) => {
@@ -569,14 +576,18 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
 
   if (!selectedTypeId) {
     return (
-      <div className="text-center py-8">
-        <Database className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">Select a Content Type</h3>
-        <p className="text-muted-foreground">
-          Choose a content type from the Content Types tab to manage its content
-          items.
-        </p>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Database />
+          </EmptyMedia>
+          <EmptyTitle>Select a Content Type</EmptyTitle>
+          <EmptyDescription>
+            Choose a content type from the Content Types tab to manage its
+            content items.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
@@ -609,6 +620,19 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+      ) : contentItems.length === 0 && !newRow ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileStack />
+            </EmptyMedia>
+            <EmptyTitle>No content items yet</EmptyTitle>
+            <EmptyDescription>
+              Create your first content item to start adding content to this
+              type.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
@@ -631,7 +655,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
             <TableBody>
               {/* New Row */}
               {newRow && (
-                <TableRow className="bg-blue-50">
+                <TableRow className="">
                   <TableCell>
                     <Input
                       value={newRow.title || ""}

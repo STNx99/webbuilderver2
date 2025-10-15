@@ -101,23 +101,21 @@ export default function ElementLoader({
     <LayoutGroup>
       {filteredElements.map((element) => (
         <ResizeHandler element={element} key={element.id}>
-          <div className="w-full h-full">
-            <EditorContextMenu element={element}>
-              {renderElement(element)}
-            </EditorContextMenu>
-            <div
-              onDragOver={(e) => handleHover(e, element)}
-              onDrop={(e) => handleDrop(e, element)}
-              className="bg-blue-400 border-2 border-dashed border-blue-600 flex items-center justify-center text-blue-800 font-semibold transition-all duration-100"
-              style={{
-                width: "100%",
-                height: draggedOverElement?.id === element.id ? "50px" : "0px",
-                opacity: draggedOverElement?.id === element.id ? 0.7 : 0,
-                overflow: "hidden",
-              }}
-            >
-              {draggingElement ? "Swap Here" : "Insert Here"}
-            </div>
+          <EditorContextMenu element={element}>
+            {renderElement(element)}
+          </EditorContextMenu>
+          <div
+            onDragOver={(e) => handleHover(e, element)}
+            onDrop={(e) => handleDrop(e, element)}
+            className="bg-blue-400 border-2 border-dashed border-blue-600 flex items-center justify-center text-blue-800 font-semibold transition-all duration-100"
+            style={{
+              width: "100%",
+              height: draggedOverElement?.id === element.id ? "50px" : "0px",
+              opacity: draggedOverElement?.id === element.id ? 0.7 : 0,
+              overflow: "hidden",
+            }}
+          >
+            {draggingElement ? "Swap Here" : "Insert Here"}
           </div>
         </ResizeHandler>
       ))}

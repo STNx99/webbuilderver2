@@ -4,6 +4,7 @@ import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { Viewport } from "@/hooks/useEditor";
 import CssTextareaImporter from "./CssTextareaImporter";
 import { Button } from "@/components/ui/button";
+import ExportDialog from "../ExportDialog";
 
 type EditorHeaderProps = {
   handlePageNavigation: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -30,6 +31,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
 
       <div className="flex items-center ">
         <div className="flex gap-4">
+          <ExportDialog />
           {(["mobile", "tablet", "desktop"] as const).map((view) => (
             <Button
               key={view}

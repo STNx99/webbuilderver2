@@ -39,11 +39,21 @@ type UpdatePayload<TElement extends EditorElement> = {
 };
 
 const createElementStore = <TElement extends EditorElement>() => {
+  let cachedProjectId: string | undefined;
+
   return create<ElementStore<TElement>>((set, get) => {
     const saveSnapshotToApi = async (elements: EditorElement[]) => {
       try {
-        const projectId = elements[0]?.projectId;
-        if (!projectId) return;
+        // Use cached projectId if elements array is empty
+        const projectId = elements[0]?.projectId || cachedProjectId;
+        if (!projectId) {
+          console.warn("No projectId available for saving snapshot");
+          return;
+        }
+        // Cache the projectId for future saves
+        if (elements[0]?.projectId) {
+          cachedProjectId = elements[0].projectId;
+        }
         const snapshot: Snapshot = {
           id: `snapshot-${Date.now()}`,
           elements: cloneDeep(elements),
@@ -61,10 +71,11 @@ const createElementStore = <TElement extends EditorElement>() => {
 
     const debouncedSave = debounce(async () => {
       const clonedElements = cloneDeep(get().elements) as EditorElement[];
+      console.log("Autosaving snapshot...", clonedElements);
       try {
         await saveSnapshotToApi(clonedElements);
       } catch (err) {
-        set({elements: clonedElements as TElement[]})
+        set({ elements: clonedElements as TElement[] });
         console.error("Failed to autosave snapshot:", err);
       }
     }, 2000);
@@ -84,11 +95,17 @@ const createElementStore = <TElement extends EditorElement>() => {
 
       setElements: (elements: TElement[]) => {
         takeSnapshot();
+        if (elements.length > 0 && elements[0].projectId) {
+          cachedProjectId = elements[0].projectId;
+        }
         set({ elements });
         debouncedSave();
         return get();
       },
       loadElements: (elements: TElement[]) => {
+        if (elements.length > 0 && elements[0].projectId) {
+          cachedProjectId = elements[0].projectId;
+        }
         set({ elements });
         debouncedSave();
         return get();
@@ -110,7 +127,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         debouncedSave();
 
         const { selectedElement } = SelectionStore.getState();
-        console.log("element before update", selectedElement);
         if (selectedElement?.id === id) {
           const updatedSelected = elementHelper.findById(
             updatedTree as EditorElement[],
@@ -122,7 +138,6 @@ const createElementStore = <TElement extends EditorElement>() => {
             });
           }
         }
-        console.log("element after update", selectedElement);
 
         return get();
       },
@@ -134,7 +149,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements as EditorElement[],
           id,
         ) as TElement[];
-
         set({
           elements: updatedTree,
         });
@@ -154,7 +168,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           elementToBeInserted,
         ) as TElement[];
 
-        console.log("Inserting element", elementToBeInserted);
         set({ elements: updated });
         debouncedSave();
         return get();
@@ -201,7 +214,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements as EditorElement[],
         ) as TElement[];
 
-        console.log("Creating element", ...newElements);
         set({
           elements: updatedTree,
         });
