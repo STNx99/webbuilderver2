@@ -23,6 +23,7 @@ import { z } from "zod";
 import createProject from "@/app/actions/projectAction";
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { projectKeys } from "@/hooks/useProjects";
 
 type CreateProjectDialogProps = {
   children?: React.ReactNode;
@@ -55,7 +56,7 @@ export default function CreateProjectDialog({
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: projectKeys.userProjects() });
       setIsCreateDialogOpen(false);
     },
   });

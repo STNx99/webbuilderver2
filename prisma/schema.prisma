@@ -60,6 +60,7 @@ model Project {
   Pages       Page[]
   Owner       User       @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
   Snapshots   Snapshot[]
+  MarketplaceItems MarketplaceItem[] // Projects that were turned into marketplace templates
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -103,15 +104,16 @@ model Snapshot {
 }
 
 model User {
-  CreatedAt DateTime  @db.Timestamptz(6)
-  Email     String
-  FirstName String?
-  Id        String    @id(map: "PK_Users")
-  ImageUrl  String?
-  LastName  String?
-  UpdatedAt DateTime  @db.Timestamptz(6)
-  Images    Image[]
-  Projects  Project[]
+  CreatedAt       DateTime          @db.Timestamptz(6)
+  Email           String
+  FirstName       String?
+  Id              String            @id(map: "PK_Users")
+  ImageUrl        String?
+  LastName        String?
+  UpdatedAt       DateTime          @db.Timestamptz(6)
+  Images          Image[]
+  Projects        Project[]
+  MarketplaceItems MarketplaceItem[]
 }
 
 model ContentType {
@@ -157,4 +159,64 @@ model ContentItem {
   UpdatedAt     DateTime            @updatedAt
   FieldValues   ContentFieldValue[]
   ContentType   ContentType         @relation(fields: [ContentTypeId], references: [Id], onDelete: Cascade)
+}
+
+model MarketplaceItem {
+  Id           String                      @id @default(cuid())
+  Title        String
+  Description  String
+  Preview      String?
+  TemplateType String                      @default("block") // "full-site" | "page" | "section" | "block"
+  Featured     Boolean                     @default(false)
+  PageCount    Int?
+  Downloads    Int                         @default(0)
+  Likes        Int                         @default(0)
+  AuthorId     String
+  AuthorName   String
+  Verified     Boolean                     @default(false)
+  ProjectId    String?                     // Reference to the original project this template is based on
+  CreatedAt    DateTime                    @default(now()) @db.Timestamp(6)
+  UpdatedAt    DateTime                    @updatedAt @db.Timestamp(6)
+  DeletedAt    DateTime?                   @db.Timestamp(6)
+  Author       User                        @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
+  Project      Project?                    @relation(fields: [ProjectId], references: [Id], onDelete: SetNull)
+  Tags         MarketplaceItemTag[]
+  Categories   MarketplaceItemCategory[]
+
+  @@index([AuthorId])
+  @@index([TemplateType])
+  @@index([Featured])
+  @@index([ProjectId])
+}
+
+model Category {
+  Id    String                    @id @default(cuid())
+  Name  String                    @unique
+  Items MarketplaceItemCategory[]
+}
+
+model Tag {
+  Id    String               @id @default(cuid())
+  Name  String               @unique
+  Items MarketplaceItemTag[]
+}
+
+model MarketplaceItemTag {
+  ItemId String
+  TagId  String
+  Item   MarketplaceItem @relation(fields: [ItemId], references: [Id], onDelete: Cascade)
+  Tag    Tag             @relation(fields: [TagId], references: [Id], onDelete: Cascade)
+
+  @@id([ItemId, TagId])
+  @@index([TagId])
+}
+
+model MarketplaceItemCategory {
+  ItemId     String
+  CategoryId String
+  Item       MarketplaceItem @relation(fields: [ItemId], references: [Id], onDelete: Cascade)
+  Category   Category        @relation(fields: [CategoryId], references: [Id], onDelete: Cascade)
+
+  @@id([ItemId, CategoryId])
+  @@index([CategoryId])
 }

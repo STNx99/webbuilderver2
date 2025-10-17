@@ -57,6 +57,37 @@ export const API_ENDPOINTS = {
         `/api/v1/public/content/${contentTypeId}/${slug}`,
     },
   },
+  IMAGES: {
+    UPLOAD: "/api/v1/images",
+    UPLOAD_BASE64: "/api/v1/images/base64",
+    GET_USER: "/api/v1/images",
+    GET_BY_ID: (id: string) => `/api/v1/images/${id}`,
+    UPDATE: (id: string) => `/api/v1/images/${id}`,
+    DELETE: (id: string) => `/api/v1/images/${id}`,
+  },
+  MARKETPLACE: {
+    ITEMS: {
+      CREATE: "/api/v1/marketplace/items",
+      GET_ALL: "/api/v1/marketplace/items",
+      GET_BY_ID: (id: string) => `/api/v1/marketplace/items/${id}`,
+      UPDATE: (id: string) => `/api/v1/marketplace/items/${id}`,
+      DELETE: (id: string) => `/api/v1/marketplace/items/${id}`,
+      DOWNLOAD: (id: string) => `/api/v1/marketplace/items/${id}/download`,
+      INCREMENT_DOWNLOADS: (id: string) =>
+        `/api/v1/marketplace/items/${id}/increment-download`,
+      INCREMENT_LIKES: (id: string) => `/api/v1/marketplace/items/${id}/like`,
+    },
+    CATEGORIES: {
+      CREATE: "/api/v1/marketplace/categories",
+      GET_ALL: "/api/v1/marketplace/categories",
+      DELETE: (id: string) => `/api/v1/marketplace/categories/${id}`,
+    },
+    TAGS: {
+      CREATE: "/api/v1/marketplace/tags",
+      GET_ALL: "/api/v1/marketplace/tags",
+      DELETE: (id: string) => `/api/v1/marketplace/tags/${id}`,
+    },
+  },
 };
 
 export const NEXT_API_ENDPOINTS = {

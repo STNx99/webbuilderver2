@@ -174,8 +174,8 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 CLERK_SECRET_KEY=your_clerk_secret_key
 
 # Backend API
-GO_SERVER_URL=http://localhost:8080/api/v1
-NEXT_PUBLIC_GO_SERVER_URL=http://localhost:8080/api/v1
+GO_SERVER_URL=http://localhost:8080
+NEXT_PUBLIC_GO_SERVER_URL=http://localhost:8080
 ```
 
 4. **Run the development server**

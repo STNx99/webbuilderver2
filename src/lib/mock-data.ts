@@ -1,4 +1,4 @@
-import { MarketplaceItem } from "./types";
+import { MarketplaceItem } from "@/interfaces/market.interface";
 
 export const categories = [
   { id: "business", name: "Business", count: 3 },
