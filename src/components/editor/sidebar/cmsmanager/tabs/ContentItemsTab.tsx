@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { RichTextEditorDialog } from "@/components/ui/rich-text-editor-dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -361,7 +361,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
             if (field.type === "richtext") {
               return (
                 <div className="min-w-[300px]">
-                  <RichTextEditor
+                  <RichTextEditorDialog
                     value={
                       editedData?.fieldValues?.[field.id] ??
                       fieldValues[field.id] ??
@@ -371,6 +371,27 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
                       meta?.updateFieldValue(item.id, field.id, value)
                     }
                     placeholder={`Enter ${field.name.toLowerCase()}`}
+                    title={`Edit ${field.name}`}
+                    trigger={
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full justify-start"
+                      >
+                        {editedData?.fieldValues?.[field.id] ||
+                        fieldValues[field.id] ? (
+                          <span className="truncate">
+                            {editedData?.fieldValues?.[field.id] ||
+                              fieldValues[field.id]
+                                ?.replace(/<[^>]*>/g, "")
+                                .slice(0, 50) ||
+                              `Edit ${field.name.toLowerCase()}`}
+                          </span>
+                        ) : (
+                          `Edit ${field.name.toLowerCase()}`
+                        )}
+                      </Button>
+                    }
                   />
                 </div>
               );
@@ -688,12 +709,30 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
                     <TableCell key={field.id}>
                       {field.type === "richtext" ? (
                         <div className="min-w-[300px]">
-                          <RichTextEditor
+                          <RichTextEditorDialog
                             value={newRow.fieldValues?.[field.id] || ""}
                             onChange={(value) =>
                               updateFieldValue("new", field.id, value)
                             }
                             placeholder={`Enter ${field.name.toLowerCase()}`}
+                            title={`Edit ${field.name}`}
+                            trigger={
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full justify-start"
+                              >
+                                {newRow.fieldValues?.[field.id] ? (
+                                  <span className="truncate">
+                                    {newRow.fieldValues[field.id]
+                                      ?.replace(/<[^>]*>/g, "")
+                                      .slice(0, 50)}
+                                  </span>
+                                ) : (
+                                  `Edit ${field.name.toLowerCase()}`
+                                )}
+                              </Button>
+                            }
                           />
                         </div>
                       ) : (
