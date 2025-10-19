@@ -54,7 +54,6 @@ export function SubscriptionCheckout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
-  // Handle URL parameters and authentication
   useEffect(() => {
     if (!isLoaded) return
 
@@ -84,13 +83,11 @@ export function SubscriptionCheckout() {
         return
       }
 
-      // Handle enterprise plan
       if (planId === 'enterprise') {
         router.push('/contact-us')
         return
       }
 
-      // For paid plans with authenticated users
       if (isSignedIn) {
         setSelectedPlan(convertToCheckoutPlan(pricingPlan))
         setBillingPeriod(frequency)
@@ -149,6 +146,25 @@ export function SubscriptionCheckout() {
         formData
       });
 
+      // Create subscription in database
+      const response = await fetch('/api/subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planId: selectedPlan.id,
+          billingPeriod,
+          amount: total,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create subscription');
+      }
+
+      const subscriptionData = await response.json();
+      console.log("[Checkout] Subscription created:", subscriptionData);
       // Show success dialog
       setShowSuccessDialog(true);
 
