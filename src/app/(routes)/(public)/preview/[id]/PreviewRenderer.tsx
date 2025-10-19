@@ -40,7 +40,7 @@ export default function PreviewRenderer({ projectId }: PreviewRendererProps) {
   if (projectError || elementsError) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg text-red-500">
+        <div className="text-lg text-destructive">
           Error loading preview:{" "}
           {projectError?.message || elementsError?.message}
         </div>
@@ -56,7 +56,6 @@ export default function PreviewRenderer({ projectId }: PreviewRendererProps) {
     );
   }
 
-  
   return (
     <div className="min-h-screen min-w-screen bg-white">
       <style

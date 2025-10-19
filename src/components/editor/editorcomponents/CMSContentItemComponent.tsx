@@ -1,10 +1,10 @@
 import React from "react";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { CMSContentItemElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";
 import { Database } from "lucide-react";
-import { useCMSContentItem, getFieldValue } from "@/hooks/useCMSContent";
+import { useCMSContentItem, getFieldValue } from "@/hooks";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const CMSContentItemComponent = ({ element, data }: EditorComponentProps) => {

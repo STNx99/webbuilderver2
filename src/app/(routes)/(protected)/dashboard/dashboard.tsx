@@ -18,11 +18,7 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { DeleteProjectDialog } from "@/components/dashboard/DeleteProjectDialog";
 import { PublishProjectDialog } from "@/components/dashboard/PublishProjectDialog";
 import CreateProjectDialog from "@/components/dashboard/CreateProjectDialog";
-import {
-  useUserProjects,
-  useDeleteProject,
-  usePublishProject,
-} from "@/hooks/useProjects";
+import { useUserProjects, useDeleteProject, usePublishProject } from "@/hooks";
 import type {
   SortOption,
   ViewMode,

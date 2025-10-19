@@ -2,8 +2,8 @@
 
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
-import { useElementHandler } from "@/hooks/useElementHandler";
-import { useResizeHandler } from "@/hooks/useResizeHandler";
+import { useElementHandler } from "@/hooks";
+import { useResizeHandler } from "@/hooks";
 import { cn } from "@/lib/utils";
 import type { EditorElement } from "@/types/global.type";
 import type React from "react";

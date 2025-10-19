@@ -16,7 +16,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useElementStore } from "@/globalstore/elementstore";
 import { CMSContentSettings } from "@/interfaces/elements.interface";
-import { useCMSContentTypes, useCMSContent } from "@/hooks/useCMSContent";
+import { useCMSContentTypes, useCMSContent } from "@/hooks";
 
 interface CMSConfigurationProps {
   elementId: string;

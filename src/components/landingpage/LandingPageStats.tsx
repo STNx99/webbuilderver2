@@ -1,6 +1,6 @@
 "use client";
 
-import { useInView } from "@/hooks/useInView";
+import { useInView } from "@/hooks";
 
 const stats = [
   { value: "50K+", label: "Websites Created" },
@@ -23,18 +23,14 @@ export default function LandingPageStats() {
             <div
               key={index}
               className={`space-y-2 group transition-all duration-700 ${
-                inView
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-8"
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
               style={{ transitionDelay: `${index * 150}ms` }}
             >
               <div className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-300">
                 {stat.value}
               </div>
-              <div className="text-sm text-muted-foreground">
-                {stat.label}
-              </div>
+              <div className="text-sm text-muted-foreground">{stat.label}</div>
             </div>
           ))}
         </div>

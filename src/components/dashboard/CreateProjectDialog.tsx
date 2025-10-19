@@ -23,7 +23,7 @@ import { z } from "zod";
 import createProject from "@/app/actions/projectAction";
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { projectKeys } from "@/hooks/useProjects";
+import { projectKeys } from "@/hooks";
 
 type CreateProjectDialogProps = {
   children?: React.ReactNode;

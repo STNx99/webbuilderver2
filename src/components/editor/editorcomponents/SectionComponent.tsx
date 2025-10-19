@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { SectionElement } from "@/interfaces/elements.interface";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,10 @@ const SectionComponent = ({ element, data }: EditorComponentProps) => {
             zIndex: 10,
           }}
         >
-          <Button className="h-6 text-primary-foreground" onDoubleClick={handleCreateSeciont}>
+          <Button
+            className="h-6 text-primary-foreground"
+            onDoubleClick={handleCreateSeciont}
+          >
             + Add Section
           </Button>
         </div>

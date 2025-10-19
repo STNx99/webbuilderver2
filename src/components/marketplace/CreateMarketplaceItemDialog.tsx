@@ -39,8 +39,8 @@ import {
   useCreateMarketplaceItem,
   useCategories,
   useTags,
-} from "@/hooks/useMarketplace";
-import { useUserProjects } from "@/hooks/useProjects";
+  useUserProjects,
+} from "@/hooks";
 import { Loader2, Plus, X, Upload, Search } from "lucide-react";
 import { CreateMarketplaceItemRequest } from "@/interfaces/market.interface";
 

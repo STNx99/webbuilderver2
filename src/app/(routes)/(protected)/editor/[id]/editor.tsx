@@ -3,7 +3,7 @@ import React from "react";
 import EditorHeader from "@/components/editor/editor/EditorHeader";
 import PreviewContainer from "@/components/editor/editor/PreviewContainer";
 import EditorCanvas from "@/components/editor/editor/EditorCanvas";
-import { useEditor } from "@/hooks/useEditor";
+import { useEditor } from "@/hooks";
 
 type EditorProps = {
   id: string;

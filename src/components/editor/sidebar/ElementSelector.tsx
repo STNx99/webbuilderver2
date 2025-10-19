@@ -17,29 +17,45 @@ export function ElementSelector() {
       <CommandInput placeholder="Type an element or search..." />
       <CommandList>
         <CommandGroup heading="Default components">
-          {elementHolders.map((element) => (
-            <CommandItem
-              key={element.type}
-              value={element.type}
-              className="h-6"
-            >
-              <ComponentHolder icon={element.icon} type={element.type} />
-            </CommandItem>
-          ))}
+          {[...elementHolders]
+            .sort((a, b) => a.type.localeCompare(b.type))
+            .map((element) => (
+              <CommandItem
+                key={element.type}
+                value={element.type}
+                className="h-6"
+              >
+                <ComponentHolder icon={element.icon} type={element.type} />
+              </CommandItem>
+            ))}
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Custom components">
-          {customComps.map((customComponent, idx) => (
-            <CommandItem
-              key={`${customComponent.name || customComponent.content}-${idx}`}
-              value={customComponent.name || customComponent.content}
-            >
-              <CustomComponentHolder
-                name={customComponent.name || ""}
-                index={idx}
-              />
-            </CommandItem>
-          ))}
+          {customComps
+            .map((_, i) => i)
+            .sort((a, b) =>
+              (
+                customComps[a].name ||
+                customComps[a].content ||
+                ""
+              ).localeCompare(
+                customComps[b].name || customComps[b].content || "",
+              ),
+            )
+            .map((originalIdx) => {
+              const customComponent = customComps[originalIdx];
+              return (
+                <CommandItem
+                  key={`${customComponent.name || customComponent.content}-${originalIdx}`}
+                  value={customComponent.name || customComponent.content}
+                >
+                  <CustomComponentHolder
+                    name={customComponent.name || ""}
+                    index={originalIdx}
+                  />
+                </CommandItem>
+              );
+            })}
         </CommandGroup>
       </CommandList>
     </Command>

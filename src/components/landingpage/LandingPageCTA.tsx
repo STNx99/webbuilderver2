@@ -3,7 +3,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useInView } from "@/hooks/useInView";
+import { useInView } from "@/hooks";
 
 export default function LandingPageCTA() {
   const [ref, inView] = useInView();
@@ -17,9 +17,7 @@ export default function LandingPageCTA() {
       <div className="container mx-auto px-4 lg:px-6 text-center relative">
         <div
           className={`max-w-4xl mx-auto space-y-8 transition-all duration-1000 ${
-            inView
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-12"
+            inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
           }`}
         >
           <h2 className="text-3xl lg:text-6xl font-bold leading-tight">
@@ -29,15 +27,13 @@ export default function LandingPageCTA() {
             </span>
           </h2>
           <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Join thousands of creators who trust WebBuilder to bring their vision
-            to life. No code required, just drag, drop, and publish—the way it
-            should be.
+            Join thousands of creators who trust WebBuilder to bring their
+            vision to life. No code required, just drag, drop, and publish—the
+            way it should be.
           </p>
           <div
             className={`flex flex-col sm:flex-row gap-6 justify-center pt-8 transition-all duration-1000 delay-300 ${
-              inView
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
             }`}
           >
             <Button
@@ -60,9 +56,7 @@ export default function LandingPageCTA() {
           </div>
           <p
             className={`text-sm text-muted-foreground pt-4 transition-all duration-1000 delay-500 ${
-              inView
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-4"
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             }`}
           >
             14-day free trial • No credit card required • Cancel anytime

@@ -1,5 +1,5 @@
 import React from "react";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import DOMPurify from "isomorphic-dompurify";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { ButtonElement } from "@/interfaces/elements.interface";

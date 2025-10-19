@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
 } from "@/components/ui/card";
-import { useInView } from "@/hooks/useInView";
+import { useInView } from "@/hooks";
 
 const testimonials = [
   {
@@ -48,9 +48,7 @@ export default function LandingPageTestimonials() {
       <div className="container mx-auto px-4 lg:px-6">
         <div
           className={`text-center mb-20 transition-all duration-1000 ${
-            inView
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-12"
+            inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
           }`}
         >
           <h2 className="text-3xl lg:text-5xl font-bold mb-6">
@@ -97,9 +95,7 @@ export default function LandingPageTestimonials() {
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <p className="font-semibold text-lg">
-                      {testimonial.name}
-                    </p>
+                    <p className="font-semibold text-lg">{testimonial.name}</p>
                     <p className="text-sm text-muted-foreground">
                       {testimonial.role}
                     </p>

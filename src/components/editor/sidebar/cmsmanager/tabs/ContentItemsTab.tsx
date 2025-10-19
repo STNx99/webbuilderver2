@@ -5,17 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditorDialog } from "@/components/ui/rich-text-editor-dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
   Table,
   TableBody,
   TableCell,
@@ -39,19 +28,20 @@ import {
 import { ContentItemFormSchema } from "@/schema/zod/cms";
 import {
   Plus,
-  Edit,
-  Trash2,
   Database,
   Eye,
   EyeOff,
   Loader2,
   Save,
   X,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
   FileStack,
 } from "lucide-react";
+import {
+  RequiredIndicator,
+  ConfirmDeleteDialog,
+  TableActionButtons,
+  SortableHeader,
+} from "./components";
 import {
   useReactTable,
   getCoreRowModel,
@@ -233,20 +223,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
     const baseColumns: ColumnDef<ContentItem, any>[] = [
       columnHelper.accessor("title", {
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Title
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
+          <SortableHeader column={column}>Title</SortableHeader>
         ),
         cell: ({ row, table }) => {
           const item = row.original;
@@ -270,20 +247,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
       }),
       columnHelper.accessor("slug", {
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Slug
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
+          <SortableHeader column={column}>Slug</SortableHeader>
         ),
         cell: ({ row, table }) => {
           const item = row.original;
@@ -347,7 +311,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
         header: () => (
           <div>
             {field.name}
-            {field.required && <span className="text-red-500 ml-1">*</span>}
+            <RequiredIndicator required={field.required} />
           </div>
         ),
         cell: ({ row, table }) => {
@@ -442,67 +406,20 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
 
         return (
           <div className="flex gap-1">
-            {isEditing ? (
-              <>
-                <Button
-                  size="sm"
-                  onClick={() => meta?.saveExistingItem(item.id)}
-                  disabled={meta?.updateItemMutation?.isPending}
-                  className="h-8 w-8 p-0"
-                >
-                  <Save className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => meta?.stopEditing(item.id)}
-                  className="h-8 w-8 p-0"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => meta?.startEditing(item.id)}
-                  className="h-8 w-8 p-0"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      className="h-8 w-8 p-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Delete Content Item</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Are you sure you want to delete "{item.title}"? This
-                        action cannot be undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() =>
-                          meta?.onDeleteItem(selectedTypeId, item.id)
-                        }
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </>
+            <TableActionButtons
+              isEditing={isEditing}
+              onEdit={() => meta?.startEditing(item.id)}
+              onSave={() => meta?.saveExistingItem(item.id)}
+              onCancel={() => meta?.stopEditing(item.id)}
+              isSaving={meta?.updateItemMutation?.isPending}
+            />
+            {!isEditing && (
+              <ConfirmDeleteDialog
+                itemName={item.title}
+                itemType="Content Item"
+                onConfirm={() => meta?.onDeleteItem(selectedTypeId, item.id)}
+                description={`Are you sure you want to delete "${item.title}"? This action cannot be undone.`}
+              />
             )}
           </div>
         );

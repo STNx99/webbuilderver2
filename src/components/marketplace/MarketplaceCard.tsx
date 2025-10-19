@@ -13,10 +13,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { MarketplaceItemWithRelations } from "@/interfaces/market.interface";
-import {
-  useDownloadMarketplaceItem,
-  useIncrementLikes,
-} from "@/hooks/useMarketplace";
+import { useDownloadMarketplaceItem, useIncrementLikes } from "@/hooks";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 

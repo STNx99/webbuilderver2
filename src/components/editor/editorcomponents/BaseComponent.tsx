@@ -1,6 +1,6 @@
 import React from "react";
 import DOMPurify from "isomorphic-dompurify";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { TextElement } from "@/interfaces/elements.interface";
 import { elementHelper } from "@/lib/utils/element/elementhelper";

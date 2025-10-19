@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { ChevronDown, Loader2 } from "lucide-react";
-import { useCategories } from "@/hooks/useMarketplace";
+import { useCategories } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

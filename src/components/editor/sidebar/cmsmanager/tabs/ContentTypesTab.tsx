@@ -1,18 +1,6 @@
-import React, { useState, useMemo } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useMemo, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import {
   Table,
   TableBody,
@@ -29,29 +17,25 @@ import {
   EmptyMedia,
 } from "@/components/ui/empty";
 import { ContentType } from "@/interfaces/cms.interface";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Loader2,
-  Save,
-  X,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  Database,
-} from "lucide-react";
+import { Eye, Loader2, Database } from "lucide-react";
 import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
   ColumnDef,
-  SortingState,
   flexRender,
   createColumnHelper,
 } from "@tanstack/react-table";
+import { useTableEditing } from "@/hooks/table/use-table-editing";
+import { useTableState } from "@/hooks/table/use-table-state";
+import {
+  SortableHeader,
+  ConfirmDeleteDialog,
+  TableActionButtons,
+  TableToolbar,
+} from "./components";
+import { Button } from "@/components/ui/button";
 
 interface ContentTypesTabProps {
   contentTypes: ContentType[];
@@ -64,14 +48,6 @@ interface ContentTypesTabProps {
   onDeleteType: (typeId: string) => void;
 }
 
-interface EditableType {
-  id?: string;
-  name?: string;
-  description?: string;
-  isNew?: boolean;
-  isEditing?: boolean;
-}
-
 export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
   contentTypes,
   isLoading,
@@ -82,43 +58,106 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
   onCreateType,
   onDeleteType,
 }) => {
-  const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [newRow, setNewRow] = useState<EditableType | null>(null);
-  const [editedValues, setEditedValues] = useState<{
-    [key: string]: EditableType;
-  }>({});
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
-
   const columnHelper = createColumnHelper<ContentType>();
 
+  // Use custom hooks for state management
+  const { sorting, setSorting, globalFilter, setGlobalFilter } =
+    useTableState();
+
+  const {
+    editingRowsSet,
+    editedValues,
+    newRow,
+    startEditing,
+    stopEditing,
+    updateField,
+    getFieldValue,
+    startNewRow,
+    cancelNewRow,
+    updateNewRowField,
+    isEditing,
+  } = useTableEditing<ContentType>({
+    getInitialValues: (type) => ({
+      name: type.name,
+      description: type.description,
+    }),
+  });
+
+  // Handlers
+  const handleStartEditing = useCallback(
+    (typeId: string) => {
+      const type = contentTypes.find((t) => t.id === typeId);
+      if (type) {
+        startEditing(typeId, type);
+      }
+    },
+    [contentTypes, startEditing],
+  );
+
+  const handleSaveExisting = useCallback(
+    async (typeId: string) => {
+      const editedData = editedValues[typeId];
+      if (!editedData) return;
+
+      const updateData = {
+        name: editedData.name,
+        description: editedData.description,
+      };
+
+      try {
+        updateTypeMutation.mutate({ id: typeId, data: updateData });
+        stopEditing(typeId);
+      } catch (error) {
+        console.error("Failed to update type:", error);
+      }
+    },
+    [editedValues, updateTypeMutation, stopEditing],
+  );
+
+  const handleSaveNew = useCallback(async () => {
+    if (!newRow) return;
+
+    const typeData = {
+      name: newRow.name || "",
+      description: newRow.description || "",
+    };
+
+    try {
+      await onCreateType(typeData);
+      cancelNewRow();
+    } catch (error) {
+      console.error("Failed to create type:", error);
+    }
+  }, [newRow, onCreateType, cancelNewRow]);
+
+  const handleUpdateField = useCallback(
+    (typeId: string, field: string, value: string) => {
+      if (newRow?.isNew) {
+        updateNewRowField(field, value);
+      } else {
+        updateField(typeId, field, value);
+      }
+    },
+    [newRow, updateField, updateNewRowField],
+  );
+
+  // Column definitions
   const columns = useMemo<ColumnDef<ContentType, any>[]>(
     () => [
       columnHelper.accessor("name", {
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Name
-            {column.getIsSorted() === "asc" ? (
-              <ArrowUp className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === "desc" ? (
-              <ArrowDown className="ml-2 h-4 w-4" />
-            ) : (
-              <ArrowUpDown className="ml-2 h-4 w-4" />
-            )}
-          </Button>
+          <SortableHeader column={column}>Name</SortableHeader>
         ),
         cell: ({ row, getValue }) => {
           const type = row.original;
-          const isEditing = editingRows.has(type.id);
+          const editing = isEditing(type.id);
 
-          return isEditing ? (
+          return editing ? (
             <Input
-              value={editedValues[type.id]?.name ?? getValue()}
-              onChange={(e) => updateTypeField(type.id, "name", e.target.value)}
+              value={getFieldValue(type.id, "name", getValue())}
+              onChange={(e) =>
+                handleUpdateField(type.id, "name", e.target.value)
+              }
               className="h-8"
             />
           ) : (
@@ -130,13 +169,13 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
         header: "Description",
         cell: ({ row, getValue }) => {
           const type = row.original;
-          const isEditing = editingRows.has(type.id);
+          const editing = isEditing(type.id);
 
-          return isEditing ? (
+          return editing ? (
             <Textarea
-              value={editedValues[type.id]?.description ?? (getValue() || "")}
+              value={getFieldValue(type.id, "description", getValue() || "")}
               onChange={(e) =>
-                updateTypeField(type.id, "description", e.target.value)
+                handleUpdateField(type.id, "description", e.target.value)
               }
               className="h-8 resize-none"
               rows={1}
@@ -161,7 +200,7 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
         header: "Actions",
         cell: ({ row }) => {
           const type = row.original;
-          const isEditing = editingRows.has(type.id);
+          const editing = isEditing(type.id);
 
           return (
             <div className="flex gap-1">
@@ -174,75 +213,40 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
               >
                 <Eye className="h-4 w-4" />
               </Button>
-              {isEditing ? (
-                <>
-                  <Button
-                    size="sm"
-                    onClick={() => saveExistingType(type.id)}
-                    disabled={updateTypeMutation.isPending}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Save className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => stopEditing(type.id)}
-                    className="h-8 w-8 p-0"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => startEditing(type.id)}
-                    className="h-8 w-8 p-0"
-                    title="Edit"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="h-8 w-8 p-0"
-                        title="Delete"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Content Type</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete "{type.name}"? This
-                          action cannot be undone and will also delete all
-                          associated fields and content items.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => onDeleteType(type.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </>
+              <TableActionButtons
+                isEditing={editing}
+                onEdit={() => handleStartEditing(type.id)}
+                onSave={() => handleSaveExisting(type.id)}
+                onCancel={() => stopEditing(type.id)}
+                isSaving={updateTypeMutation.isPending}
+              />
+              {!editing && (
+                <ConfirmDeleteDialog
+                  itemName={type.name}
+                  itemType="Content Type"
+                  onConfirm={() => onDeleteType(type.id)}
+                  isPending={deleteTypeMutation.isPending}
+                  description={`Are you sure you want to delete "${type.name}"? This action cannot be undone and will also delete all associated fields and content items.`}
+                />
               )}
             </div>
           );
         },
       }),
     ],
-    [editingRows, editedValues, updateTypeMutation.isPending],
+    [
+      columnHelper,
+      isEditing,
+      getFieldValue,
+      handleUpdateField,
+      handleStartEditing,
+      handleSaveExisting,
+      stopEditing,
+      updateTypeMutation.isPending,
+      deleteTypeMutation.isPending,
+      onSelectType,
+      onDeleteType,
+    ],
   );
 
   const table = useReactTable({
@@ -259,107 +263,16 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
     },
   });
 
-  const startEditing = (typeId: string) => {
-    const type = contentTypes.find((t) => t.id === typeId);
-    if (type) {
-      setEditedValues((prev) => ({
-        ...prev,
-        [typeId]: { name: type.name, description: type.description },
-      }));
-    }
-    setEditingRows((prev) => new Set([...prev, typeId]));
-  };
-
-  const stopEditing = (typeId: string) => {
-    setEditingRows((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(typeId);
-      return newSet;
-    });
-    setEditedValues((prev) => {
-      const newValues = { ...prev };
-      delete newValues[typeId];
-      return newValues;
-    });
-  };
-
-  const addNewRow = () => {
-    const newType: EditableType = {
-      isNew: true,
-      isEditing: true,
-      name: "",
-      description: "",
-    };
-    setNewRow(newType);
-  };
-
-  const cancelNewRow = () => {
-    setNewRow(null);
-  };
-
-  const saveNewRow = async () => {
-    if (!newRow) return;
-
-    const typeData = {
-      name: newRow.name || "",
-      description: newRow.description || "",
-    };
-
-    try {
-      await onCreateType(typeData);
-      setNewRow(null);
-    } catch (error) {
-      console.error("Failed to create type:", error);
-    }
-  };
-
-  const updateTypeField = (typeId: string, field: string, value: string) => {
-    if (newRow && newRow.isNew) {
-      setNewRow((prev) => ({ ...prev!, [field]: value }));
-    } else {
-      setEditedValues((prev) => ({
-        ...prev,
-        [typeId]: { ...prev[typeId], [field]: value },
-      }));
-    }
-  };
-
-  const saveExistingType = async (typeId: string) => {
-    const editedData = editedValues[typeId];
-    if (!editedData) return;
-
-    const updateData = {
-      name: editedData.name,
-      description: editedData.description,
-    };
-
-    try {
-      updateTypeMutation.mutate({ id: typeId, data: updateData });
-      stopEditing(typeId);
-    } catch (error) {
-      console.error("Failed to update type:", error);
-    }
-  };
-
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Content Types Grid</h3>
-        <Button size="sm" onClick={addNewRow} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Row
-        </Button>
-      </div>
-
-      {/* Search Filter */}
-      <div className="flex items-center space-x-2">
-        <Input
-          placeholder="Search content types..."
-          value={globalFilter ?? ""}
-          onChange={(event) => setGlobalFilter(String(event.target.value))}
-          className="max-w-sm"
-        />
-      </div>
+      <TableToolbar
+        title="Content Types Grid"
+        onAdd={() => startNewRow({ name: "", description: "" })}
+        searchValue={globalFilter}
+        onSearchChange={setGlobalFilter}
+        searchPlaceholder="Search content types..."
+        addDisabled={!!newRow}
+      />
 
       {isLoading ? (
         <div className="flex justify-center py-8">
@@ -405,7 +318,7 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
                     <Input
                       value={newRow.name || ""}
                       onChange={(e) =>
-                        updateTypeField("new", "name", e.target.value)
+                        updateNewRowField("name", e.target.value)
                       }
                       placeholder="Enter type name"
                       className="h-8"
@@ -415,7 +328,7 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
                     <Textarea
                       value={newRow.description || ""}
                       onChange={(e) =>
-                        updateTypeField("new", "description", e.target.value)
+                        updateNewRowField("description", e.target.value)
                       }
                       placeholder="Enter description"
                       className="h-8 resize-none"
@@ -425,24 +338,13 @@ export const ContentTypesTab: React.FC<ContentTypesTabProps> = ({
                   <TableCell className="text-muted-foreground">0</TableCell>
                   <TableCell className="text-muted-foreground">0</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        onClick={saveNewRow}
-                        disabled={createTypeMutation.isPending}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={cancelNewRow}
-                        className="h-8 w-8 p-0"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <TableActionButtons
+                      isEditing={true}
+                      onEdit={() => {}}
+                      onSave={handleSaveNew}
+                      onCancel={cancelNewRow}
+                      isSaving={createTypeMutation.isPending}
+                    />
                   </TableCell>
                 </TableRow>
               )}

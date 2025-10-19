@@ -2,18 +2,12 @@
 
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useInView } from "@/hooks/useInView";
+import { useInView } from "@/hooks";
 
 const footerSections = [
   {
     title: "Product",
-    links: [
-      "Features",
-      "Templates",
-      "Integrations",
-      "API",
-      "Changelog",
-    ],
+    links: ["Features", "Templates", "Integrations", "API", "Changelog"],
   },
   {
     title: "Company",
@@ -44,9 +38,7 @@ export default function LandingPageFooter() {
       <div className="container mx-auto px-4 lg:px-6">
         <div
           className={`grid md:grid-cols-4 gap-12 transition-all duration-1000 ${
-            inView
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-12"
+            inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
           }`}
         >
           <div className="space-y-6">
@@ -66,9 +58,7 @@ export default function LandingPageFooter() {
             <div
               key={index}
               className={`transition-all duration-700 ${
-                inView
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-8"
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
               style={{
                 transitionDelay: `${(index + 1) * 150}ms`,
@@ -93,9 +83,7 @@ export default function LandingPageFooter() {
 
         <div
           className={`border-t border-border/50 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 transition-all duration-1000 delay-300 ${
-            inView
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-8"
+            inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
           <p className="text-muted-foreground">

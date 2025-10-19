@@ -1,7 +1,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Monitor, Smartphone, Tablet } from "lucide-react";
-import { Viewport } from "@/hooks/useEditor";
+import { Viewport } from "@/hooks";
 import CssTextareaImporter from "./CssTextareaImporter";
 import { Button } from "@/components/ui/button";
 import ExportDialog from "../ExportDialog";

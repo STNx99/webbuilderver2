@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { MarketplaceCard } from "./MarketplaceCard";
 import { Button } from "@/components/ui/button";
 import { MarketplaceFilters } from "@/interfaces/market.interface";
-import { useMarketplaceItems } from "@/hooks/useMarketplace";
+import { useMarketplaceItems } from "@/hooks";
 import { Loader2, Search, AlertCircle } from "lucide-react";
 import {
   Select,
