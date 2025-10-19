@@ -8,6 +8,8 @@ const isProtectedRoute = createRouteMatcher([
   "/marketplace(.*)",
 ]);
 
+const isCheckoutRoute = createRouteMatcher(["/checkout(.*)"]);
+
 export default clerkMiddleware(async (auth, req) => {
   if (
     isProtectedRoute(req) ||
@@ -15,6 +17,9 @@ export default clerkMiddleware(async (auth, req) => {
     req.nextUrl.pathname.startsWith("/trpc")
   ) {
     await auth.protect();
+  }
+    if (isCheckoutRoute(req)) {
+    return;
   }
 });
 

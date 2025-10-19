@@ -6,76 +6,38 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, Zap, Shield, Check, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, Sparkles, ArrowRight } from 'lucide-react';
 import NumberFlow from '@number-flow/react';
-import Link from 'next/link';
 import { cn } from '@/lib/utils';
-
-const plans = [
-  {
-    id: 'hobby',
-    name: 'Hobby',
-    icon: Star,
-    price: {
-      monthly: 'Free forever',
-      yearly: 'Free forever',
-    },
-    description: 'Perfect for personal projects and trying out WebBuilder.',
-    features: [
-      '3 websites',
-      'Drag & drop builder',
-      'Basic components library',
-      'Mobile responsive design',
-      'Community support',
-    ],
-    cta: 'Get started for free',
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    icon: Zap,
-    price: {
-      monthly: 90,
-      yearly: 75,
-    },
-    description: 'Everything you need for professional websites and businesses.',
-    features: [
-      'Unlimited websites',
-      'Advanced components library',
-      'Code export (React/Next.js)',
-      'Custom domain hosting',
-      'Priority support',
-    ],
-    cta: 'Subscribe to Pro',
-    popular: true,
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    icon: Shield,
-    price: {
-      monthly: 'Get in touch for pricing',
-      yearly: 'Get in touch for pricing',
-    },
-    description: 'Advanced features for agencies and large teams.',
-    features: [
-      'Everything in Pro',
-      'Team collaboration',
-      'White-label solution',
-      'Advanced integrations',
-      'Dedicated account manager',
-    ],
-    cta: 'Contact us',
-  },
-];
+import { pricingPlans, requiresAuthentication } from '@/constants/pricing';
+import { useAuth } from '@clerk/nextjs';
 
 export default function LandingPagePricing() {
   const [frequency, setFrequency] = React.useState<'monthly' | 'yearly'>('monthly');
   const [mounted, setMounted] = React.useState(false);
+  const { isSignedIn } = useAuth();
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handlePlanSelect = (planId: string) => {
+    if (requiresAuthentication(planId) && !isSignedIn) {
+      window.location.href = `/sign-in?redirect_url=${encodeURIComponent('/checkout?plan=' + planId + '&frequency=' + frequency)}`;
+      return;
+    }
+  
+    if (planId === 'hobby') {
+      window.location.href = '/sign-up';
+      return;
+    }
+
+    if (planId === 'enterprise') {
+      window.location.href = '/contact-us';
+      return;
+    }
+    window.location.href = `/checkout?plan=${planId}&frequency=${frequency}`;
+  };
 
   if (!mounted) return null;
 
@@ -149,7 +111,7 @@ export default function LandingPagePricing() {
         </motion.div>
 
         <div className="mt-8 grid w-full max-w-6xl grid-cols-1 gap-6 md:grid-cols-3">
-          {plans.map((plan, index) => (
+          {pricingPlans.map((plan, index) => (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 20 }}
@@ -277,12 +239,10 @@ export default function LandingPagePricing() {
                         ? 'bg-primary hover:bg-primary/90 hover:shadow-primary/20 hover:shadow-md'
                         : 'hover:border-primary/30 hover:bg-primary/5 hover:text-primary',
                     )}
-                    asChild
+                    onClick={() => handlePlanSelect(plan.id)}
                   >
-                    <Link href={plan.cta === 'Contact us' ? '/contact-us' : '/sign-up'}>
-                      {plan.cta}
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </Link>
+                    {plan.cta}
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </Button>
                 </CardFooter>
                 {/* Subtle gradient effects */}
