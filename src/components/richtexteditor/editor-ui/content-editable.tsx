@@ -19,6 +19,11 @@ export function ContentEditable({
         `ContentEditable__root relative block min-h-72 min-h-full overflow-auto px-8 py-4 focus:outline-none`
       }
       aria-placeholder={placeholder}
+      lang="vi"
+      inputMode="text"
+      spellCheck={false}
+      autoCorrect="off"
+      autoCapitalize="off"
       placeholder={
         <div
           className={
