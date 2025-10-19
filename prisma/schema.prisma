@@ -114,6 +114,25 @@ model User {
   Images          Image[]
   Projects        Project[]
   MarketplaceItems MarketplaceItem[]
+  Subscriptions   Subscription[]
+}
+
+model Subscription {
+  Id            String      @id @default(cuid())
+  UserId        String
+  PlanId        String      
+  BillingPeriod String     
+  Status        String      @default("active") 
+  StartDate     DateTime    @default(now())
+  EndDate       DateTime?  
+  Amount        Float       
+  Currency      String      @default("USD")
+  CreatedAt     DateTime    @default(now()) @db.Timestamp(6)
+  UpdatedAt     DateTime    @updatedAt @db.Timestamp(6)
+  User          User        @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@index([UserId])
+  @@index([Status])
 }
 
 model ContentType {
