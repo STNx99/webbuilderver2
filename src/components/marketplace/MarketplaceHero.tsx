@@ -2,11 +2,8 @@
 
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CreateMarketplaceItemDialog } from "./CreateMarketplaceItemDialog";
-import { Plus } from "lucide-react";
 
 export function MarketplaceHero() {
   const router = useRouter();
@@ -82,18 +79,6 @@ export function MarketplaceHero() {
               </button>
             )}
           </form>
-
-          <div className="flex justify-center mt-4">
-            <CreateMarketplaceItemDialog>
-              <Button
-                size="lg"
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <Plus className="h-5 w-5 mr-2" />
-                Upload Your Template
-              </Button>
-            </CreateMarketplaceItemDialog>
-          </div>
         </div>
       </div>
     </section>

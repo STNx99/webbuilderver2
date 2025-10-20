@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -18,118 +17,42 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { DeleteProjectDialog } from "@/components/dashboard/DeleteProjectDialog";
 import { PublishProjectDialog } from "@/components/dashboard/PublishProjectDialog";
 import CreateProjectDialog from "@/components/dashboard/CreateProjectDialog";
-import { useUserProjects, useDeleteProject, usePublishProject } from "@/hooks";
-import type {
-  SortOption,
-  ViewMode,
-} from "@/components/dashboard/DashboardFilters";
+import { useDashboard } from "@/hooks";
 
 export default function Dashboard() {
-  // State management
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<SortOption>("views");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
-  const [showPublishedOnly, setShowPublishedOnly] = useState(false);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<{
-    id: string;
-    name?: string;
-  } | null>(null);
-  const [projectToPublish, setProjectToPublish] = useState<{
-    id: string;
-    name?: string;
-    published: boolean;
-  } | null>(null);
+  const {
+    // States
+    searchQuery,
+    setSearchQuery,
+    sortBy,
+    setSortBy,
+    sortOrder,
+    setSortOrder,
+    viewMode,
+    setViewMode,
+    showPublishedOnly,
+    setShowPublishedOnly,
+    isCreateDialogOpen,
+    setIsCreateDialogOpen,
+    projectToDelete,
+    setProjectToDelete,
+    projectToPublish,
+    setProjectToPublish,
 
-  // Hooks
-  const { data: projects, isLoading } = useUserProjects();
-  const deleteProjectMutation = useDeleteProject();
-  const publishProjectMutation = usePublishProject();
+    // Computed
+    filteredAndSortedProjects,
+    isLoading,
 
-  // Filter and sort projects
-  const filteredAndSortedProjects = (projects ?? [])
-    .filter((project) => {
-      const matchesSearch =
-        (project.name ?? "")
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase()) ||
-        (project.description ?? "")
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase());
-      const matchesPublished = !showPublishedOnly || !!project.published;
-      return matchesSearch && matchesPublished;
-    })
-    .sort((a, b) => {
-      let aValue: string | number;
-      let bValue: string | number;
+    // Mutations
+    deleteProjectMutation,
+    publishProjectMutation,
 
-      switch (sortBy) {
-        case "views":
-          aValue = ((a as any).views ?? 0) as number;
-          bValue = ((b as any).views ?? 0) as number;
-          break;
-        case "name":
-          aValue = (a.name ?? "").toLowerCase();
-          bValue = (b.name ?? "").toLowerCase();
-          break;
-        case "created":
-          aValue = a.createdAt ? new Date(String(a.createdAt)).getTime() : 0;
-          bValue = b.createdAt ? new Date(String(b.createdAt)).getTime() : 0;
-          break;
-        case "modified":
-          aValue = a.updatedAt ? new Date(String(a.updatedAt)).getTime() : 0;
-          bValue = b.updatedAt ? new Date(String(b.updatedAt)).getTime() : 0;
-          break;
-        default:
-          aValue = 0;
-          bValue = 0;
-      }
-
-      if (sortOrder === "asc") {
-        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
-      }
-    });
-
-  // Handlers
-  const handleDeleteProject = (projectId: string) => {
-    const project = projects?.find((p) => p.id === projectId);
-    setProjectToDelete({
-      id: projectId,
-      name: project?.name,
-    });
-  };
-
-  const handleConfirmDelete = () => {
-    if (projectToDelete) {
-      deleteProjectMutation.mutate(projectToDelete.id);
-      setProjectToDelete(null);
-    }
-  };
-
-  const handlePublishProject = (
-    projectId: string,
-    currentlyPublished: boolean,
-  ) => {
-    const project = projects?.find((p) => p.id === projectId);
-    setProjectToPublish({
-      id: projectId,
-      name: project?.name,
-      published: currentlyPublished,
-    });
-  };
-
-  const handleConfirmPublish = () => {
-    if (projectToPublish) {
-      publishProjectMutation.mutate({
-        projectId: projectToPublish.id,
-        publish: !projectToPublish.published,
-      });
-      setProjectToPublish(null);
-    }
-  };
+    // Handlers
+    handleDeleteProject,
+    handleConfirmDelete,
+    handlePublishProject,
+    handleConfirmPublish,
+  } = useDashboard();
 
   // Loading state
   if (isLoading) {
@@ -231,7 +154,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Delete Confirmation Dialog */}
         <DeleteProjectDialog
           open={!!projectToDelete}
           onOpenChange={(open) => !open && setProjectToDelete(null)}
@@ -240,7 +162,6 @@ export default function Dashboard() {
           projectName={projectToDelete?.name}
         />
 
-        {/* Publish/Unpublish Confirmation Dialog */}
         <PublishProjectDialog
           open={!!projectToPublish}
           onOpenChange={(open) => !open && setProjectToPublish(null)}

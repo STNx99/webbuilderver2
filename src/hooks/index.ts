@@ -65,3 +65,4 @@ export {
   useDeleteProject,
   usePublishProject,
 } from "./features/useProjects";
+export { useDashboard } from "./features/useDashboard";

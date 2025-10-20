@@ -56,11 +56,10 @@ export interface UpdateMarketplaceItemRequest {
 export interface MarketplaceItemWithRelations extends MarketplaceItem {
   categories?: Category[];
   tagObjects?: Tag[];
-  project?: {
-    Id: string;
-    Name: string;
-    Description?: string;
-  };
+  projectId: string;
+  authorId: string;
+  authorName: string;
+  verified: boolean;
 }
 
 export interface MarketplaceFilters {
