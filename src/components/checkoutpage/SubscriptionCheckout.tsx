@@ -338,20 +338,20 @@ export function SubscriptionCheckout() {
       </header>
 
       {/* Main Content */}
-      <main className="container px-4 py-8 md:py-12 justify-center">
+      <main className="container px-3 sm:px-4 py-6 sm:py-8 md:py-12 max-w-screen-2xl mx-auto">
         {step !== "plans" && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl mx-auto mb-8"
+            className="max-w-3xl mx-auto mb-6 sm:mb-8"
           >
-            <div className="flex items-center justify-center">
+            <div className="flex justify-start pl-6 sm:justify-center overflow-x-auto pb-2 sm:pb-0 scrollbar-hide px-2">
               {steps.map((s, index) => (
-                <div key={s.id} className="flex items-center flex-1">
-                  <div className="flex items-center gap-3">
+                <div key={s.id} className="flex items-center flex-1 min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div
                       className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all duration-300",
+                        "w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-all duration-300 shrink-0",
                         s.completed
                           ? "bg-primary text-primary-foreground shadow-sm"
                           : step === s.id
@@ -359,11 +359,11 @@ export function SubscriptionCheckout() {
                             : "bg-secondary text-muted-foreground",
                       )}
                     >
-                      {s.completed ? <Check className="w-5 h-5" /> : index + 1}
+                      {s.completed ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : index + 1}
                     </div>
                     <span
                       className={cn(
-                        "text-sm font-medium hidden sm:block",
+                        "text-xs sm:text-sm font-medium hidden sm:block whitespace-nowrap",
                         step === s.id ? "text-foreground" : "text-muted-foreground",
                       )}
                     >
@@ -373,7 +373,7 @@ export function SubscriptionCheckout() {
                   {index < steps.length - 1 && (
                     <div
                       className={cn(
-                        "h-px flex-1 mx-4 transition-all duration-300",
+                        "h-px flex-1 mx-2 sm:mx-4 min-w-[20px] transition-all duration-300",
                         s.completed ? "bg-primary" : "bg-border",
                       )}
                     />
@@ -402,15 +402,16 @@ export function SubscriptionCheckout() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.3 }}
-              className="max-w-4xl mx-auto"
+              className="max-w-6xl mx-auto"
             >
-              <Button variant="ghost" size="sm" onClick={handleBack} className="mb-6">
+              <Button variant="ghost" size="sm" onClick={handleBack} className="mb-4 sm:mb-6">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to plans
+                <span className="hidden xs:inline">Back to plans</span>
+                <span className="xs:hidden">Back</span>
               </Button>
 
-              <div className="grid lg:grid-cols-[1fr_400px] gap-8">
-                <div className="space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px] gap-6 lg:gap-8">
+                <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
                   <PaymentMethodSelector selectedMethod={paymentMethod} onMethodChange={setPaymentMethod} />
                   <Button
                     onClick={handlePaymentMethodContinue}
@@ -421,15 +422,17 @@ export function SubscriptionCheckout() {
                   </Button>
                 </div>
 
-                <OrderSummary
-                  selectedPlan={selectedPlan!}
-                  billingPeriod={billingPeriod}
-                  subtotal={subtotal}
-                  discount={discount}
-                  total={total}
-                  onDiscountApply={setDiscount}
-                  paymentMethod={paymentMethod}
-                />
+                <div className="order-1 lg:order-2">
+                  <OrderSummary
+                    selectedPlan={selectedPlan!}
+                    billingPeriod={billingPeriod}
+                    subtotal={subtotal}
+                    discount={discount}
+                    total={total}
+                    onDiscountApply={setDiscount}
+                    paymentMethod={paymentMethod}
+                  />
+                </div>
               </div>
             </motion.div>
           ) : (
@@ -441,29 +444,34 @@ export function SubscriptionCheckout() {
               transition={{ duration: 0.3 }}
               className="max-w-7xl mx-auto"
             >
-              <Button variant="ghost" size="sm" onClick={handleBack} className="mb-6">
+              <Button variant="ghost" size="sm" onClick={handleBack} className="mb-4 sm:mb-6">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to payment method
+                <span className="hidden xs:inline">Back to payment method</span>
+                <span className="xs:hidden">Back</span>
               </Button>
-              <div className="grid lg:grid-cols-[1fr_400px] gap-8">
-                <CheckoutForm
-                  selectedPlan={selectedPlan!}
-                  billingPeriod={billingPeriod}
-                  paymentMethod={paymentMethod}
-                  onBillingPeriodChange={setBillingPeriod}
-                  onSubmit={handleCompleteCheckout}
-                />
-                <OrderSummary
-                  selectedPlan={selectedPlan!}
-                  billingPeriod={billingPeriod}
-                  subtotal={subtotal}
-                  discount={discount}
-                  total={total}
-                  onDiscountApply={setDiscount}
-                  paymentMethod={paymentMethod}
-                  onComplete={handleCompleteCheckout}
-                  isProcessing={isProcessing}
-                />
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] xl:grid-cols-[1fr_400px] gap-6 lg:gap-8">
+                <div className="order-2 lg:order-1">
+                  <CheckoutForm
+                    selectedPlan={selectedPlan!}
+                    billingPeriod={billingPeriod}
+                    paymentMethod={paymentMethod}
+                    onBillingPeriodChange={setBillingPeriod}
+                    onSubmit={handleCompleteCheckout}
+                  />
+                </div>
+                <div className="order-1 lg:order-2">
+                  <OrderSummary
+                    selectedPlan={selectedPlan!}
+                    billingPeriod={billingPeriod}
+                    subtotal={subtotal}
+                    discount={discount}
+                    total={total}
+                    onDiscountApply={setDiscount}
+                    paymentMethod={paymentMethod}
+                    onComplete={handleCompleteCheckout}
+                    isProcessing={isProcessing}
+                  />
+                </div>
               </div>
             </motion.div>
           )}
