@@ -3,7 +3,6 @@ import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-import { CSSStyles } from "@/interfaces/elements.interface";
 
 export function useElementHandler() {
   const { addElement, updateElement, swapElement } = useElementStore();
@@ -17,6 +16,43 @@ export function useElementHandler() {
     setDraggedOverElement,
     setHoveredElement,
   } = useSelectionStore();
+
+  const createElementFromType = (
+    type: ElementType,
+    projectId: string,
+    parentId: string,
+    pageId: string,
+  ) => {
+    return elementHelper.createElement.create(
+      type,
+      projectId,
+      parentId,
+      pageId!,
+    );
+  };
+
+  const handleImageDrop = (
+    parsed: any,
+    projectId: string,
+    parentElement: EditorElement,
+  ) => {
+    const isContainer = elementHelper.isContainerElement(parentElement);
+    if (!isContainer) {
+      return null;
+    }
+    const newElement = createElementFromType(
+      "Image",
+      projectId,
+      parentElement.id,
+      parentElement.pageId!,
+    );
+    if (newElement) {
+      newElement.src = parsed.imageLink;
+      newElement.name = parsed.imageName || "Image";
+    }
+    setDraggedOverElement(undefined);
+    return newElement;
+  };
 
   const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
     e.preventDefault();
@@ -42,28 +78,46 @@ export function useElementHandler() {
 
     if (data) {
       const isContainer = elementHelper.isContainerElement(parentElement);
-
       if (!isContainer) {
         return;
       }
 
-      const newElement = elementHelper.createElement.create(
+      const newElement = createElementFromType(
         data as ElementType,
         projectId,
         parentElement.id,
-        parentElement.pageId,
+        parentElement.pageId!,
       );
 
       if (!newElement) {
         return;
       }
       addElement(newElement as EditorElement);
-
       setSelectedElement(newElement);
       setDraggedOverElement(undefined);
     } else if (draggingElement) {
       swapElement(draggingElement.id, parentElement.id);
       setDraggedOverElement(undefined);
+    } else {
+      const imageData = e.dataTransfer.getData("application/json");
+      if (imageData) {
+        try {
+          const parsed = JSON.parse(imageData);
+          if (parsed.type === "image") {
+            const newElement = handleImageDrop(
+              parsed,
+              projectId,
+              parentElement,
+            );
+            if (newElement) {
+              addElement(newElement);
+              setSelectedElement(newElement);
+            }
+          }
+        } catch (error) {
+          // ignore
+        }
+      }
     }
     setHoveredElement(undefined);
     setDraggingElement(undefined);
@@ -179,10 +233,28 @@ export function useElementHandler() {
     return merged;
   };
 
+  const getEventHandlers = (element: EditorElement) => {
+    const isEditableElement = elementHelper.isEditableElement(element);
+
+    return {
+      onDragStart: (e: React.DragEvent) => handleDragStart(e, element),
+      onDragLeave: (e: React.DragEvent) => handleDragLeave(e, element),
+      onDragEnd: (e: React.DragEvent) => handleDragEnd(e, element),
+      onDragOver: (e: React.DragEvent) => handleDragOver(e, element),
+      onDrop: isEditableElement
+        ? undefined
+        : (e: React.DragEvent) => handleDrop(e, element.projectId, element),
+      onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
+      onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(e, element),
+      onMouseLeave: (e: React.MouseEvent) => handleMouseLeave(e, element),
+      onBlur: (e: React.FocusEvent) => handleTextChange(e, element),
+    };
+  };
+
   const getCommonProps = (element: EditorElement) => {
     const tailwindStyles = getTailwindStyles(element);
     const mergedStyles = getStyles(element);
-    const isEditableElement = elementHelper.isEditableElement(element);
+    const eventHandlers = getEventHandlers(element);
 
     return {
       style: mergedStyles,
@@ -192,21 +264,7 @@ export function useElementHandler() {
         elementHelper.isEditableElement(element) &&
         selectedElement?.id === element.id,
       suppressContentEditableWarning: true,
-
-      onDragStart: (e: React.DragEvent) => handleDragStart(e, element),
-      onDragLeave: (e: React.DragEvent) => handleDragLeave(e, element),
-      onDragEnd: (e: React.DragEvent) => handleDragEnd(e, element),
-
-      onDragOver: (e: React.DragEvent) => handleDragOver(e, element),
-      onDrop: isEditableElement
-        ? undefined
-        : (e: React.DragEvent) => handleDrop(e, element.projectId, element),
-
-      onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
-      onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(e, element),
-      onMouseLeave: (e: React.MouseEvent) => handleMouseLeave(e, element),
-
-      onBlur: (e: React.FocusEvent) => handleTextChange(e, element),
+      ...eventHandlers,
     };
   };
 

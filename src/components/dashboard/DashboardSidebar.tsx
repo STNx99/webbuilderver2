@@ -12,6 +12,7 @@ import {
   HelpCircle,
   LogOut,
   ChevronUp,
+  Store,
 } from "lucide-react";
 
 import {
@@ -64,7 +65,7 @@ const navigationItems = [
   {
     title: "Market place",
     url: "/marketplace",
-    icon: Home,
+    icon: Store,
   }
 ];
 

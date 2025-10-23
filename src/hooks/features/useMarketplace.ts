@@ -44,13 +44,16 @@ export function useMarketplaceItem(id: string, enabled: boolean = true) {
       try {
         return await marketplaceService.getMarketplaceItemByID(id);
       } catch (error) {
-        console.error("Failed to fetch marketplace item:", error);
+        // Don't log 404 errors for deleted items
+        if (error instanceof Error && !error.message.includes("404")) {
+          console.error("Failed to fetch marketplace item:", error);
+        }
         throw error;
       }
     },
     enabled: enabled && !!id,
     staleTime: 1000 * 60 * 5, // 5 minutes
-    retry: 1,
+    retry: false, // Don't retry on 404 errors
   });
 }
 
@@ -98,8 +101,15 @@ export function useDeleteMarketplaceItem() {
   return useMutation({
     mutationFn: (id: string) => marketplaceService.deleteMarketplaceItem(id),
     onSuccess: (_, id) => {
+      // Remove the specific item from cache to prevent 404 errors
       queryClient.removeQueries({ queryKey: marketplaceKeys.item(id) });
+
+      // Invalidate all marketplace items lists to refetch without deleted item
       queryClient.invalidateQueries({ queryKey: marketplaceKeys.items() });
+
+      // Also invalidate the generic marketplace items query that ProjectCard uses
+      queryClient.invalidateQueries({ queryKey: ["marketplaceItems"] });
+
       toast.success("Template deleted successfully!");
     },
     onError: (error: Error) => {

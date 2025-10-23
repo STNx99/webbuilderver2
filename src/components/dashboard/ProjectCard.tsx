@@ -1,8 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import {
+  MoreHorizontal,
+  Eye,
+  Calendar,
+  BarChart3,
+  Trash2,
+  Edit,
+  Settings,
+  Globe,
+  EyeOff,
+  Upload,
+} from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -23,23 +36,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  MoreHorizontal,
-  Eye,
-  Calendar,
-  BarChart3,
-  Trash2,
-  Edit,
-  Settings,
-  Globe,
-  EyeOff,
-  Upload,
-} from "lucide-react";
-import type { Project } from "@/interfaces/project.interface";
-import { useRouter } from "next/navigation";
 import { CreateMarketplaceItemDialog } from "../marketplace/CreateMarketplaceItemDialog";
-import { marketplaceService } from "@/services/marketplace";
-import { useDeleteMarketplaceItem } from "@/hooks";
+import { useDeleteMarketplaceItem, useMarketplaceItems } from "@/hooks";
+import type { Project } from "@/interfaces/project.interface";
 
 interface ProjectCardProps {
   project: Project;
@@ -55,166 +54,215 @@ export function ProjectCard({
   const router = useRouter();
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { data: marketplaceItems, isLoading: isMarketplaceLoading } = useQuery({
-    queryKey: ["marketplaceItems"],
-    queryFn: () => marketplaceService.getMarketplaceItems({}),
-  });
 
-  const [marketplaceItemId, setMarketplaceItemId] = useState<
-    string | undefined
-  >();
   const deleteItem = useDeleteMarketplaceItem();
 
-  useEffect(() => {
-    if (marketplaceItems) {
-      const item = marketplaceItems.find((i) => i.projectId === project.id);
-      setMarketplaceItemId(item?.id);
-    }
-  }, [marketplaceItems, project.id]);
+  // Fetch marketplace items using the proper hook
+  const { data: marketplaceItems } = useMarketplaceItems();
 
-  const handleCardClick = () => {
+  // Find associated marketplace item
+  const marketplaceItem = useMemo(
+    () => marketplaceItems?.find((item) => item.projectId === project.id),
+    [marketplaceItems, project.id],
+  );
+
+  // Memoized handlers
+  const handleCardClick = useCallback(() => {
     router.push(`/analytics/${project.id}`);
-  };
+  }, [router, project.id]);
 
-  const handleEditClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/editor/${project.id}`);
-  };
+  const handleEditClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      router.push(`/editor/${project.id}`);
+    },
+    [router, project.id],
+  );
+
+  const handleAnalyticsClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      router.push(`/analytics/${project.id}`);
+    },
+    [router, project.id],
+  );
+
+  const handleSettingsClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      router.push(`/projectsettings/${project.id}`);
+    },
+    [router, project.id],
+  );
+
+  const handlePublishToggle = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onPublish(project.id ?? "", !!project.published);
+    },
+    [onPublish, project.id, project.published],
+  );
+
+  const handleDelete = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onDelete(project.id ?? "");
+    },
+    [onDelete, project.id],
+  );
+
+  const handleMarketplaceDelete = useCallback(async () => {
+    if (!marketplaceItem?.id) return;
+
+    try {
+      await deleteItem.mutateAsync(marketplaceItem.id);
+      setShowDeleteDialog(false);
+    } catch (error) {
+      console.error("Failed to delete marketplace item:", error);
+    }
+  }, [deleteItem, marketplaceItem?.id]);
+
+  // Format date
+  const formattedDate = useMemo(() => {
+    if (!project.updatedAt) return "—";
+    return new Date(String(project.updatedAt)).toLocaleDateString();
+  }, [project.updatedAt]);
+
+  // Get views count
+  const viewsCount = useMemo(() => {
+    const views = (project as any).views ?? 0;
+    return (views as number).toLocaleString();
+  }, [project]);
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer p-0">
-      <CardHeader className="p-0">
-        <div className="relative overflow-hidden rounded-t-lg">
-          <Image
-            width={400}
-            height={200}
-            src={"/placeholder.svg"}
-            alt={project.name ?? "Project thumbnail"}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
-            onClick={handleCardClick}
-            unoptimized
-          />
-          <div className="absolute top-2 right-2">
-            <Badge variant={project.published ? "default" : "secondary"}>
-              {project.published ? "Published" : "Draft"}
-            </Badge>
+    <>
+      <Card className="group hover:shadow-lg transition-all duration-200 cursor-pointer p-0">
+        <CardHeader className="p-0">
+          <div className="relative overflow-hidden rounded-t-lg">
+            <Image
+              width={400}
+              height={200}
+              src="/placeholder.svg"
+              alt={project.name ?? "Project thumbnail"}
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
+              onClick={handleCardClick}
+              unoptimized
+            />
+            <div className="absolute top-2 right-2">
+              <Badge variant={project.published ? "default" : "secondary"}>
+                {project.published ? "Published" : "Draft"}
+              </Badge>
+            </div>
           </div>
-        </div>
-      </CardHeader>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <h3
-            className="font-semibold text-lg truncate pr-2 cursor-pointer hover:text-primary"
-            onClick={handleCardClick}
-          >
-            {project.name}
-          </h3>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={handleEditClick}>
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Project
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push(`/analytics/${project.id}`);
-                }}
-              >
-                <BarChart3 className="mr-2 h-4 w-4" />
-                View Analytics
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push(`/projectsettings/${project.id}`);
-                }}
-              >
-                <Settings className="mr-2 h-4 w-4" />
-                Project Settings
-              </DropdownMenuItem>
-              {marketplaceItemId ? (
+        </CardHeader>
+
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between mb-2">
+            <h3
+              className="font-semibold text-lg truncate pr-2 cursor-pointer hover:text-primary"
+              onClick={handleCardClick}
+            >
+              {project.name}
+            </h3>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleEditClick}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Project
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={handleAnalyticsClick}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  View Analytics
+                </DropdownMenuItem>
+
+                <DropdownMenuItem onClick={handleSettingsClick}>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Project Settings
+                </DropdownMenuItem>
+
+                {marketplaceItem ? (
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    disabled={deleteItem.isPending}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDeleteDialog(true);
+                    }}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete from Marketplace
+                  </DropdownMenuItem>
+                ) : project.published ? (
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowUploadDialog(true);
+                    }}
+                  >
+                    <Upload className="mr-2 h-4 w-4" />
+                    Upload to Marketplace
+                  </DropdownMenuItem>
+                ) : null}
+
+                <DropdownMenuSeparator />
+
+                <DropdownMenuItem onClick={handlePublishToggle}>
+                  {project.published ? (
+                    <>
+                      <EyeOff className="mr-2 h-4 w-4" />
+                      Unpublish
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="mr-2 h-4 w-4" />
+                      Publish
+                    </>
+                  )}
+                </DropdownMenuItem>
+
                 <DropdownMenuItem
                   className="text-destructive"
-                  disabled={deleteItem.isPending}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowDeleteDialog(true);
-                  }}
+                  onClick={handleDelete}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete from Marketplace
+                  Delete
                 </DropdownMenuItem>
-              ) : project.published ? (
-                <DropdownMenuItem
-                  onSelect={(e) => {
-                    e.preventDefault();
-                    setShowUploadDialog(true);
-                  }}
-                >
-                  <Upload className="mr-2 h-4 w-4" />
-                  Upload to Marketplace
-                </DropdownMenuItem>
-              ) : null}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPublish(project.id ?? "", !!project.published);
-                }}
-              >
-                {project.published ? (
-                  <>
-                    <EyeOff className="mr-2 h-4 w-4" />
-                    Unpublish
-                  </>
-                ) : (
-                  <>
-                    <Globe className="mr-2 h-4 w-4" />
-                    Publish
-                  </>
-                )}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-destructive"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(project.id ?? "");
-                }}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-          {project.description || "No description provided"}
-        </p>
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center">
-            <Eye className="mr-1 h-4 w-4" />
-            {(((project as any).views ?? 0) as number).toLocaleString()} views
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-          <div className="flex items-center">
-            <Calendar className="mr-1 h-4 w-4" />
-            {project.updatedAt
-              ? new Date(String(project.updatedAt)).toLocaleDateString()
-              : "—"}
+
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+            {project.description || "No description provided"}
+          </p>
+
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <div className="flex items-center">
+              <Eye className="mr-1 h-4 w-4" />
+              {viewsCount} views
+            </div>
+            <div className="flex items-center">
+              <Calendar className="mr-1 h-4 w-4" />
+              {formattedDate}
+            </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Card>
+
       <CreateMarketplaceItemDialog
         open={showUploadDialog}
         onOpenChange={setShowUploadDialog}
         defaultProjectId={project.id}
-        itemId={marketplaceItemId}
+        itemId={marketplaceItem?.id}
       />
+
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -229,20 +277,13 @@ export function ProjectCard({
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               disabled={deleteItem.isPending}
-              onClick={async () => {
-                try {
-                  await deleteItem.mutateAsync(marketplaceItemId!);
-                  setShowDeleteDialog(false);
-                } catch (error) {
-                  console.error("Failed to delete marketplace item:", error);
-                }
-              }}
+              onClick={handleMarketplaceDelete}
             >
               {deleteItem.isPending ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Card>
+    </>
   );
 }
