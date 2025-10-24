@@ -47,15 +47,12 @@ import createPage from "@/app/actions/pageAction";
 
 const createPageSchema = z.object({
   name: z.string().min(1, "Page name is required"),
-  type: z.enum(["sp", "dp"], {
-    required_error: "Page type is required",
-  }),
-});
-
+  type: z.enum(["sp", "dp"])
+})
 type CreatePageFormValues = z.infer<typeof createPageSchema>;
 
 function CreatePageDialog() {
-  const { addPage, pages } = usePageStore();
+  const { addPage } = usePageStore();
   const { id } = useParams();
   const [open, setOpen] = useState(false);
 

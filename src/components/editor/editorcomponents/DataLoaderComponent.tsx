@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { DataLoaderElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";

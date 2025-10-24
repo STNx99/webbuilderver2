@@ -6,6 +6,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 interface BreakpointSelectorProps {
   currentBreakpoint: "default" | "sm" | "md" | "lg" | "xl";
@@ -20,7 +25,15 @@ export const BreakpointSelector = ({
 }: BreakpointSelectorProps) => {
   return (
     <div className="mb-4">
-      <Label className="text-xs">Breakpoint</Label>
+      <HoverCard>
+        <HoverCardTrigger asChild>
+          <Label className="text-xs cursor-help">Breakpoint</Label>
+        </HoverCardTrigger>
+        <HoverCardContent>
+          Select the responsive breakpoint to edit styles for specific screen
+          sizes.
+        </HoverCardContent>
+      </HoverCard>
       <Select
         value={currentBreakpoint}
         onValueChange={(value: "default" | "sm" | "md" | "lg" | "xl") =>

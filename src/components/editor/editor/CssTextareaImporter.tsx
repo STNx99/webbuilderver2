@@ -260,7 +260,7 @@ export default function CssTextareaImporter({
               value={css}
               onChange={(e) => setCss(e.target.value)}
               placeholder="Paste your compiled CSS here (Tailwind output, component styles, etc.)"
-              className="min-h-[240px] text-xs font-mono bg-transparent"
+              className="min-h-[240px] max-h-[300px] text-xs font-mono bg-transparent"
             />
           </div>
 

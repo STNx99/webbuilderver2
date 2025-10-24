@@ -22,6 +22,7 @@ import { useAiChat } from "@/providers/aiprovider";
 import { ProjectPageCommand } from "../ProjectPageCommand";
 import { ElementSelector } from "./ElementSelector";
 import CMSManager from "./cmsmanager/CMSManager";
+import { ImageSelector } from "./imageupload/ImageSelector";
 
 export function EditorSideBar() {
   const { chatOpen } = useAiChat();
@@ -67,7 +68,7 @@ export function EditorSideBar() {
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
-                  {/* Image upload content here */}
+                  <ImageSelector />
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>

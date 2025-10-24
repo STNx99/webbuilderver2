@@ -52,7 +52,7 @@ interface ICmsService<TContext = any> {
     limit?: number;
     sortBy?: string;
     sortOrder?: string;
-  }): Promise<ContentItem[]>;
+  }): Promise<any>;
   getPublicContentItem(
     contentTypeId: string,
     slug: string,

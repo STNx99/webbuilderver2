@@ -5,11 +5,21 @@ const isProtectedRoute = createRouteMatcher([
   "/forum(.*)",
   "/editor(.*)",
   "/settings(.*)",
+  "/marketplace(.*)",
 ]);
 
+const isCheckoutRoute = createRouteMatcher(["/checkout(.*)"]);
+
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req) || req.nextUrl.pathname.startsWith("/api") || req.nextUrl.pathname.startsWith("/trpc")) {
+  if (
+    isProtectedRoute(req) ||
+    req.nextUrl.pathname.startsWith("/api") ||
+    req.nextUrl.pathname.startsWith("/trpc")
+  ) {
     await auth.protect();
+  }
+    if (isCheckoutRoute(req)) {
+    return;
   }
 });
 

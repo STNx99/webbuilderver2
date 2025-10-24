@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useMemo, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -11,17 +10,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
   Table,
   TableBody,
   TableCell,
@@ -29,8 +17,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyMedia,
+} from "@/components/ui/empty";
 import { ContentField, ContentType } from "@/interfaces/cms.interface";
-import { Plus, Edit, Trash2, Database, Loader2, Save, X } from "lucide-react";
+import { Database, Loader2, FileText } from "lucide-react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  ColumnDef,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
+import { useTableEditing } from "@/hooks/table/use-table-editing";
+import { useTableState } from "@/hooks/table/use-table-state";
+import {
+  SortableHeader,
+  ConfirmDeleteDialog,
+  TableActionButtons,
+  TableToolbar,
+} from "./components";
 
 interface ContentFieldsTabProps {
   selectedTypeId: string;
@@ -44,14 +56,18 @@ interface ContentFieldsTabProps {
   onDeleteField: (contentTypeId: string, fieldId: string) => void;
 }
 
-interface EditableField {
-  id?: string;
-  name?: string;
-  type?: string;
-  required?: boolean;
-  isNew?: boolean;
-  isEditing?: boolean;
-}
+const FIELD_TYPES = [
+  "text",
+  "textarea",
+  "richtext",
+  "number",
+  "boolean",
+  "date",
+  "email",
+  "url",
+  "select",
+  "multiselect",
+] as const;
 
 export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
   selectedTypeId,
@@ -64,68 +80,69 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
   onCreateField,
   onDeleteField,
 }) => {
-  const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [newRow, setNewRow] = useState<EditableField | null>(null);
-  const [editedValues, setEditedValues] = useState<{
-    [key: string]: EditableField;
-  }>({});
+  const columnHelper = createColumnHelper<ContentField>();
 
-  const fieldTypes = [
-    "text",
-    "textarea",
-    "number",
-    "boolean",
-    "date",
-    "email",
-    "url",
-    "select",
-    "multiselect",
-  ];
+  // Use custom hooks for state management
+  const { sorting, setSorting, globalFilter, setGlobalFilter } =
+    useTableState();
 
-  const startEditing = (fieldId: string) => {
-    const field = contentFields.find((f) => f.id === fieldId);
-    if (field) {
-      setEditedValues((prev) => ({
-        ...prev,
-        [fieldId]: {
-          name: field.name,
-          type: field.type,
-          required: field.required,
-        },
-      }));
-    }
-    setEditingRows((prev) => new Set([...prev, fieldId]));
-  };
+  const {
+    editingRowsSet,
+    editedValues,
+    newRow,
+    startEditing,
+    stopEditing,
+    updateField,
+    getFieldValue,
+    startNewRow,
+    cancelNewRow,
+    updateNewRowField,
+    isEditing,
+  } = useTableEditing<ContentField>({
+    getInitialValues: (field) => ({
+      name: field.name,
+      type: field.type,
+      required: field.required,
+    }),
+  });
 
-  const stopEditing = (fieldId: string) => {
-    setEditingRows((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(fieldId);
-      return newSet;
-    });
-    setEditedValues((prev) => {
-      const newValues = { ...prev };
-      delete newValues[fieldId];
-      return newValues;
-    });
-  };
+  // Handlers
+  const handleStartEditing = useCallback(
+    (fieldId: string) => {
+      const field = contentFields.find((f) => f.id === fieldId);
+      if (field) {
+        startEditing(fieldId, field);
+      }
+    },
+    [contentFields, startEditing],
+  );
 
-  const addNewRow = () => {
-    const newField: EditableField = {
-      isNew: true,
-      isEditing: true,
-      name: "",
-      type: "text",
-      required: false,
-    };
-    setNewRow(newField);
-  };
+  const handleSaveExisting = useCallback(
+    async (fieldId: string) => {
+      const editedData = editedValues[fieldId];
+      if (!editedData) return;
 
-  const cancelNewRow = () => {
-    setNewRow(null);
-  };
+      const updateData = {
+        name: editedData.name,
+        type: editedData.type,
+        required: editedData.required,
+      };
 
-  const saveNewRow = async () => {
+      try {
+        updateFieldMutation.mutate({
+          contentTypeId: selectedTypeId,
+          fieldId,
+          data: updateData,
+        });
+        stopEditing(fieldId);
+      } catch (error) {
+        console.error("Failed to update field:", error);
+      }
+    },
+    [editedValues, updateFieldMutation, selectedTypeId, stopEditing],
+  );
+
+  const handleSaveNew = useCallback(async () => {
     if (!newRow) return;
 
     const fieldData = {
@@ -136,99 +153,239 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
 
     try {
       onCreateField(fieldData);
-      setNewRow(null);
+      cancelNewRow();
     } catch (error) {
       console.error("Failed to create field:", error);
     }
-  };
+  }, [newRow, onCreateField, cancelNewRow]);
 
-  const updateFieldProperty = (
-    fieldId: string,
-    property: string,
-    value: any,
-  ) => {
-    if (newRow && newRow.isNew) {
-      setNewRow((prev) => ({ ...prev!, [property]: value }));
-    } else {
-      setEditedValues((prev) => ({
-        ...prev,
-        [fieldId]: { ...prev[fieldId], [property]: value },
-      }));
-    }
-  };
+  const handleUpdateField = useCallback(
+    (fieldId: string, property: string, value: any) => {
+      if (newRow?.isNew) {
+        updateNewRowField(property, value);
+      } else {
+        updateField(fieldId, property, value);
+      }
+    },
+    [newRow, updateField, updateNewRowField],
+  );
 
-  const saveExistingField = async (fieldId: string) => {
-    const editedData = editedValues[fieldId];
-    if (!editedData) return;
+  // Column definitions
+  const columns = useMemo<ColumnDef<ContentField, any>[]>(
+    () => [
+      columnHelper.accessor("name", {
+        header: ({ column }) => (
+          <SortableHeader column={column}>Name</SortableHeader>
+        ),
+        cell: ({ row, getValue }) => {
+          const field = row.original;
+          const editing = isEditing(field.id);
 
-    const updateData = {
-      name: editedData.name,
-      type: editedData.type,
-      required: editedData.required,
-    };
+          return editing ? (
+            <Input
+              value={getFieldValue(field.id, "name", getValue())}
+              onChange={(e) =>
+                handleUpdateField(field.id, "name", e.target.value)
+              }
+              className="h-8"
+            />
+          ) : (
+            <span className="font-medium">{getValue()}</span>
+          );
+        },
+      }),
+      columnHelper.accessor("type", {
+        header: ({ column }) => (
+          <SortableHeader column={column}>Type</SortableHeader>
+        ),
+        cell: ({ row, getValue }) => {
+          const field = row.original;
+          const editing = isEditing(field.id);
 
-    try {
-      updateFieldMutation.mutate({
-        contentTypeId: selectedTypeId,
-        fieldId,
-        data: updateData,
-      });
-      stopEditing(fieldId);
-    } catch (error) {
-      console.error("Failed to update field:", error);
-    }
-  };
+          return editing ? (
+            <Select
+              value={getFieldValue(field.id, "type", getValue())}
+              onValueChange={(value) =>
+                handleUpdateField(field.id, "type", value)
+              }
+            >
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {FIELD_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <span className="capitalize">{getValue()}</span>
+          );
+        },
+      }),
+      columnHelper.accessor("required", {
+        header: "Required",
+        cell: ({ row, getValue }) => {
+          const field = row.original;
+          const editing = isEditing(field.id);
+
+          return editing ? (
+            <Switch
+              checked={getFieldValue(field.id, "required", getValue())}
+              onCheckedChange={(checked) =>
+                handleUpdateField(field.id, "required", checked)
+              }
+            />
+          ) : getValue() ? (
+            <Badge variant="secondary">Required</Badge>
+          ) : (
+            <span className="text-muted-foreground">Optional</span>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const field = row.original;
+          const editing = isEditing(field.id);
+
+          return (
+            <div className="flex gap-1">
+              <TableActionButtons
+                isEditing={editing}
+                onEdit={() => handleStartEditing(field.id)}
+                onSave={() => handleSaveExisting(field.id)}
+                onCancel={() => stopEditing(field.id)}
+                isSaving={updateFieldMutation.isPending}
+              />
+              {!editing && (
+                <ConfirmDeleteDialog
+                  itemName={field.name}
+                  itemType="Content Field"
+                  onConfirm={() => onDeleteField(selectedTypeId, field.id)}
+                  isPending={deleteFieldMutation.isPending}
+                  description={`Are you sure you want to delete the field "${field.name}"? This action cannot be undone.`}
+                />
+              )}
+            </div>
+          );
+        },
+      }),
+    ],
+    [
+      columnHelper,
+      isEditing,
+      getFieldValue,
+      handleUpdateField,
+      handleStartEditing,
+      handleSaveExisting,
+      stopEditing,
+      updateFieldMutation.isPending,
+      deleteFieldMutation.isPending,
+      onDeleteField,
+      selectedTypeId,
+    ],
+  );
+
+  const table = useReactTable({
+    data: contentFields,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      sorting,
+      globalFilter,
+    },
+  });
+
+  const selectedType = contentTypes.find((t) => t.id === selectedTypeId);
+
   if (!selectedTypeId) {
     return (
-      <div className="text-center py-8">
-        <Database className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">Select a Content Type</h3>
-        <p className="text-muted-foreground">
-          Choose a content type from the Content Types tab to manage its fields.
-        </p>
-      </div>
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Database />
+          </EmptyMedia>
+          <EmptyTitle>Select a Content Type</EmptyTitle>
+          <EmptyDescription>
+            Choose a content type from the Content Types tab to manage its
+            fields.
+          </EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h3 className="text-lg font-semibold">Content Fields Grid</h3>
-          <p className="text-sm text-muted-foreground">
-            For: {contentTypes.find((t) => t.id === selectedTypeId)?.name}
+      <div>
+        <TableToolbar
+          title="Content Fields Grid"
+          onAdd={() => startNewRow({ name: "", type: "text", required: false })}
+          searchValue={globalFilter}
+          onSearchChange={setGlobalFilter}
+          searchPlaceholder="Search content fields..."
+          addDisabled={!!newRow}
+        />
+        {selectedType && (
+          <p className="text-sm text-muted-foreground mt-1">
+            For: {selectedType.name}
           </p>
-        </div>
-        <Button size="sm" onClick={addNewRow} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Add Row
-        </Button>
+        )}
       </div>
 
       {isLoading ? (
         <div className="flex justify-center py-8">
           <Loader2 className="h-8 w-8 animate-spin" />
         </div>
+      ) : contentFields.length === 0 && !newRow ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FileText />
+            </EmptyMedia>
+            <EmptyTitle>No fields yet</EmptyTitle>
+            <EmptyDescription>
+              Add your first field to define the structure for this content
+              type.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <div className="border rounded-lg overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead className="w-48">Name</TableHead>
-                <TableHead className="w-32">Type</TableHead>
-                <TableHead className="w-24">Required</TableHead>
-                <TableHead className="w-32">Actions</TableHead>
-              </TableRow>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="w-48">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
             </TableHeader>
             <TableBody>
               {/* New Row */}
               {newRow && (
-                <TableRow className="bg-blue-50">
+                <TableRow>
                   <TableCell>
                     <Input
                       value={newRow.name || ""}
                       onChange={(e) =>
-                        updateFieldProperty("new", "name", e.target.value)
+                        updateNewRowField("name", e.target.value)
                       }
                       placeholder="Enter field name"
                       className="h-8"
@@ -238,14 +395,14 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
                     <Select
                       value={newRow.type || "text"}
                       onValueChange={(value) =>
-                        updateFieldProperty("new", "type", value)
+                        updateNewRowField("type", value)
                       }
                     >
                       <SelectTrigger className="h-8">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {fieldTypes.map((type) => (
+                        {FIELD_TYPES.map((type) => (
                           <SelectItem key={type} value={type}>
                             {type}
                           </SelectItem>
@@ -257,168 +414,35 @@ export const ContentFieldsTab: React.FC<ContentFieldsTabProps> = ({
                     <Switch
                       checked={newRow.required || false}
                       onCheckedChange={(checked) =>
-                        updateFieldProperty("new", "required", checked)
+                        updateNewRowField("required", checked)
                       }
                     />
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        onClick={saveNewRow}
-                        disabled={createFieldMutation.isPending}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={cancelNewRow}
-                        className="h-8 w-8 p-0"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <TableActionButtons
+                      isEditing={true}
+                      onEdit={() => {}}
+                      onSave={handleSaveNew}
+                      onCancel={cancelNewRow}
+                      isSaving={createFieldMutation.isPending}
+                    />
                   </TableCell>
                 </TableRow>
               )}
 
               {/* Existing Rows */}
-              {contentFields.map((field) => {
-                const isEditing = editingRows.has(field.id);
-
-                return (
-                  <TableRow key={field.id}>
-                    <TableCell className="font-medium">
-                      {isEditing ? (
-                        <Input
-                          value={editedValues[field.id]?.name ?? field.name}
-                          onChange={(e) =>
-                            updateFieldProperty(
-                              field.id,
-                              "name",
-                              e.target.value,
-                            )
-                          }
-                          className="h-8"
-                        />
-                      ) : (
-                        field.name
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
                       )}
                     </TableCell>
-                    <TableCell className="capitalize">
-                      {isEditing ? (
-                        <Select
-                          value={editedValues[field.id]?.type ?? field.type}
-                          onValueChange={(value) =>
-                            updateFieldProperty(field.id, "type", value)
-                          }
-                        >
-                          <SelectTrigger className="h-8">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {fieldTypes.map((type) => (
-                              <SelectItem key={type} value={type}>
-                                {type}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        field.type
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {isEditing ? (
-                        <Switch
-                          checked={
-                            editedValues[field.id]?.required ?? field.required
-                          }
-                          onCheckedChange={(checked) =>
-                            updateFieldProperty(field.id, "required", checked)
-                          }
-                        />
-                      ) : field.required ? (
-                        <Badge variant="secondary">Required</Badge>
-                      ) : (
-                        <span className="text-muted-foreground">Optional</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-1">
-                        {isEditing ? (
-                          <>
-                            <Button
-                              size="sm"
-                              onClick={() => saveExistingField(field.id)}
-                              disabled={updateFieldMutation.isPending}
-                              className="h-8 w-8 p-0"
-                            >
-                              <Save className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => stopEditing(field.id)}
-                              className="h-8 w-8 p-0"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </>
-                        ) : (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => startEditing(field.id)}
-                              className="h-8 w-8 p-0"
-                              title="Edit"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <AlertDialog>
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  className="h-8 w-8 p-0"
-                                  title="Delete"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>
-                                    Delete Content Field
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    Are you sure you want to delete the field "
-                                    {field.name}"? This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    onClick={() =>
-                                      onDeleteField(selectedTypeId, field.id)
-                                    }
-                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+                  ))}
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>

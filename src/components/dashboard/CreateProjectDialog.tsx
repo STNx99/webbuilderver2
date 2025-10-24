@@ -22,8 +22,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import createProject from "@/app/actions/projectAction";
 import React from "react";
-import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { projectKeys } from "@/hooks";
 
 type CreateProjectDialogProps = {
   children?: React.ReactNode;
@@ -42,10 +42,8 @@ export default function CreateProjectDialog({
   isCreateDialogOpen,
   setIsCreateDialogOpen,
 }: CreateProjectDialogProps) {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
-  // TanStack  mutation for create project
   const createProjectMutation = useMutation({
     mutationFn: async (data: z.infer<typeof projectSchema>) => {
       await createProject({
@@ -58,7 +56,7 @@ export default function CreateProjectDialog({
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: projectKeys.userProjects() });
       setIsCreateDialogOpen(false);
     },
   });
@@ -73,7 +71,6 @@ export default function CreateProjectDialog({
     },
   });
 
-  // Use TanStacddk Query mutation for create
   const handleSubmit = async (data: z.infer<typeof projectSchema>) => {
     createProjectMutation.mutate(data);
   };

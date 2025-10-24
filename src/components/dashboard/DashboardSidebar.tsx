@@ -12,6 +12,7 @@ import {
   HelpCircle,
   LogOut,
   ChevronUp,
+  Store,
 } from "lucide-react";
 
 import {
@@ -61,6 +62,11 @@ const navigationItems = [
     url: "/notifications",
     icon: Bell,
   },
+  {
+    title: "Market place",
+    url: "/marketplace",
+    icon: Store,
+  }
 ];
 
 const quickActions = [
