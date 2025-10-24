@@ -30,34 +30,27 @@ type ElementStore<TElement extends EditorElement> = {
   clearHistory: () => ElementStore<TElement>;
 };
 
-type PersistElement = EditorElement;
-
-type UpdatePayload<TElement extends EditorElement> = {
-  element: PersistElement;
-  prevElements: TElement[];
-  settings?: string | null;
-};
-
 const createElementStore = <TElement extends EditorElement>() => {
   let cachedProjectId: string | undefined;
 
   return create<ElementStore<TElement>>((set, get) => {
     const saveSnapshotToApi = async (elements: EditorElement[]) => {
       try {
-        // Use cached projectId if elements array is empty
         const projectId = elements[0]?.projectId || cachedProjectId;
         if (!projectId) {
           console.warn("No projectId available for saving snapshot");
           return;
         }
-        // Cache the projectId for future saves
         if (elements[0]?.projectId) {
           cachedProjectId = elements[0].projectId;
         }
         const snapshot: Snapshot = {
           id: `snapshot-${Date.now()}`,
           elements: cloneDeep(elements),
+          type: "working",
+          name: "Autosave",
           timestamp: Date.now(),
+          createdAt: new Date().toISOString(),
         };
         if (elementService.saveSnapshot) {
           await elementService.saveSnapshot(projectId, snapshot);

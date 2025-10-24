@@ -28,20 +28,20 @@ export const useEditor = (id: string, pageId: string) => {
 
   const { data: projectPages, isLoading: isLoadingPages } = useQuery({
     queryKey: ["pages", id],
-    queryFn: () => projectService.getProjectPages(id),
+    queryFn: async () => projectService.getProjectPages(id),
   });
 
   const { data: fetchedElements, isLoading: isLoadingElements } = useQuery<
     EditorElement[]
   >({
     queryKey: ["elements", id],
-    queryFn: () => elementService.getElements(id),
+    queryFn: async () => elementService.getElements(id),
   });
 
   const { data: project, isLoading: isLoadingProject } =
     useQuery<Project | null>({
       queryKey: ["project", id],
-      queryFn: () => projectService.getProjectById(id),
+      queryFn: async () => projectService.getProjectById(id),
       enabled: Boolean(id),
     });
 

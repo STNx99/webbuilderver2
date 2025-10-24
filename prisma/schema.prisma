@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum SnapshotType {
+  working
+  version
+}
+
 model Element {
   Content        String?
   Href           String?
@@ -60,7 +65,7 @@ model Project {
   Pages       Page[]
   Owner       User       @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
   Snapshots   Snapshot[]
-  MarketplaceItems MarketplaceItem[] // Projects that were turned into marketplace templates
+  MarketplaceItem MarketplaceItem? // Project that was turned into marketplace template
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -96,6 +101,8 @@ model Snapshot {
   Id        String   @id @map("Id")
   ProjectId String
   Elements  Json
+  Type      SnapshotType
+  Name      String
   Timestamp BigInt
   CreatedAt DateTime @default(now()) @db.Timestamp(6)
   Project   Project  @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
@@ -115,17 +122,19 @@ model User {
   Projects        Project[]
   MarketplaceItems MarketplaceItem[]
   Subscriptions   Subscription[]
+
+  CustomElements  CustomElement[]
 }
 
 model Subscription {
   Id            String      @id @default(cuid())
   UserId        String
-  PlanId        String      
-  BillingPeriod String     
-  Status        String      @default("active") 
+  PlanId        String
+  BillingPeriod String
+  Status        String      @default("active")
   StartDate     DateTime    @default(now())
-  EndDate       DateTime?  
-  Amount        Float       
+  EndDate       DateTime?
+  Amount        Float
   Currency      String      @default("USD")
   CreatedAt     DateTime    @default(now()) @db.Timestamp(6)
   UpdatedAt     DateTime    @updatedAt @db.Timestamp(6)
@@ -202,6 +211,8 @@ model MarketplaceItem {
   Tags         MarketplaceItemTag[]
   Categories   MarketplaceItemCategory[]
 
+  @@unique([ProjectId])
+
   @@index([AuthorId])
   @@index([TemplateType])
   @@index([Featured])
@@ -238,4 +249,38 @@ model MarketplaceItemCategory {
 
   @@id([ItemId, CategoryId])
   @@index([CategoryId])
+}
+
+model CustomElementType {
+  Id             String          @id @default(cuid())
+  Name           String          @unique
+  Description    String?
+  Category       String?
+  Icon           String?
+  CreatedAt      DateTime        @default(now()) @db.Timestamp(6)
+  UpdatedAt      DateTime        @updatedAt @db.Timestamp(6)
+  CustomElements CustomElement[]
+}
+
+model CustomElement {
+  Id               String            @id @map("Id")
+  Name             String
+  TypeId           String?
+  Description      String?           @db.Text
+  Category         String?           @db.VarChar(100)
+  Icon             String?           @db.VarChar(255)
+  Thumbnail        String?           @db.VarChar(255)
+  Structure        Json
+  DefaultProps     Json?
+  Tags             String?           @db.VarChar(500)
+  UserId           String
+  IsPublic         Boolean           @default(false)
+  Version          String            @default("1.0.0") @db.VarChar(20)
+  CreatedAt        DateTime          @default(now()) @db.Timestamp(6)
+  UpdatedAt        DateTime          @default(now()) @updatedAt @db.Timestamp(6)
+  User             User              @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+  CustomElementType CustomElementType? @relation(fields: [TypeId], references: [Id])
+
+  @@index([UserId])
+  @@index([TypeId])
 }
