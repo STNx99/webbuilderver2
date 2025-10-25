@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { MarketplaceHero } from "@/components/marketplace/MarketplaceHero";
 import { MarketplaceFilters } from "@/components/marketplace/MarketplaceFilters";
 import { MarketplaceGrid } from "@/components/marketplace/MarketplaceGrid";
+import MarketplaceFooter from "@/components/marketplace/MarketplaceFooter";
 
 export default async function MarketplacePage() {
   return (
@@ -24,6 +25,8 @@ export default async function MarketplacePage() {
           </div>
         </div>
       </section>
+
+      <MarketplaceFooter />
     </div>
   );
 }

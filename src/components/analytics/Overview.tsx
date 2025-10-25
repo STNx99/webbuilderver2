@@ -4,7 +4,6 @@ import { motion } from "framer-motion"
 import { TrendingUp } from "lucide-react"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip } from "recharts"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 
 const data = [
     {

@@ -18,6 +18,8 @@ export const API_ENDPOINTS = {
   },
   SNAPSHOTS: {
     SAVE: (projectId: string) => `/api/v1/snapshots/${projectId}/save`,
+    GET: (projectId: string) => `/api/v1/snapshots/${projectId}`,
+    LOAD: (projectId: string, snapshotId: string) => `/api/v1/snapshots/${projectId}/${snapshotId}`,
   },
   CMS: {
     CONTENT_TYPES: {
