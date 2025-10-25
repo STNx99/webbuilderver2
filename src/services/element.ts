@@ -8,6 +8,8 @@ interface IElementService {
   getElements: (projectId: string) => Promise<EditorElement[]>;
   getElementsPublic: (projectId: string) => Promise<EditorElement[]>;
   saveSnapshot: (projectId: string, snapshot: Snapshot) => Promise<void>;
+  getSnapshots: (projectId: string) => Promise<Snapshot[]>;
+  loadSnapshot: (projectId: string, snapshotId: string) => Promise<EditorElement[]>;
 }
 
 export const elementService: IElementService = {
@@ -36,5 +38,21 @@ export const elementService: IElementService = {
       const message = err instanceof Error ? err.message : String(err);
       throw new Error(`saveSnapshot failed: ${message}`);
     }
+  },
+
+  getSnapshots: async (projectId: string): Promise<Snapshot[]> => {
+    return apiClient.get<Snapshot[]>(
+      GetUrl(API_ENDPOINTS.SNAPSHOTS.GET(projectId)),
+    );
+  },
+
+  loadSnapshot: async (
+    projectId: string,
+    snapshotId: string,
+  ): Promise<EditorElement[]> => {
+    const snapshot = await apiClient.get<Snapshot>(
+      GetUrl(API_ENDPOINTS.SNAPSHOTS.LOAD(projectId, snapshotId)),
+    );
+    return snapshot.elements;
   },
 };
