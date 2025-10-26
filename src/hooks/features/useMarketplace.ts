@@ -147,10 +147,7 @@ export function useDownloadMarketplaceItem() {
 
   return useMutation({
     mutationFn: async (marketplaceItemId: string) => {
-      // First increment the download count
-      await marketplaceService.incrementDownloads(marketplaceItemId);
-
-      // Then create a new project from the template
+      // Create a new project from the template
       const newProject =
         await marketplaceService.downloadMarketplaceItem(marketplaceItemId);
 

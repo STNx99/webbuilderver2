@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import {
   Download,
   Heart,
-  ExternalLink,
   CheckCircle2,
   Layers,
+  Eye,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,7 @@ import { MarketplaceItemWithRelations } from "@/interfaces/market.interface";
 import { useDownloadMarketplaceItem, useIncrementLikes } from "@/hooks";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 interface MarketplaceCardProps {
   item: MarketplaceItemWithRelations;
@@ -25,6 +26,7 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const downloadItem = useDownloadMarketplaceItem();
   const incrementLikes = useIncrementLikes();
+  const router = useRouter();
 
   const getTemplateTypeLabel = (type: string) => {
     switch (type) {
@@ -46,8 +48,8 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
     e.stopPropagation();
 
     try {
-      await downloadItem.mutateAsync(item.id);
-      // The new project will be created and user will be notified via toast
+      const newProject = await downloadItem.mutateAsync(item.id);
+      router.push(`/editor/${newProject.id}`);
     } catch (error) {
       console.error("Failed to download template:", error);
     }
@@ -77,7 +79,7 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300" />
           <div className="absolute top-3 left-3">
             <Badge
               variant="secondary"
@@ -146,15 +148,32 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
         </CardContent>
         <CardFooter className="p-4 pt-0 flex items-center justify-between border-t border-border/50 mt-auto">
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                router.push(`/marketplace/${item.id}`);
+              }}
+              className="flex items-center gap-1 hover:text-foreground transition-colors"
+            >
+              <Eye className="h-3.5 w-3.5" />
+              <span>View Details</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleDownload}
               disabled={downloadItem.isPending}
               className="flex items-center gap-1 hover:text-foreground transition-colors"
             >
               <Download className="h-3.5 w-3.5" />
               <span>{(item.downloads || 0).toLocaleString()}</span>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={handleLike}
               disabled={incrementLikes.isPending || isLiked}
               className={cn(
@@ -164,7 +183,7 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
             >
               <Heart className={cn("h-3.5 w-3.5", isLiked && "fill-current")} />
               <span>{(item.likes || 0).toLocaleString()}</span>
-            </button>
+            </Button>
           </div>
           {item.author && (
             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
