@@ -31,7 +31,7 @@ export default function PreviewRenderer({ projectId }: PreviewRendererProps) {
 
   if (projectLoading || elementsLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen min-w-screen">
         <div className="text-lg">Loading preview...</div>
       </div>
     );
@@ -39,7 +39,7 @@ export default function PreviewRenderer({ projectId }: PreviewRendererProps) {
 
   if (projectError || elementsError) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen min-w-screen">
         <div className="text-lg text-destructive">
           Error loading preview:{" "}
           {projectError?.message || elementsError?.message}

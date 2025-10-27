@@ -6,6 +6,9 @@ const isProtectedRoute = createRouteMatcher([
   "/editor(.*)",
   "/settings(.*)",
   "/marketplace(.*)",
+  "/preview(.*)",
+  "/analytics(.*)",
+  "/help(.*)",
 ]);
 
 const isCheckoutRoute = createRouteMatcher(["/checkout(.*)"]);

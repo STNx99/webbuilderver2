@@ -22,6 +22,7 @@ import { useAiChat } from "@/providers/aiprovider";
 import { ProjectPageCommand } from "../ProjectPageCommand";
 import { ElementSelector } from "./ElementSelector";
 import CMSManager from "./cmsmanager/CMSManager";
+import SnapshotManager from "./SnapshotManager";
 import { ImageSelector } from "./imageupload/ImageSelector";
 
 export function EditorSideBar() {
@@ -35,7 +36,7 @@ export function EditorSideBar() {
         <Accordion
           type="multiple"
           className="w-full"
-          defaultValue={["components", "pages", "imageupload", "cms"]}
+          defaultValue={["components", "pages", "imageupload", "cms", "snapshots"]}
         >
           <AccordionItem value="components">
             <SidebarGroup>
@@ -81,6 +82,18 @@ export function EditorSideBar() {
               <AccordionContent>
                 <SidebarGroupContent>
                   <CMSManager />
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+          <AccordionItem value="snapshots">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger>Snapshots</AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  <SnapshotManager />
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>

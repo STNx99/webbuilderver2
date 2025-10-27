@@ -1,299 +1,312 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import {
-  Download,
-  Heart,
-  Calendar,
-  User,
-  CheckCircle2,
-  Layers,
-  ArrowLeft,
-} from "lucide-react";
-import Image from "next/image";
-import { MarketplaceItemWithRelations } from "@/interfaces/market.interface";
-import { useDownloadMarketplaceItem, useIncrementLikes } from "@/hooks";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { Download, Heart, Eye, ArrowLeft, Star, Share2, Code2, Zap, TrendingUp } from "lucide-react"
+import type { MarketplaceItemWithRelations } from "@/interfaces/market.interface"
+import { useDownloadMarketplaceItem, useIncrementLikes } from "@/hooks"
+import { useState } from "react"
+import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 interface MarketplaceItemDetailProps {
-  item: MarketplaceItemWithRelations;
+  item: MarketplaceItemWithRelations
 }
 
 export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
-  const router = useRouter();
-  const [isLiked, setIsLiked] = useState(false);
-  const downloadItem = useDownloadMarketplaceItem();
-  const incrementLikes = useIncrementLikes();
+  const router = useRouter()
+  const [isLiked, setIsLiked] = useState(false)
+  const downloadItem = useDownloadMarketplaceItem()
+  const incrementLikes = useIncrementLikes()
 
   const getTemplateTypeLabel = (type: string) => {
     switch (type) {
       case "full-site":
-        return "Full Site";
+        return "Full Site"
       case "page":
-        return "Page";
+        return "Page"
       case "section":
-        return "Section";
+        return "Section"
       case "block":
-        return "Block";
+        return "Block"
       default:
-        return type;
+        return type
     }
-  };
+  }
 
   const handleDownload = async () => {
     try {
-      await downloadItem.mutateAsync(item.id);
+      const newProject = await downloadItem.mutateAsync(item.id)
+      router.push(`/editor/${newProject.id}`)
     } catch (error) {
-      console.error("Failed to download template:", error);
+      console.error("Failed to download template:", error)
     }
-  };
+  }
 
   const handleLike = async () => {
-    if (isLiked) return;
-
+    if (isLiked) return
     try {
-      await incrementLikes.mutateAsync(item.id);
-      setIsLiked(true);
+      await incrementLikes.mutateAsync(item.id)
+      setIsLiked(true)
     } catch (error) {
-      console.error("Failed to like item:", error);
+      console.error("Failed to like item:", error)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <Button
-          variant="ghost"
-          className="mb-6"
-          onClick={() => router.push("/marketplace")}
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Marketplace
-        </Button>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Preview Image */}
-            <Card className="overflow-hidden">
-              <div className="relative aspect-video bg-muted">
-                <Image
-                  src={item.preview || "/placeholder.svg"}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-              </div>
-            </Card>
-
-            {/* Title and Description */}
-            <div>
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex-1">
-                  <h1 className="text-3xl font-bold mb-2">{item.title}</h1>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="secondary">
-                      {getTemplateTypeLabel(item.templateType)}
-                    </Badge>
-                    {item.featured && (
-                      <Badge variant="default" className="bg-yellow-500">
-                        Featured
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <p className="text-muted-foreground text-lg leading-relaxed">
-                {item.description}
-              </p>
-            </div>
-
-            <Separator />
-
-            {/* Additional Details */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {item.pageCount && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Layers className="h-5 w-5" />
-                    <span>
-                      <strong className="text-foreground">
-                        {item.pageCount}
-                      </strong>{" "}
-                      pages included
-                    </span>
-                  </div>
-                )}
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Download className="h-5 w-5" />
-                  <span>
-                    <strong className="text-foreground">
-                      {(item.downloads || 0).toLocaleString()}
-                    </strong>{" "}
-                    downloads
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Heart className="h-5 w-5" />
-                  <span>
-                    <strong className="text-foreground">
-                      {(item.likes || 0).toLocaleString()}
-                    </strong>{" "}
-                    likes
-                  </span>
-                </div>
-                {item.createdAt && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-5 w-5" />
-                    <span>
-                      Created{" "}
-                      <strong className="text-foreground">
-                        {new Date(item.createdAt).toLocaleDateString()}
-                      </strong>
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Tags */}
-            {item.tags && item.tags.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-3">
-                  <h2 className="text-xl font-semibold">Tags</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {item.tags.map((tag: string) => (
-                      <Badge key={tag} variant="outline">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Categories */}
-            {item.categories && item.categories.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-3">
-                  <h2 className="text-xl font-semibold">Categories</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {item.categories.map((category) => (
-                      <Badge key={category.id} variant="secondary">
-                        {category.name}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </>
+    <div className="min-h-screen min-w-screen bg-background">
+      <div className="sticky top-0 z-40 border-b border-border/30 bg-background/95 backdrop-blur-md">
+        <div className="container mx-auto px-4 py-3 max-w-7xl flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => router.push("/marketplace")}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Marketplace
+          </Button>
+          <div className="flex items-center gap-2">
+            {item.featured && (
+              <Badge
+                variant="secondary"
+                className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-200/30 dark:border-amber-900/30"
+              >
+                <Star className="h-3 w-3 mr-1.5 fill-current" />
+                Featured
+              </Badge>
             )}
           </div>
+        </div>
+      </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="sticky top-4">
-              <CardContent className="p-6 space-y-4">
-                {/* Author Info */}
-                {item.author && (
-                  <div className="space-y-2">
-                    <h3 className="text-sm font-semibold text-muted-foreground uppercase">
-                      Created By
-                    </h3>
-                    <div className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                        <User className="h-5 w-5 text-primary" />
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-16 max-w-7xl">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-12">
+            {/* Hero iframe with enhanced styling */}
+            <div className="relative rounded-2xl overflow-hidden border border-border/40 bg-muted/20 shadow-lg">
+              <div className="relative aspect-video bg-gradient-to-br from-muted/50 to-muted/20">
+                <iframe
+                  src={`/preview/${item.projectId}`}
+                  className="w-full h-full border-0"
+                  title={`${item.title} preview`}
+                  loading="lazy"
+                  sandbox="allow-same-origin"
+                />
+              </div>
+              <div className="absolute top-6 right-6">
+                <Badge className="bg-background/95 text-foreground border border-border/50 backdrop-blur-sm font-medium">
+                  {getTemplateTypeLabel(item.templateType)}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h1 className="text-5xl font-bold text-foreground mb-4 leading-tight">{item.title}</h1>
+                <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">{item.description}</p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-border/30">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Eye className="h-5 w-5" />
+                    <span className="text-sm font-medium">Views</span>
+                  </div>
+                  <p className="text-4xl font-bold text-foreground">{(item.downloads || 0).toLocaleString()}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Download className="h-5 w-5" />
+                    <span className="text-sm font-medium">Downloads</span>
+                  </div>
+                  <p className="text-4xl font-bold text-foreground">{(item.downloads || 0).toLocaleString()}</p>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Heart className="h-5 w-5" />
+                    <span className="text-sm font-medium">Likes</span>
+                  </div>
+                  <p className="text-4xl font-bold text-foreground">{(item.likes || 0).toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Technical Details Card */}
+              <Card className="border border-border/40 bg-card/40 backdrop-blur-sm hover:border-border/60 transition-colors">
+                <CardContent className="p-8 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Code2 className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground text-lg">Technical Details</h3>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center py-3 border-b border-border/20">
+                      <span className="text-sm text-muted-foreground font-medium">Type</span>
+                      <Badge variant="outline" className="text-xs font-medium">
+                        {getTemplateTypeLabel(item.templateType)}
+                      </Badge>
+                    </div>
+                    {item.pageCount && (
+                      <div className="flex justify-between items-center py-3 border-b border-border/20">
+                        <span className="text-sm text-muted-foreground font-medium">Pages</span>
+                        <span className="font-semibold text-foreground">{item.pageCount}</span>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-medium">{item.author.name}</span>
-                          {item.author.verified && (
-                            <CheckCircle2 className="h-4 w-4 text-blue-500" />
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                          Template Creator
-                        </p>
+                    )}
+                    <div className="flex justify-between items-center py-3 border-b border-border/20">
+                      <span className="text-sm text-muted-foreground font-medium">Downloads</span>
+                      <span className="font-semibold text-foreground">{(item.downloads || 0).toLocaleString()}</span>
+                    </div>
+                    {item.createdAt && (
+                      <div className="flex justify-between items-center py-3">
+                        <span className="text-sm text-muted-foreground font-medium">Created</span>
+                        <span className="font-semibold text-foreground">
+                          {new Date(item.createdAt).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tags & Categories Card */}
+              <Card className="border border-border/40 bg-card/40 backdrop-blur-sm hover:border-border/60 transition-colors">
+                <CardContent className="p-8 space-y-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10">
+                      <Zap className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-foreground text-lg">Tags & Categories</h3>
+                  </div>
+                  {item.categories && item.categories.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                        Categories
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {item.categories.map((category) => (
+                          <Badge key={category.id} variant="secondary" className="text-xs font-medium">
+                            {category.name}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                  {item.tags && item.tags.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                        Tags
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {item.tags.map((tag: string) => (
+                          <Badge key={tag} variant="outline" className="text-xs font-medium">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
 
-                <Separator />
+          <div className="lg:col-span-1">
+            <div className="space-y-6 sticky top-24">
+              {/* Author Card */}
+              {item.author && (
+                <Card className="border border-border/40 bg-card/40 backdrop-blur-sm">
+                  <CardContent className="p-8">
+                    <div className="text-center space-y-4">
+                      <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center mx-auto border border-primary/20">
+                        <span className="text-2xl font-bold text-primary">
+                          {item.author.name.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground text-base">{item.author.name}</p>
+                        <p className="text-xs text-muted-foreground font-medium">Template Creator</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-                {/* Action Buttons */}
-                <div className="space-y-3">
-                  <Button
-                    className="w-full"
-                    size="lg"
-                    onClick={handleDownload}
-                    disabled={downloadItem.isPending}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    {downloadItem.isPending ? "Downloading..." : "Download Template"}
-                  </Button>
+              <div className="space-y-3">
+                <Button
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 rounded-lg transition-all duration-200 text-base"
+                  size="lg"
+                  onClick={handleDownload}
+                  disabled={downloadItem.isPending}
+                >
+                  <Download className="h-5 w-5 mr-2" />
+                  {downloadItem.isPending ? "Creating..." : "Download Template"}
+                </Button>
+                <div className="flex gap-3">
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full",
-                      isLiked && "border-red-500 text-red-500"
+                      "flex-1 py-6 rounded-lg transition-all duration-200 font-medium",
+                      isLiked
+                        ? "border-red-500/50 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20"
+                        : "border-border/40 hover:border-red-300/50 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-950/10",
                     )}
                     size="lg"
                     onClick={handleLike}
                     disabled={incrementLikes.isPending || isLiked}
                   >
-                    <Heart
-                      className={cn(
-                        "h-4 w-4 mr-2",
-                        isLiked && "fill-current"
-                      )}
-                    />
-                    {isLiked ? "Liked" : "Like This Template"}
+                    <Heart className={cn("h-5 w-5 transition-all", isLiked && "fill-current")} />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="flex-1 py-6 rounded-lg border-border/40 bg-transparent hover:bg-muted/50 transition-colors font-medium"
+                    size="lg"
+                  >
+                    <Share2 className="h-5 w-5" />
                   </Button>
                 </div>
+              </div>
 
-                <Separator />
-
-                {/* Stats Summary */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase">
-                    Template Stats
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Downloads</span>
-                      <span className="font-medium">
+              <Card className="border border-border/40 bg-card/40 backdrop-blur-sm">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-2 mb-6">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Performance
+                    </h3>
+                  </div>
+                  <div className="space-y-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground font-medium">Downloads</span>
+                      <span className="font-bold text-2xl text-foreground">
                         {(item.downloads || 0).toLocaleString()}
                       </span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Likes</span>
-                      <span className="font-medium">
-                        {(item.likes || 0).toLocaleString()}
-                      </span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground font-medium">Likes</span>
+                      <span className="font-bold text-2xl text-foreground">{(item.likes || 0).toLocaleString()}</span>
                     </div>
                     {item.pageCount && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Pages</span>
-                        <span className="font-medium">{item.pageCount}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground font-medium">Pages</span>
+                        <span className="font-bold text-2xl text-foreground">{item.pageCount}</span>
                       </div>
                     )}
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
