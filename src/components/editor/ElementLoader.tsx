@@ -85,9 +85,8 @@ export default function ElementLoader({
             element.pageId,
           );
           if (newElement) insertElement(element, newElement);
-          console.log("Inserting custom component:", newElement);
         } catch (error) {
-          console.error("Failed to parse custom component data:", error);
+          // Silent error handling
         }
       }
 

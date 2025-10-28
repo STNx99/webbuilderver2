@@ -26,15 +26,12 @@ import { useAiChat } from "@/providers/aiprovider";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-// import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {
   const params = useParams();
   const { toggleSidebar } = useSidebar();
   const { toggleChat } = useAiChat();
   const visitProjectSubdomain = (projectId: string) => {
-    // const subdomainUrl = getProjectSubdomainUrl(projectId);
-    // window.open(subdomainUrl, "_blank");
     window.open(`http://localhost:3000/preview/${projectId}`);
   };
   const { elements } = useElementStore();

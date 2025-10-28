@@ -73,18 +73,24 @@ const SnapshotManager = () => {
     }
   }, [project?.id, elements, fetchSnapshots]);
 
-  const handleLoadSnapshot = useCallback(async (snapshotId: string) => {
-    if (!project?.id) return;
-    try {
-      const elements = await elementService.loadSnapshot(project.id, snapshotId);
-      loadElements(elements);
-      toast.success("Snapshot loaded successfully");
-      setOpen(false);
-    } catch (error) {
-      console.error("Failed to load snapshot:", error);
-      toast.error("Failed to load snapshot");
-    }
-  }, [project?.id, loadElements]);
+  const handleLoadSnapshot = useCallback(
+    async (snapshotId: string) => {
+      if (!project?.id) return;
+      try {
+        const elements = await elementService.loadSnapshot(
+          project.id,
+          snapshotId,
+        );
+        loadElements(elements);
+        toast.success("Snapshot loaded successfully");
+        setOpen(false);
+      } catch (error) {
+        console.error("Failed to load snapshot:", error);
+        toast.error("Failed to load snapshot");
+      }
+    },
+    [project?.id, loadElements],
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -105,7 +111,11 @@ const SnapshotManager = () => {
         <div className="flex-1 overflow-hidden">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">Project Snapshots</h3>
-            <Button onClick={handleSaveSnapshot} className="gap-2" disabled={saving}>
+            <Button
+              onClick={handleSaveSnapshot}
+              className="gap-2"
+              disabled={saving}
+            >
               <Save className="h-4 w-4" />
               {saving ? "Saving..." : "Save Current Version"}
             </Button>
