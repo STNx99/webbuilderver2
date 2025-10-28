@@ -152,17 +152,14 @@ export function useRemoveCollaborator(projectId?: string) {
     onMutate: async (collaboratorId) => {
       if (!projectId) return {};
 
-      // Cancel any outgoing refetches
       await queryClient.cancelQueries({
         queryKey: collaboratorKeys.byProject(projectId),
       });
 
-      // Snapshot the previous value
       const previousCollaborators = queryClient.getQueryData<Collaborator[]>(
         collaboratorKeys.byProject(projectId),
       );
 
-      // Optimistically remove the collaborator
       queryClient.setQueryData<Collaborator[]>(
         collaboratorKeys.byProject(projectId),
         (old) =>
@@ -174,7 +171,6 @@ export function useRemoveCollaborator(projectId?: string) {
     onSuccess: (_, __, context) => {
       toast.success("Collaborator removed successfully!");
 
-      // If we have a projectId, invalidate that specific query
       if (context?.projectId) {
         queryClient.invalidateQueries({
           queryKey: collaboratorKeys.byProject(context.projectId),
@@ -197,13 +193,11 @@ export function useRemoveCollaborator(projectId?: string) {
       );
     },
     onSettled: (_, __, ___, context) => {
-      // Always refetch after error or success
       if (context?.projectId) {
         queryClient.invalidateQueries({
           queryKey: collaboratorKeys.byProject(context.projectId),
         });
       } else {
-        // If no projectId, invalidate all collaborator queries
         queryClient.invalidateQueries({
           queryKey: collaboratorKeys.all,
         });
@@ -223,7 +217,6 @@ export function useLeaveProject() {
       return await collaboratorService.leaveProject(projectId);
     },
     onSuccess: (_, projectId) => {
-      // Invalidate collaborator and project queries
       queryClient.invalidateQueries({
         queryKey: collaboratorKeys.byProject(projectId),
       });
@@ -251,7 +244,7 @@ export function useCollaboratorManager(projectId: string | null) {
   const removeCollaborator = useRemoveCollaborator(projectId || undefined);
   const leaveProject = useLeaveProject();
 
-  return {
+  const result = {
     // Query states
     collaborators: collaborators.data || [],
     isLoading: collaborators.isLoading,
@@ -280,4 +273,14 @@ export function useCollaboratorManager(projectId: string | null) {
     // Refetch
     refetch: collaborators.refetch,
   };
+
+  console.log("useCollaboratorManager Debug:", {
+    projectId,
+    collaborators: result.collaborators,
+    isLoading: result.isLoading,
+    isError: result.isError,
+    error: result.error,
+  });
+
+  return result;
 }
