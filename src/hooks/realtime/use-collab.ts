@@ -61,7 +61,6 @@ export function useCollab({
   const lastSendTime = useRef<number>(0);
   const updateCountRef = useRef<number>(0);
   const hasAttemptedConnect = useRef(false);
-  const resetCounterTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialized = useRef(false);
 
   const { getToken, isLoaded, userId } = useAuth();
@@ -102,7 +101,6 @@ export function useCollab({
         setTimeout(() => {
           isUpdatingFromRemote.current = false;
           setIsSynced(true);
-
           onSync?.();
         }, 50);
       } else if (isUpdateMessage(message)) {
@@ -212,10 +210,7 @@ export function useCollab({
         setPendingUpdates(0);
       }
 
-      if (resetCounterTimerRef.current) {
-        clearTimeout(resetCounterTimerRef.current);
-      }
-      resetCounterTimerRef.current = setTimeout(() => {
+      setTimeout(() => {
         updateCountRef.current = 0;
       }, 1000);
     },
@@ -264,9 +259,6 @@ export function useCollab({
   useEffect(() => {
     return () => {
       debouncedSendElementsUpdate.cancel();
-      if (resetCounterTimerRef.current) {
-        clearTimeout(resetCounterTimerRef.current);
-      }
       isInitialized.current = false;
     };
   }, [debouncedSendElementsUpdate]);
