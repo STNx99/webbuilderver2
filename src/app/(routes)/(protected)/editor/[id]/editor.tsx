@@ -14,17 +14,8 @@ type EditorProps = {
 
 export default function Editor({ id, pageId }: EditorProps) {
   const { userId } = useAuth();
-  const [randomUserId, setRandomUserId] = useState<string>("");
   const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-    if (!userId) {
-      setRandomUserId(uuidv4());
-    }
-  }, [userId]);
-
-  const effectiveUserId = randomUserId || userId || "guest";
+  const effectiveUserId = userId || "guest";
 
   const {
     currentView,

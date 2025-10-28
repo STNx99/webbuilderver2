@@ -18,11 +18,6 @@ interface ICollaboratorService {
 }
 
 export const collaboratorService: ICollaboratorService = {
-  /**
-   * Get all collaborators for a specific project
-   * @param projectId - The project ID
-   * @returns Promise<Collaborator[]> - Array of collaborators with user details
-   */
   getProjectCollaborators: async (
     projectId: string,
   ): Promise<Collaborator[]> => {
@@ -30,7 +25,6 @@ export const collaboratorService: ICollaboratorService = {
       const response = await apiClient.get<CollaboratorListResponse>(
         GetUrl(API_ENDPOINTS.COLLABORATORS.GET_BY_PROJECT(projectId)),
       );
-      // Ensure we always return an array, even if the response is malformed
       return Array.isArray(response?.collaborators)
         ? response.collaborators
         : [];
@@ -39,17 +33,10 @@ export const collaboratorService: ICollaboratorService = {
         `Failed to fetch collaborators for project ${projectId}:`,
         error,
       );
-      // Return empty array on error to prevent undefined return
       return [];
     }
   },
 
-  /**
-   * Update a collaborator's role (owner only)
-   * @param collaboratorId - The collaborator ID
-   * @param data - New role data
-   * @returns Promise<Collaborator> - Updated collaborator
-   */
   updateCollaboratorRole: async (
     collaboratorId: string,
     data: UpdateCollaboratorRoleRequest,
@@ -60,22 +47,12 @@ export const collaboratorService: ICollaboratorService = {
     );
   },
 
-  /**
-   * Remove a collaborator from a project (owner only)
-   * @param collaboratorId - The collaborator ID to remove
-   * @returns Promise<boolean> - Success status
-   */
   removeCollaborator: async (collaboratorId: string): Promise<boolean> => {
     return apiClient.delete(
       GetUrl(API_ENDPOINTS.COLLABORATORS.REMOVE(collaboratorId)),
     );
   },
 
-  /**
-   * Leave a project (remove self as collaborator)
-   * @param projectId - The project ID to leave
-   * @returns Promise<boolean> - Success status
-   */
   leaveProject: async (projectId: string): Promise<boolean> => {
     return apiClient.delete(
       GetUrl(API_ENDPOINTS.COLLABORATORS.REMOVE_SELF(projectId)),
