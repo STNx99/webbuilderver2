@@ -19,7 +19,8 @@ export const API_ENDPOINTS = {
   SNAPSHOTS: {
     SAVE: (projectId: string) => `/api/v1/snapshots/${projectId}/save`,
     GET: (projectId: string) => `/api/v1/snapshots/${projectId}`,
-    LOAD: (projectId: string, snapshotId: string) => `/api/v1/snapshots/${projectId}/${snapshotId}`,
+    LOAD: (projectId: string, snapshotId: string) =>
+      `/api/v1/snapshots/${projectId}/${snapshotId}`,
   },
   CMS: {
     CONTENT_TYPES: {
@@ -89,6 +90,21 @@ export const API_ENDPOINTS = {
       GET_ALL: "/api/v1/marketplace/tags",
       DELETE: (id: string) => `/api/v1/marketplace/tags/${id}`,
     },
+  },
+  INVITATIONS: {
+    CREATE: "/api/v1/invitations",
+    GET_BY_PROJECT: (projectId: string) =>
+      `/api/v1/invitations/project/${projectId}`,
+    ACCEPT: "/api/v1/invitations/accept",
+    DELETE: (id: string) => `/api/v1/invitations/${id}`,
+  },
+  COLLABORATORS: {
+    GET_BY_PROJECT: (projectId: string) =>
+      `/api/v1/collaborators/project/${projectId}`,
+    UPDATE_ROLE: (id: string) => `/api/v1/collaborators/${id}/role`,
+    REMOVE: (id: string) => `/api/v1/collaborators/${id}`,
+    REMOVE_SELF: (projectId: string) =>
+      `/api/v1/collaborators/project/${projectId}/leave`,
   },
 };
 

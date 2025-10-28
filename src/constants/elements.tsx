@@ -1,6 +1,6 @@
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 
-import { EditorElement, ElementType } from "@/types/global.type";
+import { ElementType } from "@/types/global.type";
 import {
   FormInput,
   Image,
@@ -14,20 +14,22 @@ import {
   Database,
 } from "lucide-react";
 import React from "react";
-import BaseComponent from "@/components/editor/editorcomponents/BaseComponent";
-import ButtonComponent from "@/components/editor/editorcomponents/ButtonComponent";
-import CarouselComponent from "@/components/editor/editorcomponents/CarouselComponent";
-import FormComponent from "@/components/editor/editorcomponents/FormComponent";
-import FrameComponent from "@/components/editor/editorcomponents/FrameComponent";
-import ImageComponent from "@/components/editor/editorcomponents/ImageComponent";
-import InputComponent from "@/components/editor/editorcomponents/InputComponent";
-import ListComponent from "@/components/editor/editorcomponents/ListComponent";
-import SectionComponent from "@/components/editor/editorcomponents/SectionComponent";
-import SelectComponent from "@/components/editor/editorcomponents/SelectComponent";
-import DataLoaderComponent from "@/components/editor/editorcomponents/DataLoaderComponent";
-import CMSContentListComponent from "@/components/editor/editorcomponents/CMSContentListComponent";
-import CMSContentItemComponent from "@/components/editor/editorcomponents/CMSContentItemComponent";
-import CMSContentGridComponent from "@/components/editor/editorcomponents/CMSContentGridComponent";
+import {
+  BaseComponent,
+  ButtonComponent,
+  CarouselComponent,
+  FormComponent,
+  FrameComponent,
+  ImageComponent,
+  InputComponent,
+  ListComponent,
+  SectionComponent,
+  SelectComponent,
+  DataLoaderComponent,
+  CMSContentListComponent,
+  CMSContentItemComponent,
+  CMSContentGridComponent,
+} from "@/components/editor/editorcomponents";
 
 interface ElementHolder {
   type: ElementType;

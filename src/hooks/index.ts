@@ -66,3 +66,23 @@ export {
   usePublishProject,
 } from "./features/useProjects";
 export { useDashboard } from "./features/useDashboard";
+
+// =============================================================================
+// COLLABORATION HOOKS
+// =============================================================================
+export {
+  invitationKeys,
+  useProjectInvitations,
+  useCreateInvitation,
+  useAcceptInvitation,
+  useDeleteInvitation,
+  useInvitationManager,
+} from "./features/useInvitations";
+export {
+  collaboratorKeys,
+  useProjectCollaborators,
+  useUpdateCollaboratorRole,
+  useRemoveCollaborator,
+  useLeaveProject,
+  useCollaboratorManager,
+} from "./features/useCollaborators";

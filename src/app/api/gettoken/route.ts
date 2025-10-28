@@ -73,7 +73,6 @@ export async function GET() {
 
     // Cache the token for 45 seconds
     setCachedToken(sessionId, token.jwt);
-
     return Response.json(
       { tokenJWT: token.jwt },
       {

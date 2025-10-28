@@ -1,9 +1,11 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import EditorHeader from "@/components/editor/editor/EditorHeader";
 import PreviewContainer from "@/components/editor/editor/PreviewContainer";
 import EditorCanvas from "@/components/editor/editor/EditorCanvas";
 import { useEditor } from "@/hooks";
+import { useAuth } from "@clerk/nextjs";
+import { v4 as uuidv4 } from "uuid";
 
 type EditorProps = {
   id: string;
@@ -11,6 +13,19 @@ type EditorProps = {
 };
 
 export default function Editor({ id, pageId }: EditorProps) {
+  const { userId } = useAuth();
+  const [randomUserId, setRandomUserId] = useState<string>("");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (!userId) {
+      setRandomUserId(uuidv4());
+    }
+  }, [userId]);
+
+  const effectiveUserId = randomUserId || userId || "guest";
+
   const {
     currentView,
     setCurrentView,
@@ -22,7 +37,11 @@ export default function Editor({ id, pageId }: EditorProps) {
     handleDragOver,
     handleDragLeave,
     addNewSection,
-  } = useEditor(id, pageId);
+    collab,
+  } = useEditor(id, pageId, {
+    enableCollab: isMounted && !!effectiveUserId,
+    userId: effectiveUserId,
+  });
 
   return (
     <div className="flex-1 w-full h-full flex flex-col bg-background text-foreground relative">
@@ -30,6 +49,7 @@ export default function Editor({ id, pageId }: EditorProps) {
         handlePageNavigation={handlePageNavigation}
         currentView={currentView}
         setCurrentView={setCurrentView}
+        projectId={id}
       />
       <PreviewContainer currentView={currentView} isLoading={isLoading}>
         <EditorCanvas
@@ -40,6 +60,8 @@ export default function Editor({ id, pageId }: EditorProps) {
           isLoading={isLoading}
           selectedElement={selectedElement || null}
           addNewSection={addNewSection}
+          userId={effectiveUserId}
+          sendMessage={collab.sendMessage}
         />
       </PreviewContainer>
     </div>

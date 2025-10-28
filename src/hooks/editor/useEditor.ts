@@ -7,21 +7,32 @@ import { useSelectionStore } from "@/globalstore/selectionstore";
 import { usePageStore } from "@/globalstore/pagestore";
 import { useProjectStore } from "@/globalstore/projectstore";
 import { projectService } from "@/services/project";
-import { elementService } from "@/services/element";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";
 import type { Project } from "@/interfaces/project.interface";
+import { useCollab } from "@/hooks/realtime/use-collab";
+import { toast } from "sonner";
 
 export type Viewport = "mobile" | "tablet" | "desktop";
 
-export const useEditor = (id: string, pageId: string) => {
+export interface UseEditorOptions {
+  enableCollab?: boolean;
+  collabWsUrl?: string;
+  userId?: string;
+}
+
+export const useEditor = (
+  id: string,
+  pageId: string,
+  options?: UseEditorOptions,
+) => {
   const [currentView, setCurrentView] = useState<Viewport>("desktop");
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const router = useRouter();
 
-  const { addElement, loadElements, elements } = useElementStore();
+  const { addElement, elements } = useElementStore();
   const { selectedElement } = useSelectionStore();
   const { pages, loadPages, setCurrentPage } = usePageStore();
   const { loadProject } = useProjectStore();
@@ -31,13 +42,6 @@ export const useEditor = (id: string, pageId: string) => {
     queryFn: async () => projectService.getProjectPages(id),
   });
 
-  const { data: fetchedElements, isLoading: isLoadingElements } = useQuery<
-    EditorElement[]
-  >({
-    queryKey: ["elements", id],
-    queryFn: async () => elementService.getElements(id),
-  });
-
   const { data: project, isLoading: isLoadingProject } =
     useQuery<Project | null>({
       queryKey: ["project", id],
@@ -45,17 +49,33 @@ export const useEditor = (id: string, pageId: string) => {
       enabled: Boolean(id),
     });
 
+  const collab = useCollab({
+    roomId: id,
+    wsUrl:
+      options?.collabWsUrl ||
+      process.env.NEXT_PUBLIC_COLLAB_WS_URL ||
+      "ws://localhost:8082",
+    enabled: options?.enableCollab !== false,
+    onSync: () => {
+      toast.success("Live collaboration connected", {
+        duration: 3000,
+      });
+    },
+    onError: (error) => {
+      console.error("[useEditor] Collaboration error:", error);
+      toast.info("Working in offline mode", {
+        description:
+          "Collaboration server unavailable. Changes will be saved locally.",
+        duration: 5000,
+      });
+    },
+  });
+
   useEffect(() => {
     if (projectPages && projectPages.length > 0) {
       loadPages(projectPages);
     }
   }, [projectPages, loadPages]);
-
-  useEffect(() => {
-    if (fetchedElements && fetchedElements.length > 0) {
-      loadElements(fetchedElements);
-    }
-  }, [fetchedElements, loadElements]);
 
   useEffect(() => {
     if (project) {
@@ -135,7 +155,7 @@ export const useEditor = (id: string, pageId: string) => {
     if (newElement) addElement(newElement);
   };
 
-  const isLoading = isLoadingElements || isLoadingPages || isLoadingProject;
+  const isLoading = isLoadingPages || isLoadingProject;
 
   return {
     currentView,
@@ -149,5 +169,14 @@ export const useEditor = (id: string, pageId: string) => {
     handleDragOver,
     handleDragLeave,
     addNewSection,
+    collab: {
+      isConnected: collab.isConnected,
+      connectionState: collab.connectionState,
+      isSynced: collab.isSynced,
+      error: collab.error,
+      connect: collab.connect,
+      disconnect: collab.disconnect,
+      sendMessage: collab.sendMessage,
+    },
   };
 };
