@@ -169,7 +169,7 @@ export function useDownloadMarketplaceItem() {
         },
       );
 
-      toast.success(`Template downloaded! Created project: ${newProject.Name}`);
+      toast.success(`Template downloaded! Created project: ${newProject.name}`);
     },
     onError: (error: Error) => {
       toast.error(`Failed to download template: ${error.message}`);

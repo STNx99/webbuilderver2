@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { Download, Heart, Eye, ArrowLeft, Star, Share2, Code2, Zap, TrendingUp } from "lucide-react"
+import { Download, Heart, Eye, ArrowLeft, Star, Share2, Code2, Zap, TrendingUp, Loader2 } from "lucide-react"
 import type { MarketplaceItemWithRelations } from "@/interfaces/market.interface"
 import { useDownloadMarketplaceItem, useIncrementLikes } from "@/hooks"
 import { useState } from "react"
@@ -192,8 +192,8 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
                         Categories
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {item.categories.map((category) => (
-                          <Badge key={category.id} variant="secondary" className="text-xs font-medium">
+                        {item.categories.map((category, index) => (
+                          <Badge key={category.id || `category-${index}`} variant="secondary" className="text-xs font-medium">
                             {category.name}
                           </Badge>
                         ))}
@@ -206,8 +206,8 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
                         Tags
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {item.tags.map((tag: string) => (
-                          <Badge key={tag} variant="outline" className="text-xs font-medium">
+                        {item.tags.map((tag: string, index: number) => (
+                          <Badge key={`${tag}-${index}`} variant="outline" className="text-xs font-medium">
                             {tag}
                           </Badge>
                         ))}
@@ -247,23 +247,31 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
                   onClick={handleDownload}
                   disabled={downloadItem.isPending}
                 >
-                  <Download className="h-5 w-5 mr-2" />
-                  {downloadItem.isPending ? "Creating..." : "Download Template"}
+                  {downloadItem.isPending ? (
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  ) : (
+                    <Download className="h-5 w-5 mr-2" />
+                  )}
+                  {downloadItem.isPending ? "Creating Project..." : "Download Template"}
                 </Button>
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
                     className={cn(
                       "flex-1 py-6 rounded-lg transition-all duration-200 font-medium",
-                      isLiked
+                      incrementLikes.isPending
                         ? "border-red-500/50 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20"
                         : "border-border/40 hover:border-red-300/50 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50/50 dark:hover:bg-red-950/10",
                     )}
                     size="lg"
                     onClick={handleLike}
-                    disabled={incrementLikes.isPending || isLiked}
+                    disabled={incrementLikes.isPending}
                   >
-                    <Heart className={cn("h-5 w-5 transition-all", isLiked && "fill-current")} />
+                    {incrementLikes.isPending ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <Heart className="h-5 w-5 transition-all" />
+                    )}
                   </Button>
                   <Button
                     variant="outline"
