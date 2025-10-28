@@ -6,6 +6,7 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { useMouseStore } from "@/globalstore/mousestore";
 import { EditorElement } from "@/types/global.type";
 import { useWebSocket } from "./use-websocket";
+import { debounce } from "lodash";
 import {
   WebSocketMessage,
   WebSocketErrorEvent,
@@ -60,7 +61,6 @@ export function useCollab({
   const lastSendTime = useRef<number>(0);
   const updateCountRef = useRef<number>(0);
   const hasAttemptedConnect = useRef(false);
-  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const resetCounterTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialized = useRef(false);
 
@@ -222,6 +222,10 @@ export function useCollab({
     [sendMessage, throttleMs, maxRapidUpdates],
   );
 
+  const debouncedSendElementsUpdate = useRef(
+    debounce(sendElementsUpdate, debounceMs),
+  ).current;
+
   useEffect(() => {
     initializeStateHashes();
   }, [initializeStateHashes]);
@@ -247,40 +251,25 @@ export function useCollab({
 
     lastLocalStateHash.current = currentHash;
 
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    debounceTimerRef.current = setTimeout(() => {
-      sendElementsUpdate(elements, currentHash);
-    }, debounceMs);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
+    debouncedSendElementsUpdate(elements, currentHash);
   }, [
     elements,
     enabled,
     isConnected,
     isSynced,
     computeElementsHash,
-    sendElementsUpdate,
-    debounceMs,
+    debouncedSendElementsUpdate,
   ]);
 
   useEffect(() => {
     return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
+      debouncedSendElementsUpdate.cancel();
       if (resetCounterTimerRef.current) {
         clearTimeout(resetCounterTimerRef.current);
       }
       isInitialized.current = false;
     };
-  }, []);
+  }, [debouncedSendElementsUpdate]);
 
   return {
     isConnected,
