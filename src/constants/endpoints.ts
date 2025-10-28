@@ -106,8 +106,16 @@ export const API_ENDPOINTS = {
     REMOVE_SELF: (projectId: string) =>
       `/api/v1/collaborators/project/${projectId}/leave`,
   },
+  CUSTOM_ELEMENTS: {
+    CREATE: "/api/v1/customelements",
+    GET_ALL: "/api/v1/customelements",
+    GET_PUBLIC: "/api/v1/customelements/public",
+    GET_BY_ID: (id: string) => `/api/v1/customelements/${id}`,
+    UPDATE: (id: string) => `/api/v1/customelements/${id}`,
+    DELETE: (id: string) => `/api/v1/customelements/${id}`,
+    DUPLICATE: (id: string) => `/api/v1/customelements/${id}/duplicate`,
+  },
 };
-
 export const NEXT_API_ENDPOINTS = {
   ELEMENTS: {
     UPDATE: (id: string) => `/api/elements/${id}`,

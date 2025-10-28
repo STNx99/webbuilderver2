@@ -10,11 +10,12 @@ import {
   ContextMenuSeparator,
   ContextMenuPortal,
 } from "@/components/ui/context-menu";
-import { Copy, Trash2, Layers, ArrowUp, ArrowDown } from "lucide-react";
+import { Copy, Trash2, Layers, ArrowUp, ArrowDown, Save } from "lucide-react";
 import { KeyboardEvent as EditorKeyboardEvent } from "@/lib/utils/element/keyBoardEvents";
 import { EditorElement } from "@/types/global.type";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
+import { SaveElementDialog } from "./SaveElementDialog";
 
 interface EditorContextMenuProps {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
 }) => {
   const { updateElement } = useElementStore();
   const { setSelectedElement } = useSelectionStore();
+  const [showSaveDialog, setShowSaveDialog] = React.useState(false);
 
   const onCopy = () => {
     keyboardEventHandler.copyElement();
@@ -54,28 +56,33 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
     keyboardEventHandler.deleteElement();
   };
 
+  const onSave = () => {
+    setShowSaveDialog(true);
+  };
+
   const triggerRef = React.useRef<HTMLDivElement | null>(null);
 
   const [portalContainer, setPortalContainer] =
     React.useState<HTMLElement | null>(null);
 
   return (
-    <ContextMenu
-      onOpenChange={(open: boolean) => {
-        if (open) {
-          const ownerDoc = triggerRef.current?.ownerDocument;
-          const container =
-            (ownerDoc && ownerDoc.body) ||
-            (typeof document !== "undefined" ? document.body : null);
+    <>
+      <ContextMenu
+        onOpenChange={(open: boolean) => {
+          if (open) {
+            const ownerDoc = triggerRef.current?.ownerDocument;
+            const container =
+              (ownerDoc && ownerDoc.body) ||
+              (typeof document !== "undefined" ? document.body : null);
 
-          setPortalContainer(container);
+            setPortalContainer(container);
 
-          setSelectedElement(element);
-        } else {
-          setPortalContainer(null);
-        }
-      }}
-    >
+            setSelectedElement(element);
+          } else {
+            setPortalContainer(null);
+          }
+        }}
+      >
       <ContextMenuTrigger asChild>
         <div
           ref={triggerRef}
@@ -180,6 +187,23 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
 
               <ContextMenuItem asChild>
                 <div
+                  onClick={onSave}
+                  className="flex justify-between cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm"
+                >
+                  <div className="flex">
+                    <Save className="mr-2 h-4 w-4" />
+                    Save Element
+                  </div>
+                  <span className="text-xs text-muted-foreground w-10 text-left mr-1">
+                    ⌘S
+                  </span>
+                </div>
+              </ContextMenuItem>
+
+              <ContextMenuSeparator className="bg-border -mx-1 my-1 h-px" />
+
+              <ContextMenuItem asChild>
+                <div
                   onClick={onDelete}
                   className="text-destructive flex justify-between cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm"
                 >
@@ -195,7 +219,12 @@ export const EditorContextMenu: React.FC<EditorContextMenuProps> = ({
             </ContextMenuPrimitive.Content>
           </ContextMenuPortal>
         )}
-    </ContextMenu>
+      </ContextMenu>
+      <SaveElementDialog
+        open={showSaveDialog}
+        onOpenChange={setShowSaveDialog}
+      />
+    </>
   );
 };
 
