@@ -34,7 +34,6 @@ export function useProjectInvitations(
       if (!projectId) throw new Error("Project ID is required");
       const invitations =
         await invitationService.getProjectInvitations(projectId);
-      // Ensure we always return an array, never undefined
       return invitations || [];
     },
     enabled: !!projectId && enabled,

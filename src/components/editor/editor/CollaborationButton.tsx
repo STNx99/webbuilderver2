@@ -18,15 +18,17 @@ interface CollaborationButtonProps {
   projectId: string;
 }
 
-export default function CollaborationButton({ projectId }: CollaborationButtonProps) {
+export default function CollaborationButton({
+  projectId,
+}: CollaborationButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { userId } = useAuth();
   const { project } = useProjectStore();
 
-  // Only show collaboration button if user is the project owner
   const isOwner = project?.ownerId === userId;
 
   if (!isOwner) {
+    console.log("CollaborationButton: Not rendering because user is not owner");
     return null;
   }
 
@@ -42,7 +44,7 @@ export default function CollaborationButton({ projectId }: CollaborationButtonPr
           <span className="hidden sm:inline">Collaborators</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="!max-w-[75vw] max-h-[95vh] overflow-hidden w-auto flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />

@@ -24,11 +24,11 @@ export interface Collaborator {
   invitedBy: string;
   createdAt: string;
   updatedAt: string;
-  // Optional populated fields
   user?: {
     id: string;
     email: string;
-    name?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
   };
 }
 
