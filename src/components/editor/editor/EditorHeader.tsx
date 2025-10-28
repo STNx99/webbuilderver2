@@ -5,17 +5,21 @@ import { Viewport } from "@/hooks";
 import CssTextareaImporter from "./CssTextareaImporter";
 import { Button } from "@/components/ui/button";
 import ExportDialog from "../ExportDialog";
+import CollaborationButton from "./CollaborationButton";
+import CollaboratorIndicator from "./CollaboratorIndicator";
 
 type EditorHeaderProps = {
   handlePageNavigation: (e: React.FocusEvent<HTMLInputElement>) => void;
   currentView: Viewport;
   setCurrentView: (view: Viewport) => void;
+  projectId: string;
 };
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({
   handlePageNavigation,
   currentView,
   setCurrentView,
+  projectId,
 }) => {
   return (
     <div className="flex items-center justify-between border-b border-border bg-card shadow-sm p-2">
@@ -31,6 +35,8 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
 
       <div className="flex items-center ">
         <div className="flex gap-4">
+          <CollaboratorIndicator projectId={projectId} />
+          <CollaborationButton projectId={projectId} />
           <ExportDialog />
           {(["mobile", "tablet", "desktop"] as const).map((view) => (
             <Button

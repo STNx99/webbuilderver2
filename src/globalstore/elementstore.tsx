@@ -1,18 +1,18 @@
 import { create } from "zustand";
 import { ContainerElement, EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-import { elementService } from "@/services/element";
-import { debounce } from "lodash";
 import { cloneDeep } from "lodash";
 import { SelectionStore } from "./selectionstore";
-import { Snapshot } from "@/interfaces/snapshot.interface";
 
 type ElementStore<TElement extends EditorElement> = {
   elements: TElement[];
   past: TElement[][];
   future: TElement[][];
   setElements: (elements: TElement[]) => ElementStore<TElement>;
-  loadElements: (elements: TElement[]) => ElementStore<TElement>;
+  loadElements: (
+    elements: TElement[],
+    skipSave?: boolean,
+  ) => ElementStore<TElement>;
   updateElement: (
     id: string,
     updatedElement: Partial<TElement>,
@@ -34,45 +34,6 @@ const createElementStore = <TElement extends EditorElement>() => {
   let cachedProjectId: string | undefined;
 
   return create<ElementStore<TElement>>((set, get) => {
-    const saveSnapshotToApi = async (elements: EditorElement[]) => {
-      try {
-        const projectId = elements[0]?.projectId || cachedProjectId;
-        if (!projectId) {
-          console.warn("No projectId available for saving snapshot");
-          return;
-        }
-        if (elements[0]?.projectId) {
-          cachedProjectId = elements[0].projectId;
-        }
-        const snapshot: Snapshot = {
-          id: `snapshot-${Date.now()}`,
-          elements: cloneDeep(elements),
-          type: "working",
-          name: "Autosave",
-          timestamp: Date.now(),
-          createdAt: new Date().toISOString(),
-        };
-        if (elementService.saveSnapshot) {
-          await elementService.saveSnapshot(projectId, snapshot);
-        } else {
-          console.warn("saveSnapshot not implemented in elementService");
-        }
-      } catch (err) {
-        console.error("Failed to save snapshot to API:", err);
-      }
-    };
-
-    const debouncedSave = debounce(async () => {
-      const clonedElements = cloneDeep(get().elements) as EditorElement[];
-      console.log("Autosaving snapshot...", clonedElements);
-      try {
-        await saveSnapshotToApi(clonedElements);
-      } catch (err) {
-        set({ elements: clonedElements as TElement[] });
-        console.error("Failed to autosave snapshot:", err);
-      }
-    }, 2000);
-
     const takeSnapshot = () => {
       const { elements, past } = get();
       set({
@@ -92,15 +53,14 @@ const createElementStore = <TElement extends EditorElement>() => {
           cachedProjectId = elements[0].projectId;
         }
         set({ elements });
-        debouncedSave();
+
         return get();
       },
-      loadElements: (elements: TElement[]) => {
+      loadElements: (elements: TElement[], skipSave = false) => {
         if (elements.length > 0 && elements[0].projectId) {
           cachedProjectId = elements[0].projectId;
         }
         set({ elements });
-        debouncedSave();
         return get();
       },
 
@@ -117,7 +77,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         ) as TElement[];
 
         set({ elements: updatedTree });
-        debouncedSave();
 
         const { selectedElement } = SelectionStore.getState();
         if (selectedElement?.id === id) {
@@ -145,7 +104,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({
           elements: updatedTree,
         });
-        debouncedSave();
         return get();
       },
 
@@ -162,7 +120,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         ) as TElement[];
 
         set({ elements: updated });
-        debouncedSave();
         return get();
       },
 
@@ -210,7 +167,6 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({
           elements: updatedTree,
         });
-        debouncedSave();
         return get();
       },
 
@@ -241,7 +197,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           (e: TElement) => recursivelyUpdate(e) as TElement,
         );
         set({ elements: updated });
-        debouncedSave();
         return get();
       },
 
@@ -255,7 +210,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements: previous,
           future: [elements, ...future],
         });
-        debouncedSave();
         return get();
       },
 
@@ -269,7 +223,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements: next,
           future: newFuture,
         });
-        debouncedSave();
         return get();
       },
 
@@ -314,7 +267,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           ) as TElement[];
 
           set({ elements: updatedTree });
-          debouncedSave();
         } else {
           // Top-level elements
           const idx1 = elements.findIndex((e) => e.id === id1);
@@ -329,7 +281,6 @@ const createElementStore = <TElement extends EditorElement>() => {
           ];
 
           set({ elements: newElements });
-          debouncedSave();
         }
 
         return get();

@@ -12,6 +12,12 @@ enum SnapshotType {
   version
 }
 
+enum CollaboratorRole {
+  owner
+  editor
+  viewer
+}
+
 model Element {
   Content        String?
   Href           String?
@@ -66,6 +72,8 @@ model Project {
   Owner       User       @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
   Snapshots   Snapshot[]
   MarketplaceItem MarketplaceItem? // Project that was turned into marketplace template
+  Collaborators Collaborator[]
+  Invitations Invitation[]
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -122,6 +130,7 @@ model User {
   Projects        Project[]
   MarketplaceItems MarketplaceItem[]
   Subscriptions   Subscription[]
+  Collaborators   Collaborator[]
 
   CustomElements  CustomElement[]
 }
@@ -283,4 +292,34 @@ model CustomElement {
 
   @@index([UserId])
   @@index([TypeId])
+}
+
+model Invitation {
+  Id          String           @id @default(cuid())
+  Email       String
+  ProjectId   String
+  Role        CollaboratorRole @default(editor)
+  Token       String           @unique // For secure invite links
+  ExpiresAt   DateTime
+  CreatedAt   DateTime         @default(now())
+  AcceptedAt  DateTime?
+  Project     Project          @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@index([ProjectId])
+  @@index([Token])
+}
+
+model Collaborator {
+  Id        String           @id @default(cuid())
+  UserId    String
+  ProjectId String
+  Role      CollaboratorRole @default(editor)
+  CreatedAt DateTime         @default(now()) @db.Timestamp(6)
+  UpdatedAt DateTime         @updatedAt @db.Timestamp(6)
+  User      User             @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+  Project   Project          @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@unique([UserId, ProjectId])
+  @@index([UserId])
+  @@index([ProjectId])
 }
