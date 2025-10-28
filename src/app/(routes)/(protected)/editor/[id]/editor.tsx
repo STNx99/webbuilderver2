@@ -17,6 +17,10 @@ export default function Editor({ id, pageId }: EditorProps) {
   const [isMounted, setIsMounted] = useState(false);
   const effectiveUserId = userId || "guest";
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const {
     currentView,
     setCurrentView,
