@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from "uuid";
 import { elementHelper } from "./elementhelper";
 import { ElementStore } from "@/globalstore/elementstore";
 import { SelectionStore } from "@/globalstore/selectionstore";
+import GetUrl from "@/lib/utils/geturl";
+import { API_ENDPOINTS } from "@/constants/endpoints";
+import apiClient from "@/services/apiclient";
 
 export interface IKeyboardEvent {
   copyElement: () => void;
@@ -11,6 +14,7 @@ export interface IKeyboardEvent {
   bringToFront: () => void;
   sendToBack: () => void;
   deleteElement: () => void;
+  saveElement: () => Promise<void>;
 }
 
 export class KeyboardEvent implements IKeyboardEvent {
@@ -113,5 +117,10 @@ export class KeyboardEvent implements IKeyboardEvent {
 
   public redo = () => {
     ElementStore.getState().redo();
+  };
+
+  public saveElement = async () => {
+    // This method is now handled by the SaveElementDialog component
+    // The dialog will be opened from the context menu
   };
 }
