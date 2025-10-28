@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,83 +8,51 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useProjectStore } from "@/globalstore/projectstore";
-import { elementService } from "@/services/element";
-import { Snapshot } from "@/interfaces/snapshot.interface";
 import { useElementStore } from "@/globalstore/elementstore";
 import { History, Save, RotateCcw } from "lucide-react";
-import { toast } from "sonner";
+import { useSnapshots, useSaveSnapshot, useLoadSnapshot } from "@/hooks/editor/useSnapshot";
 
 const SnapshotManager = () => {
   const [open, setOpen] = useState(false);
-  const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
-  const [loading, setLoading] = useState(false);
   const { project } = useProjectStore();
   const { loadElements } = useElementStore();
   const elements = useElementStore((s) => s.elements);
-  const [saving, setSaving] = useState(false);
 
-  const fetchSnapshots = useCallback(async () => {
-    if (!project?.id) return;
-    setLoading(true);
-    try {
-      const data = await elementService.getSnapshots(project.id);
-      setSnapshots(data);
-    } catch (error) {
-      console.error("Failed to fetch snapshots:", error);
-      toast.error("Failed to load snapshots");
-    } finally {
-      setLoading(false);
-    }
-  }, [project?.id]);
+  const { data: snapshots = [], isLoading: loading } = useSnapshots(project?.id);
+  const saveSnapshotMutation = useSaveSnapshot();
+  const loadSnapshotMutation = useLoadSnapshot();
 
-  useEffect(() => {
-    if (open && project?.id) {
-      fetchSnapshots();
-    }
-  }, [open, fetchSnapshots]);
-
-  const handleSaveSnapshot = useCallback(async () => {
+  const handleSaveSnapshot = async () => {
     if (!project?.id) return;
     if (!elements || elements.length === 0) {
-      toast.error("No elements to save in snapshot");
       return;
     }
 
-    setSaving(true);
-    try {
-      const snapshot: Snapshot = {
-        id: `snapshot-${Date.now()}`,
-        elements: elements,
-        type: "version",
-        name: `Version ${new Date().toLocaleString()}`,
-        timestamp: Date.now(),
-        createdAt: new Date().toISOString(),
-      };
+    const snapshot = {
+      id: `snapshot-${Date.now()}`,
+      elements: elements,
+      type: "version" as const,
+      name: `Version ${new Date().toLocaleString()}`,
+      timestamp: Date.now(),
+      createdAt: new Date().toISOString(),
+    };
 
-      await elementService.saveSnapshot(project.id, snapshot);
-      toast.success("Snapshot saved successfully");
-      await fetchSnapshots();
-    } catch (err: unknown) {
-      console.error("Failed to save snapshot:", err);
-      const msg = err instanceof Error ? err.message : String(err);
-      toast.error(`Failed to save snapshot: ${msg}`);
-    } finally {
-      setSaving(false);
-    }
-  }, [project?.id, elements, fetchSnapshots]);
+    saveSnapshotMutation.mutate({ projectId: project.id, snapshot });
+  };
 
-  const handleLoadSnapshot = useCallback(async (snapshotId: string) => {
+  const handleLoadSnapshot = async (snapshotId: string) => {
     if (!project?.id) return;
-    try {
-      const elements = await elementService.loadSnapshot(project.id, snapshotId);
-      loadElements(elements);
-      toast.success("Snapshot loaded successfully");
-      setOpen(false);
-    } catch (error) {
-      console.error("Failed to load snapshot:", error);
-      toast.error("Failed to load snapshot");
-    }
-  }, [project?.id, loadElements]);
+
+    loadSnapshotMutation.mutate(
+      { projectId: project.id, snapshotId },
+      {
+        onSuccess: (elements) => {
+          loadElements(elements);
+          setOpen(false);
+        },
+      }
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -105,9 +73,13 @@ const SnapshotManager = () => {
         <div className="flex-1 overflow-hidden">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold">Project Snapshots</h3>
-            <Button onClick={handleSaveSnapshot} className="gap-2" disabled={saving}>
+            <Button
+              onClick={handleSaveSnapshot}
+              className="gap-2"
+              disabled={saveSnapshotMutation.isPending}
+            >
               <Save className="h-4 w-4" />
-              {saving ? "Saving..." : "Save Current Version"}
+              {saveSnapshotMutation.isPending ? "Saving..." : "Save Current Version"}
             </Button>
           </div>
 
@@ -139,9 +111,10 @@ const SnapshotManager = () => {
                       size="sm"
                       onClick={() => handleLoadSnapshot(snapshot.id)}
                       className="gap-2"
+                      disabled={loadSnapshotMutation.isPending}
                     >
                       <RotateCcw className="h-4 w-4" />
-                      Load
+                      {loadSnapshotMutation.isPending ? "Loading..." : "Load"}
                     </Button>
                   </div>
                 ))}
