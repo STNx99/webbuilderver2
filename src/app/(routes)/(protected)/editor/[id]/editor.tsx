@@ -5,7 +5,6 @@ import PreviewContainer from "@/components/editor/editor/PreviewContainer";
 import EditorCanvas from "@/components/editor/editor/EditorCanvas";
 import { useEditor } from "@/hooks";
 import { useAuth } from "@clerk/nextjs";
-import { v4 as uuidv4 } from "uuid";
 
 type EditorProps = {
   id: string;

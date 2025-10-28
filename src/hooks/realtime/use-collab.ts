@@ -66,6 +66,7 @@ export function useCollab({
 
   const handleMessage = useCallback(
     (message: WebSocketMessage) => {
+      console.log("[useCollab] Received message:", message.type);
       if (isSyncMessage(message)) {
         isUpdatingFromRemote.current = true;
 
@@ -152,7 +153,10 @@ export function useCollab({
     reconnectInterval: 1000,
     maxReconnectAttempts: 2,
     onMessage: handleMessage,
-    onConnect: () => {},
+    onConnect: () => {
+      console.log("[useCollab] Connected, setting synced");
+      setIsSynced(true);
+    },
     onDisconnect: () => {
       setIsSynced(false);
     },
@@ -190,6 +194,11 @@ export function useCollab({
       lastSendTime.current = now;
       updateCountRef.current++;
 
+      console.log(
+        "[useCollab] Sending update with",
+        elementsToSend.length,
+        "elements",
+      );
       sendMessage({
         type: "update",
         elements: elementsToSend,
@@ -202,18 +211,25 @@ export function useCollab({
   ).current;
 
   useEffect(() => {
-    if (
+    const shouldSend = !(
       !enabled ||
       !isConnected ||
       !isSynced ||
       isUpdatingFromRemote.current ||
-      elements.length === 0 ||
       elementsJSON === lastLocalUpdate.current
-    ) {
-      return;
-    }
+    );
+    console.log("[useCollab] Should send update?", shouldSend, {
+      enabled,
+      isConnected,
+      isSynced,
+      isUpdatingFromRemote: isUpdatingFromRemote.current,
+      elementsLength: elements.length,
+      elementsChanged: elementsJSON !== lastLocalUpdate.current,
+    });
 
-    debouncedSend(elements, elementsJSON);
+    if (shouldSend) {
+      debouncedSend(elements, elementsJSON);
+    }
   }, [
     elementsJSON,
     elements,
