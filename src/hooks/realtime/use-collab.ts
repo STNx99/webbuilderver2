@@ -61,7 +61,9 @@ export function useCollab({
   const lastSendTime = useRef<number>(0);
   const updateCountRef = useRef<number>(0);
   const hasAttemptedConnect = useRef(false);
+  const resetCounterTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isInitialized = useRef(false);
+  const remoteUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { getToken, isLoaded, userId } = useAuth();
   const { elements, loadElements } = useElementStore();
@@ -90,7 +92,23 @@ export function useCollab({
   const handleMessage = useCallback(
     (message: WebSocketMessage) => {
       if (isSyncMessage(message)) {
+        console.log("[Collab] Received sync message");
         isUpdatingFromRemote.current = true;
+
+        // Clear any existing safety timeout
+        if (remoteUpdateTimeoutRef.current) {
+          clearTimeout(remoteUpdateTimeoutRef.current);
+        }
+
+        // Safety timeout to prevent flag from getting stuck
+        remoteUpdateTimeoutRef.current = setTimeout(() => {
+          if (isUpdatingFromRemote.current) {
+            console.warn(
+              "[Collab] Safety reset: isUpdatingFromRemote was stuck",
+            );
+            isUpdatingFromRemote.current = false;
+          }
+        }, 1000);
 
         const remoteHash = computeElementsHash(message.elements);
         lastLocalStateHash.current = remoteHash;
@@ -100,23 +118,50 @@ export function useCollab({
 
         setTimeout(() => {
           isUpdatingFromRemote.current = false;
+          if (remoteUpdateTimeoutRef.current) {
+            clearTimeout(remoteUpdateTimeoutRef.current);
+            remoteUpdateTimeoutRef.current = null;
+          }
           setIsSynced(true);
+
           onSync?.();
         }, 50);
       } else if (isUpdateMessage(message)) {
+        console.log("[Collab] Received update message");
         const remoteHash = computeElementsHash(message.elements);
 
         if (remoteHash !== lastLocalStateHash.current) {
           isUpdatingFromRemote.current = true;
+
+          // Clear any existing safety timeout
+          if (remoteUpdateTimeoutRef.current) {
+            clearTimeout(remoteUpdateTimeoutRef.current);
+          }
+
+          // Safety timeout to prevent flag from getting stuck
+          remoteUpdateTimeoutRef.current = setTimeout(() => {
+            if (isUpdatingFromRemote.current) {
+              console.warn(
+                "[Collab] Safety reset: isUpdatingFromRemote was stuck",
+              );
+              isUpdatingFromRemote.current = false;
+            }
+          }, 1000);
+
           lastLocalStateHash.current = remoteHash;
 
           loadElements(message.elements, true);
 
           setTimeout(() => {
             isUpdatingFromRemote.current = false;
+            if (remoteUpdateTimeoutRef.current) {
+              clearTimeout(remoteUpdateTimeoutRef.current);
+              remoteUpdateTimeoutRef.current = null;
+            }
           }, 50);
         }
       } else if (isErrorMessage(message)) {
+        console.error("[Collab] Server error:", message.error);
         const error = new Error(message.error);
         onError?.(error);
       } else if (isMouseMoveMessage(message)) {
@@ -210,7 +255,10 @@ export function useCollab({
         setPendingUpdates(0);
       }
 
-      setTimeout(() => {
+      if (resetCounterTimerRef.current) {
+        clearTimeout(resetCounterTimerRef.current);
+      }
+      resetCounterTimerRef.current = setTimeout(() => {
         updateCountRef.current = 0;
       }, 1000);
     },
@@ -259,6 +307,12 @@ export function useCollab({
   useEffect(() => {
     return () => {
       debouncedSendElementsUpdate.cancel();
+      if (resetCounterTimerRef.current) {
+        clearTimeout(resetCounterTimerRef.current);
+      }
+      if (remoteUpdateTimeoutRef.current) {
+        clearTimeout(remoteUpdateTimeoutRef.current);
+      }
       isInitialized.current = false;
     };
   }, [debouncedSendElementsUpdate]);
