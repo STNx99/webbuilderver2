@@ -48,10 +48,10 @@ export function Editor({
           ...(editorState ? { editorState } : {}),
           ...(editorSerializedState
             ? {
-                editorState: createEditor().parseEditorState(
-                  JSON.stringify(editorSerializedState),
-                ),
-              }
+              editorState: createEditor().parseEditorState(
+                JSON.stringify(editorSerializedState),
+              ),
+            }
             : {}),
         }}
       >

@@ -55,26 +55,26 @@ export function RichTextEditorDialog({
           </Button>
         )}
       </DialogTrigger>
-        <DialogContent className="!max-w-none !w-[90vw] !h-[90vh] !max-h-[90vh] overflow-hidden">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-4 min-h-[70vh]">
-            <div className="flex-1 overflow-hidden">
-              <RichTextEditor
-                value={tempValue}
-                onChange={setTempValue}
-                placeholder={placeholder}
-              />
-            </div>
-            <div className="flex justify-end gap-2 border-t pt-4">
-              <Button variant="outline" onClick={handleCancel}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave}>Save</Button>
-            </div>
+      <DialogContent className="!max-w-none !w-[90vw] !h-[90vh] !max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-4">
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <div className="flex-1 flex flex-col px-6 pb-6 gap-4 min-h-0">
+          <div className="flex-1 min-h-0">
+            <RichTextEditor
+              value={tempValue}
+              onChange={setTempValue}
+              placeholder={placeholder}
+            />
           </div>
-        </DialogContent>
+          <div className="flex justify-end gap-2 border-t pt-4">
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave}>Save</Button>
+          </div>
+        </div>
+      </DialogContent>
     </Dialog>
   );
 }

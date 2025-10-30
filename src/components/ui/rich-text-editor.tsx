@@ -34,10 +34,12 @@ export function RichTextEditor({
   );
 
   return (
-    <Editor
-      initialContent={editorState}
-      onContentChange={handleChange}
-      placeholder={placeholder}
-    />
+    <div className="h-full w-full">
+      <Editor
+        initialContent={editorState}
+        onContentChange={handleChange}
+        placeholder={placeholder}
+      />
+    </div>
   );
 }
