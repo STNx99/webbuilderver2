@@ -87,10 +87,10 @@ export function Plugins({
       {/* Core plugins */}
       <RichTextPlugin
         contentEditable={
-          <div className="relative">
+          <div className="relative h-full flex flex-col">
             <ToolbarPlugin>
               {({ blockType }) => (
-                <div className="flex flex-wrap items-center gap-1 p-3 border-b bg-muted/30 sticky top-0 z-10">
+                <div className="flex flex-wrap items-center gap-1 p-3 border-b bg-muted/30 sticky top-0 z-10 shrink-0">
                   <BlockFormatDropDown>
                     <FormatParagraph />
                     <FormatHeading levels={["h1", "h2", "h3"]} />
@@ -116,7 +116,7 @@ export function Plugins({
                 </div>
               )}
             </ToolbarPlugin>
-            <div className="flex-1 overflow-auto p-3 relative" ref={onRef}>
+            <div className="flex-1 overflow-y-auto p-4 min-h-0" ref={onRef}>
               <ContentEditable placeholder={placeholder} />
             </div>
           </div>
