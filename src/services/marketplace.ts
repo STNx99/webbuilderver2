@@ -8,6 +8,7 @@ import {
   Category,
   Tag,
 } from "@/interfaces/market.interface";
+import { Project } from "@/interfaces/project.interface";
 import apiClient from "./apiclient";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 
@@ -25,7 +26,7 @@ interface IMarketplaceService {
     data: UpdateMarketplaceItemRequest,
   ) => Promise<MarketplaceItem>;
   deleteMarketplaceItem: (id: string) => Promise<boolean>;
-  downloadMarketplaceItem: (id: string) => Promise<any>;
+  downloadMarketplaceItem: (id: string) => Promise<Project>;
   incrementDownloads: (id: string) => Promise<boolean>;
   incrementLikes: (id: string) => Promise<boolean>;
 
@@ -186,10 +187,11 @@ export const marketplaceService: IMarketplaceService = {
     return apiClient.delete(GetUrl(API_ENDPOINTS.MARKETPLACE.TAGS.DELETE(id)));
   },
 
-  downloadMarketplaceItem: async (marketplaceItemId: string) => {
-    return apiClient.post(
+  downloadMarketplaceItem: async (marketplaceItemId: string): Promise<Project> => {
+    const response = await apiClient.post<{ project: Project }>(
       GetUrl(API_ENDPOINTS.MARKETPLACE.ITEMS.DOWNLOAD(marketplaceItemId)),
       {},
     );
+    return response.project;
   },
 };

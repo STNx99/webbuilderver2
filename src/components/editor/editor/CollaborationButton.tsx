@@ -28,7 +28,6 @@ export default function CollaborationButton({
   const isOwner = project?.ownerId === userId;
 
   if (!isOwner) {
-    console.log("CollaborationButton: Not rendering because user is not owner");
     return null;
   }
 

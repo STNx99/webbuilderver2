@@ -17,6 +17,9 @@ import {
   isUserDisconnectMessage,
 } from "@/interfaces/realtime.interface";
 
+// Track active connections to prevent duplicates
+const activeConnections = new Map<string, boolean>();
+
 export function useWebSocket({
   url,
   roomId,
@@ -67,6 +70,8 @@ export function useWebSocket({
 
   // Disconnect function
   const disconnect = useCallback(() => {
+    const connectionKey = `${roomId}:${userId}`;
+    activeConnections.delete(connectionKey);
     isManualDisconnectRef.current = true;
     shouldReconnectRef.current = false;
     clearReconnectTimeout();
@@ -78,10 +83,12 @@ export function useWebSocket({
 
     setConnectionState("disconnected");
     messageQueueRef.current = [];
-  }, [clearReconnectTimeout]);
+  }, [clearReconnectTimeout, roomId, userId]);
 
   // Connect function
   const connect = useCallback(async () => {
+    const connectionKey = `${roomId}:${userId}`;
+
     // Prevent multiple connections
     if (
       wsRef.current?.readyState === WebSocket.OPEN ||
@@ -90,10 +97,15 @@ export function useWebSocket({
       return;
     }
 
-    if (!shouldReconnectRef.current) {
+    // Check if another instance is already connecting
+    if (activeConnections.get(connectionKey)) {
       return;
     }
 
+    if (!shouldReconnectRef.current) {
+      return;
+    }
+    activeConnections.set(connectionKey, true);
     isManualDisconnectRef.current = false;
     setConnectionState("connecting");
     setError(null);
@@ -162,6 +174,8 @@ export function useWebSocket({
 
       // Connection closed
       ws.onclose = (event) => {
+        const connectionKey = `${roomId}:${userId}`;
+        activeConnections.delete(connectionKey);
         wsRef.current = null;
         setConnectionState("disconnected");
 
@@ -191,12 +205,15 @@ export function useWebSocket({
 
       wsRef.current = ws;
     } catch (err) {
+      const connectionKey = `${roomId}:${userId}`;
+      activeConnections.delete(connectionKey);
       setConnectionState("error");
       setError("CONNECTION_FAILED");
     }
   }, [
     url,
     roomId,
+    userId,
     getToken,
     reconnectInterval,
     maxReconnectAttempts,
@@ -236,6 +253,8 @@ export function useWebSocket({
 
     // Cleanup on unmount
     return () => {
+      const connectionKey = `${roomId}:${userId}`;
+      activeConnections.delete(connectionKey);
       hasInitializedRef.current = false;
       isManualDisconnectRef.current = true;
       shouldReconnectRef.current = false;

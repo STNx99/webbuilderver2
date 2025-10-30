@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useMouseStore } from "@/globalstore/mousestore";
@@ -26,6 +26,9 @@ export interface UseCollabOptions {
   enabled?: boolean;
   onSync?: () => void;
   onError?: (error: Error) => void;
+  debounceMs?: number;
+  throttleMs?: number;
+  maxRapidUpdates?: number;
 }
 
 export interface UseCollabReturn {
@@ -36,6 +39,7 @@ export interface UseCollabReturn {
   sendMessage: (message: SendMessagePayload) => boolean;
   error: WebSocketError | null;
   isSynced: boolean;
+  pendingUpdates: number;
 }
 
 export function useCollab({
@@ -44,74 +48,120 @@ export function useCollab({
   enabled = true,
   onSync,
   onError,
+  debounceMs = 300,
+  throttleMs = 500,
+  maxRapidUpdates = 10,
 }: UseCollabOptions): UseCollabReturn {
   const [isSynced, setIsSynced] = useState(false);
+  const [pendingUpdates, setPendingUpdates] = useState(0);
+
   const isUpdatingFromRemote = useRef(false);
-  const lastLocalUpdate = useRef<string>("");
+  const lastLocalStateHash = useRef<string>("");
+  const lastSentStateHash = useRef<string>("");
   const lastSendTime = useRef<number>(0);
   const updateCountRef = useRef<number>(0);
+  const hasAttemptedConnect = useRef(false);
+  const resetCounterTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const isInitialized = useRef(false);
+  const remoteUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { getToken, isLoaded, userId } = useAuth();
   const { elements, loadElements } = useElementStore();
   const mouseStore = useMouseStore();
 
-  const elementsJSON = useMemo(() => {
-    try {
-      return JSON.stringify(elements);
-    } catch (err) {
-      console.error("[useCollab] ❌ Failed to stringify elements:", err);
-      return "[]";
+  const computeElementsHash = useCallback(
+    (elements: EditorElement[]): string => {
+      try {
+        return JSON.stringify(elements);
+      } catch (err) {
+        return "[]";
+      }
+    },
+    [],
+  );
+
+  const initializeStateHashes = useCallback(() => {
+    if (!isInitialized.current) {
+      const currentHash = computeElementsHash(elements);
+      lastLocalStateHash.current = currentHash;
+      lastSentStateHash.current = currentHash;
+      isInitialized.current = true;
     }
-  }, [elements]);
+  }, [elements, computeElementsHash]);
 
   const handleMessage = useCallback(
     (message: WebSocketMessage) => {
       if (isSyncMessage(message)) {
+        console.log("[Collab] Received sync message");
         isUpdatingFromRemote.current = true;
 
-        let remoteJSON: string;
-        try {
-          remoteJSON = JSON.stringify(message.elements);
-        } catch (err) {
-          console.error(
-            "[useCollab] ❌ Failed to stringify remote elements:",
-            err,
-          );
-          remoteJSON = "[]";
+        // Clear any existing safety timeout
+        if (remoteUpdateTimeoutRef.current) {
+          clearTimeout(remoteUpdateTimeoutRef.current);
         }
-        lastLocalUpdate.current = remoteJSON;
+
+        // Safety timeout to prevent flag from getting stuck
+        remoteUpdateTimeoutRef.current = setTimeout(() => {
+          if (isUpdatingFromRemote.current) {
+            console.warn(
+              "[Collab] Safety reset: isUpdatingFromRemote was stuck",
+            );
+            isUpdatingFromRemote.current = false;
+          }
+        }, 1000);
+
+        const remoteHash = computeElementsHash(message.elements);
+        lastLocalStateHash.current = remoteHash;
+        lastSentStateHash.current = remoteHash;
 
         loadElements(message.elements, true);
 
         setTimeout(() => {
           isUpdatingFromRemote.current = false;
+          if (remoteUpdateTimeoutRef.current) {
+            clearTimeout(remoteUpdateTimeoutRef.current);
+            remoteUpdateTimeoutRef.current = null;
+          }
           setIsSynced(true);
 
           onSync?.();
-        }, 200);
+        }, 50);
       } else if (isUpdateMessage(message)) {
-        let remoteJSON: string;
-        try {
-          remoteJSON = JSON.stringify(message.elements);
-        } catch (err) {
-          console.error(
-            "[useCollab] ❌ Failed to stringify remote elements:",
-            err,
-          );
-          remoteJSON = "[]";
-        }
-        if (remoteJSON !== lastLocalUpdate.current) {
+        console.log("[Collab] Received update message");
+        const remoteHash = computeElementsHash(message.elements);
+
+        if (remoteHash !== lastLocalStateHash.current) {
           isUpdatingFromRemote.current = true;
-          lastLocalUpdate.current = remoteJSON;
+
+          // Clear any existing safety timeout
+          if (remoteUpdateTimeoutRef.current) {
+            clearTimeout(remoteUpdateTimeoutRef.current);
+          }
+
+          // Safety timeout to prevent flag from getting stuck
+          remoteUpdateTimeoutRef.current = setTimeout(() => {
+            if (isUpdatingFromRemote.current) {
+              console.warn(
+                "[Collab] Safety reset: isUpdatingFromRemote was stuck",
+              );
+              isUpdatingFromRemote.current = false;
+            }
+          }, 1000);
+
+          lastLocalStateHash.current = remoteHash;
 
           loadElements(message.elements, true);
 
           setTimeout(() => {
             isUpdatingFromRemote.current = false;
-          }, 200);
+            if (remoteUpdateTimeoutRef.current) {
+              clearTimeout(remoteUpdateTimeoutRef.current);
+              remoteUpdateTimeoutRef.current = null;
+            }
+          }, 50);
         }
       } else if (isErrorMessage(message)) {
-        console.error("[useCollab] ❌ Server error:", message.error);
+        console.error("[Collab] Server error:", message.error);
         const error = new Error(message.error);
         onError?.(error);
       } else if (isMouseMoveMessage(message)) {
@@ -130,7 +180,7 @@ export function useCollab({
         mouseStore.removeMousePosition(message.userId);
       }
     },
-    [loadElements, onSync, onError, mouseStore],
+    [computeElementsHash, loadElements, onSync, onError, mouseStore],
   );
 
   const isWebSocketEnabled = enabled && isLoaded && !!userId;
@@ -141,94 +191,131 @@ export function useCollab({
     connect,
     disconnect,
     sendMessage,
-    reconnect,
     error,
   } = useWebSocket({
     url: wsUrl,
     roomId,
-    userId: userId!,
+    userId: userId || "",
     getToken,
-    autoConnect: isWebSocketEnabled,
+    autoConnect: false,
     reconnectInterval: 1000,
     maxReconnectAttempts: 2,
     onMessage: handleMessage,
-    onConnect: () => {},
+    onConnect: () => {
+      setIsSynced(true);
+    },
     onDisconnect: () => {
       setIsSynced(false);
     },
     onError: (err: WebSocketErrorEvent) => {
-      console.error("[useCollab] WebSocket error:", err);
       const error = new Error("WebSocket connection error");
       onError?.(error);
     },
   });
 
-  console.log("[useCollab] Connection state:", {
-    isConnected,
-    connectionState,
-    enabled,
-    isLoaded,
-    isWebSocketEnabled,
-  });
-
   useEffect(() => {
-    if (enabled && isLoaded && !isConnected) {
-      reconnect();
+    if (
+      isWebSocketEnabled &&
+      connectionState === "disconnected" &&
+      !hasAttemptedConnect.current
+    ) {
+      hasAttemptedConnect.current = true;
+      connect();
     }
-  }, [isLoaded, enabled, isConnected, reconnect]);
 
-  const debouncedSend = useRef(
-    debounce((elementsToSend: EditorElement[], currentJSON: string) => {
+    if (connectionState === "disconnected" && !isWebSocketEnabled) {
+      hasAttemptedConnect.current = false;
+    }
+  }, [isWebSocketEnabled, connectionState, connect]);
+
+  const sendElementsUpdate = useCallback(
+    (elements: EditorElement[], currentHash: string) => {
       const now = Date.now();
       const timeSinceLastSend = now - lastSendTime.current;
 
-      if (timeSinceLastSend < 500 && updateCountRef.current > 10) {
+      if (
+        timeSinceLastSend < throttleMs &&
+        updateCountRef.current >= maxRapidUpdates
+      ) {
+        setPendingUpdates((prev) => prev + 1);
         return;
       }
 
-      lastLocalUpdate.current = currentJSON;
+      lastSentStateHash.current = currentHash;
+      lastLocalStateHash.current = currentHash;
       lastSendTime.current = now;
       updateCountRef.current++;
 
-      sendMessage({
+      const success = sendMessage({
         type: "update",
-        elements: elementsToSend,
+        elements,
       });
 
-      setTimeout(() => {
+      if (success) {
+        setPendingUpdates(0);
+      }
+
+      if (resetCounterTimerRef.current) {
+        clearTimeout(resetCounterTimerRef.current);
+      }
+      resetCounterTimerRef.current = setTimeout(() => {
         updateCountRef.current = 0;
       }, 1000);
-    }, 300),
+    },
+    [sendMessage, throttleMs, maxRapidUpdates],
+  );
+
+  const debouncedSendElementsUpdate = useRef(
+    debounce(sendElementsUpdate, debounceMs),
   ).current;
 
   useEffect(() => {
-    if (
-      !enabled ||
-      !isConnected ||
-      !isSynced ||
-      isUpdatingFromRemote.current ||
-      elements.length === 0 ||
-      elementsJSON === lastLocalUpdate.current
-    ) {
+    initializeStateHashes();
+  }, [initializeStateHashes]);
+
+  useEffect(() => {
+    if (!enabled || !isConnected || !isSynced) {
       return;
     }
 
-    debouncedSend(elements, elementsJSON);
+    if (isUpdatingFromRemote.current) {
+      return;
+    }
+
+    const currentHash = computeElementsHash(elements);
+
+    if (currentHash === lastLocalStateHash.current) {
+      return;
+    }
+
+    if (currentHash === lastSentStateHash.current) {
+      return;
+    }
+
+    lastLocalStateHash.current = currentHash;
+
+    debouncedSendElementsUpdate(elements, currentHash);
   }, [
-    elementsJSON,
     elements,
     enabled,
     isConnected,
     isSynced,
-    sendMessage,
-    debouncedSend,
+    computeElementsHash,
+    debouncedSendElementsUpdate,
   ]);
 
   useEffect(() => {
     return () => {
-      debouncedSend.cancel();
+      debouncedSendElementsUpdate.cancel();
+      if (resetCounterTimerRef.current) {
+        clearTimeout(resetCounterTimerRef.current);
+      }
+      if (remoteUpdateTimeoutRef.current) {
+        clearTimeout(remoteUpdateTimeoutRef.current);
+      }
+      isInitialized.current = false;
     };
-  }, [debouncedSend]);
+  }, [debouncedSendElementsUpdate]);
 
   return {
     isConnected,
@@ -238,5 +325,6 @@ export function useCollab({
     sendMessage,
     error,
     isSynced,
+    pendingUpdates,
   };
 }
