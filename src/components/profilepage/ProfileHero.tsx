@@ -29,7 +29,7 @@ export default function ProfileHero({ profile, stats }: ProfileHeroProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
         >
-            <Card className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20">
+            <Card className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-primary/20 hover:shadow-lg transition-all duration-300">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
                 <CardContent className="p-4 sm:p-6 lg:p-8 relative">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">

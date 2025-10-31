@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import ProfilePage from "@/components/profilepage/ProfilePage";
+import { ProfileContent } from "@/components/profilepage/ProfileContent";
 
-export default function Page() {
-    return <ProfilePage />;
+export default function ProfilePage() {
+    return <ProfileContent />;
 }
