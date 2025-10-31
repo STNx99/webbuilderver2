@@ -3,10 +3,11 @@
 import { motion } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { CreditCard, Wallet, Smartphone, Building2 } from "lucide-react"
+import { Wallet } from "lucide-react"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
-export type PaymentMethod = "credit-card" | "paypal" | "apple-pay" | "google-pay" | "bank-transfer"
+export type PaymentMethod = "vnpay"
 
 interface PaymentMethodSelectorProps {
   selectedMethod: PaymentMethod
@@ -15,39 +16,11 @@ interface PaymentMethodSelectorProps {
 
 const paymentMethods = [
   {
-    id: "credit-card" as PaymentMethod,
-    name: "Credit / Debit Card",
-    description: "Visa, Mastercard, Amex",
-    icon: CreditCard,
-    processingTime: "Instant",
-  },
-  // {
-  //   id: "paypal" as PaymentMethod,
-  //   name: "PayPal",
-  //   description: "Pay with your PayPal account",
-  //   icon: Wallet,
-  //   processingTime: "Instant",
-  // },
-  // {
-  //   id: "apple-pay" as PaymentMethod,
-  //   name: "Apple Pay",
-  //   description: "Pay with Apple Pay",
-  //   icon: Smartphone,
-  //   processingTime: "Instant",
-  // },
-  // {
-  //   id: "google-pay" as PaymentMethod,
-  //   name: "Google Pay",
-  //   description: "Pay with Google Pay",
-  //   icon: Smartphone,
-  //   processingTime: "Instant",
-  // },
-  {
-    id: "bank-transfer" as PaymentMethod,
-    name: "Bank Transfer",
-    description: "Direct bank transfer",
-    icon: Building2,
-    processingTime: "1-2 business days",
+    id: "vnpay" as PaymentMethod,
+    name: "VNPay",
+    description: "Thanh toán qua VNPay - Hỗ trợ thẻ ATM, Visa, Mastercard, QR Code",
+    icon: Wallet,
+    processingTime: "Ngay lập tức",
   },
 ]
 
