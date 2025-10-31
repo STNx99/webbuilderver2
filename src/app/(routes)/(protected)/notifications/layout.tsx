@@ -12,7 +12,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 
-export default function AnalyticsLayout({
+export default function NotificationsLayout({
     children,
 }: {
     children: React.ReactNode;
@@ -35,7 +35,7 @@ export default function AnalyticsLayout({
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator className="hidden md:block" />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Analytics</BreadcrumbPage>
+                                    <BreadcrumbPage>Notifications</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
