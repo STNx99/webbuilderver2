@@ -140,11 +140,16 @@ model Subscription {
   UserId        String
   PlanId        String
   BillingPeriod String
-  Status        String      @default("active")
+  Status        String      @default("pending")
   StartDate     DateTime    @default(now())
   EndDate       DateTime?
   Amount        Float
-  Currency      String      @default("USD")
+  Currency      String      @default("VND")
+  Email         String?
+  TransactionNo String?     // VNPay transaction number from bank
+  BankCode      String?     // Bank code used for payment
+  CardType      String?     // Card type (ATM/Credit)
+  PayDate       DateTime?   // Actual payment datetime from VNPay
   CreatedAt     DateTime    @default(now()) @db.Timestamp(6)
   UpdatedAt     DateTime    @updatedAt @db.Timestamp(6)
   User          User        @relation(fields: [UserId], references: [Id], onDelete: Cascade)
