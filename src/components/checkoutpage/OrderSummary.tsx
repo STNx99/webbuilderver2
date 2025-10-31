@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Check, Tag, Shield, Sparkles, CreditCard, Wallet, Smartphone, Building2 } from "lucide-react"
+import { Check, Tag, Shield, Sparkles, Wallet } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { Plan, BillingPeriod } from "./SubscriptionCheckout"
 import type { PaymentMethod } from "./PaymentMethod"
@@ -23,11 +23,7 @@ interface OrderSummaryProps {
 }
 
 const paymentMethodIcons = {
-  "credit-card": CreditCard,
-  paypal: Wallet,
-  "apple-pay": Smartphone,
-  "google-pay": Smartphone,
-  "bank-transfer": Building2,
+  vnpay: Wallet,
 }
 
 export function OrderSummary({
@@ -67,7 +63,7 @@ export function OrderSummary({
     onDiscountApply(0)
   }
 
-  const PaymentIcon = paymentMethod ? paymentMethodIcons[paymentMethod] : CreditCard
+  const PaymentIcon = paymentMethod ? paymentMethodIcons[paymentMethod] : Wallet
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -123,8 +119,8 @@ export function OrderSummary({
                     <PaymentIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs sm:text-sm font-medium">Payment method</p>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground capitalize">{paymentMethod.replace("-", " ")}</p>
+                    <p className="text-xs sm:text-sm font-medium">Phương thức thanh toán</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">VNPay</p>
                   </div>
                 </div>
               </div>
@@ -133,7 +129,7 @@ export function OrderSummary({
             <div className="mb-4 sm:mb-6">
               <label className="text-xs sm:text-sm font-medium mb-2 flex items-center gap-2">
                 <Tag className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
-                Discount code
+                Mã giảm giá
               </label>
               <AnimatePresence mode="wait">
                 {!couponApplied ? (
@@ -146,7 +142,7 @@ export function OrderSummary({
                   >
                     <Input
                       type="text"
-                      placeholder="Enter code"
+                      placeholder="Nhập mã"
                       value={couponCode}
                       onChange={(e) => {
                         setCouponCode(e.target.value)
@@ -161,7 +157,7 @@ export function OrderSummary({
                       disabled={!couponCode}
                       className="hover:bg-primary/5 hover:text-primary hover:border-primary/50 bg-transparent h-9 sm:h-10 px-3 sm:px-4 text-xs sm:text-sm"
                     >
-                      Apply
+                      Áp dụng
                     </Button>
                   </motion.div>
                 ) : (
@@ -175,7 +171,7 @@ export function OrderSummary({
                     <div className="flex items-center gap-1.5 sm:gap-2">
                       <Check className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                       <span className="text-xs sm:text-sm font-medium text-primary">{couponCode}</span>
-                      <span className="text-xs sm:text-sm text-muted-foreground">({discount}% off)</span>
+                      <span className="text-xs sm:text-sm text-muted-foreground">(giảm {discount}%)</span>
                     </div>
                     <Button
                       type="button"
@@ -184,7 +180,7 @@ export function OrderSummary({
                       onClick={handleRemoveCoupon}
                       className="hover:text-destructive h-auto p-1 text-xs"
                     >
-                      Remove
+                      Xóa
                     </Button>
                   </motion.div>
                 )}
@@ -210,7 +206,7 @@ export function OrderSummary({
                 transition={{ delay: 0.2 }}
                 className="flex items-center justify-between text-xs sm:text-sm"
               >
-                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-muted-foreground">Tạm tính</span>
                 <span className="font-medium">${subtotal.toFixed(2)}</span>
               </motion.div>
               <AnimatePresence>
@@ -221,7 +217,7 @@ export function OrderSummary({
                     exit={{ opacity: 0, height: 0 }}
                     className="flex items-center justify-between text-xs sm:text-sm"
                   >
-                    <span className="text-muted-foreground">Discount ({discount}%)</span>
+                    <span className="text-muted-foreground">Giảm giá ({discount}%)</span>
                     <span className="font-medium text-primary">-${((subtotal * discount) / 100).toFixed(2)}</span>
                   </motion.div>
                 )}
@@ -232,13 +228,13 @@ export function OrderSummary({
                 transition={{ delay: 0.3 }}
                 className="flex items-center justify-between pt-2 sm:pt-3 border-t border-border"
               >
-                <span className="font-semibold text-sm sm:text-base">Total</span>
+                <span className="font-semibold text-sm sm:text-base">Tổng cộng</span>
                 <div className="text-right">
                   <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                     ${total.toFixed(2)}
                   </div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground">
-                    {billingPeriod === "monthly" ? "per month" : "per year"}
+                    {billingPeriod === "monthly" ? "mỗi tháng" : "mỗi năm"}
                   </div>
                 </div>
               </motion.div>
@@ -267,7 +263,7 @@ export function OrderSummary({
                     Processing...
                   </div>
                 ) : (
-                  'Complete purchase'
+                  'Thanh toán'
                 )}
               </Button>
             )}
@@ -277,9 +273,9 @@ export function OrderSummary({
               <div className="flex items-start gap-2 sm:gap-3">
                 <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs sm:text-sm font-medium mb-1">Secure checkout - SSL encrypted</p>
+                  <p className="text-xs sm:text-sm font-medium mb-1">Thanh toán an toàn - Mã hóa SSL</p>
                   <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
-                    Your payment information is processed securely. We do not store credit card details.
+                    Thông tin thanh toán của bạn được xử lý an toàn qua VNPay.
                   </p>
                 </div>
               </div>
@@ -299,9 +295,9 @@ export function OrderSummary({
               <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
             </div>
             <div>
-              <p className="text-xs sm:text-sm font-medium mb-1">14-day money back guarantee</p>
+              <p className="text-xs sm:text-sm font-medium mb-1">Đảm bảo hoàn tiền trong 14 ngày</p>
               <p className="text-[10px] sm:text-xs text-muted-foreground leading-relaxed">
-                Not satisfied? Get a full refund within 14 days, no questions asked.
+                Không hài lòng? Hoàn tiền 100% trong 14 ngày, không cần lý do.
               </p>
             </div>
           </div>

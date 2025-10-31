@@ -45,7 +45,7 @@ export function SubscriptionCheckout() {
   const [step, setStep] = useState<CheckoutStep>("plans")
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod>("yearly")
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("credit-card")
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("vnpay")
   const [discount, setDiscount] = useState<number>(0)
   const [showAuthPrompt, setShowAuthPrompt] = useState(false)
   const [isInitializing, setIsInitializing] = useState(true)
@@ -134,10 +134,7 @@ export function SubscriptionCheckout() {
     setIsProcessing(true);
 
     try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      console.log("[Checkout] Payment simulation completed", {
+      console.log("[Checkout] Creating VNPay payment...", {
         planId: selectedPlan.id,
         planName: selectedPlan.name,
         billingPeriod,
@@ -146,8 +143,8 @@ export function SubscriptionCheckout() {
         formData
       });
 
-      // Create subscription in database
-      const response = await fetch('/api/subscription', {
+      // Create VNPay payment URL
+      const response = await fetch('/api/vnpay/create-payment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -156,22 +153,23 @@ export function SubscriptionCheckout() {
           planId: selectedPlan.id,
           billingPeriod,
           amount: total,
+          email: formData.email,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create subscription');
+        throw new Error('Failed to create VNPay payment');
       }
 
-      const subscriptionData = await response.json();
-      console.log("[Checkout] Subscription created:", subscriptionData);
-      // Show success dialog
-      setShowSuccessDialog(true);
+      const data = await response.json();
+      console.log("[Checkout] VNPay payment URL created:", data);
+
+      // Redirect to VNPay payment page
+      window.location.href = data.paymentUrl;
 
     } catch (error) {
       console.error("[Checkout] Error:", error);
-      // In production, show error toast/notification
-      alert('Failed to complete purchase. Please try again.');
+      alert('Không thể tạo thanh toán. Vui lòng thử lại.');
     } finally {
       setIsProcessing(false);
     }
