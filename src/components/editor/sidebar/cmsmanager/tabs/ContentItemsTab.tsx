@@ -314,6 +314,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
             <RequiredIndicator required={field.required} />
           </div>
         ),
+        size: 200,
         cell: ({ row, table }) => {
           const item = row.original;
           const meta = table.options.meta as any;
@@ -324,7 +325,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
           if (isEditing) {
             if (field.type === "richtext") {
               return (
-                <div className="min-w-[300px]">
+                <div className="w-[200px]">
                   <RichTextEditorDialog
                     value={
                       editedData?.fieldValues?.[field.id] ??
@@ -343,7 +344,7 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
                         className="w-full justify-start"
                       >
                         {editedData?.fieldValues?.[field.id] ||
-                        fieldValues[field.id] ? (
+                          fieldValues[field.id] ? (
                           <span className="truncate">
                             {editedData?.fieldValues?.[field.id] ||
                               fieldValues[field.id]
@@ -370,25 +371,28 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
                   onChange={(e) =>
                     meta?.updateFieldValue(item.id, field.id, e.target.value)
                   }
-                  className="h-8"
+                  className="h-8 w-[200px]"
                 />
               );
             }
           } else {
             if (field.type === "richtext") {
+              const content = fieldValues[field.id] || "-";
+              const textContent = content.replace(/<[^>]*>/g, "");
               return (
-                <div
-                  className="max-w-xs truncate"
-                  dangerouslySetInnerHTML={{
-                    __html: fieldValues[field.id] || "-",
-                  }}
-                />
+                <div className="w-[200px] overflow-hidden">
+                  <span className="block truncate" title={textContent}>
+                    {textContent}
+                  </span>
+                </div>
               );
             } else {
               return (
-                <span className="max-w-xs truncate block">
-                  {fieldValues[field.id] || "-"}
-                </span>
+                <div className="w-[200px] overflow-hidden">
+                  <span className="block truncate" title={fieldValues[field.id] || "-"}>
+                    {fieldValues[field.id] || "-"}
+                  </span>
+                </div>
               );
             }
           }
@@ -582,9 +586,9 @@ export const ContentItemsTab: React.FC<ContentItemsTabProps> = ({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>
