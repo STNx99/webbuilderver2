@@ -73,6 +73,10 @@ export default function CollaboratorIndicator({
   const onlineCount = onlineUsers.length;
   const hasOnlineUsers = onlineCount > 0;
 
+  if (!hasOnlineUsers) {
+    return null;
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>

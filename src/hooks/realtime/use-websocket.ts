@@ -20,14 +20,21 @@ import {
 // Track active connections to prevent duplicates
 const activeConnections = new Map<string, boolean>();
 
+// Calculate exponential backoff with jitter
+const calculateBackoff = (attempt: number, baseDelay: number): number => {
+  const exponentialDelay = Math.min(baseDelay * Math.pow(2, attempt), 30000);
+  const jitter = Math.random() * 1000;
+  return exponentialDelay + jitter;
+};
+
 export function useWebSocket({
   url,
   roomId,
   userId,
   getToken,
   autoConnect = true,
-  reconnectInterval = 3000,
-  maxReconnectAttempts = 5,
+  reconnectInterval = 1000,
+  maxReconnectAttempts = 10,
   onMessage,
   onConnect,
   onDisconnect,
@@ -44,6 +51,7 @@ export function useWebSocket({
   const messageQueueRef = useRef<any[]>([]);
   const hasInitializedRef = useRef(false);
   const shouldReconnectRef = useRef(true);
+  const currentRoomRef = useRef<string>(roomId);
 
   const callbacksRef = useRef({
     onMessage,
@@ -88,8 +96,6 @@ export function useWebSocket({
   // Connect function
   const connect = useCallback(async () => {
     const connectionKey = `${roomId}:${userId}`;
-
-    // Prevent multiple connections
     if (
       wsRef.current?.readyState === WebSocket.OPEN ||
       wsRef.current?.readyState === WebSocket.CONNECTING
@@ -102,9 +108,6 @@ export function useWebSocket({
       return;
     }
 
-    if (!shouldReconnectRef.current) {
-      return;
-    }
     activeConnections.set(connectionKey, true);
     isManualDisconnectRef.current = false;
     setConnectionState("connecting");
@@ -115,15 +118,14 @@ export function useWebSocket({
     if (!token) {
       setError("AUTH_ERROR");
       setConnectionState("error");
+      activeConnections.delete(connectionKey);
       return;
     }
 
     const wsUrl = `${url}/ws/${roomId}?token=${encodeURIComponent(token)}`;
-
     try {
       const ws = new WebSocket(wsUrl);
 
-      // Connection opened
       ws.onopen = () => {
         setConnectionState("connected");
         setError(null);
@@ -160,7 +162,6 @@ export function useWebSocket({
             callbacksRef.current.onMessage?.(data);
           }
         } catch (err) {
-          // Only set parse error for actual JSON parsing failures
           setError("PARSE_ERROR");
         }
       };
@@ -183,17 +184,23 @@ export function useWebSocket({
         // 1. Not a manual disconnect
         // 2. Not exceeded max attempts
         // 3. Reconnection is enabled
+        // 4. Still in the same room (not switched projects)
         if (
           !isManualDisconnectRef.current &&
           shouldReconnectRef.current &&
-          reconnectAttemptsRef.current < maxReconnectAttempts
+          reconnectAttemptsRef.current < maxReconnectAttempts &&
+          currentRoomRef.current === roomId
         ) {
+          const attempt = reconnectAttemptsRef.current;
           reconnectAttemptsRef.current++;
+
+          // Use exponential backoff for reconnection
+          const backoffDelay = calculateBackoff(attempt, reconnectInterval);
 
           clearReconnectTimeout();
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
-          }, reconnectInterval);
+          }, backoffDelay);
         } else if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
           shouldReconnectRef.current = false;
           setError("SERVER_UNAVAILABLE");
@@ -218,6 +225,7 @@ export function useWebSocket({
     reconnectInterval,
     maxReconnectAttempts,
     clearReconnectTimeout,
+    error,
   ]);
 
   // Send message function
@@ -243,11 +251,38 @@ export function useWebSocket({
     setTimeout(() => connect(), 100);
   }, [connect, disconnect]);
 
+  // Handle room changes - disconnect from old room and prepare for reconnection
+  useEffect(() => {
+    const previousRoom = currentRoomRef.current;
+
+    if (previousRoom !== roomId) {
+      // Close existing connection if any
+      if (wsRef.current) {
+        const connectionKey = `${previousRoom}:${userId}`;
+        activeConnections.delete(connectionKey);
+        wsRef.current.close(1000, "Room changed");
+        wsRef.current = null;
+      }
+
+      // Reset state for new room
+      setConnectionState("disconnected");
+      messageQueueRef.current = [];
+      reconnectAttemptsRef.current = 0;
+      shouldReconnectRef.current = true;
+      hasInitializedRef.current = false;
+      clearReconnectTimeout();
+
+      // Update current room reference
+      currentRoomRef.current = roomId;
+    }
+  }, [roomId, userId, clearReconnectTimeout]);
+
   // Initialize connection on mount
   useEffect(() => {
     if (autoConnect && !hasInitializedRef.current) {
       hasInitializedRef.current = true;
       shouldReconnectRef.current = true;
+      currentRoomRef.current = roomId;
       connect();
     }
 
@@ -266,6 +301,29 @@ export function useWebSocket({
       }
     };
   }, []); // Empty dependency array - only run on mount/unmount
+
+  // Listen for online/offline events
+  useEffect(() => {
+    const handleOnline = () => {
+      if (connectionState === "disconnected" || connectionState === "error") {
+        reconnectAttemptsRef.current = 0;
+        shouldReconnectRef.current = true;
+        connect();
+      }
+    };
+
+    const handleOffline = () => {
+      setError("CONNECTION_FAILED");
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [connectionState, connect]);
 
   return {
     connectionState,

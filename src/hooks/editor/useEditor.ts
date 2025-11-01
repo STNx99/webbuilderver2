@@ -70,6 +70,7 @@ export const useEditor = (
       });
     },
   });
+  
 
   useEffect(() => {
     if (projectPages && projectPages.length > 0) {

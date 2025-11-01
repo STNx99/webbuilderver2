@@ -13,7 +13,13 @@ export type ConnectionState =
   | "error";
 
 export type WebSocketMessage =
-  | { type: "sync"; elements: EditorElement[] }
+  | {
+      type: "sync";
+      elements: EditorElement[];
+      users?: Record<string, User>;
+      mousePositions?: Record<string, { X: number; Y: number }>;
+      selectedElements?: Record<string, string>;
+    }
   | { type: "update"; elements: EditorElement[] }
   | { type: "error"; error: string }
   | { type: "mouseMove"; userId: string; x: number; y: number }
@@ -70,9 +76,13 @@ export interface UseWebSocketReturn {
 }
 
 // Type Guards
-export function isSyncMessage(
-  message: WebSocketMessage,
-): message is { type: "sync"; elements: EditorElement[] } {
+export function isSyncMessage(message: WebSocketMessage): message is {
+  type: "sync";
+  elements: EditorElement[];
+  users?: Record<string, User>;
+  mousePositions?: Record<string, { X: number; Y: number }>;
+  selectedElements?: Record<string, string>;
+} {
   return message.type === "sync";
 }
 

@@ -93,13 +93,14 @@ export function useCollab({
     (message: WebSocketMessage) => {
       switch (message.type) {
         case "sync": {
-          console.log("[Collab] Received sync message");
           isUpdatingFromRemote.current = true;
 
+          // Clear any existing safety timeout
           if (remoteUpdateTimeoutRef.current) {
             clearTimeout(remoteUpdateTimeoutRef.current);
           }
 
+          // Safety timeout to prevent flag from getting stuck
           remoteUpdateTimeoutRef.current = setTimeout(() => {
             if (isUpdatingFromRemote.current) {
               console.warn(
@@ -115,6 +116,26 @@ export function useCollab({
 
           loadElements(message.elements, true);
 
+          // Set users if provided in sync message
+          if (message.users) {
+            mouseStore.setUsers(message.users);
+          }
+
+          // Set mouse positions if provided
+          if (message.mousePositions) {
+            const convertedPositions: Record<string, { x: number; y: number }> =
+              {};
+            Object.entries(message.mousePositions).forEach(([userId, pos]) => {
+              convertedPositions[userId] = { x: pos.X, y: pos.Y };
+            });
+            mouseStore.setMousePositions(convertedPositions);
+          }
+
+          // Set selected elements if provided
+          if (message.selectedElements) {
+            mouseStore.setSelectedElements(message.selectedElements);
+          }
+
           setTimeout(() => {
             isUpdatingFromRemote.current = false;
             if (remoteUpdateTimeoutRef.current) {
@@ -128,7 +149,6 @@ export function useCollab({
           break;
         }
         case "update": {
-          console.log("[Collab] Received update message");
           const remoteHash = computeElementsHash(message.elements);
 
           if (remoteHash !== lastLocalStateHash.current) {
@@ -162,7 +182,6 @@ export function useCollab({
           break;
         }
         case "error": {
-          console.error("[Collab] Server error:", message.error);
           const error = new Error(message.error);
           onError?.(error);
           break;
@@ -177,12 +196,18 @@ export function useCollab({
         case "currentState": {
           const convertedPositions: Record<string, { x: number; y: number }> =
             {};
-          Object.entries(message.mousePositions).forEach(([userId, pos]) => {
-            convertedPositions[userId] = { x: pos.X, y: pos.Y };
-          });
+          if (message.mousePositions) {
+            Object.entries(message.mousePositions).forEach(([userId, pos]) => {
+              convertedPositions[userId] = { x: pos.X, y: pos.Y };
+            });
+          }
           mouseStore.setMousePositions(convertedPositions);
-          mouseStore.setSelectedElements(message.selectedElements);
-          mouseStore.setUsers(message.users);
+          mouseStore.setSelectedElements(message.selectedElements || {});
+
+          // Set users from message or add current user if empty
+          if (message.users && Object.keys(message.users).length > 0) {
+            mouseStore.setUsers(message.users);
+          }
           break;
         }
         case "userDisconnect": {
@@ -220,6 +245,7 @@ export function useCollab({
     },
     onDisconnect: () => {
       setIsSynced(false);
+      mouseStore.clear();
     },
     onError: (err: WebSocketErrorEvent) => {
       const error = new Error("WebSocket connection error");
@@ -227,12 +253,20 @@ export function useCollab({
     },
   });
 
+  // Reset connection flag when roomId changes
+  useEffect(() => {
+    console.log("[Collab] Room ID changed, resetting connection attempt flag");
+    hasAttemptedConnect.current = false;
+  }, [roomId]);
+
+  // Auto-connect when enabled and disconnected
   useEffect(() => {
     if (
       isWebSocketEnabled &&
       connectionState === "disconnected" &&
       !hasAttemptedConnect.current
     ) {
+      console.log("[Collab] Auto-connecting to WebSocket room:", roomId);
       hasAttemptedConnect.current = true;
       connect();
     }
@@ -240,7 +274,7 @@ export function useCollab({
     if (connectionState === "disconnected" && !isWebSocketEnabled) {
       hasAttemptedConnect.current = false;
     }
-  }, [isWebSocketEnabled, connectionState, connect]);
+  }, [isWebSocketEnabled, connectionState, connect, roomId]);
 
   const sendElementsUpdate = useCallback(
     (elements: EditorElement[], currentHash: string) => {
