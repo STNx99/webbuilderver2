@@ -1,5 +1,11 @@
 import { EditorElement } from "@/types/global.type";
 
+export type User = {
+  userId: string;
+  userName: string;
+  email: string;
+};
+
 export type ConnectionState =
   | "disconnected"
   | "connecting"
@@ -15,6 +21,7 @@ export type WebSocketMessage =
       type: "currentState";
       mousePositions: Record<string, { X: number; Y: number }>;
       selectedElements: Record<string, string>;
+      users: Record<string, User>;
     }
   | { type: "userDisconnect"; userId: string };
 
@@ -91,6 +98,7 @@ export function isCurrentStateMessage(message: WebSocketMessage): message is {
   type: "currentState";
   mousePositions: Record<string, { X: number; Y: number }>;
   selectedElements: Record<string, string>;
+  users: Record<string, User>;
 } {
   return message.type === "currentState";
 }
