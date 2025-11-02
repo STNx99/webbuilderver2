@@ -57,6 +57,20 @@ export {
   useMarketplaceManager,
 } from "./features/useMarketplace";
 export {
+  commentKeys,
+  useComments,
+  useComment,
+  useCommentsByItem,
+  useCommentCount,
+  useCreateComment,
+  useUpdateComment,
+  useDeleteComment,
+  useCreateReaction,
+  useDeleteReaction,
+  useReactions,
+  useReactionSummary,
+} from "./features/useComments";
+export {
   projectKeys,
   useUserProjects,
   useProject,
