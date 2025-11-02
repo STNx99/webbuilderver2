@@ -24,7 +24,6 @@ import { Badge } from "@/components/ui/badge";
 import { Trash2, LogOut, Loader2, Eye, Edit } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { getRoleIcon, getRoleBadgeVariant } from "./utils";
-import { useEffect } from "react";
 
 // Helper functions for user display
 const getFullName = (user: Collaborator["user"]) => {

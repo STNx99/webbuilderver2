@@ -95,7 +95,11 @@ export const API_ENDPOINTS = {
     CREATE: "/api/v1/invitations",
     GET_BY_PROJECT: (projectId: string) =>
       `/api/v1/invitations/project/${projectId}`,
+    GET_PENDING_BY_PROJECT: (projectId: string) =>
+      `/api/v1/invitations/project/${projectId}/pending`,
     ACCEPT: "/api/v1/invitations/accept",
+    CANCEL: (id: string) => `/api/v1/invitations/${id}/cancel`,
+    UPDATE_STATUS: (id: string) => `/api/v1/invitations/${id}/status`,
     DELETE: (id: string) => `/api/v1/invitations/${id}`,
   },
   COLLABORATORS: {
@@ -114,6 +118,11 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/api/v1/customelements/${id}`,
     DELETE: (id: string) => `/api/v1/customelements/${id}`,
     DUPLICATE: (id: string) => `/api/v1/customelements/${id}/duplicate`,
+  },
+  USERS: {
+    SEARCH: "/api/v1/users/search",
+    GET_BY_EMAIL: (email: string) => `/api/v1/users/email/${email}`,
+    GET_BY_USERNAME: (username: string) => `/api/v1/users/username/${username}`,
   },
 };
 export const NEXT_API_ENDPOINTS = {

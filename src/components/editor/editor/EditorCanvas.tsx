@@ -32,7 +32,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const keyboardEvent = new KeyboardEventClass();
-  const { mousePositions } = useMouseStore();
+  const { mousePositions, users } = useMouseStore();
 
   useMouseTracking({
     canvasRef,
@@ -41,8 +41,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     enabled: true,
   });
 
-  useEffect(() => {
-  }, [mousePositions]);
+  useEffect(() => {}, [mousePositions]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -124,15 +123,13 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
           >
             <MousePointer className="w-5 h-5 text-blue-500 drop-shadow-lg" />
             <div className="bg-blue-500 text-white text-xs px-2 py-1 rounded shadow-lg whitespace-nowrap">
-              {uid.slice(0, 8)}
+              {users[uid]?.userName || uid.slice(0, 8)}
             </div>
           </div>
         );
       })}
       <div className="overflow-x-hidden h-full w-full p-4">
-        {isLoading ? null : ( 
-          <ElementLoader />
-        )}
+        {isLoading ? null : <ElementLoader />}
         {!selectedElement && (
           <Button className="mb-4 w-full " onClick={addNewSection}>
             + Add new section

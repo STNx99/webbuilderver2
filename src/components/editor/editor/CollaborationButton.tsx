@@ -43,7 +43,7 @@ export default function CollaborationButton({
           <span className="hidden sm:inline">Collaborators</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="!max-w-[75vw] max-h-[95vh] overflow-hidden w-auto flex flex-col">
+      <DialogContent className="max-w-[40vw]! min-w-[20vw] max-h-[95vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />

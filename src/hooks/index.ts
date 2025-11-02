@@ -75,6 +75,8 @@ export {
   useProjectInvitations,
   useCreateInvitation,
   useAcceptInvitation,
+  useCancelInvitation,
+  useUpdateInvitationStatus,
   useDeleteInvitation,
   useInvitationManager,
 } from "./features/useInvitations";
@@ -86,3 +88,11 @@ export {
   useLeaveProject,
   useCollaboratorManager,
 } from "./features/useCollaborators";
+
+// USER HOOKS
+export {
+  userKeys,
+  useSearchUsers,
+  useUserByEmail,
+  useUserByUsername,
+} from "./features/useUsers";

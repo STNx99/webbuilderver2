@@ -10,8 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { UserPlus } from "lucide-react";
 import InviteMemberDialog from "./InviteMemberDialog";
 import CollaboratorsTable from "./CollaboratorsTable";
 import InvitationsTable from "./InvitationsTable";
@@ -70,7 +68,7 @@ export default function CollaborationManager({
 
   return (
     <div className="space-y-6">
-      <Card  >
+      <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -89,7 +87,7 @@ export default function CollaborationManager({
             )}
           </div>
         </CardHeader>
-        <CardContent  >
+        <CardContent>
           <CollaboratorsTable
             collaborators={collaborators.collaborators}
             currentUserId={currentUserId}

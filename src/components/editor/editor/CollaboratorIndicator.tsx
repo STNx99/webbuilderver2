@@ -9,35 +9,18 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Users, LogOut } from "lucide-react";
-import { useProjectCollaborators, useLeaveProject } from "@/hooks";
-import {
-  CollaboratorRole,
-  Collaborator,
-} from "@/interfaces/collaboration.interface";
+import { Users } from "lucide-react";
+import { useMouseStore } from "@/globalstore/mousestore";
 import { useAuth } from "@clerk/nextjs";
-import { useProjectStore } from "@/globalstore/projectstore";
-import {
-  getRoleIcon,
-  getRoleBadgeVariant,
-} from "@/components/collaboration/utils";
 
 // Helper functions for user display
-const getFullName = (user: Collaborator["user"]) => {
-  if (!user) return "Unknown User";
-  const { firstName, lastName } = user;
-  if (firstName && lastName) return `${firstName} ${lastName}`;
-  if (firstName) return firstName;
-  if (lastName) return lastName;
-  return "Unknown User";
+const getFullName = (user: { userName: string; email: string }) => {
+  return user.userName || user.email || "Unknown User";
 };
 
-const getAvatarInitial = (user: Collaborator["user"]) => {
-  if (!user) return "";
-  const { firstName, lastName, email } = user;
-  if (firstName) return firstName.charAt(0).toUpperCase();
-  if (lastName) return lastName.charAt(0).toUpperCase();
-  if (email) return email.charAt(0).toUpperCase();
+const getAvatarInitial = (user: { userName: string; email: string }) => {
+  if (user.userName) return user.userName.charAt(0).toUpperCase();
+  if (user.email) return user.email.charAt(0).toUpperCase();
   return "";
 };
 
@@ -45,20 +28,13 @@ interface CollaboratorIndicatorProps {
   projectId: string;
 }
 
-interface CollaboratorItemProps {
-  collaborator: Collaborator;
+interface OnlineUserItemProps {
+  user: { userName: string; email: string };
   isCurrentUser?: boolean;
-  onLeaveProject?: () => void;
 }
 
-function CollaboratorItem({
-  collaborator,
-  isCurrentUser = false,
-  onLeaveProject,
-}: CollaboratorItemProps) {
-  const displayName = isCurrentUser ? "You" : getFullName(collaborator.user);
-  const showLeaveButton =
-    isCurrentUser && collaborator.role !== CollaboratorRole.OWNER;
+function OnlineUserItem({ user, isCurrentUser = false }: OnlineUserItemProps) {
+  const displayName = isCurrentUser ? "You" : getFullName(user);
 
   return (
     <div
@@ -67,36 +43,18 @@ function CollaboratorItem({
       <div className="flex items-center gap-2">
         <Avatar className="h-6 w-6">
           <AvatarFallback className="text-xs">
-            {getAvatarInitial(collaborator.user)}
+            {getAvatarInitial(user)}
           </AvatarFallback>
         </Avatar>
         <div>
           <div className="text-sm font-medium">{displayName}</div>
-          <div className="text-xs text-muted-foreground">
-            {collaborator.user?.email}
-          </div>
+          <div className="text-xs text-muted-foreground">{user.email}</div>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Badge
-          variant={getRoleBadgeVariant(collaborator.role)}
-          className="text-xs"
-        >
-          <div className="flex items-center gap-1">
-            {getRoleIcon(collaborator.role)}
-            <span className="capitalize">{collaborator.role}</span>
-          </div>
+        <Badge variant="secondary" className="text-xs">
+          Online
         </Badge>
-        {showLeaveButton && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onLeaveProject}
-            className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-          >
-            <LogOut className="h-3 w-3" />
-          </Button>
-        )}
       </div>
     </div>
   );
@@ -106,39 +64,18 @@ export default function CollaboratorIndicator({
   projectId,
 }: CollaboratorIndicatorProps) {
   const { userId } = useAuth();
-  const { project } = useProjectStore();
-  const { data: collaborators = [], isLoading } =
-    useProjectCollaborators(projectId);
-  const leaveProject = useLeaveProject();
+  const { users } = useMouseStore();
 
-  const isOwner = project?.ownerId === userId;
-  const currentUserCollaborator = collaborators.find(
-    (c) => c.userId === userId,
-  );
-  const otherCollaborators = collaborators.filter((c) => c.userId !== userId);
+  const onlineUsers = Object.values(users);
+  const currentUser = onlineUsers.find((u) => u.userId === userId);
+  const otherUsers = onlineUsers.filter((u) => u.userId !== userId);
 
-  const handleLeaveProject = async () => {
-    if (
-      window.confirm(
-        "Are you sure you want to leave this project? You will lose access to it.",
-      )
-    ) {
-      try {
-        await leaveProject.mutateAsync(projectId);
-      } catch (error) {
-        console.error("Failed to leave project:", error);
-      }
-    }
-  };
+  const onlineCount = onlineUsers.length;
+  const hasOnlineUsers = onlineCount > 0;
 
-  // Don't show indicator while loading
-  if (isLoading) return null;
-
-  // Don't show anything if not owner and no collaborators
-  if (!isOwner && collaborators.length === 0) return null;
-
-  const collaboratorCount = collaborators.length;
-  const hasCollaborators = collaboratorCount > 0;
+  if (!hasOnlineUsers) {
+    return null;
+  }
 
   return (
     <Popover>
@@ -150,21 +87,11 @@ export default function CollaboratorIndicator({
         >
           <Users className="h-4 w-4" />
           <span className="hidden sm:inline">
-            {hasCollaborators
-              ? `${collaboratorCount} collaborator${collaboratorCount !== 1 ? "s" : ""}`
-              : "Collaboration"}
+            {hasOnlineUsers ? `${onlineCount} online` : "No one online"}
           </span>
-          {currentUserCollaborator && (
-            <Badge
-              variant={getRoleBadgeVariant(currentUserCollaborator.role)}
-              className="ml-1 text-xs"
-            >
-              {currentUserCollaborator.role}
-            </Badge>
-          )}
-          {isOwner && !hasCollaborators && (
-            <Badge variant="outline" className="ml-1 text-xs">
-              Owner
+          {hasOnlineUsers && (
+            <Badge variant="secondary" className="ml-1 text-xs">
+              Live
             </Badge>
           )}
         </Button>
@@ -173,28 +100,17 @@ export default function CollaboratorIndicator({
       <PopoverContent className="w-80" align="end">
         <div className="space-y-4">
           <div>
-            <h4 className="font-medium text-sm mb-3">
-              {hasCollaborators ? "Project Team" : "Collaboration Available"}
-            </h4>
-            {!hasCollaborators && isOwner && (
+            <h4 className="font-medium text-sm mb-3">Online Collaborators</h4>
+            {!hasOnlineUsers && (
               <p className="text-xs text-muted-foreground mb-3">
-                Invite team members to collaborate on this project.
+                No one is currently online in this session.
               </p>
             )}
 
-            {currentUserCollaborator && (
-              <CollaboratorItem
-                collaborator={currentUserCollaborator}
-                isCurrentUser
-                onLeaveProject={handleLeaveProject}
-              />
-            )}
+            {currentUser && <OnlineUserItem user={currentUser} isCurrentUser />}
 
-            {otherCollaborators.map((collaborator) => (
-              <CollaboratorItem
-                key={collaborator.id}
-                collaborator={collaborator}
-              />
+            {otherUsers.map((user) => (
+              <OnlineUserItem key={user.userId} user={user} />
             ))}
           </div>
         </div>

@@ -33,11 +33,13 @@ export function useProjectInvitations(
     queryFn: async () => {
       if (!projectId) throw new Error("Project ID is required");
       const invitations =
-        await invitationService.getProjectInvitations(projectId);
+        await invitationService.getPendingInvitationsByProject(projectId);
       return invitations || [];
     },
     enabled: !!projectId && enabled,
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 30, // 30 seconds
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
 }
 
@@ -52,48 +54,24 @@ export function useCreateInvitation() {
     mutationFn: async (data: CreateInvitationRequest) => {
       return await invitationService.createInvitation(data);
     },
-    onMutate: async (data) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({
-        queryKey: invitationKeys.byProject(data.projectId),
-      });
-
-      // Snapshot the previous value
-      const previousInvitations = queryClient.getQueryData<Invitation[]>(
-        invitationKeys.byProject(data.projectId),
-      );
-
-      return { previousInvitations, projectId: data.projectId };
-    },
     onSuccess: (newInvitation, variables) => {
-      // Optimistically add to cache
+      // Update cache with new invitation
       queryClient.setQueryData<Invitation[]>(
         invitationKeys.byProject(variables.projectId),
-        (old) => {
-          return old ? [newInvitation, ...old] : [newInvitation];
-        },
+        (old = []) => [newInvitation, ...old],
       );
 
-      toast.success(`Invitation sent to ${variables.email}!`);
-    },
-    onError: (error, variables, context) => {
-      // Rollback on error
-      if (context?.previousInvitations) {
-        queryClient.setQueryData(
-          invitationKeys.byProject(context.projectId),
-          context.previousInvitations,
-        );
-      }
-
-      toast.error(
-        error instanceof Error ? error.message : "Failed to send invitation",
-      );
-    },
-    onSettled: (_, __, variables) => {
-      // Always refetch after error or success
+      // Also invalidate to ensure fresh data
       queryClient.invalidateQueries({
         queryKey: invitationKeys.byProject(variables.projectId),
       });
+
+      toast.success(`Invitation sent to ${variables.email}!`);
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to send invitation",
+      );
     },
   });
 }
@@ -133,6 +111,97 @@ export function useAcceptInvitation() {
 }
 
 /**
+ * Hook to update invitation status
+ * @param projectId - Optional project ID for optimistic updates
+ */
+export function useUpdateInvitationStatus(projectId?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      invitationId,
+      status,
+    }: {
+      invitationId: string;
+      status: string;
+    }) => {
+      return await invitationService.updateInvitationStatus(
+        invitationId,
+        status,
+      );
+    },
+    onSuccess: (updatedInvitation) => {
+      toast.success(
+        `Invitation status updated to ${updatedInvitation.status}!`,
+      );
+
+      if (projectId) {
+        queryClient.setQueryData<Invitation[]>(
+          invitationKeys.byProject(projectId),
+          (old = []) =>
+            old.map((inv) =>
+              inv.id === updatedInvitation.id ? updatedInvitation : inv,
+            ),
+        );
+      }
+
+      // Invalidate to ensure consistency
+      queryClient.invalidateQueries({
+        queryKey: projectId
+          ? invitationKeys.byProject(projectId)
+          : invitationKeys.all,
+      });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update invitation status",
+      );
+    },
+  });
+}
+
+/**
+ * Hook to cancel an invitation
+ * @param projectId - Optional project ID for optimistic updates
+ */
+export function useCancelInvitation(projectId?: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (invitationId: string) => {
+      return await invitationService.cancelInvitation(invitationId);
+    },
+    onSuccess: (updatedInvitation) => {
+      toast.success("Invitation cancelled successfully!");
+
+      if (projectId) {
+        queryClient.setQueryData<Invitation[]>(
+          invitationKeys.byProject(projectId),
+          (old = []) =>
+            old.map((inv) =>
+              inv.id === updatedInvitation.id ? updatedInvitation : inv,
+            ),
+        );
+      }
+
+      // Invalidate to ensure consistency
+      queryClient.invalidateQueries({
+        queryKey: projectId
+          ? invitationKeys.byProject(projectId)
+          : invitationKeys.all,
+      });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to cancel invitation",
+      );
+    },
+  });
+}
+
+/**
  * Hook to delete/revoke an invitation
  * @param projectId - Optional project ID for optimistic updates
  */
@@ -146,33 +215,26 @@ export function useDeleteInvitation(projectId?: string) {
     onMutate: async (invitationId) => {
       if (!projectId) return {};
 
-      // Cancel any outgoing refetches
+      // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: invitationKeys.byProject(projectId),
       });
 
-      // Snapshot the previous value
+      // Snapshot previous value
       const previousInvitations = queryClient.getQueryData<Invitation[]>(
         invitationKeys.byProject(projectId),
       );
 
-      // Optimistically remove the invitation
+      // Optimistically remove from cache
       queryClient.setQueryData<Invitation[]>(
         invitationKeys.byProject(projectId),
-        (old) => (old ? old.filter((inv) => inv.id !== invitationId) : []),
+        (old = []) => old.filter((inv) => inv.id !== invitationId),
       );
 
       return { previousInvitations, projectId };
     },
-    onSuccess: (_, __, context) => {
+    onSuccess: () => {
       toast.success("Invitation deleted successfully!");
-
-      // If we have a projectId, invalidate that specific query
-      if (context?.projectId) {
-        queryClient.invalidateQueries({
-          queryKey: invitationKeys.byProject(context.projectId),
-        });
-      }
     },
     onError: (error, invitationId, context) => {
       // Rollback on error
@@ -188,15 +250,10 @@ export function useDeleteInvitation(projectId?: string) {
       );
     },
     onSettled: (_, __, ___, context) => {
-      // Always refetch after error or success
+      // Always refetch after deletion to ensure consistency
       if (context?.projectId) {
         queryClient.invalidateQueries({
           queryKey: invitationKeys.byProject(context.projectId),
-        });
-      } else {
-        // If no projectId, invalidate all invitation queries
-        queryClient.invalidateQueries({
-          queryKey: invitationKeys.all,
         });
       }
     },
@@ -211,6 +268,10 @@ export function useInvitationManager(projectId: string | null) {
   const invitations = useProjectInvitations(projectId);
   const createInvitation = useCreateInvitation();
   const acceptInvitation = useAcceptInvitation();
+  const cancelInvitation = useCancelInvitation(projectId || undefined);
+  const updateInvitationStatus = useUpdateInvitationStatus(
+    projectId || undefined,
+  );
   const deleteInvitation = useDeleteInvitation(projectId || undefined);
 
   return {
@@ -228,6 +289,14 @@ export function useInvitationManager(projectId: string | null) {
     acceptInvitation: acceptInvitation.mutate,
     acceptInvitationAsync: acceptInvitation.mutateAsync,
     isAccepting: acceptInvitation.isPending,
+
+    cancelInvitation: cancelInvitation.mutate,
+    cancelInvitationAsync: cancelInvitation.mutateAsync,
+    isCancelling: cancelInvitation.isPending,
+
+    updateInvitationStatus: updateInvitationStatus.mutate,
+    updateInvitationStatusAsync: updateInvitationStatus.mutateAsync,
+    isUpdatingStatus: updateInvitationStatus.isPending,
 
     deleteInvitation: deleteInvitation.mutate,
     deleteInvitationAsync: deleteInvitation.mutateAsync,

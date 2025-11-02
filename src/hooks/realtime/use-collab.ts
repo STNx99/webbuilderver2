@@ -91,46 +91,8 @@ export function useCollab({
 
   const handleMessage = useCallback(
     (message: WebSocketMessage) => {
-      if (isSyncMessage(message)) {
-        console.log("[Collab] Received sync message");
-        isUpdatingFromRemote.current = true;
-
-        // Clear any existing safety timeout
-        if (remoteUpdateTimeoutRef.current) {
-          clearTimeout(remoteUpdateTimeoutRef.current);
-        }
-
-        // Safety timeout to prevent flag from getting stuck
-        remoteUpdateTimeoutRef.current = setTimeout(() => {
-          if (isUpdatingFromRemote.current) {
-            console.warn(
-              "[Collab] Safety reset: isUpdatingFromRemote was stuck",
-            );
-            isUpdatingFromRemote.current = false;
-          }
-        }, 1000);
-
-        const remoteHash = computeElementsHash(message.elements);
-        lastLocalStateHash.current = remoteHash;
-        lastSentStateHash.current = remoteHash;
-
-        loadElements(message.elements, true);
-
-        setTimeout(() => {
-          isUpdatingFromRemote.current = false;
-          if (remoteUpdateTimeoutRef.current) {
-            clearTimeout(remoteUpdateTimeoutRef.current);
-            remoteUpdateTimeoutRef.current = null;
-          }
-          setIsSynced(true);
-
-          onSync?.();
-        }, 50);
-      } else if (isUpdateMessage(message)) {
-        console.log("[Collab] Received update message");
-        const remoteHash = computeElementsHash(message.elements);
-
-        if (remoteHash !== lastLocalStateHash.current) {
+      switch (message.type) {
+        case "sync": {
           isUpdatingFromRemote.current = true;
 
           // Clear any existing safety timeout
@@ -148,9 +110,31 @@ export function useCollab({
             }
           }, 1000);
 
+          const remoteHash = computeElementsHash(message.elements);
           lastLocalStateHash.current = remoteHash;
+          lastSentStateHash.current = remoteHash;
 
           loadElements(message.elements, true);
+
+          // Set users if provided in sync message
+          if (message.users) {
+            mouseStore.setUsers(message.users);
+          }
+
+          // Set mouse positions if provided
+          if (message.mousePositions) {
+            const convertedPositions: Record<string, { x: number; y: number }> =
+              {};
+            Object.entries(message.mousePositions).forEach(([userId, pos]) => {
+              convertedPositions[userId] = { x: pos.X, y: pos.Y };
+            });
+            mouseStore.setMousePositions(convertedPositions);
+          }
+
+          // Set selected elements if provided
+          if (message.selectedElements) {
+            mouseStore.setSelectedElements(message.selectedElements);
+          }
 
           setTimeout(() => {
             isUpdatingFromRemote.current = false;
@@ -158,26 +142,81 @@ export function useCollab({
               clearTimeout(remoteUpdateTimeoutRef.current);
               remoteUpdateTimeoutRef.current = null;
             }
+            setIsSynced(true);
+
+            onSync?.();
           }, 50);
+          break;
         }
-      } else if (isErrorMessage(message)) {
-        console.error("[Collab] Server error:", message.error);
-        const error = new Error(message.error);
-        onError?.(error);
-      } else if (isMouseMoveMessage(message)) {
-        mouseStore.updateMousePosition(message.userId, {
-          x: message.x,
-          y: message.y,
-        });
-      } else if (isCurrentStateMessage(message)) {
-        const convertedPositions: Record<string, { x: number; y: number }> = {};
-        Object.entries(message.mousePositions).forEach(([userId, pos]) => {
-          convertedPositions[userId] = { x: pos.X, y: pos.Y };
-        });
-        mouseStore.setMousePositions(convertedPositions);
-        mouseStore.setSelectedElements(message.selectedElements);
-      } else if (isUserDisconnectMessage(message)) {
-        mouseStore.removeMousePosition(message.userId);
+        case "update": {
+          const remoteHash = computeElementsHash(message.elements);
+
+          if (remoteHash !== lastLocalStateHash.current) {
+            isUpdatingFromRemote.current = true;
+
+            if (remoteUpdateTimeoutRef.current) {
+              clearTimeout(remoteUpdateTimeoutRef.current);
+            }
+
+            remoteUpdateTimeoutRef.current = setTimeout(() => {
+              if (isUpdatingFromRemote.current) {
+                console.warn(
+                  "[Collab] Safety reset: isUpdatingFromRemote was stuck",
+                );
+                isUpdatingFromRemote.current = false;
+              }
+            }, 1000);
+
+            lastLocalStateHash.current = remoteHash;
+
+            loadElements(message.elements, true);
+
+            setTimeout(() => {
+              isUpdatingFromRemote.current = false;
+              if (remoteUpdateTimeoutRef.current) {
+                clearTimeout(remoteUpdateTimeoutRef.current);
+                remoteUpdateTimeoutRef.current = null;
+              }
+            }, 50);
+          }
+          break;
+        }
+        case "error": {
+          const error = new Error(message.error);
+          onError?.(error);
+          break;
+        }
+        case "mouseMove": {
+          mouseStore.updateMousePosition(message.userId, {
+            x: message.x,
+            y: message.y,
+          });
+          break;
+        }
+        case "currentState": {
+          const convertedPositions: Record<string, { x: number; y: number }> =
+            {};
+          if (message.mousePositions) {
+            Object.entries(message.mousePositions).forEach(([userId, pos]) => {
+              convertedPositions[userId] = { x: pos.X, y: pos.Y };
+            });
+          }
+          mouseStore.setMousePositions(convertedPositions);
+          mouseStore.setSelectedElements(message.selectedElements || {});
+
+          // Set users from message or add current user if empty
+          if (message.users && Object.keys(message.users).length > 0) {
+            mouseStore.setUsers(message.users);
+          }
+          break;
+        }
+        case "userDisconnect": {
+          mouseStore.removeMousePosition(message.userId);
+          mouseStore.removeUser(message.userId);
+          break;
+        }
+        default:
+          break;
       }
     },
     [computeElementsHash, loadElements, onSync, onError, mouseStore],
@@ -206,6 +245,7 @@ export function useCollab({
     },
     onDisconnect: () => {
       setIsSynced(false);
+      mouseStore.clear();
     },
     onError: (err: WebSocketErrorEvent) => {
       const error = new Error("WebSocket connection error");
@@ -213,12 +253,20 @@ export function useCollab({
     },
   });
 
+  // Reset connection flag when roomId changes
+  useEffect(() => {
+    console.log("[Collab] Room ID changed, resetting connection attempt flag");
+    hasAttemptedConnect.current = false;
+  }, [roomId]);
+
+  // Auto-connect when enabled and disconnected
   useEffect(() => {
     if (
       isWebSocketEnabled &&
       connectionState === "disconnected" &&
       !hasAttemptedConnect.current
     ) {
+      console.log("[Collab] Auto-connecting to WebSocket room:", roomId);
       hasAttemptedConnect.current = true;
       connect();
     }
@@ -226,7 +274,7 @@ export function useCollab({
     if (connectionState === "disconnected" && !isWebSocketEnabled) {
       hasAttemptedConnect.current = false;
     }
-  }, [isWebSocketEnabled, connectionState, connect]);
+  }, [isWebSocketEnabled, connectionState, connect, roomId]);
 
   const sendElementsUpdate = useCallback(
     (elements: EditorElement[], currentHash: string) => {
