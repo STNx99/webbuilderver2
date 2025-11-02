@@ -6,14 +6,14 @@ export enum CollaboratorRole {
 
 export interface Invitation {
   id: string;
-  projectId: string;
   email: string;
+  projectId: string;
   role: CollaboratorRole;
   token: string;
+  status: string;
   expiresAt: string;
-  acceptedAt?: string | null;
   createdAt: string;
-  updatedAt: string;
+  acceptedAt?: string | null;
 }
 
 export interface Collaborator {

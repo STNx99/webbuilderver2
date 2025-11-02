@@ -8,10 +8,20 @@ import {
   InvitationListResponse,
 } from "@/interfaces/collaboration.interface";
 
+export interface UpdateInvitationStatusRequest {
+  status: string;
+}
+
 interface IInvitationService {
   createInvitation: (data: CreateInvitationRequest) => Promise<Invitation>;
   getProjectInvitations: (projectId: string) => Promise<Invitation[]>;
+  getPendingInvitationsByProject: (projectId: string) => Promise<Invitation[]>;
   acceptInvitation: (data: AcceptInvitationRequest) => Promise<void>;
+  cancelInvitation: (invitationId: string) => Promise<Invitation>;
+  updateInvitationStatus: (
+    invitationId: string,
+    status: string,
+  ) => Promise<Invitation>;
   deleteInvitation: (invitationId: string) => Promise<boolean>;
 }
 
@@ -37,17 +47,15 @@ export const invitationService: IInvitationService = {
    */
   getProjectInvitations: async (projectId: string): Promise<Invitation[]> => {
     try {
-      const response = await apiClient.get<InvitationListResponse>(
+      const response = await apiClient.get<Invitation[]>(
         GetUrl(API_ENDPOINTS.INVITATIONS.GET_BY_PROJECT(projectId)),
       );
-      // Ensure we always return an array, even if the response is malformed
-      return Array.isArray(response?.invitations) ? response.invitations : [];
+      return Array.isArray(response) ? response : [];
     } catch (error) {
       console.warn(
         `Failed to fetch invitations for project ${projectId}:`,
         error,
       );
-      // Return empty array on error to prevent undefined return
       return [];
     }
   },
@@ -59,6 +67,53 @@ export const invitationService: IInvitationService = {
    */
   acceptInvitation: async (data: AcceptInvitationRequest): Promise<void> => {
     await apiClient.post<void>(GetUrl(API_ENDPOINTS.INVITATIONS.ACCEPT), data);
+  },
+
+  /**
+   * Get pending invitations for a specific project
+   * @param projectId - The project ID
+   * @returns Promise<Invitation[]> - Array of pending invitations
+   */
+  getPendingInvitationsByProject: async (
+    projectId: string,
+  ): Promise<Invitation[]> => {
+    try {
+      const response = await apiClient.get<Invitation[]>(
+        GetUrl(API_ENDPOINTS.INVITATIONS.GET_PENDING_BY_PROJECT(projectId)),
+      );
+      const invitations = Array.isArray(response) ? response : [];
+      return invitations;
+    } catch (error) {
+      return [];
+    }
+  },
+
+  /**
+   * Cancel an invitation
+   * @param invitationId - The invitation ID to cancel
+   * @returns Promise<Invitation> - The updated invitation
+   */
+  cancelInvitation: async (invitationId: string): Promise<Invitation> => {
+    return apiClient.patch<Invitation>(
+      GetUrl(API_ENDPOINTS.INVITATIONS.CANCEL(invitationId)),
+      {},
+    );
+  },
+
+  /**
+   * Update the status of an invitation
+   * @param invitationId - The invitation ID
+   * @param status - The new status
+   * @returns Promise<Invitation> - The updated invitation
+   */
+  updateInvitationStatus: async (
+    invitationId: string,
+    status: string,
+  ): Promise<Invitation> => {
+    return apiClient.patch<Invitation>(
+      GetUrl(API_ENDPOINTS.INVITATIONS.UPDATE_STATUS(invitationId)),
+      { status },
+    );
   },
 
   /**
