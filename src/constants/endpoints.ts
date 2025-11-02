@@ -90,6 +90,21 @@ export const API_ENDPOINTS = {
       GET_ALL: "/api/v1/marketplace/tags",
       DELETE: (id: string) => `/api/v1/marketplace/tags/${id}`,
     },
+    COMMENTS: {
+      CREATE: "/api/v1/comments",
+      GET_ALL: "/api/v1/comments",
+      GET_BY_ID: (commentId: string) => `/api/v1/comments/${commentId}`,
+      GET_BY_ITEM: (itemId: string) => `/api/v1/marketplace/items/${itemId}/comments`,
+      UPDATE: (commentId: string) => `/api/v1/comments/${commentId}`,
+      DELETE: (commentId: string) => `/api/v1/comments/${commentId}`,
+      MODERATE: (commentId: string) => `/api/v1/comments/${commentId}/moderate`,
+      GET_COUNT: (itemId: string) => `/api/v1/marketplace/items/${itemId}/comments/count`,
+      // Reactions
+      CREATE_REACTION: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
+      DELETE_REACTION: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
+      GET_REACTIONS: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
+      GET_REACTION_SUMMARY: (commentId: string) => `/api/v1/comments/${commentId}/reactions/summary`,
+    },
   },
   INVITATIONS: {
     CREATE: "/api/v1/invitations",
