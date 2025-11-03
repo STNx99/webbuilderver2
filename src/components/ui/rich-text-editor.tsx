@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Editor } from "@/components/richtexteditor/blocks/editor/editor";
+import { AIChatbotBubble } from "@/components/ui/ai-chatbot-bubble";
 
 interface RichTextEditorProps {
   value?: string;
@@ -33,12 +34,26 @@ export function RichTextEditor({
     [onChange],
   );
 
+  const handleAIContentGenerated = useCallback(
+    (content: string) => {
+      // Append AI generated content to current value
+      const newValue = value ? `${value}\n${content}` : content;
+      onChange?.(newValue);
+    },
+    [value, onChange],
+  );
+
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative">
       <Editor
         initialContent={editorState}
         onContentChange={handleChange}
         placeholder={placeholder}
+      />
+      <AIChatbotBubble
+        onContentGenerated={handleAIContentGenerated}
+        fieldName="Rich Text Content"
+        currentContent={value}
       />
     </div>
   );

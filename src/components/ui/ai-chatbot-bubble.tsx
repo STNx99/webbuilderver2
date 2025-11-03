@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Sparkles, Send, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { aiContentService } from "@/services/aicontent";
 
 interface Message {
     id: string;
@@ -17,6 +18,21 @@ interface AIChatbotBubbleProps {
     onContentGenerated?: (content: string) => void;
     fieldName?: string;
     currentContent?: string;
+}
+
+// Typing indicator component
+function TypingIndicator() {
+    return (
+        <div className="flex justify-start">
+            <div className="bg-muted rounded-lg px-4 py-3">
+                <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export function AIChatbotBubble({ onContentGenerated, fieldName, currentContent }: AIChatbotBubbleProps) {
@@ -40,7 +56,7 @@ export function AIChatbotBubble({ onContentGenerated, fieldName, currentContent 
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages]);
+    }, [messages, isLoading]);
 
     const handleSend = async () => {
         if (!input.trim() || isLoading) return;
@@ -70,23 +86,13 @@ export function AIChatbotBubble({ onContentGenerated, fieldName, currentContent 
                 contextString = `Nội dung hiện tại:\n${currentContent}\n\n${contextString}`;
             }
 
-            const response = await fetch("http://localhost:3001/api/ai/generate-content", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    prompt: input,
-                    context: contextString,
-                    includeImages: true,
-                }),
+            // Use aiContentService from aicontent.ts
+            const data = await aiContentService.generateContent({
+                prompt: input,
+                context: contextString,
+                includeImages: true,
             });
 
-            if (!response.ok) {
-                throw new Error("Failed to generate content");
-            }
-
-            const data = await response.json();
             const generatedContent = data.content || data.html || "";
 
             const assistantMessage: Message = {
@@ -153,7 +159,7 @@ export function AIChatbotBubble({ onContentGenerated, fieldName, currentContent 
                             >
                                 <div
                                     className={cn(
-                                        "max-w-[80%] rounded-lg px-4 py-2",
+                                        "max-w-[80%] rounded-lg px-4 py-2 shadow-sm",
                                         message.role === "user"
                                             ? "bg-primary text-primary-foreground"
                                             : "bg-muted",
@@ -165,13 +171,7 @@ export function AIChatbotBubble({ onContentGenerated, fieldName, currentContent 
                                 </div>
                             </div>
                         ))}
-                        {isLoading && (
-                            <div className="flex justify-start">
-                                <div className="bg-muted rounded-lg px-4 py-2">
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                </div>
-                            </div>
-                        )}
+                        {isLoading && <TypingIndicator />}
                         <div ref={messagesEndRef} />
                     </div>
 
