@@ -116,8 +116,10 @@ export function Plugins({
                 </div>
               )}
             </ToolbarPlugin>
-            <div className="flex-1 overflow-y-auto p-4 min-h-0" ref={onRef}>
-              <ContentEditable placeholder={placeholder} />
+            <div className="flex-1 overflow-y-auto min-h-0 relative">
+              <div ref={onRef} className="h-full">
+                <ContentEditable placeholder={placeholder} />
+              </div>
             </div>
           </div>
         }
