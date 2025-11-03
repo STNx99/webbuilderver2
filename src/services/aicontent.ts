@@ -1,4 +1,7 @@
-import ApiClient from './apiclient';
+import { GetAIUrl } from "@/lib/utils/geturl";
+import { API_ENDPOINTS } from "@/constants/endpoints";
+import apiClient from "./apiclient";
+import getToken from "./token";
 
 interface GenerateContentParams {
     prompt: string;
@@ -13,13 +16,27 @@ interface GenerateContentResponse {
 
 export const aiContentService = {
     async generateContent(params: GenerateContentParams): Promise<GenerateContentResponse> {
-        return await ApiClient.post<GenerateContentResponse>(
-            'http://localhost:3001/api/ai/generate-content',
-            {
-                prompt: params.prompt,
-                context: params.context,
-                includeImages: params.includeImages,
-            }
-        );
+        try {
+            const token = await getToken();
+            const url = GetAIUrl(API_ENDPOINTS.AI.GENERATE_CONTENT);
+            console.log("AI Content URL:", url);
+
+            return await apiClient.post<GenerateContentResponse>(
+                url,
+                {
+                    prompt: params.prompt,
+                    context: params.context,
+                    includeImages: params.includeImages,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+        } catch (error) {
+            console.error("Failed to generate AI content:", error);
+            throw error;
+        }
     },
 };
