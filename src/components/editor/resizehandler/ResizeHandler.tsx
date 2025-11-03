@@ -2,12 +2,12 @@
 
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
-import { useElementHandler } from "@/hooks/useElementHandler";
-import { useResizeHandler } from "@/hooks/useResizeHandler";
+import { useElementHandler } from "@/hooks";
+import { useResizeHandler } from "@/hooks";
 import { cn } from "@/lib/utils";
 import type { EditorElement } from "@/types/global.type";
 import type React from "react";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useRef, useMemo, memo } from "react";
 import {
   type ResizeDirection,
   directionalClasses,
@@ -21,38 +21,54 @@ interface ResizeHandlerProps {
   children: ReactNode;
 }
 
-function ResizeHandle({
-  direction,
-  onResizeStart,
-  element,
-  isResizing,
-  currentResizeDirection,
-}: {
+interface ResizeHandleProps {
   direction: ResizeDirection;
   onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void;
   element: EditorElement;
   isResizing: boolean;
   currentResizeDirection: ResizeDirection | null;
-}) {
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.button === 0) {
-      e.preventDefault();
-      e.stopPropagation();
+}
 
-      onResizeStart(direction, e);
-    }
+const ResizeHandle = memo(function ResizeHandle({
+  direction,
+  onResizeStart,
+  element,
+  isResizing,
+  currentResizeDirection,
+}: ResizeHandleProps) {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Only handle left mouse button
+    if (e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    onResizeStart(direction, e);
   };
 
   const isMarginHandle = direction.startsWith("margin-");
+  const isPaddingHandle = direction.startsWith("padding-");
   const isGapHandle = direction === "gap";
 
+  // Determine handle color based on type
+  const handleColorClasses = useMemo(() => {
+    if (isGapHandle) {
+      return "bg-green-500 border-white hover:bg-green-600 active:bg-green-700";
+    }
+    if (isMarginHandle) {
+      return "bg-orange-500 border-white hover:bg-orange-600 active:bg-orange-700";
+    }
+    if (isPaddingHandle) {
+      return "bg-yellow-500 border-white hover:bg-yellow-600 active:bg-yellow-700";
+    }
+    return "bg-blue-500 border-white hover:bg-blue-600 active:bg-blue-700";
+  }, [isGapHandle, isMarginHandle, isPaddingHandle]);
+
   const baseClasses = cn(
-    "absolute rounded-full w-3 h-3 border-2 z-10 active:scale-125",
-    isGapHandle
-      ? "bg-green-500 border-white hover:bg-green-600 active:bg-green-700"
-      : isMarginHandle
-        ? "bg-orange-500 border-white hover:bg-orange-600 active:bg-orange-700"
-        : "bg-blue-500 border-white hover:bg-blue-600 active:bg-blue-700",
+    "absolute rounded-full w-3 h-3 border-2 z-10 transition-transform duration-75",
+    "hover:scale-110 active:scale-125",
+    handleColorClasses,
+    directionalClasses[direction],
   );
 
   return (
@@ -63,13 +79,100 @@ function ResizeHandle({
       currentResizeDirection={currentResizeDirection}
     >
       <div
-        className={cn(baseClasses, directionalClasses[direction])}
+        className={baseClasses}
         onMouseDown={handleMouseDown}
+        onPointerDown={(e) => e.stopPropagation()}
+        role="button"
+        aria-label={`Resize ${direction}`}
+        tabIndex={-1}
       />
     </ResizeTooltip>
   );
-}
+});
 
+/**
+ * Gap handle component (centered)
+ * Memoized to prevent unnecessary re-renders
+ */
+const GapHandle = memo(function GapHandle({
+  onResizeStart,
+  element,
+  isResizing,
+  currentResizeDirection,
+}: {
+  onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void;
+  element: EditorElement;
+  isResizing: boolean;
+  currentResizeDirection: ResizeDirection | null;
+}) {
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Only handle left mouse button
+    if (e.button !== 0) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    onResizeStart("gap", e);
+  };
+
+  const baseClasses = cn(
+    "absolute rounded-full w-3 h-3 border-2 z-10 transition-transform duration-75",
+    "bg-green-500 border-white hover:bg-green-600 active:bg-green-700",
+    "hover:scale-110 active:scale-125",
+    "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize",
+  );
+
+  return (
+    <ResizeTooltip
+      direction="gap"
+      element={element}
+      isResizing={isResizing}
+      currentResizeDirection={currentResizeDirection}
+    >
+      <div
+        className={baseClasses}
+        onMouseDown={handleMouseDown}
+        onPointerDown={(e) => e.stopPropagation()}
+        role="button"
+        aria-label="Resize gap"
+        tabIndex={-1}
+      />
+    </ResizeTooltip>
+  );
+});
+
+/**
+ * Element label showing type and ID
+ * Memoized to prevent unnecessary re-renders
+ */
+const ElementLabel = memo(function ElementLabel({
+  element,
+}: {
+  element: EditorElement;
+}) {
+  return (
+    <div
+      className="absolute top-0 left-0 z-30 text-blue-500 text-xs px-1 py-0.5 pointer-events-none select-none bg-white/80 rounded"
+      style={{
+        transform: "translateY(-22px)",
+        maxWidth: "200px",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+      }}
+    >
+      {element.type}
+      <span className="opacity-60 ml-1 text-[10px]">
+        #{element.id.slice(0, 8)}
+      </span>
+    </div>
+  );
+});
+
+/**
+ * Main ResizeHandler component
+ * Wraps an element with resize handles and selection visualization
+ */
 export default function ResizeHandler({
   element,
   children,
@@ -86,47 +189,36 @@ export default function ResizeHandler({
       targetRef,
     });
 
-  // Get resize handles, excluding the gap handle
-  const resizeHandles: ResizeDirection[] = getResizeHandles(
-    element.styles?.default,
-  ).filter((dir) => dir !== "gap");
+  // Determine selection states
+  const isSelected = selectedElement?.id === element.id;
+  const isHovered =
+    hoveredElement?.id === element.id &&
+    draggedOverElement?.id !== element.id &&
+    !isSelected;
+  const isDraggedOver = draggedOverElement?.id === element.id && !isSelected;
 
-  // Use imported hasGap to determine if gap handles should be rendered
-  const showGapHandles = hasGap(element.styles?.default);
-
-  // Helper for rendering gap handle in the center
-  function GapHandle({
-    onResizeStart,
-    isResizing,
-    currentResizeDirection,
-  }: {
-    onResizeStart: (direction: ResizeDirection, e: React.MouseEvent) => void;
-    isResizing: boolean;
-    currentResizeDirection: ResizeDirection | null;
-  }) {
-    const baseClasses = cn(
-      "absolute rounded-full w-3 h-3 border-2 z-10 active:scale-125 bg-green-500 border-white hover:bg-green-600 active:bg-green-700",
-      "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ns-resize",
+  // Get resize handles (excluding gap)
+  const resizeHandles = useMemo(() => {
+    return getResizeHandles(element.styles?.default).filter(
+      (dir) => dir !== "gap",
     );
-    const handleMouseDown = (e: React.MouseEvent) => {
-      if (e.button === 0) {
-        e.preventDefault();
-        e.stopPropagation();
+  }, [element.styles?.default]);
 
-        onResizeStart("gap", e);
-      }
-    };
-    return (
-      <ResizeTooltip
-        direction="gap"
-        element={element}
-        isResizing={isResizing}
-        currentResizeDirection={currentResizeDirection}
-      >
-        <div className={baseClasses} onMouseDown={handleMouseDown} />
-      </ResizeTooltip>
-    );
-  }
+  // Check if gap handles should be shown
+  const showGapHandles = useMemo(() => {
+    return hasGap(element.styles?.default);
+  }, [element.styles?.default]);
+
+  // Handle double click
+  const handleElementDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    handleDoubleClick(e, element);
+  };
+
+  // Handle pointer down
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.stopPropagation();
+  };
 
   return (
     <div
@@ -138,58 +230,63 @@ export default function ResizeHandler({
         position: "relative",
       }}
       id={element.id}
-      onPointerDown={(e) => e.stopPropagation()}
-      onDoubleClick={(e) => {
-        e.stopPropagation();
-        handleDoubleClick(e, element);
-      }}
+      onPointerDown={handlePointerDown}
+      onDoubleClick={handleElementDoubleClick}
     >
-      {selectedElement?.id === element.id && (
-        <div
-          className="absolute top-0 left-0 z-30 text-blue-500 text-xs px-1 py-0.5 pointer-events-none select-none"
-          style={{
-            transform: "translateY(-20px)",
-            maxWidth: "80%",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {element.type} {element.id}
-        </div>
-      )}
+      {/* Element label (shown when selected) */}
+      {isSelected && <ElementLabel element={element} />}
+
+      {/* Children content */}
       {children}
-      {selectedElement?.id === element.id && (
+
+      {/* Resize handles (shown when selected) */}
+      {isSelected && (
         <>
           {resizeHandles.map((dir) => (
             <ResizeHandle
               key={dir}
               direction={dir}
               onResizeStart={handleResizeStart}
-              element={selectedElement}
+              element={element}
               isResizing={isResizing}
               currentResizeDirection={currentResizeDirection}
             />
           ))}
+
+          {/* Gap handle (if element supports gap) */}
           {showGapHandles && (
             <GapHandle
               onResizeStart={handleResizeStart}
+              element={element}
               isResizing={isResizing}
               currentResizeDirection={currentResizeDirection}
             />
           )}
-          <div className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none" />
+
+          {/* Selection border */}
+          <div
+            className="absolute inset-0 border-2 border-blue-500 border-dashed pointer-events-none rounded-sm"
+            style={{
+              boxShadow: "0 0 0 1px rgba(59, 130, 246, 0.1)",
+            }}
+          />
         </>
       )}
-      {hoveredElement?.id === element.id &&
-        !(draggedOverElement?.id === element.id) &&
-        !(selectedElement?.id === element.id) && (
-          <div className="pointer-events-none absolute inset-0 border border-black z-20" />
-        )}
-      {draggedOverElement?.id === element.id &&
-        !(selectedElement?.id === element.id) && (
-          <div className="pointer-events-none absolute border-dashed inset-0 border-2 border-green-600 z-20" />
-        )}
+
+      {/* Hover border (shown when hovered but not selected) */}
+      {isHovered && (
+        <div className="pointer-events-none absolute inset-0 border border-blue-400 z-20 rounded-sm transition-colors duration-100" />
+      )}
+
+      {/* Drag over border (shown when dragging over) */}
+      {isDraggedOver && (
+        <div
+          className="pointer-events-none absolute inset-0 border-2 border-dashed border-green-600 z-20 rounded-sm"
+          style={{
+            boxShadow: "0 0 0 1px rgba(22, 163, 74, 0.1)",
+          }}
+        />
+      )}
     </div>
   );
 }

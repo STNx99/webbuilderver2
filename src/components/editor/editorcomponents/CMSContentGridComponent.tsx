@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { CMSContentGridElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
 import ElementLoader from "../ElementLoader";
 import { Database } from "lucide-react";
-import { useCMSContent, getFieldValue } from "@/hooks/useCMSContent";
+import { useCMSContent, getFieldValue } from "@/hooks";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-
 
 const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
   const cmsElement = element as CMSContentGridElement;
@@ -39,7 +38,6 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
       ? contentItems
       : [];
 
-  // Apply limit
   const limitedItems = itemsToRender.slice(0, limit);
 
   if (!contentTypeId) {

@@ -1,6 +1,7 @@
 import { ElementType } from "@/types/global.type";
 import { Component } from "lucide-react";
 import React from "react";
+import { ComponentTooltip } from "../ComponentTooltip";
 
 type HolderProps = {
   icon: React.ReactNode;
@@ -15,14 +16,16 @@ const ComponentHolder = ({ icon, type }: HolderProps) => {
     e.dataTransfer.setData("elementType", elementType);
   };
   return (
-    <div
-      draggable
-      onDragStart={(e) => onDragStart(e, type)}
-      className="flex flex-row justify-between items-center w-full px-2 h-full text-xs rounded-md cursor-grab active:cursor-grabbing transition-colors"
-    >
-      <div>{type}</div>
-      {icon}
-    </div>
+    <ComponentTooltip componentType={type}>
+      <div
+        draggable
+        onDragStart={(e) => onDragStart(e, type)}
+        className="flex flex-row justify-between items-center w-full px-2 h-full text-xs rounded-md cursor-grab active:cursor-grabbing transition-colors"
+      >
+        <div>{type}</div>
+        {icon}
+      </div>
+    </ComponentTooltip>
   );
 };
 

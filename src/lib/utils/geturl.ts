@@ -6,6 +6,14 @@ export default function GetUrl(path: string): string {
   return `${baseUrl}${path}`;
 }
 
+export function GetAIUrl(path: string): string {
+  const baseUrl =
+    process.env.AI_SERVER_URL ||
+    process.env.NEXT_PUBLIC_AI_SERVER_URL ||
+    "http://localhost:3001";
+  return `${baseUrl}${path}`;
+}
+
 export function GetNextJSURL(url: string): string {
   if (typeof window === "undefined") {
     const base =

@@ -7,7 +7,7 @@ const ProjectSchema = z.object({
   OwnerId: z.string(),
   Published: z.boolean().optional().default(false),
   Subdomain: z.string().optional().nullable(),
-  Styles: z.record(z.unknown()).optional(), // Json type
+  Styles: z.record(z.string(), z.unknown()).optional(), // Json type
   CreatedAt: z.date().optional(),
   UpdatedAt: z.date().optional(),
   DeletedAt: z.date().optional().nullable(),

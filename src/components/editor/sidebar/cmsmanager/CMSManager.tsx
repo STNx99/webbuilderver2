@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useCMSManager } from "../../../../hooks/useCMSManager";
+import { useCMSManager } from "../../../../hooks/cms/useCMSManager";
 import { ContentTypesTab } from "./tabs/ContentTypesTab";
 import { ContentFieldsTab } from "./tabs/ContentFieldsTab";
 import { ContentItemsTab } from "./tabs/ContentItemsTab";

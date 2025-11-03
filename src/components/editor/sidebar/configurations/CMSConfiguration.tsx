@@ -16,8 +16,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useElementStore } from "@/globalstore/elementstore";
 import { CMSContentSettings } from "@/interfaces/elements.interface";
-import { Database } from "lucide-react";
-import { useCMSContentTypes, useCMSContent } from "@/hooks/useCMSContent";
+import { useCMSContentTypes, useCMSContent } from "@/hooks";
 
 interface CMSConfigurationProps {
   elementId: string;
@@ -34,11 +33,9 @@ const CMSConfiguration: React.FC<CMSConfigurationProps> = ({ elementId }) => {
     element.type === "CMSContentList" || element.type === "CMSContentGrid";
   const isItem = element.type === "CMSContentItem";
 
-  // Fetch available content types from CMS
   const { data: contentTypes = [], isLoading: isLoadingTypes } =
     useCMSContentTypes();
 
-  // Fetch content items for the selected content type (for item slug selection)
   const { contentItems, isLoading: isLoadingItems } = useCMSContent({
     contentTypeId: settings.contentTypeId,
     enabled: !!settings.contentTypeId && isItem,

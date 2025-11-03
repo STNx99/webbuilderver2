@@ -38,13 +38,25 @@ type AppearanceStyles = Pick<
   | "borderColor"
   | "borderWidth"
   | "borderRadius"
+  | "borderStyle"
+  | "borderTopLeftRadius"
+  | "borderTopRightRadius"
+  | "borderBottomLeftRadius"
+  | "borderBottomRightRadius"
   | "boxShadow"
   | "outline"
   | "outlineColor"
   | "outlineWidth"
   | "outlineStyle"
-  // Opacity
+  // Background
+  | "backgroundImage"
+  | "backgroundSize"
+  | "backgroundPosition"
+  | "backgroundRepeat"
+  | "backgroundAttachment"
+  // Opacity & Visibility
   | "opacity"
+  | "visibility"
   // Spacing
   | "padding"
   | "paddingTop"
@@ -88,6 +100,25 @@ type AppearanceStyles = Pick<
   | "placeContent"
   | "placeSelf"
   | "justifyItems"
+  // Transform & Effects
+  | "transform"
+  | "transformOrigin"
+  | "filter"
+  // Overflow & Scrolling
+  | "overflow"
+  | "overflowX"
+  | "overflowY"
+  // Cursor & Interaction
+  | "cursor"
+  // Box Model
+  | "boxSizing"
+  | "objectFit"
+  | "aspectRatio"
+  // Text Overflow
+  | "textOverflow"
+  | "whiteSpace"
+  | "wordBreak"
+  | "wordWrap"
 >;
 
 interface AppearanceAccordionProps {
@@ -192,6 +223,10 @@ export const AppearanceAccordion = ({
             "size",
             "display",
             "position",
+            "background",
+            "transform",
+            "effects",
+            "overflow",
           ]}
         >
           {/* Size Section */}
@@ -469,6 +504,30 @@ export const AppearanceAccordion = ({
                   </span>
                 </div>
                 <div className="flex items-center gap-5">
+                  <Label htmlFor="borderStyle" className="text-xs w-16">
+                    Style
+                  </Label>
+                  <Select
+                    value={styles.borderStyle || "solid"}
+                    onValueChange={(value) => updateStyle("borderStyle", value)}
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Style" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solid">Solid</SelectItem>
+                      <SelectItem value="dashed">Dashed</SelectItem>
+                      <SelectItem value="dotted">Dotted</SelectItem>
+                      <SelectItem value="double">Double</SelectItem>
+                      <SelectItem value="groove">Groove</SelectItem>
+                      <SelectItem value="ridge">Ridge</SelectItem>
+                      <SelectItem value="inset">Inset</SelectItem>
+                      <SelectItem value="outset">Outset</SelectItem>
+                      <SelectItem value="none">None</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-5">
                   <Label htmlFor="borderRadius" className="text-xs w-16">
                     Radius
                   </Label>
@@ -490,6 +549,92 @@ export const AppearanceAccordion = ({
                   <span className="text-xs w-6 text-right">
                     {styles.borderRadius}
                   </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2">
+                    <Label
+                      htmlFor="borderTopLeftRadius"
+                      className="text-xs w-8"
+                    >
+                      TL
+                    </Label>
+                    <Input
+                      id="borderTopLeftRadius"
+                      type="number"
+                      value={styles.borderTopLeftRadius || ""}
+                      onChange={(e) =>
+                        updateStyle(
+                          "borderTopLeftRadius",
+                          `${e.target.value}px`,
+                        )
+                      }
+                      className="w-12 h-6 px-1 py-0 text-xs border"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label
+                      htmlFor="borderTopRightRadius"
+                      className="text-xs w-8"
+                    >
+                      TR
+                    </Label>
+                    <Input
+                      id="borderTopRightRadius"
+                      type="number"
+                      value={styles.borderTopRightRadius || ""}
+                      onChange={(e) =>
+                        updateStyle(
+                          "borderTopRightRadius",
+                          `${e.target.value}px`,
+                        )
+                      }
+                      className="w-12 h-6 px-1 py-0 text-xs border"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label
+                      htmlFor="borderBottomLeftRadius"
+                      className="text-xs w-8"
+                    >
+                      BL
+                    </Label>
+                    <Input
+                      id="borderBottomLeftRadius"
+                      type="number"
+                      value={styles.borderBottomLeftRadius || ""}
+                      onChange={(e) =>
+                        updateStyle(
+                          "borderBottomLeftRadius",
+                          `${e.target.value}px`,
+                        )
+                      }
+                      className="w-12 h-6 px-1 py-0 text-xs border"
+                      placeholder="0"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label
+                      htmlFor="borderBottomRightRadius"
+                      className="text-xs w-8"
+                    >
+                      BR
+                    </Label>
+                    <Input
+                      id="borderBottomRightRadius"
+                      type="number"
+                      value={styles.borderBottomRightRadius || ""}
+                      onChange={(e) =>
+                        updateStyle(
+                          "borderBottomRightRadius",
+                          `${e.target.value}px`,
+                        )
+                      }
+                      className="w-12 h-6 px-1 py-0 text-xs border"
+                      placeholder="0"
+                    />
+                  </div>
                 </div>
               </div>
             </AccordionContent>
@@ -1204,6 +1349,292 @@ export const AppearanceAccordion = ({
               </AccordionContent>
             </AccordionItem>
           )}
+
+          {/* Background Section */}
+          <AccordionItem value="background">
+            <AccordionTrigger className="text-xs">Background</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2 py-1">
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="backgroundImage" className="text-xs w-20">
+                    Image URL
+                  </Label>
+                  <Input
+                    id="backgroundImage"
+                    type="text"
+                    value={styles.backgroundImage || ""}
+                    placeholder="url(https://...)"
+                    onChange={(e) =>
+                      updateStyle("backgroundImage", e.target.value)
+                    }
+                    className="w-40 h-6 px-1 py-0 text-xs border"
+                  />
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="backgroundSize" className="text-xs w-20">
+                    Size
+                  </Label>
+                  <Select
+                    value={styles.backgroundSize?.toString() || "auto"}
+                    onValueChange={(value) =>
+                      updateStyle("backgroundSize", value)
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="auto">Auto</SelectItem>
+                      <SelectItem value="cover">Cover</SelectItem>
+                      <SelectItem value="contain">Contain</SelectItem>
+                      <SelectItem value="100% 100%">100%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="backgroundPosition" className="text-xs w-20">
+                    Position
+                  </Label>
+                  <Input
+                    id="backgroundPosition"
+                    type="text"
+                    value={styles.backgroundPosition || ""}
+                    placeholder="center center"
+                    onChange={(e) =>
+                      updateStyle("backgroundPosition", e.target.value)
+                    }
+                    className="w-32 h-6 px-1 py-0 text-xs border"
+                  />
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="backgroundRepeat" className="text-xs w-20">
+                    Repeat
+                  </Label>
+                  <Select
+                    value={styles.backgroundRepeat || "repeat"}
+                    onValueChange={(value) =>
+                      updateStyle("backgroundRepeat", value)
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Repeat" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="repeat">Repeat</SelectItem>
+                      <SelectItem value="no-repeat">No Repeat</SelectItem>
+                      <SelectItem value="repeat-x">Repeat X</SelectItem>
+                      <SelectItem value="repeat-y">Repeat Y</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Transform Section */}
+          <AccordionItem value="transform">
+            <AccordionTrigger className="text-xs">Transform</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2 py-1">
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="transform" className="text-xs w-20">
+                    Transform
+                  </Label>
+                  <Input
+                    id="transform"
+                    type="text"
+                    value={styles.transform || ""}
+                    placeholder="rotate(45deg) scale(1.2)"
+                    onChange={(e) => updateStyle("transform", e.target.value)}
+                    className="w-48 h-6 px-1 py-0 text-xs border"
+                  />
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="transformOrigin" className="text-xs w-20">
+                    Origin
+                  </Label>
+                  <Input
+                    id="transformOrigin"
+                    type="text"
+                    value={styles.transformOrigin || ""}
+                    placeholder="center center"
+                    onChange={(e) =>
+                      updateStyle("transformOrigin", e.target.value)
+                    }
+                    className="w-32 h-6 px-1 py-0 text-xs border"
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Effects Section */}
+          <AccordionItem value="effects">
+            <AccordionTrigger className="text-xs">Effects</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2 py-1">
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="filter" className="text-xs w-20">
+                    Filter
+                  </Label>
+                  <Input
+                    id="filter"
+                    type="text"
+                    value={styles.filter || ""}
+                    placeholder="blur(5px) brightness(1.2)"
+                    onChange={(e) => updateStyle("filter", e.target.value)}
+                    className="w-48 h-6 px-1 py-0 text-xs border"
+                  />
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="cursor" className="text-xs w-20">
+                    Cursor
+                  </Label>
+                  <Select
+                    value={styles.cursor || "auto"}
+                    onValueChange={(value) => updateStyle("cursor", value)}
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Cursor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="auto">Auto</SelectItem>
+                      <SelectItem value="pointer">Pointer</SelectItem>
+                      <SelectItem value="text">Text</SelectItem>
+                      <SelectItem value="move">Move</SelectItem>
+                      <SelectItem value="not-allowed">Not Allowed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="visibility" className="text-xs w-20">
+                    Visibility
+                  </Label>
+                  <Select
+                    value={styles.visibility || "visible"}
+                    onValueChange={(value) =>
+                      updateStyle(
+                        "visibility",
+                        value as "visible" | "hidden" | "collapse",
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Visibility" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="visible">Visible</SelectItem>
+                      <SelectItem value="hidden">Hidden</SelectItem>
+                      <SelectItem value="collapse">Collapse</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Overflow Section */}
+          <AccordionItem value="overflow">
+            <AccordionTrigger className="text-xs">Overflow</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2 py-1">
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="overflow" className="text-xs w-20">
+                    Overflow
+                  </Label>
+                  <Select
+                    value={styles.overflow || "visible"}
+                    onValueChange={(value) =>
+                      updateStyle(
+                        "overflow",
+                        value as "visible" | "hidden" | "scroll" | "auto",
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Overflow" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="visible">Visible</SelectItem>
+                      <SelectItem value="hidden">Hidden</SelectItem>
+                      <SelectItem value="scroll">Scroll</SelectItem>
+                      <SelectItem value="auto">Auto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="overflowX" className="text-xs w-20">
+                    Overflow X
+                  </Label>
+                  <Select
+                    value={styles.overflowX || "visible"}
+                    onValueChange={(value) =>
+                      updateStyle(
+                        "overflowX",
+                        value as "visible" | "hidden" | "scroll" | "auto",
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="X" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="visible">Visible</SelectItem>
+                      <SelectItem value="hidden">Hidden</SelectItem>
+                      <SelectItem value="scroll">Scroll</SelectItem>
+                      <SelectItem value="auto">Auto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="overflowY" className="text-xs w-20">
+                    Overflow Y
+                  </Label>
+                  <Select
+                    value={styles.overflowY || "visible"}
+                    onValueChange={(value) =>
+                      updateStyle(
+                        "overflowY",
+                        value as "visible" | "hidden" | "scroll" | "auto",
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Y" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="visible">Visible</SelectItem>
+                      <SelectItem value="hidden">Hidden</SelectItem>
+                      <SelectItem value="scroll">Scroll</SelectItem>
+                      <SelectItem value="auto">Auto</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-5">
+                  <Label htmlFor="boxSizing" className="text-xs w-20">
+                    Box Sizing
+                  </Label>
+                  <Select
+                    value={styles.boxSizing || "content-box"}
+                    onValueChange={(value) =>
+                      updateStyle(
+                        "boxSizing",
+                        value as "content-box" | "border-box",
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-32 max-h-6 px-1 py-0 text-xs border">
+                      <SelectValue placeholder="Box Sizing" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="content-box">Content Box</SelectItem>
+                      <SelectItem value="border-box">Border Box</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </AccordionContent>
     </AccordionItem>

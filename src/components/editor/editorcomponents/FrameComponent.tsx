@@ -1,5 +1,5 @@
 import React from "react";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { FrameElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";

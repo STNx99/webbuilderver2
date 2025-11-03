@@ -1,13 +1,13 @@
 import React from "react";
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { CMSContentListElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
 import ElementLoader from "../ElementLoader";
 import { Database } from "lucide-react";
-import { useCMSContent } from "@/hooks/useCMSContent";
+import { useCMSContent } from "@/hooks";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-import { getFieldValue } from "@/hooks/useCMSContent";
+import { getFieldValue } from "@/hooks";
 
 const CMSContentListComponent = ({ element, data }: EditorComponentProps) => {
   const cmsElement = element as CMSContentListElement;

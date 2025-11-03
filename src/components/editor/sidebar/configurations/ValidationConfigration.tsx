@@ -13,6 +13,12 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useSelectionStore } from "@/globalstore/selectionstore";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 const ALL_RULES: RuleType[] = [
   "required",
@@ -115,20 +121,28 @@ export default function ValidationConfiguration() {
       case "required":
         return (
           <div className="flex items-center gap-2">
-            <Label htmlFor={`required-${rule.rule}`} className="text-xs">
-              Required
-            </Label>
-            <input
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Label
+                  htmlFor={`required-${rule.rule}`}
+                  className="text-xs cursor-help"
+                >
+                  Required
+                </Label>
+              </HoverCardTrigger>
+              <HoverCardContent>
+                Makes this field mandatory for form submission.
+              </HoverCardContent>
+            </HoverCard>
+            <Checkbox
               id={`required-${rule.rule}`}
-              type="checkbox"
               checked={!!("value" in rule && rule.value)}
-              onChange={(e) =>
+              onCheckedChange={(checked) =>
                 updateValidationRule({
                   ...rule,
-                  ...("value" in rule ? { value: e.target.checked } : {}),
+                  ...("value" in rule ? { value: !!checked } : {}),
                 } as ValidationRule)
               }
-              className="w-4 h-4"
             />
           </div>
         );
@@ -192,23 +206,32 @@ export default function ValidationConfiguration() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-row gap-2 items-center">
-        <Select
-          value={newRule}
-          onValueChange={(value) => setNewRule(value as RuleType)}
-        >
-          <SelectTrigger className="w-36 h-7 px-2 py-1 text-xs">
-            <SelectValue placeholder="Select rule" />
-          </SelectTrigger>
-          <SelectContent>
-            {ALL_RULES.filter(
-              (rt) => !validateRules.some((rule) => rule.rule === rt),
-            ).map((rt) => (
-              <SelectItem key={rt} value={rt} className="capitalize">
-                {rt}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <HoverCard>
+          <HoverCardTrigger asChild>
+            <div>
+              <Select
+                value={newRule}
+                onValueChange={(value) => setNewRule(value as RuleType)}
+              >
+                <SelectTrigger className="w-36 h-7 px-2 py-1 text-xs cursor-help">
+                  <SelectValue placeholder="Select rule" />
+                </SelectTrigger>
+                <SelectContent>
+                  {ALL_RULES.filter(
+                    (rt) => !validateRules.some((rule) => rule.rule === rt),
+                  ).map((rt) => (
+                    <SelectItem key={rt} value={rt} className="capitalize">
+                      {rt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            Choose a validation rule to add to this input field.
+          </HoverCardContent>
+        </HoverCard>
         <Button
           type="button"
           className="h-7 px-3 py-1 text-xs"

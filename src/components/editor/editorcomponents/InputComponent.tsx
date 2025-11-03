@@ -1,4 +1,4 @@
-import { useElementHandler } from "@/hooks/useElementHandler";
+import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { InputElement } from "@/interfaces/elements.interface";
 import React from "react";

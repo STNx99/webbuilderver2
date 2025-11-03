@@ -45,21 +45,24 @@ model Image {
 }
 
 model Project {
-  Description String?
-  Id          String     @id(map: "PK_Projects")
-  Name        String
-  OwnerId     String
-  Published   Boolean    @default(false)
-  Subdomain   String?
-  CreatedAt   DateTime   @db.Timestamp(6)
-  DeletedAt   DateTime?  @db.Timestamp(6)
-  UpdatedAt   DateTime   @db.Timestamp(6)
-  Styles      Json?
-  Header      Json?
-  Elements    Element[]
-  Pages       Page[]
-  Owner       User       @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
-  Snapshots   Snapshot[]
+  Description     String?
+  Id              String           @id(map: "PK_Projects")
+  Name            String
+  OwnerId         String
+  Published       Boolean          @default(false)
+  Subdomain       String?
+  CreatedAt       DateTime         @db.Timestamp(6)
+  DeletedAt       DateTime?        @db.Timestamp(6)
+  UpdatedAt       DateTime         @db.Timestamp(6)
+  Styles          Json?
+  Header          Json?
+  Collaborators   Collaborator[]
+  Elements        Element[]
+  Invitations     Invitation[]
+  MarketplaceItem MarketplaceItem?
+  Pages           Page[]
+  Owner           User             @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
+  Snapshots       Snapshot[]
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -92,26 +95,57 @@ model Setting {
 }
 
 model Snapshot {
-  Id        String   @id @map("Id")
+  Id        String       @id @map("Id")
   ProjectId String
   Elements  Json
   Timestamp BigInt
-  CreatedAt DateTime @default(now()) @db.Timestamp(6)
-  Project   Project  @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+  CreatedAt DateTime     @default(now()) @db.Timestamp(6)
+  Name      String
+  Type      SnapshotType
+  Project   Project      @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
 
   @@index([ProjectId, Timestamp])
 }
 
 model User {
-  CreatedAt DateTime  @db.Timestamptz(6)
-  Email     String
-  FirstName String?
-  Id        String    @id(map: "PK_Users")
-  ImageUrl  String?
-  LastName  String?
-  UpdatedAt DateTime  @db.Timestamptz(6)
-  Images    Image[]
-  Projects  Project[]
+  CreatedAt        DateTime          @db.Timestamptz(6)
+  Email            String
+  FirstName        String?
+  Id               String            @id(map: "PK_Users")
+  ImageUrl         String?
+  LastName         String?
+  UpdatedAt        DateTime          @db.Timestamptz(6)
+  Collaborators    Collaborator[]
+  CustomElements   CustomElement[]
+  Images           Image[]
+  MarketplaceItems MarketplaceItem[]
+  Projects         Project[]
+  Subscriptions    Subscription[]
+  Comments         Comment[]
+  CommentReactions CommentReaction[]
+}
+
+model Subscription {
+  Id            String    @id @default(cuid())
+  UserId        String
+  PlanId        String
+  BillingPeriod String
+  Status        String    @default("pending")
+  StartDate     DateTime  @default(now())
+  EndDate       DateTime?
+  Amount        Float
+  Currency      String    @default("VND")
+  CreatedAt     DateTime  @default(now()) @db.Timestamp(6)
+  UpdatedAt     DateTime  @updatedAt @db.Timestamp(6)
+  BankCode      String?
+  CardType      String?
+  Email         String?
+  PayDate       DateTime?
+  TransactionNo String?
+  User          User      @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@index([UserId])
+  @@index([Status])
 }
 
 model ContentType {
@@ -157,4 +191,176 @@ model ContentItem {
   UpdatedAt     DateTime            @updatedAt
   FieldValues   ContentFieldValue[]
   ContentType   ContentType         @relation(fields: [ContentTypeId], references: [Id], onDelete: Cascade)
+}
+
+model MarketplaceItem {
+  Id           String                    @id @default(cuid())
+  Title        String
+  Description  String
+  Preview      String?
+  TemplateType String                    @default("block")
+  Featured     Boolean                   @default(false)
+  PageCount    Int?
+  Downloads    Int                       @default(0)
+  Likes        Int                       @default(0)
+  AuthorId     String
+  AuthorName   String
+  Verified     Boolean                   @default(false)
+  CreatedAt    DateTime                  @default(now()) @db.Timestamp(6)
+  UpdatedAt    DateTime                  @updatedAt @db.Timestamp(6)
+  DeletedAt    DateTime?                 @db.Timestamp(6)
+  ProjectId    String?                   @unique
+  Author       User                      @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
+  Project      Project?                  @relation(fields: [ProjectId], references: [Id])
+  Categories   MarketplaceItemCategory[]
+  Tags         MarketplaceItemTag[]
+  Comments     Comment[]
+
+  @@index([AuthorId])
+  @@index([TemplateType])
+  @@index([Featured])
+  @@index([ProjectId])
+}
+
+model Category {
+  Id    String                    @id @default(cuid())
+  Name  String                    @unique
+  Items MarketplaceItemCategory[]
+}
+
+model Tag {
+  Id    String               @id @default(cuid())
+  Name  String               @unique
+  Items MarketplaceItemTag[]
+}
+
+model MarketplaceItemTag {
+  ItemId String
+  TagId  String
+  Item   MarketplaceItem @relation(fields: [ItemId], references: [Id], onDelete: Cascade)
+  Tag    Tag             @relation(fields: [TagId], references: [Id], onDelete: Cascade)
+
+  @@id([ItemId, TagId])
+  @@index([TagId])
+}
+
+model MarketplaceItemCategory {
+  ItemId     String
+  CategoryId String
+  Category   Category        @relation(fields: [CategoryId], references: [Id], onDelete: Cascade)
+  Item       MarketplaceItem @relation(fields: [ItemId], references: [Id], onDelete: Cascade)
+
+  @@id([ItemId, CategoryId])
+  @@index([CategoryId])
+}
+
+model CustomElementType {
+  Id             String          @id @default(cuid())
+  Name           String          @unique
+  Description    String?
+  Category       String?
+  Icon           String?
+  CreatedAt      DateTime        @default(now()) @db.Timestamp(6)
+  UpdatedAt      DateTime        @updatedAt @db.Timestamp(6)
+  CustomElements CustomElement[]
+}
+
+model CustomElement {
+  Id                String             @id @map("Id")
+  Name              String
+  TypeId            String?
+  Description       String?
+  Category          String?            @db.VarChar(100)
+  Icon              String?            @db.VarChar(255)
+  Thumbnail         String?            @db.VarChar(255)
+  Structure         Json
+  DefaultProps      Json?
+  Tags              String?            @db.VarChar(500)
+  UserId            String
+  IsPublic          Boolean            @default(false)
+  Version           String             @default("1.0.0") @db.VarChar(20)
+  CreatedAt         DateTime           @default(now()) @db.Timestamp(6)
+  UpdatedAt         DateTime           @default(now()) @updatedAt @db.Timestamp(6)
+  CustomElementType CustomElementType? @relation(fields: [TypeId], references: [Id])
+  User              User               @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@index([UserId])
+  @@index([TypeId])
+}
+
+model Invitation {
+  Id         String           @id @default(cuid())
+  Email      String
+  ProjectId  String
+  Role       CollaboratorRole @default(editor)
+  Token      String           @unique
+  ExpiresAt  DateTime
+  Status     String           @default("pending")
+  CreatedAt  DateTime         @default(now())
+  AcceptedAt DateTime?
+  Project    Project          @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@index([ProjectId])
+  @@index([Token])
+  @@index([Status])
+}
+
+model Collaborator {
+  Id        String           @id @default(cuid())
+  UserId    String
+  ProjectId String
+  Role      CollaboratorRole @default(editor)
+  CreatedAt DateTime         @default(now()) @db.Timestamp(6)
+  UpdatedAt DateTime         @updatedAt @db.Timestamp(6)
+  Project   Project          @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+  User      User             @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@unique([UserId, ProjectId])
+  @@index([UserId])
+  @@index([ProjectId])
+}
+
+model Comment {
+  Id        String            @id @default(cuid())
+  Content   String
+  AuthorId  String
+  ItemId    String
+  ParentId  String?
+  Status    String            @default("published")
+  Edited    Boolean           @default(false)
+  CreatedAt DateTime          @default(now()) @db.Timestamp(6)
+  UpdatedAt DateTime          @updatedAt @db.Timestamp(6)
+  DeletedAt DateTime?         @db.Timestamp(6)
+  Author    User              @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
+  Item      MarketplaceItem   @relation(fields: [ItemId], references: [Id], onDelete: Cascade)
+  Parent    Comment?          @relation("CommentReplies", fields: [ParentId], references: [Id], onDelete: Cascade)
+  Replies   Comment[]         @relation("CommentReplies")
+  Reactions CommentReaction[]
+
+  @@index([AuthorId])
+  @@index([ItemId])
+}
+
+model CommentReaction {
+  Id        String    @id @default(cuid())
+  CommentId String
+  UserId    String
+  Type      String
+  CreatedAt DateTime  @default(now()) @db.Timestamp(6)
+  Comment   Comment   @relation(fields: [CommentId], references: [Id], onDelete: Cascade)
+  User      User      @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@index([CommentId])
+  @@index([UserId])
+}
+
+enum SnapshotType {
+  working
+  version
+}
+
+enum CollaboratorRole {
+  owner
+  editor
+  viewer
 }

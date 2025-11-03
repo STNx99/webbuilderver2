@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronRight, Github } from "lucide-react";
+import { ArrowRight, ChevronRight} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +29,7 @@ export default function LandingPageHero() {
       </div>
       <div
         className={cn(
-          "absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:16px_16px] opacity-15",
+          "absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-size-[16px_16px] opacity-15",
           {
             "bg-[linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)]":
               theme === "light",
@@ -50,7 +51,7 @@ export default function LandingPageHero() {
                 New
               </span>
               <span className="text-muted-foreground">
-                Introducing our latest component library
+                Introducing our powerful visual web builder
               </span>
               <ChevronRight className="text-muted-foreground ml-1 h-4 w-4" />
             </div>
@@ -63,7 +64,7 @@ export default function LandingPageHero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="from-primary/10 via-foreground/85 to-foreground/50 bg-gradient-to-tl bg-clip-text text-center text-4xl tracking-tighter text-balance text-transparent sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            Build beautiful interfaces with speed and precision
+            Build stunning websites without coding
           </motion.h1>
 
           {/* Description */}
@@ -73,9 +74,9 @@ export default function LandingPageHero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-muted-foreground mx-auto mt-6 max-w-2xl text-center text-lg"
           >
-            A modern UI component library designed to help developers create
-            stunning web applications with minimal effort. Fully customizable,
-            responsive, and accessible.
+            Create professional websites with our intuitive drag-and-drop builder. 
+            No coding required - just drag, drop, customize, and publish. Export clean, 
+            production-ready code when you're done.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -88,21 +89,15 @@ export default function LandingPageHero() {
             <Button
               size="lg"
               className="group bg-primary text-primary-foreground hover:shadow-primary/30 relative overflow-hidden rounded-full px-6 shadow-lg transition-all duration-300"
+              asChild
             >
-              <span className="relative z-10 flex items-center">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </span>
-              <span className="from-primary via-primary/90 to-primary/80 absolute inset-0 z-0 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-            </Button>
-
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-border bg-background/50 flex items-center gap-2 rounded-full backdrop-blur-sm"
-            >
-              <Github className="h-4 w-4" />
-              Star on GitHub
+              <Link href="/sign-up">
+                <span className="relative z-10 flex items-center">
+                  Get Started
+                  <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </span>
+                <span className="from-primary via-primary/90 to-primary/80 absolute inset-0 z-0 bg-gradient-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+              </Link>
             </Button>
           </motion.div>
 

@@ -12,6 +12,7 @@ import {
   HelpCircle,
   LogOut,
   ChevronUp,
+  Store,
 } from "lucide-react";
 
 import {
@@ -61,6 +62,11 @@ const navigationItems = [
     url: "/notifications",
     icon: Bell,
   },
+  {
+    title: "Market place",
+    url: "/marketplace",
+    icon: Store,
+  }
 ];
 
 const quickActions = [
@@ -89,7 +95,7 @@ const user = {
   avatar: "/placeholder.svg?height=32&width=32",
 };
 
-interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {}
+interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> { }
 
 export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
@@ -204,18 +210,24 @@ export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
                   align="end"
                   sideOffset={4}
                 >
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings">
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Settings</span>
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                  <DropdownMenuItem asChild>
+                    <Link href="/logout">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

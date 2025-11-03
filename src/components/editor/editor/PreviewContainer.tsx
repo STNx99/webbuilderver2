@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { viewportSizes } from "@/constants/viewports";
-import { Viewport } from "@/hooks/useEditor";
+import { Viewport } from "@/hooks";
 import { cn } from "@/lib/utils";
 import { useProjectStore } from "@/globalstore/projectstore";
 import ElementLoading from "@/components/editor/skeleton/ElementLoading";

@@ -105,7 +105,7 @@ export default function CarouselConfigurationAccordion() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <Label htmlFor="carousel-align" className="text-xs w-28">
+                  <Label htmlFor="carousel-align" className="text-xs w-2/8">
                     Align
                   </Label>
                   <Select
@@ -161,6 +161,79 @@ export default function CarouselConfigurationAccordion() {
                     className="w-48 h-7 px-2 py-1 text-xs"
                     placeholder="3000"
                     autoComplete="off"
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          {/* Slides Settings */}
+          <AccordionItem value="slides">
+            <AccordionTrigger className="text-xs">Slides</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-4 py-1">
+                <div className="flex items-center gap-4">
+                  <Label
+                    htmlFor="carousel-slidesToShow"
+                    className="text-xs w-28"
+                  >
+                    Slides to Show
+                  </Label>
+                  <Input
+                    id="carousel-slidesToShow"
+                    name="slidesToShow"
+                    type="number"
+                    value={settings.slidesToShow || 1}
+                    onChange={handleInputChange}
+                    className="w-48 h-7 px-2 py-1 text-xs"
+                    placeholder="1"
+                    min="1"
+                  />
+                </div>
+                <div className="flex items-center gap-4">
+                  <Label
+                    htmlFor="carousel-slidesToScroll"
+                    className="text-xs w-28"
+                  >
+                    Slides to Scroll
+                  </Label>
+                  <Input
+                    id="carousel-slidesToScroll"
+                    name="slidesToScroll"
+                    type="number"
+                    value={settings.slidesToScroll || 1}
+                    onChange={handleInputChange}
+                    className="w-48 h-7 px-2 py-1 text-xs"
+                    placeholder="1"
+                    min="1"
+                  />
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          {/* Responsive Settings */}
+          <AccordionItem value="responsive">
+            <AccordionTrigger className="text-xs">Responsive</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-4 py-1">
+                <div className="flex items-center gap-4">
+                  <Label
+                    htmlFor="carousel-breakpoints"
+                    className="text-xs w-28"
+                  >
+                    Breakpoints (JSON)
+                  </Label>
+                  <Input
+                    id="carousel-breakpoints"
+                    name="breakpoints"
+                    type="text"
+                    value={
+                      settings.breakpoints
+                        ? JSON.stringify(settings.breakpoints)
+                        : ""
+                    }
+                    onChange={handleInputChange}
+                    className="w-48 h-7 px-2 py-1 text-xs"
+                    placeholder='{"640": { "slidesToShow": 2 }}'
                   />
                 </div>
               </div>

@@ -26,15 +26,13 @@ import { useAiChat } from "@/providers/aiprovider";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-// import Chat from "@/components/ChatModel";
 
 function LayoutSideBar() {
   const params = useParams();
   const { toggleSidebar } = useSidebar();
   const { toggleChat } = useAiChat();
   const visitProjectSubdomain = (projectId: string) => {
-    // const subdomainUrl = getProjectSubdomainUrl(projectId);
-    // window.open(subdomainUrl, "_blank");
+    window.open(`http://localhost:3000/preview/${projectId}`);
   };
   const { elements } = useElementStore();
   const { selectedElement } = useSelectionStore();
@@ -60,7 +58,7 @@ function LayoutSideBar() {
               </SidebarGroupLabel>
               <AccordionContent>
                 <SidebarGroupContent>
-                  <div className="max-h-60 overflow-y-auto">
+                  <div className="max-h-60 overflow-y-auto overflow-x-hidden">
                     {filteredElements.length > 0 ? (
                       filteredElements.map((element) => (
                         <ElementTreeItem
@@ -130,7 +128,7 @@ function LayoutSideBar() {
           <SidebarMenuItem>
             <Button
               onClick={() => {
-                if (params.slug) visitProjectSubdomain(params.slug.toString());
+                visitProjectSubdomain(params.id as string);
               }}
               className="w-full font-bold"
               variant="default"
