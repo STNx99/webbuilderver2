@@ -9,6 +9,7 @@ import { useDownloadMarketplaceItem, useIncrementLikes } from "@/hooks"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
+import { CommentSection } from "./CommentSection"
 
 interface MarketplaceItemDetailProps {
   item: MarketplaceItemWithRelations
@@ -57,7 +58,7 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
   return (
     <div className="min-h-screen min-w-screen bg-background">
       <div className="sticky top-0 z-40 border-b border-border/30 bg-background/95 backdrop-blur-md">
-        <div className="container mx-auto px-4 py-3 max-w-7xl flex items-center justify-between">
+        <div className="container mx-auto px-4 py-3 max-w-screen flex items-center justify-between">
           <Button
             variant="ghost"
             size="sm"
@@ -82,7 +83,7 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-16 max-w-7xl">
+      <div className="container mx-auto px-4 py-16 max-w-screen">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-12">
             {/* Hero iframe with enhanced styling */}
@@ -311,6 +312,10 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
                   </div>
                 </CardContent>
               </Card>
+              {/* Comments Section */}
+              <div className="space-y-4">
+                <CommentSection itemId={item.id} />
+              </div>
             </div>
           </div>
         </div>
