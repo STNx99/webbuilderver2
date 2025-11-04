@@ -22,6 +22,9 @@ export const API_ENDPOINTS = {
     LOAD: (projectId: string, snapshotId: string) =>
       `/api/v1/snapshots/${projectId}/${snapshotId}`,
   },
+  AI: {
+    GENERATE_CONTENT: "/api/v1/ai/generate-content",
+  },
   CMS: {
     CONTENT_TYPES: {
       GET: "/api/v1/content-types",
