@@ -62,28 +62,6 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
 }
 
 /**
- * Format phone number
- */
-export function formatPhoneNumber(phone?: string | null): string {
-  if (!phone) return 'Not provided';
-  
-  // Remove all non-digit characters
-  const cleaned = phone.replace(/\D/g, '');
-  
-  // Format as +1 (234) 567-8900 if it's US number
-  if (cleaned.length === 11 && cleaned.startsWith('1')) {
-    return `+${cleaned[0]} (${cleaned.slice(1, 4)}) ${cleaned.slice(4, 7)}-${cleaned.slice(7)}`;
-  }
-  
-  // Format as (234) 567-8900 if it's 10 digits
-  if (cleaned.length === 10) {
-    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
-  }
-  
-  return phone;
-}
-
-/**
  * Export profile data as JSON
  */
 export function exportProfileData(data: any, filename?: string): void {
