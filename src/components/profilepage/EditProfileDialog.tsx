@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
@@ -23,21 +22,32 @@ interface EditProfileDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps) {
+export function EditProfileDialog({
+  open,
+  onOpenChange,
+}: EditProfileDialogProps) {
   const { user, isLoaded } = useUser();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  
+
   const getInitialFormData = () => ({
-    firstName: (user?.unsafeMetadata?.firstName as string) || user?.firstName || '',
-    lastName: (user?.unsafeMetadata?.lastName as string) || user?.lastName || '',
-    username: (user?.unsafeMetadata?.username as string) || user?.username || '',
+    firstName:
+      (user?.unsafeMetadata?.firstName as string) || user?.firstName || "",
+    lastName:
+      (user?.unsafeMetadata?.lastName as string) || user?.lastName || "",
+    username:
+      (user?.unsafeMetadata?.username as string) || user?.username || "",
   });
 
   const [formData, setFormData] = useState(getInitialFormData());
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const usernameError =
+    formData.username && !/^[a-zA-Z0-9_]{3,20}$/.test(formData.username)
+      ? "Username must be 3-20 characters, letters, numbers, and underscores only"
+      : null;
 
   useEffect(() => {
     if (open && user) {
@@ -53,7 +63,7 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
         return;
       }
 
-      if (!file.type.startsWith('image/')) {
+      if (!file.type.startsWith("image/")) {
         toast.error("Please select a valid image file");
         return;
       }
@@ -75,6 +85,14 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
   const handleUpdateProfile = async () => {
     if (!user) return;
 
+    // Validate username
+    if (formData.username && !/^[a-zA-Z0-9_]{3,20}$/.test(formData.username)) {
+      toast.error(
+        "Username must be 3-20 characters, letters, numbers, and underscores only"
+      );
+      return;
+    }
+
     setIsUpdating(true);
 
     try {
@@ -91,8 +109,10 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
           firstName: formData.firstName || undefined,
           lastName: formData.lastName || undefined,
           username: formData.username || undefined,
-        }
+        },
       });
+
+      await user.reload();
 
       toast.success("Profile updated successfully!");
       onOpenChange(false);
@@ -100,7 +120,17 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
       setImagePreview(null);
     } catch (error: any) {
       console.error("Error updating profile:", error);
-      toast.error(error.errors?.[0]?.message || "Failed to update profile");
+
+      // Handle specific Clerk errors
+      if (error.errors?.[0]?.code === "username_exists") {
+        toast.error("This username is already taken");
+      } else if (error.errors?.[0]?.code === "form_param_format_invalid") {
+        toast.error("Invalid format for one of the fields");
+      } else if (error.errors?.[0]?.code === "form_param_nil") {
+        toast.error("Required fields cannot be empty");
+      } else {
+        toast.error(error.errors?.[0]?.message || "Failed to update profile");
+      }
     } finally {
       setIsUpdating(false);
       setIsUploadingImage(false);
@@ -119,7 +149,9 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
   }
 
   const currentImage = imagePreview || user.imageUrl;
-  const initials = `${formData.firstName?.[0] || ''}${formData.lastName?.[0] || ''}`.toUpperCase();
+  const initials = `${formData.firstName?.[0] || ""}${
+    formData.lastName?.[0] || ""
+  }`.toUpperCase();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -134,9 +166,9 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
         <div className="grid gap-6 py-4">
           <div className="flex flex-col items-center gap-4">
             <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
-              <AvatarImage src={currentImage} alt={user.fullName || 'User'} />
+              <AvatarImage src={currentImage} alt={user.fullName || "User"} />
               <AvatarFallback className="bg-primary/20 text-primary text-2xl font-bold">
-                {initials || 'U'}
+                {initials || "U"}
               </AvatarFallback>
             </Avatar>
 
@@ -145,11 +177,13 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => document.getElementById('avatar-upload')?.click()}
+                onClick={() =>
+                  document.getElementById("avatar-upload")?.click()
+                }
                 disabled={isUpdating}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                Upload Photo
+                {imagePreview ? "Change Photo" : "Upload Photo"}
               </Button>
               {imagePreview && (
                 <Button
@@ -177,14 +211,15 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
               Recommended: Square image, at least 400x400px (max 10MB)
             </p>
           </div>
-
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
                 id="firstName"
                 value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstName: e.target.value })
+                }
                 placeholder="Enter your first name"
                 disabled={isUpdating}
               />
@@ -195,7 +230,9 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
               <Input
                 id="lastName"
                 value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
                 placeholder="Enter your last name"
                 disabled={isUpdating}
               />
@@ -206,22 +243,29 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
               <Input
                 id="username"
                 value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 placeholder="Enter your username"
                 disabled={isUpdating}
+                className={usernameError ? "border-red-500" : ""}
               />
+              {usernameError && (
+                <p className="text-xs text-red-500">{usernameError}</p>
+              )}
             </div>
 
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                value={user.primaryEmailAddress?.emailAddress || ''}
+                value={user.primaryEmailAddress?.emailAddress || ""}
                 disabled
                 className="bg-muted"
               />
               <p className="text-xs text-muted-foreground">
-                Email cannot be changed here. Please update it in your account settings.
+                Email cannot be changed here. Please update it in your account
+                settings.
               </p>
             </div>
           </div>
@@ -237,15 +281,21 @@ export function EditProfileDialog({ open, onOpenChange }: EditProfileDialogProps
           </Button>
           <Button
             onClick={handleUpdateProfile}
-            disabled={isUpdating || (!formData.firstName && !formData.lastName)}
+            disabled={
+              isUpdating ||
+              (!formData.firstName.trim() &&
+                !formData.lastName.trim() &&
+                !formData.username.trim()) ||
+              !!usernameError
+            }
           >
             {isUpdating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isUploadingImage ? 'Uploading...' : 'Saving...'}
+                {isUploadingImage ? "Uploading..." : "Saving..."}
               </>
             ) : (
-              'Save Changes'
+              "Save Changes"
             )}
           </Button>
         </DialogFooter>

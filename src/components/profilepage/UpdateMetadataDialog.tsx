@@ -42,6 +42,16 @@ export function UpdateMetadataDialog({ open, onOpenChange }: UpdateMetadataDialo
   const handleUpdate = async () => {
     if (!user) return;
 
+    if (formData.bio && formData.bio.length > 500) {
+      toast.error("Bio must be less than 500 characters");
+      return;
+    }
+
+    if (formData.address && formData.address.length > 100) {
+      toast.error("Location must be less than 100 characters");
+      return;
+    }
+
     setIsUpdating(true);
 
     try {
@@ -53,11 +63,13 @@ export function UpdateMetadataDialog({ open, onOpenChange }: UpdateMetadataDialo
         },
       });
 
+      await user.reload();
+
       toast.success("Additional information updated successfully!");
       onOpenChange(false);
     } catch (error: any) {
       console.error("Error updating metadata:", error);
-      toast.error(error.errors?.[0]?.message || "Failed to update information");
+      toast.error("Failed to update information. Please try again.");
     } finally {
       setIsUpdating(false);
     }
