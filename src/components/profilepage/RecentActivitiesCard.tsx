@@ -42,7 +42,7 @@ export default function RecentActivitiesCard() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.1 }}
                         >
-                            <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 flex-shrink-0">
+                            <div className="p-1.5 sm:p-2 rounded-full bg-primary/10 shrink-0">
                                 <activity.icon className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                             </div>
                             <div className="flex-1 min-w-0">

@@ -1,14 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Calendar } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { User, Mail, MapPin, Calendar, AtSign, Edit } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '../ui/card';
+import { Button } from '../ui/button';
+import { UpdateMetadataDialog } from './UpdateMetadataDialog';
 
 interface UserProfile {
     email: string;
-    phone: string;
     address: string;
     joinDate: string;
+    username: string;
+    bio: string;
 }
 
 interface PersonalInfoCardProps {
@@ -16,9 +20,10 @@ interface PersonalInfoCardProps {
 }
 
 export default function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
+    const [isMetadataDialogOpen, setIsMetadataDialogOpen] = useState(false);
     const infoItems = [
         { icon: Mail, label: 'Email', value: profile.email },
-        { icon: Phone, label: 'Phone', value: profile.phone },
+        { icon: AtSign, label: 'Username', value: profile.username || 'Not set' },
         { icon: MapPin, label: 'Location', value: profile.address },
         { icon: Calendar, label: 'Joined', value: profile.joinDate },
     ];
@@ -46,7 +51,7 @@ export default function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
                         >
-                            <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
+                            <div className="p-2 rounded-lg bg-primary/10 shrink-0">
                                 <item.icon className="h-4 w-4 text-primary" />
                             </div>
                             <div className="flex-1 min-w-0">
@@ -56,7 +61,22 @@ export default function PersonalInfoCard({ profile }: PersonalInfoCardProps) {
                         </motion.div>
                     ))}
                 </CardContent>
+                <CardFooter className="px-4 sm:px-6 pt-2">
+                    <Button 
+                        variant="outline" 
+                        className="w-full gap-2"
+                        onClick={() => setIsMetadataDialogOpen(true)}
+                    >
+                        <Edit className="h-4 w-4" />
+                        Update Bio & Location
+                    </Button>
+                </CardFooter>
             </Card>
+
+            <UpdateMetadataDialog 
+                open={isMetadataDialogOpen}
+                onOpenChange={setIsMetadataDialogOpen}
+            />
         </motion.div>
     );
 }
