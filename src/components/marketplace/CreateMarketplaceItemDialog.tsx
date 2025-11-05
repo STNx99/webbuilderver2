@@ -45,7 +45,8 @@ import {
   useTags,
   useUserProjects,
 } from "@/hooks";
-import { Loader2, Plus, Upload } from "lucide-react";
+import { useUserPlan } from "@/hooks/subscription/useUserPlan";
+import { Loader2, Plus, Upload, Crown, AlertCircle } from "lucide-react";
 import { CreateMarketplaceItemRequest } from "@/interfaces/market.interface";
 import { TagSelector, CategorySelector } from "./tags";
 
@@ -82,6 +83,9 @@ function CreateMarketplaceItemDialog({
   const { data: categories, isLoading: isCategoriesLoading } = useCategories();
   const { data: existingTags, isLoading: isTagsLoading } = useTags();
   const { data: projects, isLoading: isProjectsLoading } = useUserProjects();
+  const { data: userPlan } = useUserPlan();
+
+  const canPublish = userPlan?.canPublishToMarketplace ?? false;
 
   const defaultValues = useMemo(() => {
     if (existingItem) {
@@ -214,6 +218,21 @@ function CreateMarketplaceItemDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+            {/* Permission Warning */}
+            {!canPublish && (
+              <div className="flex items-start gap-3 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <Crown className="h-5 w-5 text-yellow-600 mt-0.5 shrink-0" />
+                <div className="text-sm">
+                  <p className="font-medium text-yellow-600 mb-1">
+                    Gói Hobby không thể publish lên Marketplace
+                  </p>
+                  <p className="text-muted-foreground">
+                    Nâng cấp lên <strong>Pro</strong> hoặc <strong>Enterprise</strong> để chia sẻ template với cộng đồng.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Project Selection - only show in create mode */}
             {!itemId && (
               <FormField
@@ -452,7 +471,7 @@ function CreateMarketplaceItemDialog({
               </Button>
               <Button
                 type="submit"
-                disabled={createItem.isPending || updateItem.isPending}
+                disabled={!canPublish || createItem.isPending || updateItem.isPending}
                 className="flex-1 sm:flex-none bg-primary hover:bg-primary/90"
               >
                 {createItem.isPending || updateItem.isPending ? (

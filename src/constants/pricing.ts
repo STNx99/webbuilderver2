@@ -46,6 +46,7 @@ export const pricingPlans: PricingPlan[] = [
     features: [
       'Unlimited websites',
       'Advanced components library',
+      'Publish to Marketplace',
       'Code export (React/Next.js)',
       'Custom domain hosting',
       'Priority support',
@@ -88,4 +89,16 @@ export function requiresAuthentication(planId: string): boolean {
 // Helper function to check if plan is paid
 export function isPaidPlan(planId: string): boolean {
   return planId === 'pro';
+}
+
+// Helper function to check if plan can publish to marketplace
+export function canPublishToMarketplace(planId: string): boolean {
+  return planId === 'pro' || planId === 'enterprise';
+}
+
+// Helper function to get plan limits
+export function getPlanLimits(planId: string) {
+  return {
+    canPublishToMarketplace: canPublishToMarketplace(planId),
+  };
 }
