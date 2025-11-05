@@ -18,6 +18,7 @@ interface CreateSubscriptionData {
   transactionNo?: string;
   startDate?: Date;
   endDate?: Date;
+  status?: SubscriptionStatusType; // Add status field
 }
 
 interface UpdateSubscriptionData {
@@ -71,7 +72,7 @@ export const subscriptionDAL = {
         endDate: endDate.toISOString(),
         status: activeSubscription.Status as SubscriptionStatusType,
         daysUntilExpiry,
-        canRenew: true, // Can always renew
+        canRenew: daysUntilExpiry <= 30, // Can renew if expiring within 30 days
       },
     };
   },
@@ -81,13 +82,19 @@ export const subscriptionDAL = {
    */
   createSubscription: async (data: CreateSubscriptionData) => {
     const startDate = data.startDate || new Date();
-    const endDate = data.endDate || new Date();
+    let endDate: Date;
 
-    // Calculate end date based on billing period
-    if (data.billingPeriod === "monthly") {
-      endDate.setMonth(endDate.getMonth() + 1);
-    } else if (data.billingPeriod === "yearly") {
-      endDate.setFullYear(endDate.getFullYear() + 1);
+    // Use provided endDate or calculate based on billing period
+    if (data.endDate) {
+      endDate = data.endDate;
+    } else {
+      endDate = new Date(startDate);
+      // Calculate end date based on billing period
+      if (data.billingPeriod === "monthly") {
+        endDate.setMonth(endDate.getMonth() + 1);
+      } else if (data.billingPeriod === "yearly") {
+        endDate.setFullYear(endDate.getFullYear() + 1);
+      }
     }
 
     return await prisma?.subscription.create({
@@ -95,7 +102,7 @@ export const subscriptionDAL = {
         UserId: data.userId,
         PlanId: data.planId,
         BillingPeriod: data.billingPeriod,
-        Status: "active",
+        Status: data.status || "active", // Use provided status or default to active
         StartDate: startDate,
         EndDate: endDate,
         Amount: data.amount,
@@ -125,12 +132,26 @@ export const subscriptionDAL = {
    * Update subscription details
    */
   updateSubscription: async (subscriptionId: string, updates: UpdateSubscriptionData) => {
+    const fieldMapping: Record<string, string> = {
+      status: 'Status',
+      startDate: 'StartDate',
+      endDate: 'EndDate',
+      bankCode: 'BankCode',
+      cardType: 'CardType',
+      payDate: 'PayDate',
+      transactionNo: 'TransactionNo',
+    };
+
+    const updateData = Object.entries(updates).reduce((acc, [key, value]) => {
+      if (value !== undefined && fieldMapping[key]) {
+        acc[fieldMapping[key]] = value;
+      }
+      return acc;
+    }, { UpdatedAt: new Date() } as Record<string, any>);
+
     return await prisma?.subscription.update({
       where: { Id: subscriptionId },
-      data: {
-        ...updates,
-        UpdatedAt: new Date(),
-      },
+      data: updateData,
     });
   },
 
@@ -167,6 +188,65 @@ export const subscriptionDAL = {
       },
       data: {
         Status: "expired",
+        UpdatedAt: now,
+      },
+    });
+  },
+
+  /**
+   * Check if user has an active subscription for a specific plan and billing period
+   */
+  hasActiveSubscription: async (
+    userId: string,
+    planId: PlanId,
+    billingPeriod: BillingPeriod
+  ): Promise<boolean> => {
+    const activeSubscription = await prisma?.subscription.findFirst({
+      where: {
+        UserId: userId,
+        PlanId: planId,
+        BillingPeriod: billingPeriod,
+        Status: "active",
+        EndDate: {
+          gte: new Date(),
+        },
+      },
+    });
+
+    return !!activeSubscription;
+  },
+
+  /**
+   * Get active subscriptions for a user (excluding expired ones)
+   */
+  getActiveSubscriptions: async (userId: string) => {
+    return await prisma?.subscription.findMany({
+      where: {
+        UserId: userId,
+        Status: "active",
+        EndDate: {
+          gte: new Date(),
+        },
+      },
+      orderBy: {
+        CreatedAt: "desc",
+      },
+    });
+  },
+
+  /**
+   * Cancel all active subscriptions for a user
+   */
+  cancelAllActiveSubscriptions: async (userId: string, excludeId?: string) => {
+    const now = new Date();
+    return await prisma?.subscription.updateMany({
+      where: {
+        UserId: userId,
+        Status: "active",
+        Id: excludeId ? { not: excludeId } : undefined,
+      },
+      data: {
+        Status: "cancelled",
         UpdatedAt: now,
       },
     });

@@ -52,13 +52,15 @@ export async function GET(request: NextRequest) {
 
     // Update subscription based on response code
     if (responseCode === '00') {
+      console.log('[VNPay IPN] Payment successful for transaction:', transactionId);
+      
       const startDate = new Date();
       const endDate = subscription.BillingPeriod === 'yearly'
         ? new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDate())
         : new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
       // Parse pay date
-      let payDateTime = null;
+      let payDateTime: Date | undefined = undefined;
       if (payDate) {
         const year = parseInt(payDate.substring(0, 4));
         const month = parseInt(payDate.substring(4, 6)) - 1;
@@ -70,15 +72,9 @@ export async function GET(request: NextRequest) {
       }
 
       // Cancel all other active subscriptions for this user using DAL
-      const userSubscriptions = await subscriptionDAL.getSubscriptionsByUser(subscription.UserId);
-      const activeSubscriptions = userSubscriptions.filter(sub =>
-        sub.Status === 'active' && sub.Id !== transactionId
-      );
+      await subscriptionDAL.cancelAllActiveSubscriptions(subscription.UserId, transactionId);
 
-      for (const activeSub of activeSubscriptions) {
-        await subscriptionDAL.cancelSubscription(activeSub.Id);
-      }
-
+      console.log('[VNPay IPN] Updating subscription to active');
       await subscriptionDAL.updateSubscription(transactionId, {
         status: 'active',
         startDate,
@@ -88,6 +84,8 @@ export async function GET(request: NextRequest) {
         cardType,
         payDate: payDateTime || undefined,
       });
+      
+      console.log('[VNPay IPN] Subscription updated successfully');
     } else {
       await subscriptionDAL.updateSubscription(transactionId, { status: 'cancelled' });
     }

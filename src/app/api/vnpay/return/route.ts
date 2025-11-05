@@ -43,13 +43,15 @@ export async function GET(request: NextRequest) {
     // Update subscription based on response code
     if (responseCode === '00') {
       // Payment successful
+      console.log('[VNPay Return] Payment successful for transaction:', transactionId);
+      
       const startDate = new Date();
       const endDate = subscription.BillingPeriod === 'yearly'
         ? new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDate())
         : new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
       // Parse pay date from VNPay format (YYYYMMDDHHmmss)
-      let payDateTime = null;
+      let payDateTime: Date | undefined = undefined;
       if (payDate) {
         const year = parseInt(payDate.substring(0, 4));
         const month = parseInt(payDate.substring(4, 6)) - 1;
@@ -61,16 +63,18 @@ export async function GET(request: NextRequest) {
       }
 
       // Cancel all other active subscriptions for this user using DAL
-      const userSubscriptions = await subscriptionDAL.getSubscriptionsByUser(subscription.UserId);
-      const activeSubscriptions = userSubscriptions.filter(sub =>
-        sub.Status === 'active' && sub.Id !== transactionId
-      );
+      await subscriptionDAL.cancelAllActiveSubscriptions(subscription.UserId, transactionId);
 
-      for (const activeSub of activeSubscriptions) {
-        await subscriptionDAL.cancelSubscription(activeSub.Id);
-      }
+      console.log('[VNPay Return] Updating subscription to active:', {
+        transactionId,
+        startDate,
+        endDate,
+        transactionNo,
+        bankCode,
+        cardType,
+      });
 
-      await subscriptionDAL.updateSubscription(transactionId, {
+      const updatedSubscription = await subscriptionDAL.updateSubscription(transactionId, {
         status: 'active',
         startDate,
         endDate,
@@ -79,6 +83,8 @@ export async function GET(request: NextRequest) {
         cardType,
         payDate: payDateTime || undefined,
       });
+
+      console.log('[VNPay Return] Subscription updated successfully:', updatedSubscription);
 
       // Redirect to success page
       return NextResponse.redirect(

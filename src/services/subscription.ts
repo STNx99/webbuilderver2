@@ -10,6 +10,7 @@ import type {
 
 interface ISubscriptionService {
   getSubscriptionStatus: () => Promise<SubscriptionStatus>;
+  getAllSubscriptions: () => Promise<any>;
   createPayment: (data: CreatePaymentRequest) => Promise<CreatePaymentResponse>;
   cancelSubscription: (data: CancelSubscriptionRequest) => Promise<CancelSubscriptionResponse>;
 }
@@ -17,6 +18,10 @@ interface ISubscriptionService {
 export const subscriptionService: ISubscriptionService = {
   getSubscriptionStatus: async (): Promise<SubscriptionStatus> => {
     return apiClient.get<SubscriptionStatus>(API_ENDPOINTS.SUBSCRIPTION.STATUS);
+  },
+
+  getAllSubscriptions: async (): Promise<any> => {
+    return apiClient.get(API_ENDPOINTS.SUBSCRIPTION.GET);
   },
 
   createPayment: async (data: CreatePaymentRequest): Promise<CreatePaymentResponse> => {

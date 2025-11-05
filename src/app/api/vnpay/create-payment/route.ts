@@ -25,23 +25,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for existing active subscription using DAL
-    const subscriptionStatus = await subscriptionDAL.getSubscriptionStatus(userId);
+    const hasExistingSubscription = await subscriptionDAL.hasActiveSubscription(
+      userId,
+      planId,
+      billingPeriod
+    );
 
-    if (subscriptionStatus.hasActiveSubscription) {
+    if (hasExistingSubscription) {
+      const subscriptionStatus = await subscriptionDAL.getSubscriptionStatus(userId);
       const existingSub = subscriptionStatus.subscription!;
-      if (existingSub.planId === planId && existingSub.billingPeriod === billingPeriod) {
-        return NextResponse.json(
-          {
-            error: 'Bạn đã có gói đăng ký này đang hoạt động',
-            existingSubscription: {
-              planId: existingSub.planId,
-              endDate: existingSub.endDate
-            }
-          },
-          { status: 409 }
-        );
-      }
-      console.log('[Payment] User upgrading/downgrading from', existingSub.planId, 'to', planId);
+      
+      return NextResponse.json(
+        {
+          error: 'Bạn đã có gói đăng ký này đang hoạt động',
+          existingSubscription: {
+            planId: existingSub.planId,
+            endDate: existingSub.endDate
+          }
+        },
+        { status: 409 }
+      );
     }
 
     // Convert amount from USD to VND
@@ -67,10 +70,8 @@ export async function POST(request: NextRequest) {
       email,
       startDate: new Date(),
       endDate: new Date(), // Will be updated when payment is confirmed
+      status: "pending",
     });
-
-    // Update status to pending
-    await subscriptionDAL.updateSubscription(transaction.Id, { status: 'pending' });
 
     // Create payment URL
     const paymentUrl = createPaymentUrl({

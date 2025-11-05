@@ -2,6 +2,26 @@ export type PlanId = 'hobby' | 'pro' | 'enterprise';
 export type BillingPeriod = 'monthly' | 'yearly';
 export type SubscriptionStatusType = 'active' | 'pending' | 'cancelled' | 'expired';
 
+// Subscription model from database
+export interface Subscription {
+  Id: string;
+  UserId: string;
+  PlanId: string;
+  BillingPeriod: string;
+  Status: string;
+  StartDate: Date;
+  EndDate: Date | null;
+  Amount: number;
+  Currency: string;
+  CreatedAt: Date;
+  UpdatedAt: Date;
+  BankCode: string | null;
+  CardType: string | null;
+  Email: string | null;
+  PayDate: Date | null;
+  TransactionNo: string | null;
+}
+
 export interface SubscriptionStatus {
   hasActiveSubscription: boolean;
   plan?: PlanId;
@@ -37,4 +57,8 @@ export interface CancelSubscriptionRequest {
 export interface CancelSubscriptionResponse {
   success: boolean;
   message: string;
+}
+
+export interface SubscriptionListResponse {
+  subscriptions: Subscription[];
 }

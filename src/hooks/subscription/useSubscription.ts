@@ -12,6 +12,15 @@ export function useSubscriptionStatus() {
   });
 }
 
+export function useAllSubscriptions() {
+  return useQuery({
+    queryKey: ['all-subscriptions'],
+    queryFn: async () => {
+      return subscriptionService.getAllSubscriptions();
+    },
+  });
+}
+
 export function useCreatePayment() {
   const queryClient = useQueryClient();
 
