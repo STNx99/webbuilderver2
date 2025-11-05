@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyReturnUrl } from '@/lib/vnpay-utils';
 import vnpayConfig from '@/lib/vnpay-config';
-import prisma from '@/lib/prisma';
+import { subscriptionDAL } from '@/data/subscription';
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,8 +12,6 @@ export async function GET(request: NextRequest) {
     searchParams.forEach((value, key) => {
       vnp_Params[key] = value;
     });
-
-
 
     const transactionId = vnp_Params['vnp_TxnRef'];
     const responseCode = vnp_Params['vnp_ResponseCode'];
@@ -28,10 +26,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Find the subscription
-    const subscription = await prisma.subscription.findUnique({
-      where: { Id: transactionId },
-    });
+    // Find the subscription using DAL
+    const subscription = await subscriptionDAL.getSubscriptionById(transactionId);
 
     if (!subscription) {
       return NextResponse.json({
@@ -73,38 +69,27 @@ export async function GET(request: NextRequest) {
         payDateTime = new Date(year, month, day, hour, minute, second);
       }
 
-      // Cancel all other active subscriptions for this user
-      await prisma.subscription.updateMany({
-        where: {
-          UserId: subscription.UserId,
-          Status: 'active',
-          Id: { not: transactionId }
-        },
-        data: {
-          Status: 'cancelled',
-          UpdatedAt: new Date()
-        }
-      });
+      // Cancel all other active subscriptions for this user using DAL
+      const userSubscriptions = await subscriptionDAL.getSubscriptionsByUser(subscription.UserId);
+      const activeSubscriptions = userSubscriptions.filter(sub =>
+        sub.Status === 'active' && sub.Id !== transactionId
+      );
 
-      await prisma.subscription.update({
-        where: { Id: transactionId },
-        data: {
-          Status: 'active',
-          StartDate: startDate,
-          EndDate: endDate,
-          TransactionNo: transactionNo || null,
-          BankCode: bankCode || null,
-          CardType: cardType || null,
-          PayDate: payDateTime,
-        },
+      for (const activeSub of activeSubscriptions) {
+        await subscriptionDAL.cancelSubscription(activeSub.Id);
+      }
+
+      await subscriptionDAL.updateSubscription(transactionId, {
+        status: 'active',
+        startDate,
+        endDate,
+        transactionNo,
+        bankCode,
+        cardType,
+        payDate: payDateTime || undefined,
       });
     } else {
-      await prisma.subscription.update({
-        where: { Id: transactionId },
-        data: {
-          Status: 'failed',
-        },
-      });
+      await subscriptionDAL.updateSubscription(transactionId, { status: 'cancelled' });
     }
 
     return NextResponse.json({

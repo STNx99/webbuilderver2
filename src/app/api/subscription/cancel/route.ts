@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
+import { subscriptionDAL } from '@/data/subscription'
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,10 +20,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Find the subscription
-    const subscription = await prisma.subscription.findUnique({
-      where: { Id: subscriptionId },
-    })
+    // Verify ownership by getting the subscription
+    const subscription = await subscriptionDAL.getSubscriptionById(subscriptionId)
 
     if (!subscription) {
       return NextResponse.json(
@@ -48,14 +46,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Cancel the subscription
-    await prisma.subscription.update({
-      where: { Id: subscriptionId },
-      data: {
-        Status: 'cancelled',
-        UpdatedAt: new Date(),
-      },
-    })
+    // Cancel the subscription using DAL
+    await subscriptionDAL.cancelSubscription(subscriptionId)
 
     return NextResponse.json({
       success: true,

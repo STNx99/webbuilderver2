@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import moment from 'moment';
 import { createPaymentUrl, convertUSDtoVND } from '@/lib/vnpay-utils';
 import vnpayConfig from '@/lib/vnpay-config';
-import prisma from '@/lib/prisma';
+import { subscriptionDAL } from '@/data/subscription';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,34 +24,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check for existing active subscription
-    const existingSubscription = await prisma.subscription.findFirst({
-      where: {
-        UserId: userId,
-        Status: 'active',
-        EndDate: {
-          gt: new Date() // Still valid
-        }
-      },
-      orderBy: {
-        CreatedAt: 'desc'
-      }
-    });
+    // Check for existing active subscription using DAL
+    const subscriptionStatus = await subscriptionDAL.getSubscriptionStatus(userId);
 
-    if (existingSubscription) {
-      if (existingSubscription.PlanId === planId && existingSubscription.BillingPeriod === billingPeriod) {
+    if (subscriptionStatus.hasActiveSubscription) {
+      const existingSub = subscriptionStatus.subscription!;
+      if (existingSub.planId === planId && existingSub.billingPeriod === billingPeriod) {
         return NextResponse.json(
-          { 
+          {
             error: 'Bạn đã có gói đăng ký này đang hoạt động',
             existingSubscription: {
-              planId: existingSubscription.PlanId,
-              endDate: existingSubscription.EndDate
+              planId: existingSub.planId,
+              endDate: existingSub.endDate
             }
           },
           { status: 409 }
         );
       }
-      console.log('[Payment] User upgrading/downgrading from', existingSubscription.PlanId, 'to', planId);
+      console.log('[Payment] User upgrading/downgrading from', existingSub.planId, 'to', planId);
     }
 
     // Convert amount from USD to VND
@@ -59,28 +49,28 @@ export async function POST(request: NextRequest) {
 
     // Create order ID
     const orderId = `${userId}_${moment().format('DDHHmmss')}`;
-    
+
     // Get IP address
-    const ipAddr = request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
+    const ipAddr = request.headers.get('x-forwarded-for') ||
+                   request.headers.get('x-real-ip') ||
                    '127.0.0.1';
 
     // Create order info
     const orderInfo = `Thanh toan goi ${planId} - ${billingPeriod}`;
 
-
-    // Create pending transaction in database
-    const transaction = await prisma.subscription.create({
-      data: {
-        UserId: userId,
-        PlanId: planId,
-        BillingPeriod: billingPeriod,
-        Amount: amountVND, // Lưu giá VND thay vì USD
-        Status: 'pending',
-        Currency: 'VND',
-        Email: email || null,
-      },
+    // Create pending transaction in database using DAL
+    const transaction = await subscriptionDAL.createSubscription({
+      userId,
+      planId,
+      billingPeriod,
+      amount: amountVND,
+      email,
+      startDate: new Date(),
+      endDate: new Date(), // Will be updated when payment is confirmed
     });
+
+    // Update status to pending
+    await subscriptionDAL.updateSubscription(transaction.Id, { status: 'pending' });
 
     // Create payment URL
     const paymentUrl = createPaymentUrl({
