@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getPlanLimits } from '@/constants/pricing';
+import { subscriptionService } from '@/services/subscription';
 
 interface UserPlan {
   plan: 'hobby' | 'pro' | 'enterprise';
@@ -13,35 +14,36 @@ export function useUserPlan() {
   return useQuery<UserPlan>({
     queryKey: ['user-plan'],
     queryFn: async () => {
-      const response = await fetch('/api/subscription/status');
-      if (!response.ok) {
+      try {
+        const data = await subscriptionService.getSubscriptionStatus();
+
+        if (!data.hasActiveSubscription || !data.subscription) {
+          const limits = getPlanLimits('hobby');
+          return {
+            plan: 'hobby',
+            hasActiveSubscription: false,
+            ...limits,
+          };
+        }
+
+        const planId = data.subscription.planId as 'hobby' | 'pro' | 'enterprise';
+        const limits = getPlanLimits(planId);
+        return {
+          plan: planId,
+          hasActiveSubscription: true,
+          subscriptionEndDate: data.subscription.endDate,
+          daysUntilExpiry: data.subscription.daysUntilExpiry,
+          ...limits,
+        };
+      } catch (error) {
+        // Fallback to hobby plan if API fails
         const limits = getPlanLimits('hobby');
-        return { 
-          plan: 'hobby', 
+        return {
+          plan: 'hobby',
           hasActiveSubscription: false,
           ...limits,
         };
       }
-      
-      const data = await response.json();
-      
-      if (!data.hasActiveSubscription) {
-        const limits = getPlanLimits('hobby');
-        return { 
-          plan: 'hobby', 
-          hasActiveSubscription: false,
-          ...limits,
-        };
-      }
-      
-      const limits = getPlanLimits(data.subscription.planId);
-      return {
-        plan: data.subscription.planId,
-        hasActiveSubscription: true,
-        subscriptionEndDate: data.subscription.endDate,
-        daysUntilExpiry: data.subscription.daysUntilExpiry,
-        ...limits,
-      };
     },
   });
 }

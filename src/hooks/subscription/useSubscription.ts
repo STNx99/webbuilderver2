@@ -1,30 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-
-interface SubscriptionStatus {
-  hasActiveSubscription: boolean;
-  plan?: string;
-  subscription?: {
-    id: string;
-    planId: string;
-    billingPeriod: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-    daysUntilExpiry: number;
-    canRenew: boolean;
-  };
-}
+import { subscriptionService } from '@/services/subscription';
+import type { SubscriptionStatus, CreatePaymentRequest } from '@/interfaces/subscription.interface';
 
 export function useSubscriptionStatus() {
   return useQuery<SubscriptionStatus>({
     queryKey: ['subscription-status'],
     queryFn: async () => {
-      const response = await fetch('/api/subscription/status');
-      if (!response.ok) {
-        throw new Error('Failed to fetch subscription status');
-      }
-      return response.json();
+      return subscriptionService.getSubscriptionStatus();
     },
   });
 }
@@ -33,25 +16,8 @@ export function useCreatePayment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data: {
-      planId: string;
-      billingPeriod: string;
-      amount: number;
-      email?: string;
-    }) => {
-      const response = await fetch('/api/vnpay/create-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create payment');
-      }
-
-      return result;
+    mutationFn: async (data: CreatePaymentRequest) => {
+      return subscriptionService.createPayment(data);
     },
     onSuccess: (data) => {
       // Redirect to VNPay
@@ -79,19 +45,7 @@ export function useCancelSubscription() {
 
   return useMutation({
     mutationFn: async (subscriptionId: string) => {
-      const response = await fetch('/api/subscription/cancel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subscriptionId }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to cancel subscription');
-      }
-
-      return result;
+      return subscriptionService.cancelSubscription({ subscriptionId });
     },
     onSuccess: () => {
       toast.success('Hủy subscription thành công', {
