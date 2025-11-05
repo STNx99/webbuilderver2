@@ -24,6 +24,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check for existing active subscription
+    const existingSubscription = await prisma.subscription.findFirst({
+      where: {
+        UserId: userId,
+        Status: 'active',
+        EndDate: {
+          gt: new Date() // Still valid
+        }
+      },
+      orderBy: {
+        CreatedAt: 'desc'
+      }
+    });
+
+    if (existingSubscription) {
+      if (existingSubscription.PlanId === planId && existingSubscription.BillingPeriod === billingPeriod) {
+        return NextResponse.json(
+          { 
+            error: 'Bạn đã có gói đăng ký này đang hoạt động',
+            existingSubscription: {
+              planId: existingSubscription.PlanId,
+              endDate: existingSubscription.EndDate
+            }
+          },
+          { status: 409 }
+        );
+      }
+      console.log('[Payment] User upgrading/downgrading from', existingSubscription.PlanId, 'to', planId);
+    }
+
     // Convert amount from USD to VND
     const amountVND = convertUSDtoVND(amount);
 

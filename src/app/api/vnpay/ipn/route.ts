@@ -73,6 +73,19 @@ export async function GET(request: NextRequest) {
         payDateTime = new Date(year, month, day, hour, minute, second);
       }
 
+      // Cancel all other active subscriptions for this user
+      await prisma.subscription.updateMany({
+        where: {
+          UserId: subscription.UserId,
+          Status: 'active',
+          Id: { not: transactionId }
+        },
+        data: {
+          Status: 'cancelled',
+          UpdatedAt: new Date()
+        }
+      });
+
       await prisma.subscription.update({
         where: { Id: transactionId },
         data: {
