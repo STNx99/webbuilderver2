@@ -1,7 +1,8 @@
 import { Star, Zap, Shield, LucideIcon } from 'lucide-react';
+import type { PlanId, BillingPeriod } from '@/interfaces/subscription.interface';
 
 export interface PricingPlan {
-  id: string;
+  id: PlanId;
   name: string;
   icon: LucideIcon;
   price: {
@@ -46,6 +47,7 @@ export const pricingPlans: PricingPlan[] = [
     features: [
       'Unlimited websites',
       'Advanced components library',
+      'Publish to Marketplace',
       'Code export (React/Next.js)',
       'Custom domain hosting',
       'Priority support',
@@ -75,17 +77,29 @@ export const pricingPlans: PricingPlan[] = [
 ];
 
 // Helper function to get numeric price for calculations
-export function getNumericPrice(plan: PricingPlan, frequency: 'monthly' | 'yearly'): number {
+export function getNumericPrice(plan: PricingPlan, frequency: BillingPeriod): number {
   const price = plan.price[frequency];
   return typeof price === 'number' ? price : 0;
 }
 
 // Helper function to check if plan requires authentication
-export function requiresAuthentication(planId: string): boolean {
+export function requiresAuthentication(planId: PlanId): boolean {
   return planId !== 'hobby';
 }
 
 // Helper function to check if plan is paid
-export function isPaidPlan(planId: string): boolean {
+export function isPaidPlan(planId: PlanId): boolean {
   return planId === 'pro';
+}
+
+// Helper function to check if plan can publish to marketplace
+export function canPublishToMarketplace(planId: PlanId): boolean {
+  return planId === 'pro' || planId === 'enterprise';
+}
+
+// Helper function to get plan limits
+export function getPlanLimits(planId: PlanId) {
+  return {
+    canPublishToMarketplace: canPublishToMarketplace(planId),
+  };
 }

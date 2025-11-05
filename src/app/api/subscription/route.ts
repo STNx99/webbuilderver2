@@ -1,56 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import prisma from '@/lib/prisma'
 import { auth, currentUser } from '@clerk/nextjs/server'
+import { subscriptionDAL } from '@/data/subscription'
 
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth()
-    const clerkUser = await currentUser()
 
-    if (!userId || !clerkUser) {
+    if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user exists in database, if not create them
-    let user = await prisma.user.findUnique({
-      where: { Id: userId }
-    })
-
-    if (!user) {
-      // Create user record in database
-      user = await prisma.user.create({
-        data: {
-          Id: userId,
-          Email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          FirstName: clerkUser.firstName,
-          LastName: clerkUser.lastName,
-          ImageUrl: clerkUser.imageUrl,
-          CreatedAt: new Date(),
-          UpdatedAt: new Date(),
-        }
-      })
-    }
-
-    // Get the most recent active subscription
-    const subscription = await prisma.subscription.findFirst({
-      where: {
-        UserId: userId,
-        Status: 'active',
-      },
-      orderBy: {
-        CreatedAt: 'desc',
-      },
-    })
-
-    if (!subscription) {
-      return NextResponse.json({ error: 'No active subscription found' }, { status: 404 })
-    }
+    // Get all subscriptions for the user
+    const subscriptions = await subscriptionDAL.getSubscriptionsByUser(userId)
 
     return NextResponse.json({
-      subscription,
+      subscriptions,
     })
   } catch (error) {
-    console.error('Error fetching subscription:', error)
+    console.error('Error fetching subscriptions:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -77,37 +44,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    let user = await prisma.user.findUnique({
-      where: { Id: userId }
-    })
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          Id: userId,
-          Email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          FirstName: clerkUser.firstName,
-          LastName: clerkUser.lastName,
-          ImageUrl: clerkUser.imageUrl,
-          CreatedAt: new Date(),
-          UpdatedAt: new Date(),
-        }
-      })
-    }
-
-    const startDate = new Date()
-    const endDate = billingPeriod === 'yearly'
-      ? new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDate())
-      : new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate())
-
-    const subscription = await prisma.subscription.create({
-      data: {
-        UserId: userId,
-        PlanId: planId,
-        BillingPeriod: billingPeriod,
-        Amount: amount,
-        EndDate: endDate,
-      },
+    // Create subscription using DAL
+    const subscription = await subscriptionDAL.createSubscription({
+      userId,
+      planId,
+      billingPeriod,
+      amount,
     })
 
     return NextResponse.json({

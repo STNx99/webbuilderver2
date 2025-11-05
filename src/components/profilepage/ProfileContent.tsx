@@ -17,6 +17,7 @@ import PersonalInfoCard from "./PersonalInfoCard";
 import RecentActivitiesCard from "./RecentActivitiesCard";
 import { EditProfileDialog } from "./EditProfileDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { SubscriptionCard } from "./SubscriptionCard";
 
 export function ProfileContent() {
   const { user, isLoaded } = useUser();
@@ -182,8 +183,9 @@ export function ProfileContent() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <PersonalInfoCard profile={profile} />
+          <SubscriptionCard />
           <RecentActivitiesCard />
         </div>
 

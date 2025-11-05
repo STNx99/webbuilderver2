@@ -3,7 +3,7 @@ import { auth } from '@clerk/nextjs/server';
 import moment from 'moment';
 import { createPaymentUrl, convertUSDtoVND } from '@/lib/vnpay-utils';
 import vnpayConfig from '@/lib/vnpay-config';
-import prisma from '@/lib/prisma';
+import { subscriptionDAL } from '@/data/subscription';
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,32 +24,53 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check for existing active subscription using DAL
+    const hasExistingSubscription = await subscriptionDAL.hasActiveSubscription(
+      userId,
+      planId,
+      billingPeriod
+    );
+
+    if (hasExistingSubscription) {
+      const subscriptionStatus = await subscriptionDAL.getSubscriptionStatus(userId);
+      const existingSub = subscriptionStatus.subscription!;
+      
+      return NextResponse.json(
+        {
+          error: 'Bạn đã có gói đăng ký này đang hoạt động',
+          existingSubscription: {
+            planId: existingSub.planId,
+            endDate: existingSub.endDate
+          }
+        },
+        { status: 409 }
+      );
+    }
+
     // Convert amount from USD to VND
     const amountVND = convertUSDtoVND(amount);
 
     // Create order ID
     const orderId = `${userId}_${moment().format('DDHHmmss')}`;
-    
+
     // Get IP address
-    const ipAddr = request.headers.get('x-forwarded-for') || 
-                   request.headers.get('x-real-ip') || 
+    const ipAddr = request.headers.get('x-forwarded-for') ||
+                   request.headers.get('x-real-ip') ||
                    '127.0.0.1';
 
     // Create order info
     const orderInfo = `Thanh toan goi ${planId} - ${billingPeriod}`;
 
-
-    // Create pending transaction in database
-    const transaction = await prisma.subscription.create({
-      data: {
-        UserId: userId,
-        PlanId: planId,
-        BillingPeriod: billingPeriod,
-        Amount: amountVND, // Lưu giá VND thay vì USD
-        Status: 'pending',
-        Currency: 'VND',
-        Email: email || null,
-      },
+    // Create pending transaction in database using DAL
+    const transaction = await subscriptionDAL.createSubscription({
+      userId,
+      planId,
+      billingPeriod,
+      amount: amountVND,
+      email,
+      startDate: new Date(),
+      endDate: new Date(), // Will be updated when payment is confirmed
+      status: "pending",
     });
 
     // Create payment URL
