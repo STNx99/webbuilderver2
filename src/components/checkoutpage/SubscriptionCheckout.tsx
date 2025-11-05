@@ -14,12 +14,11 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ArrowLeft, Check, Loader2, Sparkles, Menu, X, AlertCircle} from "lucide-react"
 import { pricingPlans, getNumericPrice, requiresAuthentication, type PricingPlan } from "@/constants/pricing"
+import type { BillingPeriod, PlanId } from "@/interfaces/subscription.interface"
 import Link from "next/link"
 import ThemeSwitcher from "@/components/ThemeSwticher"
 import { useSubscriptionStatus, useCreatePayment, useCancelSubscription } from "@/hooks/subscription/useSubscription"
 import { toast } from "sonner"
-
-export type BillingPeriod = "monthly" | "yearly"
 
 // Use the same interface as pricing plans for consistency
 export interface Plan extends PricingPlan {
@@ -76,7 +75,7 @@ export function SubscriptionCheckout() {
         return
       }
 
-      if (requiresAuthentication(planId) && !isSignedIn) {
+      if (requiresAuthentication(planId as PlanId) && !isSignedIn) {
         setShowAuthPrompt(true)
         setIsInitializing(false)
         return

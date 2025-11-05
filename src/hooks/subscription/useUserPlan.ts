@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getPlanLimits } from '@/constants/pricing';
 import { subscriptionService } from '@/services/subscription';
+import type { PlanId } from '@/interfaces/subscription.interface';
 
 interface UserPlan {
-  plan: 'hobby' | 'pro' | 'enterprise';
+  plan: PlanId;
   hasActiveSubscription: boolean;
   subscriptionEndDate?: string;
   daysUntilExpiry?: number;
@@ -26,7 +27,7 @@ export function useUserPlan() {
           };
         }
 
-        const planId = data.subscription.planId as 'hobby' | 'pro' | 'enterprise';
+        const planId = data.subscription.planId as PlanId;
         const limits = getPlanLimits(planId);
         return {
           plan: planId,
