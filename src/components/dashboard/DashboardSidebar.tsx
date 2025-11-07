@@ -14,6 +14,7 @@ import {
   ChevronUp,
   Store,
 } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 import {
   Sidebar,
@@ -88,17 +89,64 @@ const quickActions = [
   },
 ];
 
-// Mock user data
-const user = {
-  name: "John Doe",
-  email: "john@example.com",
-  avatar: "/placeholder.svg?height=32&width=32",
-};
+// Mock user data - REMOVED, now using Clerk
+// const user = {
+//   name: "John Doe",
+//   email: "john@example.com",
+//   avatar: "/placeholder.svg?height=32&width=32",
+// };
 
 interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> { }
 
 export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
+  const { user, isLoaded } = useUser();
+
+  // Show loading state while Clerk is loading
+  if (!isLoaded) {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <BarChart3 className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Loading...</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
+
+  // Handle case where user is not authenticated
+  if (!user) {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton size="lg">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <BarChart3 className="size-4" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">Not signed in</span>
+                </div>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
   return (
     <>
       <Sidebar collapsible="icon" {...props}>
@@ -185,21 +233,21 @@ export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
-                        src={user.avatar || "/placeholder.svg"}
-                        alt={user.name}
+                        src={user.imageUrl || "/placeholder.svg"}
+                        alt={`${user.firstName} ${user.lastName}`}
                       />
                       <AvatarFallback className="rounded-lg">
-                        {user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
+                        {(user.firstName || "U").charAt(0)}
+                        {(user.lastName || "").charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-semibold">
-                        {user.name}
+                        {user.firstName} {user.lastName}
                       </span>
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate text-xs">
+                        {user.primaryEmailAddress?.emailAddress}
+                      </span>
                     </div>
                     <ChevronUp className="ml-auto size-4" />
                   </SidebarMenuButton>
