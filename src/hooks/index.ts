@@ -31,6 +31,15 @@ export { useGridEditor } from "./editor/useGridEditor";
 export { useResizeHandler } from "./editor/useResizeHandler";
 
 // =============================================================================
+// ELEMENT COMMENTS HOOKS
+// =============================================================================
+export {
+  elementCommentKeys,
+  useElementComments,
+  useProjectComments,
+} from "./useElementComments";
+
+// =============================================================================
 // UI HOOKS
 // =============================================================================
 export { useInView } from "./ui/useInView";

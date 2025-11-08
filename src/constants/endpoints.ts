@@ -97,16 +97,21 @@ export const API_ENDPOINTS = {
       CREATE: "/api/v1/comments",
       GET_ALL: "/api/v1/comments",
       GET_BY_ID: (commentId: string) => `/api/v1/comments/${commentId}`,
-      GET_BY_ITEM: (itemId: string) => `/api/v1/marketplace/items/${itemId}/comments`,
+      GET_BY_ITEM: (itemId: string) =>
+        `/api/v1/marketplace/items/${itemId}/comments`,
       UPDATE: (commentId: string) => `/api/v1/comments/${commentId}`,
       DELETE: (commentId: string) => `/api/v1/comments/${commentId}`,
       MODERATE: (commentId: string) => `/api/v1/comments/${commentId}/moderate`,
-      GET_COUNT: (itemId: string) => `/api/v1/marketplace/items/${itemId}/comments/count`,
-      // Reactions
-      CREATE_REACTION: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
-      DELETE_REACTION: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
-      GET_REACTIONS: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
-      GET_REACTION_SUMMARY: (commentId: string) => `/api/v1/comments/${commentId}/reactions/summary`,
+      GET_COUNT: (itemId: string) =>
+        `/api/v1/marketplace/items/${itemId}/comments/count`,
+      CREATE_REACTION: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions`,
+      DELETE_REACTION: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions`,
+      GET_REACTIONS: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions`,
+      GET_REACTION_SUMMARY: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions/summary`,
     },
   },
   INVITATIONS: {
@@ -153,7 +158,20 @@ export const API_ENDPOINTS = {
     RETURN: "/api/vnpay/return",
     IPN: "/api/vnpay/ipn",
   },
-  
+  ELEMENT_COMMENTS: {
+    CREATE: "/api/v1/element-comments",
+    GET_BY_ID: (id: string) => `/api/v1/element-comments/${id}`,
+    GET_BY_ELEMENT: (elementId: string) =>
+      `/api/v1/elements/${elementId}/comments`,
+    UPDATE: (id: string) => `/api/v1/element-comments/${id}`,
+    DELETE: (id: string) => `/api/v1/element-comments/${id}`,
+    TOGGLE_RESOLVED: (id: string) =>
+      `/api/v1/element-comments/${id}/toggle-resolved`,
+    GET_BY_AUTHOR: (authorId: string) =>
+      `/api/v1/element-comments/author/${authorId}`,
+    GET_BY_PROJECT: (projectId: string) =>
+      `/api/v1/projects/${projectId}/comments`,
+  },
 };
 export const NEXT_API_ENDPOINTS = {
   ELEMENTS: {
