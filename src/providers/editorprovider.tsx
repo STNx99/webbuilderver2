@@ -7,6 +7,7 @@ import LayoutSideBar from "@/components/editor/sidebar/LayoutSideBar";
 import AIChatProvider from "./aiprovider";
 import AIChatPanel from "@/components/editor/ai/AiChatPanel";
 import { useAiChat } from "./aiprovider";
+import { ElementCommentsPanel } from "@/components/editor/comments/ElementCommentsPanel";
 
 interface EditorProviderProps {
   children: React.ReactNode;
@@ -24,6 +25,7 @@ function EditorLayout({ children }: EditorProviderProps) {
         {children}
       </main>
       <LayoutSideBar />
+      <ElementCommentsPanel />
     </SidebarProvider>
   );
 }

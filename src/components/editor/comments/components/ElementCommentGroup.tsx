@@ -2,11 +2,7 @@
 
 import React, { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import {
-  ChevronDown,
-  Layers,
-  MousePointerClick,
-} from "lucide-react";
+import { ChevronDown, Layers, MousePointerClick } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +15,7 @@ import {
 } from "@/components/ui/collapsible";
 import { ElementComment } from "@/interfaces/elementcomment.interface";
 import { useElementStore } from "@/globalstore/elementstore";
+import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { CommentCard } from "./CommentCard";
 
 interface ElementCommentGroupProps {
@@ -53,10 +50,10 @@ export function ElementCommentGroup({
   onElementSelect,
 }: ElementCommentGroupProps) {
   const { user } = useUser();
-  const { getElement } = useElementStore();
+  const { elements } = useElementStore();
   const [isOpen, setIsOpen] = useState(true);
 
-  const element = getElement(elementId);
+  const element = elementHelper.findById(elements, elementId);
   const unresolvedCount = comments.filter((c) => !c.resolved).length;
 
   return (

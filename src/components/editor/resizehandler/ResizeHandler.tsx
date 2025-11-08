@@ -15,6 +15,7 @@ import {
   hasGap,
 } from "@/constants/direciton";
 import ResizeTooltip from "./ResizeTooltip";
+import { ElementCommentButton } from "@/components/editor/comments/ElementCommentButton";
 
 interface ResizeHandlerProps {
   element: EditorElement;
@@ -235,6 +236,9 @@ export default function ResizeHandler({
     >
       {/* Element label (shown when selected) */}
       {isSelected && <ElementLabel element={element} />}
+
+      {/* Comment button (shown when selected) */}
+      {isSelected && <ElementCommentButton element={element} />}
 
       {/* Children content */}
       {children}

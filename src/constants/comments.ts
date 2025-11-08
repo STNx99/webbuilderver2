@@ -22,7 +22,7 @@ export const COMMENT_SORT_ORDERS = {
 
 // Panel dimensions
 export const COMMENTS_PANEL = {
-  WIDTH: "w-[420px]",
+  WIDTH: "w-1/4",
   POSITION: "fixed right-4 top-20 z-50",
 } as const;
 

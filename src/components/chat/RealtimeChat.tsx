@@ -240,7 +240,7 @@ export default function RealtimeChat() {
                 <Input
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
-                  onKeyPress={handleKeyPress}
+                  onKeyDown={handleKeyPress}
                   placeholder={selectedUser ? `Message ${selectedUser.username}...` : "Type a message..."}
                   className={cn(
                     "flex-1 border-gray-300 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent",

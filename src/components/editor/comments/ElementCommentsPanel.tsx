@@ -18,8 +18,6 @@ import { useCommentManager } from "@/hooks/useCommentManager";
 import { CommentsPanelHeader } from "./components/CommentsPanelHeader";
 import { CommentsListView } from "./components/CommentsListView";
 import { CommentInput } from "./components/CommentInput";
-import { EmptyState } from "./components/EmptyState";
-import { ElementComment } from "@/interfaces/elementcomment.interface";
 import { COMMENTS_SCROLL_HEIGHT, COMMENTS_PANEL } from "@/constants/comments";
 
 /**
