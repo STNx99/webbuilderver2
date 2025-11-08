@@ -153,6 +153,7 @@ export const API_ENDPOINTS = {
     RETURN: "/api/vnpay/return",
     IPN: "/api/vnpay/ipn",
   },
+  
 };
 export const NEXT_API_ENDPOINTS = {
   ELEMENTS: {

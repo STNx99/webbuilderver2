@@ -103,10 +103,23 @@ export {
   useCollaboratorManager,
 } from "./features/useCollaborators";
 
+// =============================================================================
 // USER HOOKS
+// =============================================================================
 export {
   userKeys,
   useSearchUsers,
   useUserByEmail,
   useUserByUsername,
 } from "./features/useUsers";
+
+// =============================================================================
+// RBAC & PERMISSIONS HOOKS
+// =============================================================================
+export {
+  useProjectPermissions,
+  useCanEditOwnResource,
+  useCanDeleteOwnResource,
+  useRoleDescription,
+  Permission,
+} from "./useProjectPermissions";

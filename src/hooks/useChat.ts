@@ -87,7 +87,7 @@ export function useChat(): ChatState & ChatActions {
         setIsConnected(false);
       });
 
-      newSocket.on("connect_error", (error) => {
+      newSocket.on("connect_error", (error : unknown) => {
         console.error("Connection error:", error);
         setIsConnected(false);
       });
