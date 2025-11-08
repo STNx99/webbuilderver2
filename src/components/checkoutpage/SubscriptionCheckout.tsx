@@ -12,12 +12,13 @@ import { CheckoutForm } from "./CheckoutForm"
 import { OrderSummary } from "./OrderSummary"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ArrowLeft, Check, Loader2, Sparkles, Menu, X } from "lucide-react"
+import { ArrowLeft, Check, Loader2, Sparkles, Menu, X, AlertCircle} from "lucide-react"
 import { pricingPlans, getNumericPrice, requiresAuthentication, type PricingPlan } from "@/constants/pricing"
+import type { BillingPeriod, PlanId } from "@/interfaces/subscription.interface"
 import Link from "next/link"
 import ThemeSwitcher from "@/components/ThemeSwticher"
-
-export type BillingPeriod = "monthly" | "yearly"
+import { useSubscriptionStatus, useCreatePayment, useCancelSubscription } from "@/hooks/subscription/useSubscription"
+import { toast } from "sonner"
 
 // Use the same interface as pricing plans for consistency
 export interface Plan extends PricingPlan {
@@ -53,6 +54,12 @@ export function SubscriptionCheckout() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
+
+  // Fetch subscription status
+  const { data: subscriptionStatus, isLoading: isLoadingSubscription } = useSubscriptionStatus()
+  const createPayment = useCreatePayment()
+  const cancelSubscription = useCancelSubscription()
 
   useEffect(() => {
     if (!isLoaded) return
@@ -68,7 +75,7 @@ export function SubscriptionCheckout() {
         return
       }
 
-      if (requiresAuthentication(planId) && !isSignedIn) {
+      if (requiresAuthentication(planId as PlanId) && !isSignedIn) {
         setShowAuthPrompt(true)
         setIsInitializing(false)
         return
@@ -131,48 +138,12 @@ export function SubscriptionCheckout() {
   const handleCompleteCheckout = async (formData: any) => {
     if (!selectedPlan) return;
 
-    setIsProcessing(true);
-
-    try {
-      console.log("[Checkout] Creating VNPay payment...", {
-        planId: selectedPlan.id,
-        planName: selectedPlan.name,
-        billingPeriod,
-        amount: total,
-        paymentMethod,
-        formData
-      });
-
-      // Create VNPay payment URL
-      const response = await fetch('/api/vnpay/create-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          planId: selectedPlan.id,
-          billingPeriod,
-          amount: total,
-          email: formData.email,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create VNPay payment');
-      }
-
-      const data = await response.json();
-      console.log("[Checkout] VNPay payment URL created:", data);
-
-      // Redirect to VNPay payment page
-      window.location.href = data.paymentUrl;
-
-    } catch (error) {
-      console.error("[Checkout] Error:", error);
-      alert('Không thể tạo thanh toán. Vui lòng thử lại.');
-    } finally {
-      setIsProcessing(false);
-    }
+    createPayment.mutate({
+      planId: selectedPlan.id,
+      billingPeriod,
+      amount: total,
+      email: formData.email,
+    });
   }
 
   const currentPrice = selectedPlan
@@ -192,7 +163,7 @@ export function SubscriptionCheckout() {
   ]
 
   // Show loading screen while initializing
-  if (isInitializing) {
+  if (isInitializing || isLoadingSubscription) {
     return (
       <div className="min-h-screen min-w-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -337,6 +308,40 @@ export function SubscriptionCheckout() {
 
       {/* Main Content */}
       <main className="container px-3 sm:px-4 py-6 sm:py-8 md:py-12 max-w-screen-2xl mx-auto">
+        {/* Show subscription status if user has active subscription */}
+        {subscriptionStatus?.hasActiveSubscription && step !== "plans" && (
+          <div className="max-w-3xl mx-auto mb-6">
+            <div className="flex flex-col gap-3 p-4 rounded-lg border border-primary/50 bg-primary/5">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm mb-1">Gói đăng ký hiện tại</h3>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Bạn đang có gói <strong className="text-foreground">{subscriptionStatus.subscription?.planId}</strong> đang hoạt động 
+                    (còn <strong className="text-foreground">{subscriptionStatus.subscription?.daysUntilExpiry}</strong> ngày). 
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedPlan?.id === subscriptionStatus.subscription?.planId 
+                      ? 'Bạn đang chọn cùng gói hiện tại. Chọn gói khác hoặc hủy gói hiện tại để đăng ký lại.'
+                      : 'Việc thanh toán gói mới sẽ tự động hủy và thay thế gói hiện tại.'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowCancelDialog(true)}
+                  disabled={cancelSubscription.isPending}
+                  className="text-xs"
+                >
+                  {cancelSubscription.isPending ? 'Đang hủy...' : 'Hủy gói hiện tại'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {step !== "plans" && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -467,7 +472,7 @@ export function SubscriptionCheckout() {
                     onDiscountApply={setDiscount}
                     paymentMethod={paymentMethod}
                     onComplete={handleCompleteCheckout}
-                    isProcessing={isProcessing}
+                    isProcessing={createPayment.isPending}
                   />
                 </div>
               </div>
@@ -502,6 +507,54 @@ export function SubscriptionCheckout() {
             >
               Continue browsing plans
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Subscription Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="w-5 h-5" />
+              Hủy gói đăng ký
+            </DialogTitle>
+            <DialogDescription>
+              Bạn có chắc muốn hủy gói <strong>{subscriptionStatus?.subscription?.planId?.toUpperCase()}</strong>?
+              Hành động này không thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <h4 className="font-medium text-destructive mb-2">Điều gì sẽ xảy ra:</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Bạn sẽ mất quyền truy cập các tính năng premium ngay lập tức</li>
+                <li>• Tài khoản sẽ chuyển về gói miễn phí (Hobby)</li>
+                <li>• Bạn có thể đăng ký lại bất cứ lúc nào</li>
+              </ul>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelDialog(false)}
+                className="flex-1"
+              >
+                Giữ nguyên
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (subscriptionStatus?.subscription?.id) {
+                    cancelSubscription.mutate(subscriptionStatus.subscription.id)
+                    setShowCancelDialog(false)
+                  }
+                }}
+                disabled={cancelSubscription.isPending}
+                className="flex-1"
+              >
+                {cancelSubscription.isPending ? 'Đang hủy...' : 'Xác nhận hủy'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

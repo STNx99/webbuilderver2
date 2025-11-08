@@ -142,6 +142,17 @@ export const API_ENDPOINTS = {
     GET_BY_EMAIL: (email: string) => `/api/v1/users/email/${email}`,
     GET_BY_USERNAME: (username: string) => `/api/v1/users/username/${username}`,
   },
+  SUBSCRIPTION: {
+    STATUS: "/api/subscription/status",
+    CANCEL: "/api/subscription/cancel",
+    CREATE: "/api/subscription",
+    GET: "/api/subscription",
+  },
+  VNPAY: {
+    CREATE_PAYMENT: "/api/vnpay/create-payment",
+    RETURN: "/api/vnpay/return",
+    IPN: "/api/vnpay/ipn",
+  },
 };
 export const NEXT_API_ENDPOINTS = {
   ELEMENTS: {

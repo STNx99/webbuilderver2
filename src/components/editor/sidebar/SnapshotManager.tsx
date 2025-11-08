@@ -62,7 +62,7 @@ const SnapshotManager = () => {
           Manage Snapshots
         </Button>
       </DialogTrigger>
-      <DialogContent className="!max-w-[75vw] max-h-[95vh] h-[75vw] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[75vw] max-h-[95vh] h-[75vw] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <History className="h-5 w-5" />
