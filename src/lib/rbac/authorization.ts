@@ -6,8 +6,26 @@
  */
 
 import { CollaboratorRole } from "@/interfaces/collaboration.interface";
-import { Permission, hasPermission, getRoleHierarchy } from "./permissions";
-import prisma from "@/lib/prisma";
+import { Permission } from "@/constants/rbac";
+import { hasPermission } from "./permissions";
+import {
+  getUserProjectAccess,
+  getCollaboratorInfo,
+  userOwnsResource,
+  getUserProjectsWithPermission,
+  getUserPermissions,
+  countOwnedProjects,
+} from "@/data/rbac";
+import { type UserProjectAccess } from "@/data/rbac";
+
+export type { UserProjectAccess };
+
+export {
+  getUserProjectAccess,
+  userOwnsResource,
+  getUserProjectsWithPermission,
+  getUserPermissions,
+};
 
 /**
  * Result of an authorization check
@@ -19,86 +37,12 @@ export interface AuthorizationResult {
 }
 
 /**
- * User access information for a project
- */
-export interface UserProjectAccess {
-  userId: string;
-  projectId: string;
-  role: CollaboratorRole;
-  isOwner: boolean;
-  isCollaborator: boolean;
-}
-
-/**
- * Get user's role and access level for a project
- */
-export async function getUserProjectAccess(
-  userId: string,
-  projectId: string
-): Promise<UserProjectAccess | null> {
-  try {
-    // First check if user is the project owner
-    const project = await prisma.project.findUnique({
-      where: { Id: projectId },
-      select: { OwnerId: true, DeletedAt: true },
-    });
-
-    if (!project) {
-      return null;
-    }
-
-    // Don't allow access to deleted projects
-    if (project.DeletedAt !== null) {
-      return null;
-    }
-
-    // User is the owner
-    if (project.OwnerId === userId) {
-      return {
-        userId,
-        projectId,
-        role: CollaboratorRole.OWNER,
-        isOwner: true,
-        isCollaborator: false,
-      };
-    }
-
-    // Check if user is a collaborator
-    const collaborator = await prisma.collaborator.findUnique({
-      where: {
-        UserId_ProjectId: {
-          UserId: userId,
-          ProjectId: projectId,
-        },
-      },
-      select: { Role: true },
-    });
-
-    if (collaborator) {
-      return {
-        userId,
-        projectId,
-        role: collaborator.Role as CollaboratorRole,
-        isOwner: false,
-        isCollaborator: true,
-      };
-    }
-
-    // User has no access
-    return null;
-  } catch (error) {
-    console.error("[Authorization] Error getting user project access:", error);
-    return null;
-  }
-}
-
-/**
  * Check if user has permission to perform an action on a project
  */
 export async function authorizeUserAction(
   userId: string,
   projectId: string,
-  permission: Permission
+  permission: Permission,
 ): Promise<AuthorizationResult> {
   const access = await getUserProjectAccess(userId, projectId);
 
@@ -131,7 +75,7 @@ export async function authorizeUserAction(
 export async function authorizeUserAnyPermission(
   userId: string,
   projectId: string,
-  permissions: Permission[]
+  permissions: Permission[],
 ): Promise<AuthorizationResult> {
   const access = await getUserProjectAccess(userId, projectId);
 
@@ -143,7 +87,7 @@ export async function authorizeUserAnyPermission(
   }
 
   const hasAnyPermission = permissions.some((permission) =>
-    hasPermission(access.role, permission)
+    hasPermission(access.role, permission),
   );
 
   if (!hasAnyPermission) {
@@ -166,7 +110,7 @@ export async function authorizeUserAnyPermission(
 export async function canModifyCollaborator(
   userId: string,
   projectId: string,
-  targetCollaboratorId: string
+  targetCollaboratorId: string,
 ): Promise<AuthorizationResult> {
   const userAccess = await getUserProjectAccess(userId, projectId);
 
@@ -187,10 +131,7 @@ export async function canModifyCollaborator(
   }
 
   // Get target collaborator info
-  const targetCollaborator = await prisma.collaborator.findUnique({
-    where: { Id: targetCollaboratorId },
-    select: { UserId: true, Role: true, ProjectId: true },
-  });
+  const targetCollaborator = await getCollaboratorInfo(targetCollaboratorId);
 
   if (!targetCollaborator) {
     return {
@@ -231,7 +172,7 @@ export async function canModifyCollaborator(
 export async function canRemoveCollaborator(
   userId: string,
   projectId: string,
-  targetUserId: string
+  targetUserId: string,
 ): Promise<AuthorizationResult> {
   const userAccess = await getUserProjectAccess(userId, projectId);
 
@@ -246,9 +187,7 @@ export async function canRemoveCollaborator(
   if (targetUserId === userId) {
     // Owner can't leave if they're the only owner
     if (userAccess.isOwner) {
-      const ownerCount = await prisma.project.count({
-        where: { Id: projectId, OwnerId: userId },
-      });
+      const ownerCount = await countOwnedProjects(userId);
 
       if (ownerCount > 0) {
         return {
@@ -281,39 +220,13 @@ export async function canRemoveCollaborator(
 }
 
 /**
- * Check if user owns a specific resource (e.g., comment)
- */
-export async function userOwnsResource(
-  userId: string,
-  resourceType: "comment",
-  resourceId: string
-): Promise<boolean> {
-  try {
-    switch (resourceType) {
-      case "comment": {
-        const comment = await prisma.comment.findUnique({
-          where: { Id: resourceId },
-          select: { AuthorId: true },
-        });
-        return comment?.AuthorId === userId;
-      }
-      default:
-        return false;
-    }
-  } catch (error) {
-    console.error("[Authorization] Error checking resource ownership:", error);
-    return false;
-  }
-}
-
-/**
  * Middleware-friendly authorization check
  * Throws an error if authorization fails
  */
 export async function requirePermission(
   userId: string,
   projectId: string,
-  permission: Permission
+  permission: Permission,
 ): Promise<UserProjectAccess> {
   const result = await authorizeUserAction(userId, projectId, permission);
 
@@ -334,58 +247,11 @@ export async function requirePermission(
 }
 
 /**
- * Get all projects where user has a specific permission
- */
-export async function getUserProjectsWithPermission(
-  userId: string,
-  permission: Permission
-): Promise<string[]> {
-  try {
-    // Get owned projects (owners have all permissions)
-    const ownedProjects = await prisma.project.findMany({
-      where: {
-        OwnerId: userId,
-        DeletedAt: null,
-      },
-      select: { Id: true },
-    });
-
-    // Get collaborated projects where user has the permission
-    const collaborations = await prisma.collaborator.findMany({
-      where: {
-        UserId: userId,
-      },
-      select: { ProjectId: true, Role: true },
-    });
-
-    const collaboratedProjects = collaborations
-      .filter((collab) =>
-        hasPermission(collab.Role as CollaboratorRole, permission)
-      )
-      .map((collab) => collab.ProjectId);
-
-    // Combine and deduplicate
-    const allProjectIds = [
-      ...ownedProjects.map((p) => p.Id),
-      ...collaboratedProjects,
-    ];
-
-    return [...new Set(allProjectIds)];
-  } catch (error) {
-    console.error(
-      "[Authorization] Error getting user projects with permission:",
-      error
-    );
-    return [];
-  }
-}
-
-/**
  * Check if user has permission to access realtime collaboration features
  */
 export async function canAccessRealtimeCollab(
   userId: string,
-  projectId: string
+  projectId: string,
 ): Promise<boolean> {
   const access = await getUserProjectAccess(userId, projectId);
   if (!access) return false;
@@ -393,18 +259,4 @@ export async function canAccessRealtimeCollab(
   // All roles with project access can use realtime features
   // Viewers can see cursors but can't edit
   return hasPermission(access.role, Permission.PROJECT_VIEW);
-}
-
-/**
- * Get user's effective permissions for a project
- */
-export async function getUserPermissions(
-  userId: string,
-  projectId: string
-): Promise<Permission[]> {
-  const access = await getUserProjectAccess(userId, projectId);
-  if (!access) return [];
-
-  const { ROLE_PERMISSIONS } = await import("./permissions");
-  return ROLE_PERMISSIONS[access.role];
 }

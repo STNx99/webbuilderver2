@@ -24,6 +24,7 @@ interface UseResizeHandlerProps {
   element: EditorElement;
   updateElement: (id: string, updates: Partial<EditorElement>) => void;
   targetRef: React.RefObject<HTMLDivElement | null>;
+  enabled?: boolean;
 }
 
 interface DirectionFlags {
@@ -129,6 +130,7 @@ export function useResizeHandler({
   element,
   updateElement,
   targetRef,
+  enabled = true,
 }: UseResizeHandlerProps) {
   // Store element in ref to always have latest version
   const elementRef = useRef(element);
@@ -427,9 +429,10 @@ export function useResizeHandler({
     direction: ResizeDirection,
     e: React.MouseEvent,
   ) => {
-    if (!targetRef.current) return;
+    if (!enabled || !targetRef.current) return;
 
     e.preventDefault();
+    e.stopPropagation();
     e.stopPropagation();
 
     // Get owner document and window
@@ -468,11 +471,9 @@ export function useResizeHandler({
       ownerWindow: ownerWin,
     };
 
-    // Add event listeners to owner document
     ownerDoc.addEventListener("mousemove", onMouseMove);
     ownerDoc.addEventListener("mouseup", onMouseUp);
 
-    // Prevent text selection during resize
     try {
       if (ownerDoc.body) {
         ownerDoc.body.style.userSelect = "none";

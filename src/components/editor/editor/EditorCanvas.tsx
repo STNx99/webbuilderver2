@@ -17,6 +17,8 @@ type EditorCanvasProps = {
   addNewSection: () => void;
   userId: string;
   sendMessage: (message: any) => boolean;
+  isReadOnly?: boolean;
+  isLocked?: boolean;
 };
 
 const EditorCanvas: React.FC<EditorCanvasProps> = ({
@@ -29,10 +31,17 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   addNewSection,
   userId,
   sendMessage,
+  isReadOnly = false,
+  isLocked = false,
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const keyboardEvent = new KeyboardEventClass();
   const { mousePositions, users } = useMouseStore();
+
+  useEffect(() => {
+    keyboardEvent.setReadOnly(isReadOnly);
+    keyboardEvent.setLocked(isLocked);
+  }, [isReadOnly, isLocked, keyboardEvent]);
 
   useMouseTracking({
     canvasRef,
@@ -48,16 +57,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     if (!canvas) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      console.log(
-        "Key pressed:",
-        e.key,
-        "Ctrl:",
-        e.ctrlKey,
-        "Meta:",
-        e.metaKey,
-        "Key:",
-        e.key,
-      );
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "c":
@@ -129,9 +128,13 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         );
       })}
       <div className="overflow-x-hidden h-full w-full p-4">
-        {isLoading ? null : <ElementLoader />}
+        {isLoading ? null : <ElementLoader isReadOnly={isReadOnly} isLocked={isLocked} />}
         {!selectedElement && (
-          <Button className="mb-4 w-full " onClick={addNewSection}>
+          <Button
+            className="mb-4 w-full"
+            onClick={addNewSection}
+            disabled={isReadOnly || isLocked}
+          >
             + Add new section
           </Button>
         )}

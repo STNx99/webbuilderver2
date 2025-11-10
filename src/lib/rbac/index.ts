@@ -16,9 +16,15 @@
 export {
   // Permission enum
   Permission,
+} from "@/constants/rbac";
+
+export {
   // Role definitions
   ROLE_PERMISSIONS,
   ROLE_DESCRIPTIONS,
+} from "@/constants/rbac";
+
+export {
   // Permission checking functions
   hasPermission,
   hasAnyPermission,

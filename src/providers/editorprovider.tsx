@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { createContext, useContext } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { EditorSideBar } from "@/components/editor/sidebar/EditorSideBar";
 import LayoutSideBar from "@/components/editor/sidebar/LayoutSideBar";
@@ -11,6 +11,23 @@ import { ElementCommentsPanel } from "@/components/editor/comments/ElementCommen
 
 interface EditorProviderProps {
   children: React.ReactNode;
+  projectId?: string;
+  userId?: string;
+}
+
+interface EditorContextType {
+  projectId: string | null;
+  userId: string | null;
+}
+
+const EditorContext = createContext<EditorContextType | undefined>(undefined);
+
+export function useEditorContext() {
+  const context = useContext(EditorContext);
+  if (!context) {
+    throw new Error("useEditorContext must be used within EditorProvider");
+  }
+  return context;
 }
 
 function EditorLayout({ children }: EditorProviderProps) {
@@ -30,10 +47,18 @@ function EditorLayout({ children }: EditorProviderProps) {
   );
 }
 
-export default function EditorProvider({ children }: EditorProviderProps) {
+export default function EditorProvider({
+  children,
+  projectId,
+  userId,
+}: EditorProviderProps) {
   return (
-    <AIChatProvider>
-      <EditorLayout>{children}</EditorLayout>
-    </AIChatProvider>
+    <EditorContext.Provider
+      value={{ projectId: projectId || null, userId: userId || null }}
+    >
+      <AIChatProvider>
+        <EditorLayout>{children}</EditorLayout>
+      </AIChatProvider>
+    </EditorContext.Provider>
   );
 }

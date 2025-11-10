@@ -13,6 +13,7 @@ import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";
 import type { Project } from "@/interfaces/project.interface";
 import { useCollab } from "@/hooks/realtime/use-collab";
+import { useEditorPermissions } from "./useEditorPermissions";
 import { toast } from "sonner";
 
 export type Viewport = "mobile" | "tablet" | "desktop";
@@ -21,6 +22,8 @@ export interface UseEditorOptions {
   enableCollab?: boolean;
   collabWsUrl?: string;
   userId?: string;
+  isReadOnly?: boolean;
+  isLocked?: boolean;
 }
 
 export const useEditor = (
@@ -31,6 +34,13 @@ export const useEditor = (
   const [currentView, setCurrentView] = useState<Viewport>("desktop");
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const router = useRouter();
+
+  // Get permissions from the hook
+  const permissions = useEditorPermissions(id);
+
+  // Use passed options or fall back to permissions
+  const isReadOnly = options?.isReadOnly ?? !permissions.canEditElements;
+  const isLocked = options?.isLocked ?? false;
 
   const { addElement, elements } = useElementStore();
   const { selectedElement } = useSelectionStore();
@@ -70,7 +80,6 @@ export const useEditor = (
       });
     },
   });
-  
 
   useEffect(() => {
     if (projectPages && projectPages.length > 0) {
@@ -94,6 +103,17 @@ export const useEditor = (
   );
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    // Prevent drop if read-only or locked or no permission
+    if (isReadOnly || isLocked || !permissions.canCreateElements) {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDraggingOver(false);
+      toast.error("Cannot add elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     e.preventDefault();
     e.stopPropagation();
     setIsDraggingOver(false);
@@ -137,6 +157,10 @@ export const useEditor = (
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    // Prevent drag over if read-only
+    if (isReadOnly || isLocked || !permissions.canCreateElements) {
+      return;
+    }
     e.preventDefault();
     setIsDraggingOver(true);
   };
@@ -147,6 +171,14 @@ export const useEditor = (
   };
 
   const addNewSection = () => {
+    // Check permissions before adding new section
+    if (isReadOnly || isLocked || !permissions.canCreateElements) {
+      toast.error("Cannot add elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     const newElement = elementHelper.createElement.create<SectionElement>(
       "Section",
       id,
@@ -170,6 +202,14 @@ export const useEditor = (
     handleDragOver,
     handleDragLeave,
     addNewSection,
+    isReadOnly,
+    isLocked,
+    permissions: {
+      canCreateElements: permissions.canCreateElements,
+      canEditElements: permissions.canEditElements,
+      canDeleteElements: permissions.canDeleteElements,
+      canReorderElements: permissions.canReorderElements,
+    },
     collab: {
       isConnected: collab.isConnected,
       connectionState: collab.connectionState,
