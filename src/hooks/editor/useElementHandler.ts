@@ -3,8 +3,11 @@ import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useEditorPermissions } from "./useEditorPermissions";
+import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
-export function useElementHandler() {
+export function useElementHandler(isReadOnly?: boolean, isLocked?: boolean) {
   const { addElement, updateElement, swapElement } = useElementStore();
   const {
     hoveredElement,
@@ -16,6 +19,15 @@ export function useElementHandler() {
     setDraggedOverElement,
     setHoveredElement,
   } = useSelectionStore();
+
+  const params = useParams();
+  const projectId = params?.id as string;
+  const permissions = useEditorPermissions(projectId ?? null);
+
+  const canDrag = !isReadOnly && !isLocked && permissions.canEditElements;
+  const canDelete = !isReadOnly && !isLocked && permissions.canDeleteElements;
+  const canCreate = !isReadOnly && !isLocked && permissions.canCreateElements;
+  const canReorder = !isReadOnly && !isLocked && permissions.canReorderElements;
 
   const createElementFromType = (
     type: ElementType,
@@ -58,6 +70,13 @@ export function useElementHandler() {
     e.preventDefault();
     e.stopPropagation();
 
+    if (!permissions.canEditElements) {
+      toast.error("Cannot edit elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     if (selectedElement && selectedElement.id === element.id) {
       setSelectedElement(undefined);
       return;
@@ -73,10 +92,27 @@ export function useElementHandler() {
   ) => {
     e.stopPropagation();
     e.preventDefault();
+
+    // Prevent drop if read-only, locked, or no permission
+    if (!canDrag && !canCreate && !canReorder) {
+      toast.error("Cannot perform this action - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     setSelectedElement(undefined);
     const data = e.dataTransfer.getData("elementType");
 
     if (data) {
+      // Creating new element from element type
+      if (!canCreate) {
+        toast.error("Cannot add elements - editor is in read-only mode", {
+          duration: 2000,
+        });
+        return;
+      }
+
       const isContainer = elementHelper.isContainerElement(parentElement);
       if (!isContainer) {
         return;
@@ -96,14 +132,30 @@ export function useElementHandler() {
       setSelectedElement(newElement);
       setDraggedOverElement(undefined);
     } else if (draggingElement) {
+      // Moving existing element
+      if (!canReorder) {
+        toast.error("Cannot reorder elements - editor is in read-only mode", {
+          duration: 2000,
+        });
+        return;
+      }
+
       swapElement(draggingElement.id, parentElement.id);
       setDraggedOverElement(undefined);
     } else {
+      // Handling image drop
       const imageData = e.dataTransfer.getData("application/json");
       if (imageData) {
         try {
           const parsed = JSON.parse(imageData);
           if (parsed.type === "image") {
+            if (!canCreate) {
+              toast.error("Cannot add elements - editor is in read-only mode", {
+                duration: 2000,
+              });
+              return;
+            }
+
             const newElement = handleImageDrop(
               parsed,
               projectId,
@@ -125,12 +177,23 @@ export function useElementHandler() {
 
   const handleDragStart = (e: React.DragEvent, element: EditorElement) => {
     e.stopPropagation();
+
+    if (!canDrag) {
+      e.preventDefault();
+      return;
+    }
+
     setDraggingElement(element);
   };
 
   const handleDragOver = (e: React.DragEvent, element: EditorElement) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!canDrag) {
+      return;
+    }
+
     if (
       draggingElement?.id === element.id ||
       draggingElement?.parentId === element.id
@@ -203,6 +266,14 @@ export function useElementHandler() {
     if (!elementHelper.isEditableElement(element)) {
       return;
     }
+
+    if (!permissions.canEditElements) {
+      toast.error("Cannot edit elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     updateElement(element.id, {
       content: e.currentTarget.textContent || "",
     });
@@ -258,11 +329,12 @@ export function useElementHandler() {
 
     return {
       style: mergedStyles,
-      draggable: true,
+      draggable: canDrag,
       className: tailwindStyles,
       contentEditable:
         elementHelper.isEditableElement(element) &&
-        selectedElement?.id === element.id,
+        selectedElement?.id === element.id &&
+        permissions.canEditElements,
       suppressContentEditableWarning: true,
       ...eventHandlers,
     };
@@ -280,5 +352,10 @@ export function useElementHandler() {
     getTailwindStyles,
     getCommonProps,
     getStyles,
+    // Export permission states for UI purposes
+    canDrag,
+    canDelete,
+    canCreate,
+    canReorder,
   };
 }

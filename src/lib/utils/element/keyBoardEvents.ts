@@ -6,6 +6,7 @@ import { SelectionStore } from "@/globalstore/selectionstore";
 import GetUrl from "@/lib/utils/geturl";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 import apiClient from "@/services/apiclient";
+import { toast } from "sonner";
 
 export interface IKeyboardEvent {
   copyElement: () => void;
@@ -15,9 +16,22 @@ export interface IKeyboardEvent {
   sendToBack: () => void;
   deleteElement: () => void;
   saveElement: () => Promise<void>;
+  setReadOnly: (value: boolean) => void;
+  setLocked: (value: boolean) => void;
 }
 
 export class KeyboardEvent implements IKeyboardEvent {
+  private isReadOnly = false;
+  private isLocked = false;
+
+  public setReadOnly = (value: boolean) => {
+    this.isReadOnly = value;
+  };
+
+  public setLocked = (value: boolean) => {
+    this.isLocked = value;
+  };
+
   public copyElement = () => {
     const selectedElement =
       SelectionStore.getState().selectedElement ||
@@ -27,6 +41,14 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public cutElement = () => {
+    // Prevent cut in read-only or locked mode
+    if (this.isReadOnly || this.isLocked) {
+      toast.error("Cannot cut elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     const selectedElement =
       SelectionStore.getState().selectedElement ||
       SelectionStore.getState().hoveredElement;
@@ -37,6 +59,14 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public pasteElement = () => {
+    // Prevent paste in read-only or locked mode
+    if (this.isReadOnly || this.isLocked) {
+      toast.error("Cannot paste elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     const copiedElement = sessionStorage.getItem("copiedElement");
     if (!copiedElement) return;
 
@@ -65,6 +95,14 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public bringToFront = () => {
+    // Prevent reorder in read-only or locked mode
+    if (this.isReadOnly || this.isLocked) {
+      toast.error("Cannot reorder elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     const selectedElement =
       SelectionStore.getState().selectedElement ||
       SelectionStore.getState().hoveredElement;
@@ -82,6 +120,14 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public sendToBack = () => {
+    // Prevent reorder in read-only or locked mode
+    if (this.isReadOnly || this.isLocked) {
+      toast.error("Cannot reorder elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     const selectedElement =
       SelectionStore.getState().selectedElement ||
       SelectionStore.getState().hoveredElement;
@@ -99,6 +145,14 @@ export class KeyboardEvent implements IKeyboardEvent {
   };
 
   public deleteElement = () => {
+    // Prevent delete in read-only or locked mode
+    if (this.isReadOnly || this.isLocked) {
+      toast.error("Cannot delete elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     const selectedElement =
       SelectionStore.getState().selectedElement ||
       SelectionStore.getState().hoveredElement;

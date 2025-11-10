@@ -1,0 +1,1 @@
+Docs for AI to understand each feature of the app
