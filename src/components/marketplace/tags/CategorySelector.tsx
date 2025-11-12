@@ -70,9 +70,9 @@ export function CategorySelector({
             <Loader2 className="h-3 w-3 animate-spin" />
           </div>
         ) : filteredCategories.length > 0 ? (
-          filteredCategories.slice(0, 6).map((category) => (
+          filteredCategories.slice(0, 6).map((category, index) => (
             <div
-              key={category.id}
+              key={`category-${category.id || index}`}
               className="flex items-center space-x-2 hover:bg-muted/50 rounded px-2 py-1"
             >
               <Checkbox
