@@ -6,6 +6,7 @@ import {
   CSSStyles,
   DataLoaderElement,
   FormElement,
+  ImageElement,
   InputElement,
 } from "@/interfaces/elements.interface";
 import { EditorElement, ElementType } from "@/types/global.type";
@@ -45,7 +46,7 @@ function createBaseElement(
     elements: [],
     settings: null,
     ...overrides,
-  };
+  } as EditorElement;
 }
 
 export class TextElementCreateStrategy implements ElementCreateStrategy {
@@ -133,20 +134,24 @@ export class InputElementCreateStrategy implements ElementCreateStrategy {
 }
 
 export class ImageElementCreateStrategy implements ElementCreateStrategy {
-  buildElement(state: BuilderState): EditorElement {
+  buildElement(state: BuilderState): ImageElement {
     return createBaseElement(state, {
       content: state.content ?? "Image",
+      settings: {
+        objectFit: "cover",
+        loading: "lazy",
+        decoding: "async",
+      },
       styles: {
         default: {
           width: "100%",
           height: "auto",
-          objectFit: "cover",
           borderRadius: "8px",
           backgroundColor: "transparent",
         },
       },
-      tailwindStyles: "w-full rounded-lg object-cover bg-transparent",
-    });
+      tailwindStyles: "w-full rounded-lg bg-transparent",
+    }) as ImageElement;
   }
 }
 export class ListElementCreateStrategy implements ElementCreateStrategy {

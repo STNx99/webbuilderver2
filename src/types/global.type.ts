@@ -7,6 +7,7 @@ import {
   ButtonElement,
   FormElement,
   FrameElement,
+  ImageElement,
   InputElement,
   ListElement,
   SectionElement,
@@ -31,6 +32,7 @@ type EditorElement =
   | BaseElement
   | FrameElement
   | ButtonElement
+  | ImageElement
   | ListElement
   | InputElement
   | SelectElement
