@@ -28,6 +28,8 @@ interface Element<Settings = undefined> {
   projectId: string;
   settings?: Settings | null;
   order?: number;
+  events?: Record<string, any[]>;
+  eventWorkflows?: Record<string, string[]>;
 }
 
 interface BaseElement extends Element {}

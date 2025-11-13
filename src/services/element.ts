@@ -1,58 +1,87 @@
 import { EditorElement } from "@/types/global.type";
-import GetUrl from "@/lib/utils/geturl";
+import GetUrl, { GetNextJSURL } from "@/utils/geturl";
 import apiClient from "./apiclient";
-import { API_ENDPOINTS } from "@/constants/endpoints";
-import { Snapshot } from "@/interfaces/snapshot.interface";
 
 interface IElementService {
   getElements: (projectId: string) => Promise<EditorElement[]>;
+
   getElementsPublic: (projectId: string) => Promise<EditorElement[]>;
-  saveSnapshot: (projectId: string, snapshot: Snapshot) => Promise<void>;
-  getSnapshots: (projectId: string) => Promise<Snapshot[]>;
-  loadSnapshot: (projectId: string, snapshotId: string) => Promise<EditorElement[]>;
+
+  createElement: (
+    projectId: string,
+    ...elements: EditorElement[]
+  ) => Promise<void>;
+
+  updateElement: (
+    element: EditorElement,
+    settings?: string | null,
+  ) => Promise<EditorElement>;
+
+  deleteElement: (id: string) => Promise<boolean>;
 }
 
+/**
+ * Element service for communicating with backend element endpoints.
+ *
+ * Methods:
+ * - getElements: authenticated fetch of elements for a project
+ * - getElementsPublic: public fetch for published rendering
+ * - createElement: create one or more elements for a project
+ * - updateElement: update an element (sends { element, settings } payload,
+ *                  uses permissive request typing and casts response to EditorElement)
+ * - deleteElement: delete an element by id
+ */
 export const elementService: IElementService = {
   getElements: async (projectId: string): Promise<EditorElement[]> => {
-    return apiClient.get<EditorElement[]>(
-      GetUrl(API_ENDPOINTS.ELEMENTS.GET(projectId)),
-    );
+    return apiClient.get<EditorElement[]>(GetUrl(`/elements/${projectId}`));
   },
 
   getElementsPublic: async (projectId: string): Promise<EditorElement[]> => {
     return apiClient.getPublic<EditorElement[]>(
-      GetUrl(API_ENDPOINTS.ELEMENTS.GET_PUBLIC(projectId)),
+      GetUrl(`/elements/public/${projectId}`),
     );
   },
 
-  saveSnapshot: async (
+  createElement: async (
     projectId: string,
-    snapshot: Snapshot,
+    ...elements: EditorElement[]
   ): Promise<void> => {
+    if (!Array.isArray(elements) || elements.length === 0) return;
+
     try {
-      await apiClient.post(
-        GetUrl(API_ENDPOINTS.SNAPSHOTS.SAVE(projectId)),
-        snapshot,
-      );
+      await apiClient.post(GetUrl(`/elements/${projectId}`), elements);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
-      throw new Error(`saveSnapshot failed: ${message}`);
+      throw new Error(`createElement failed: ${message}`);
     }
   },
 
-  getSnapshots: async (projectId: string): Promise<Snapshot[]> => {
-    return apiClient.get<Snapshot[]>(
-      GetUrl(API_ENDPOINTS.SNAPSHOTS.GET(projectId)),
-    );
+  updateElement: async (
+    element: EditorElement,
+    settings?: string | null,
+  ): Promise<EditorElement> => {
+    if (!element?.id) {
+      throw new Error("updateElement failed: element id is required");
+    }
+
+    try {
+      const resp = await apiClient.put<Record<string, unknown>>(
+        GetNextJSURL(`/api/elements/${element.id}`),
+        { element, settings },
+      );
+      return resp as unknown as EditorElement;
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(`updateElement failed: ${message}`);
+    }
   },
 
-  loadSnapshot: async (
-    projectId: string,
-    snapshotId: string,
-  ): Promise<EditorElement[]> => {
-    const snapshot = await apiClient.get<Snapshot>(
-      GetUrl(API_ENDPOINTS.SNAPSHOTS.LOAD(projectId, snapshotId)),
-    );
-    return snapshot.elements;
+  deleteElement: async (id: string): Promise<boolean> => {
+    try {
+      return await apiClient.delete(GetNextJSURL(`/api/elements/${id}`));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      throw new Error(`deleteElement failed: ${message}`);
+    }
   },
 };

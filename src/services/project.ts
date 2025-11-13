@@ -1,80 +1,83 @@
-import GetUrl from "@/lib/utils/geturl";
-import { Page } from "@/interfaces/page.interface";
+import GetUrl, { GetNextJSURL } from "@/utils/geturl";
+import getToken from "./token";
+import { Page } from "@/generated/prisma";
 import { Project } from "@/interfaces/project.interface";
 import apiClient from "./apiclient";
-import { API_ENDPOINTS } from "@/constants/endpoints";
 
 interface IProjectService {
   getProjects: () => Promise<Project[]>;
+
   getUserProjects: () => Promise<Project[]>;
+
   getProjectById: (id: string) => Promise<Project>;
+
   createProject: (project: Project) => Promise<Project>;
+
   updateProject: (project: Project) => Promise<Project>;
-  updateProjectPartial: (
-    projectId: string,
-    project: Partial<Project>,
-  ) => Promise<Project>;
+
   deleteProject: (id: string) => Promise<boolean>;
+
   getProjectPages: (id: string) => Promise<Page[]>;
+
   deleteProjectPage: (projectId: string, pageId: string) => Promise<boolean>;
-  getProjectPublic: (id: string) => Promise<Project>;
+
   getFonts: () => Promise<string[]>;
 }
 
 export const projectService: IProjectService = {
   getProjects: async (): Promise<Project[]> => {
-    return apiClient.getPublic<Project[]>(
-      GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC),
-    );
+    return apiClient.getPublic<Project[]>(GetUrl("/projects/public"));
   },
 
   getUserProjects: async (): Promise<Project[]> => {
-    return apiClient.get<Project[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_USER));
+    return apiClient.get<Project[]>(GetUrl("/projects/user"));
   },
 
   getProjectById: async (id: string): Promise<Project> => {
-    return apiClient.get<Project>(GetUrl(API_ENDPOINTS.PROJECTS.GET_BY_ID(id)));
+    return apiClient.get<Project>(GetUrl(`/projects/${id}`));
   },
 
   deleteProject: async (id: string): Promise<boolean> => {
-    return apiClient.delete(GetUrl(API_ENDPOINTS.PROJECTS.DELETE(id)));
+    const token = await getToken();
+    const response = await fetch(GetNextJSURL(`/api/projects/${id}`), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    if (response.status === 204) return true;
+    return false;
   },
 
   createProject: async (project: Project) => {
-    return await apiClient.post<Project>(
-      GetUrl(API_ENDPOINTS.PROJECTS.CREATE),
-      project,
-    );
+    return await apiClient.post<Project>(GetUrl("/projects"), project);
   },
 
   updateProject: async (project: Project) => {
     return await apiClient.put<Project>(
-      GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(project.id)),
+      GetUrl(`/projects/${project.id}`),
       project,
     );
   },
 
   getProjectPages: async (id: string): Promise<Page[]> => {
-    return apiClient.get<Page[]>(GetUrl(API_ENDPOINTS.PROJECTS.GET_PAGES(id)));
-  },
-
-  updateProjectPartial: async (
-    projectId: string,
-    project: Partial<Project>,
-  ): Promise<Project> => {
-    return apiClient.patch<Project>(
-      GetUrl(API_ENDPOINTS.PROJECTS.UPDATE(projectId)),
-      project,
-    );
+    return apiClient.get<Page[]>(GetUrl(`/projects/${id}/pages`));
   },
 
   deleteProjectPage: async (
     projectId: string,
     pageId: string,
   ): Promise<boolean> => {
-    return apiClient.delete(
-      GetUrl(API_ENDPOINTS.PROJECTS.DELETE_PAGE(projectId, pageId)),
-    );
+    const token = await getToken();
+    const response = await fetch(`/api/projects/${projectId}/pages/${pageId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+    return response.status === 204;
   },
 
   getFonts: async (): Promise<string[]> => {
@@ -93,10 +96,5 @@ export const projectService: IProjectService = {
     }
     const data = await response.json();
     return data.items.map((font: { family: string }) => font.family);
-  },
-  getProjectPublic: async (id: string): Promise<Project> => {
-    return apiClient.getPublic<Project>(
-      GetUrl(API_ENDPOINTS.PROJECTS.GET_PUBLIC_BY_ID(id)),
-    );
   },
 };

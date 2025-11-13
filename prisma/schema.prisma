@@ -25,6 +25,7 @@ model Element {
   Elements       Element[] @relation("ElementChildren")
   Project        Project   @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
   Settings       Setting?  @relation("ElementSettings")
+  EventWorkflows Json?     @default("{}")
 
   @@index([ParentId])
   @@index([PageId])
@@ -63,6 +64,7 @@ model Project {
   Pages           Page[]
   Owner           User             @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
   Snapshots       Snapshot[]
+  EventWorkflows  EventWorkflow[]
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
 }
@@ -78,6 +80,22 @@ model Page {
   DeletedAt DateTime? @db.Timestamp(6)
   Elements  Element[]
   Project   Project   @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+
+  @@unique([ProjectId, Name])
+  @@index([ProjectId])
+}
+
+model EventWorkflow {
+  Id          String   @id @default(cuid())
+  ProjectId   String
+  Name        String
+  Description String?
+  Handlers    Json     @default("[]")
+  CanvasData  Json?
+  Enabled     Boolean  @default(true)
+  CreatedAt   DateTime @default(now()) @db.Timestamp(6)
+  UpdatedAt   DateTime @updatedAt @db.Timestamp(6)
+  Project     Project  @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
 
   @@unique([ProjectId, Name])
   @@index([ProjectId])

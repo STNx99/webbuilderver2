@@ -82,29 +82,6 @@ class ApiClient {
     return response.json();
   }
 
-  async patch<T>(
-    url: string,
-    data: Partial<T>,
-    options: RequestInit = {},
-  ): Promise<T> {
-    const token = await getToken();
-
-    const response = await fetch(url, {
-      ...options,
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(options.headers || {}),
-      },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to patch: ${url} (${response.status})`);
-    }
-    return response.json();
-  }
-
   async delete(url: string, options: RequestInit = {}): Promise<boolean> {
     const token = await getToken();
 
