@@ -20,3 +20,13 @@ export {
   type EditorAction,
   type EditorResource,
 } from "./useEditorPermissions";
+
+export {
+  useCreateEventWorkflow,
+  useDeleteEventWorkflow,
+  useEventWorkflow,
+  useEventWorkflows,
+  useUpdateEventWorkflow,
+} from "./eventworkflow/useEventWorkflows";
+
+export { useWorkflowCanvas } from "./eventworkflow/useWorkflowCanvas";

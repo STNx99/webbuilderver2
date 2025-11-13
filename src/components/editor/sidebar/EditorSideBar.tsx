@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -16,17 +17,21 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Settings } from "lucide-react";
+import { Settings, Zap } from "lucide-react";
 import Link from "next/link";
 import { useAiChat } from "@/providers/aiprovider";
+import { useEditorContext } from "@/providers/editorprovider";
 import { ProjectPageCommand } from "../ProjectPageCommand";
 import { ElementSelector } from "./ElementSelector";
 import CMSManager from "./cmsmanager/CMSManager";
 import SnapshotManager from "./SnapshotManager";
 import { ImageSelector } from "./imageupload/ImageSelector";
+import { EventWorkflowManagerDialog } from "./eventworkflow/EventWorkflowManagerDialog";
 
 export function EditorSideBar() {
   const { chatOpen } = useAiChat();
+  const { projectId } = useEditorContext();
+  const [workflowDialogOpen, setWorkflowDialogOpen] = useState(false);
 
   if (chatOpen) return null;
 
@@ -36,7 +41,14 @@ export function EditorSideBar() {
         <Accordion
           type="multiple"
           className="w-full"
-          defaultValue={["components", "pages", "imageupload", "cms", "snapshots"]}
+          defaultValue={[
+            "components",
+            "pages",
+            "imageupload",
+            "cms",
+            "snapshots",
+            "workflows",
+          ]}
         >
           <AccordionItem value="components">
             <SidebarGroup>
@@ -94,6 +106,41 @@ export function EditorSideBar() {
               <AccordionContent>
                 <SidebarGroupContent>
                   <SnapshotManager />
+                </SidebarGroupContent>
+              </AccordionContent>
+            </SidebarGroup>
+          </AccordionItem>
+          <AccordionItem value="workflows">
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <AccordionTrigger>Event Workflows</AccordionTrigger>
+              </SidebarGroupLabel>
+              <AccordionContent>
+                <SidebarGroupContent>
+                  {projectId ? (
+                    <>
+                      <EventWorkflowManagerDialog
+                        projectId={projectId}
+                        isOpen={workflowDialogOpen}
+                        onOpenChange={setWorkflowDialogOpen}
+                      />
+                      <button
+                        onClick={() => setWorkflowDialogOpen(true)}
+                        className="w-full mb-3 px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors text-sm font-medium gap-2 flex items-center justify-center"
+                      >
+                        <Zap className="h-4 w-4" />
+                        Open Workflow Editor
+                      </button>
+                      <p className="text-xs text-muted-foreground">
+                        Create and manage visual workflows for your elements
+                        with drag-and-drop nodes
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Project not loaded
+                    </p>
+                  )}
                 </SidebarGroupContent>
               </AccordionContent>
             </SidebarGroup>

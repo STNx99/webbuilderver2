@@ -1,3 +1,5 @@
+"use client";
+
 import { useElementHandler } from "@/hooks";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { InputElement } from "@/interfaces/elements.interface";
@@ -9,12 +11,13 @@ const InputComponent = ({ element }: EditorComponentProps) => {
   const { getCommonProps } = useElementHandler();
 
   const safeStyles = elementHelper.getSafeStyles(inputElement);
+  const commonProps = getCommonProps(inputElement);
 
   return (
     <input
       type="text"
       placeholder={inputElement.content || "Input field"}
-      {...getCommonProps(inputElement)}
+      {...commonProps}
       style={{
         ...safeStyles,
         width: "100%",

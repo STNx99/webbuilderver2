@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useElementHandler } from "@/hooks";
 import DOMPurify from "isomorphic-dompurify";
@@ -10,11 +12,12 @@ const ButtonComponent = ({ element }: EditorComponentProps) => {
   const { getCommonProps } = useElementHandler();
 
   const safeStyles = elementHelper.getSafeStyles(buttonElement);
+  const commonProps = getCommonProps(buttonElement);
 
   return (
     <button
-      {...getCommonProps(buttonElement)}
-      type={"button"}
+      {...commonProps}
+      type="button"
       style={{
         ...safeStyles,
         width: "100%",
@@ -23,7 +26,7 @@ const ButtonComponent = ({ element }: EditorComponentProps) => {
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(element.content || ""),
       }}
-    ></button>
+    />
   );
 };
 

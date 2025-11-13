@@ -172,6 +172,17 @@ export const API_ENDPOINTS = {
     GET_BY_PROJECT: (projectId: string) =>
       `/api/v1/projects/${projectId}/comments`,
   },
+  EVENT_WORKFLOWS: {
+    GET_BY_PROJECT: (projectId: string) =>
+      `/api/projects/${projectId}/eventworkflows`,
+    CREATE: (projectId: string) => `/api/projects/${projectId}/eventworkflows`,
+    GET_BY_ID: (projectId: string, workflowId: string) =>
+      `/api/projects/${projectId}/eventworkflows/${workflowId}`,
+    UPDATE: (projectId: string, workflowId: string) =>
+      `/api/projects/${projectId}/eventworkflows/${workflowId}`,
+    DELETE: (projectId: string, workflowId: string) =>
+      `/api/projects/${projectId}/eventworkflows/${workflowId}`,
+  },
 };
 export const NEXT_API_ENDPOINTS = {
   ELEMENTS: {

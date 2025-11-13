@@ -49,42 +49,34 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     userId,
     enabled: true,
   });
-
-  useEffect(() => {}, [mousePositions]);
-
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "c":
-            e.preventDefault();
             keyboardEvent.copyElement();
             break;
           case "v":
-            e.preventDefault();
             keyboardEvent.pasteElement();
             break;
           case "x":
-            e.preventDefault();
             keyboardEvent.cutElement();
             break;
           case "z":
-            e.preventDefault();
             keyboardEvent.undo();
             break;
           case "y":
-            e.preventDefault();
             keyboardEvent.redo();
             break;
         }
       } else if (e.key === "Delete") {
-        e.preventDefault();
         keyboardEvent.deleteElement();
       } else if (e.key === "Escape") {
-        e.preventDefault();
         keyboardEvent.deselectAll();
       }
     };
@@ -128,7 +120,9 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         );
       })}
       <div className="overflow-x-hidden h-full w-full p-4">
-        {isLoading ? null : <ElementLoader isReadOnly={isReadOnly} isLocked={isLocked} />}
+        {isLoading ? null : (
+          <ElementLoader isReadOnly={isReadOnly} isLocked={isLocked} />
+        )}
         {!selectedElement && (
           <Button
             className="mb-4 w-full"
