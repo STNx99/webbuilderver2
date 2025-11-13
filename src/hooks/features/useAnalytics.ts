@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 export interface AnalyticsStats {
   totalViews: number;
@@ -49,23 +49,10 @@ export interface AnalyticsData {
   }>;
 }
 
-interface UseAnalyticsReturn {
-  data: AnalyticsData | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-}
-
-export function useAnalytics(): UseAnalyticsReturn {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchAnalytics = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
+export function useAnalytics() {
+  return useQuery({
+    queryKey: ['analytics'],
+    queryFn: async () => {
       const response = await fetch('/api/analytics', {
         method: 'GET',
         headers: {
@@ -78,24 +65,11 @@ export function useAnalytics(): UseAnalyticsReturn {
         throw new Error(errorData.error || 'Failed to fetch analytics');
       }
 
-      const result: AnalyticsData = await response.json();
-      setData(result);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
-      console.error('Analytics fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const refetch = async () => {
-    await fetchAnalytics();
-  };
-
-  return { data, loading, error, refetch };
+      return response.json() as Promise<AnalyticsData>;
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000, 
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+  });
 }

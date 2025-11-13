@@ -12,7 +12,7 @@ import { useAnalytics } from "@/hooks";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function AnalyticsContent() {
-  const { data, loading, error } = useAnalytics();
+  const { data, isLoading, error, refetch } = useAnalytics();
 
   const handleDownload = () => {
     if (!data) return;
@@ -67,8 +67,8 @@ export function AnalyticsContent() {
     return (
       <div className="flex flex-1 flex-col gap-4 p-4">
         <div className="text-center py-12">
-          <p className="text-red-500">Error loading analytics: {error}</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">
+          <p className="text-red-500">Error loading analytics: {error.message}</p>
+          <Button onClick={() => refetch()} className="mt-4">
             Try Again
           </Button>
         </div>
@@ -90,7 +90,7 @@ export function AnalyticsContent() {
           <Button
             onClick={handleDownload}
             className="gap-2 w-full sm:w-auto"
-            disabled={!data || loading}
+            disabled={!data || isLoading}
           >
             <Download className="h-4 w-4" />
             Export Report
@@ -99,7 +99,7 @@ export function AnalyticsContent() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {loading ? (
+          {isLoading ? (
             <>
               {[...Array(4)].map((_, i) => (
                 <Skeleton key={i} className="h-32 w-full rounded-lg" />
@@ -225,14 +225,14 @@ export function AnalyticsContent() {
         {/* Charts Row */}
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="lg:col-span-1">
-            {loading ? (
+            {isLoading ? (
               <Skeleton className="h-96 w-full rounded-lg" />
             ) : (
               <Overview chartData={data?.chartData} />
             )}
           </div>
           <div className="lg:col-span-1">
-            {loading ? (
+            {isLoading ? (
               <Skeleton className="h-96 w-full rounded-lg" />
             ) : (
               <CalendarDateRangePicker topTemplates={data?.topTemplates} />
@@ -242,7 +242,7 @@ export function AnalyticsContent() {
 
         {/* Recent Visits */}
         <div className="w-full">
-          {loading ? (
+          {isLoading ? (
             <Skeleton className="h-96 w-full rounded-lg" />
           ) : (
             <RecentVisits recentItems={data?.recentItems} />
