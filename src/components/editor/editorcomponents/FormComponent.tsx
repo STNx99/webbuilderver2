@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { useElementHandler } from "@/hooks";
+import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
 import { EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
@@ -13,6 +15,10 @@ import ElementLoader from "../ElementLoader";
 
 export default function FormComponent({ element, data }: EditorComponentProps) {
   const { getCommonProps } = useElementHandler();
+  const { elementRef, registerEvents, createEventHandlers, eventsActive } =
+    useElementEvents({
+      elementId: element.id,
+    });
   const { addElement, updateElement } = useElementStore<EditorElement>();
   const formElement = element as FormElement;
   const searhParams = useSearchParams();
@@ -40,14 +46,27 @@ export default function FormComponent({ element, data }: EditorComponentProps) {
 
   const safeStyles = elementHelper.getSafeStyles(formElement);
 
+  // Register events when element events change
+  useEffect(() => {
+    if (element.events) {
+      registerEvents(element.events);
+    }
+  }, [element.events, registerEvents]);
+
+  const eventHandlers = createEventHandlers();
+
   return (
     <form
+      ref={elementRef as React.RefObject<HTMLFormElement>}
       {...getCommonProps(formElement)}
+      {...eventHandlers}
       className="flex flex-col gap-4 p-4 border rounded-lg"
       style={{
         ...safeStyles,
         width: "100%",
         height: "100%",
+        cursor: eventsActive ? "pointer" : "inherit",
+        userSelect: eventsActive ? "none" : "auto",
       }}
     >
       <ElementLoader elements={formElement.elements} data={data} />

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useElementHandler } from "@/hooks";
+import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { CMSContentGridElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
@@ -11,8 +12,21 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
   const cmsElement = element as CMSContentGridElement;
   const { getCommonProps } = useElementHandler();
+  const { elementRef, registerEvents, createEventHandlers, eventsActive } =
+    useElementEvents({
+      elementId: element.id,
+    });
 
   const safeStyles = elementHelper.getSafeStyles(cmsElement);
+
+  // Register events when element events change
+  useEffect(() => {
+    if (element.events) {
+      registerEvents(element.events);
+    }
+  }, [element.events, registerEvents]);
+
+  const eventHandlers = createEventHandlers();
 
   // Get CMS settings
   const settings = cmsElement.settings || {};
@@ -43,8 +57,16 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
   if (!contentTypeId) {
     return (
       <div
+        ref={elementRef as React.RefObject<HTMLDivElement>}
         {...getCommonProps(cmsElement)}
-        style={{ ...safeStyles, width: "100%", height: "100%" }}
+        {...eventHandlers}
+        style={{
+          ...safeStyles,
+          width: "100%",
+          height: "100%",
+          cursor: eventsActive ? "pointer" : "inherit",
+          userSelect: eventsActive ? "none" : "auto",
+        }}
         className="flex items-center justify-center border-2 border-dashed border-gray-300 bg-gray-50"
       >
         <div className="text-center text-gray-500">
@@ -58,11 +80,15 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
 
   return (
     <div
+      ref={elementRef as React.RefObject<HTMLDivElement>}
       {...getCommonProps(cmsElement)}
+      {...eventHandlers}
       style={{
         ...safeStyles,
         width: "100%",
         height: "100%",
+        cursor: eventsActive ? "pointer" : "inherit",
+        userSelect: eventsActive ? "none" : "auto",
       }}
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
     >
