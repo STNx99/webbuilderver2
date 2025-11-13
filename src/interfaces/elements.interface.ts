@@ -61,6 +61,18 @@ interface ButtonElement extends Element<void> {
   element?: FrameElement;
 }
 
+interface ImageSettings {
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
+  loading?: "lazy" | "eager";
+  decoding?: "async" | "sync" | "auto";
+  sizes?: string;
+  srcset?: string;
+}
+
+interface ImageElement extends Element<ImageSettings> {
+  type: "Image";
+}
+
 interface InputSettings {
   name?: string;
   type?: "text" | "email" | "password" | "number" | "tel" | "url" | "textarea";
@@ -145,6 +157,7 @@ export type {
   SectionElement,
   FrameElement,
   ButtonElement,
+  ImageElement,
   InputElement,
   ListElement,
   SelectElement,
@@ -158,6 +171,7 @@ export type {
 //Export settings
 export type {
   CarouselSettings,
+  ImageSettings,
   FormSettings,
   InputSettings,
   DataLoaderSettings,

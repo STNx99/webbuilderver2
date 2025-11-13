@@ -120,9 +120,9 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
           )}
           {item.tags && item.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
-              {item.tags.slice(0, 3).map((tag: string) => (
-                <Badge key={tag} variant="outline" className="text-xs">
-                  {tag}
+              {item.tags.slice(0, 3).map((tag: any, index: number) => (
+                <Badge key={`tag-${typeof tag === 'string' ? tag : tag?.name || tag?.id || index}`} variant="outline" className="text-xs">
+                  {typeof tag === 'string' ? tag : tag?.name || tag?.id || 'Unknown'}
                 </Badge>
               ))}
               {item.tags.length > 3 && (
@@ -134,9 +134,9 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
           )}
           {item.categories && item.categories.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mt-auto">
-              {item.categories.slice(0, 2).map((category) => (
+              {item.categories.slice(0, 2).map((category, index) => (
                 <Badge
-                  key={category.id}
+                  key={`category-${category.id || index}`}
                   variant="secondary"
                   className="text-xs"
                 >

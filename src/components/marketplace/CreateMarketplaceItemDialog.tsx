@@ -97,7 +97,9 @@ function CreateMarketplaceItemDialog({
         templateType: existingItem.templateType,
         featured: existingItem.featured || false,
         pageCount: existingItem.pageCount,
-        tags: existingItem.tags || [],
+        tags: (existingItem.tags || []).map((tag: any) => 
+          typeof tag === 'string' ? tag : tag?.name || ''
+        ).filter(Boolean),
         categoryIds: existingItem.categories?.map((c) => c.id) || [],
       };
     }

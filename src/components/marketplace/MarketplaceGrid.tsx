@@ -221,8 +221,8 @@ export function MarketplaceGrid() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayedItems.map((item) => (
-          <MarketplaceCard key={item.id} item={item} />
+        {displayedItems.map((item, index) => (
+          <MarketplaceCard key={`item-${item.id || index}`} item={item} />
         ))}
       </div>
 

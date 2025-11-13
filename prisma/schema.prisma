@@ -203,6 +203,7 @@ model MarketplaceItem {
   PageCount    Int?
   Downloads    Int                       @default(0)
   Likes        Int                       @default(0)
+  Views        Int                       @default(0)
   AuthorId     String
   AuthorName   String
   Verified     Boolean                   @default(false)

@@ -15,6 +15,7 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { ImageDragDataSchema } from "@/schema/zod/imageupload";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ImageSettings } from "@/interfaces/elements.interface";
 
 type Props = EditorComponentProps;
 
@@ -23,10 +24,14 @@ const ImageComponent: React.FC<Props> = ({ element, data }) => {
   const { updateElement } = useElementStore();
   const safeStyles = elementHelper.getSafeStyles(element);
 
-  const { objectFit: rawObjectFit } = safeStyles;
+  // Get image settings with type assertion
+  const imageSettings = (element.type === "Image" ? element.settings : null) as ImageSettings | null;
+  const objectFit = imageSettings?.objectFit ?? "cover";
+  const loading = imageSettings?.loading ?? "lazy";
+  const decoding = imageSettings?.decoding ?? "async";
 
   const imageStyle: React.CSSProperties = {
-    objectFit: (rawObjectFit as React.CSSProperties["objectFit"]) ?? "cover",
+    objectFit: objectFit as React.CSSProperties["objectFit"],
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -88,8 +93,8 @@ const ImageComponent: React.FC<Props> = ({ element, data }) => {
         src={element.src}
         alt={element.name || "Image"}
         style={imageStyle}
-        loading="lazy"
-        decoding="async"
+        loading={loading}
+        decoding={decoding}
         role="img"
         className="w-full h-full"
       />
