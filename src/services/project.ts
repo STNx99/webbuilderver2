@@ -1,8 +1,8 @@
-import GetUrl, { GetNextJSURL } from "@/utils/geturl";
 import getToken from "./token";
 import { Page } from "@/generated/prisma";
 import { Project } from "@/interfaces/project.interface";
 import apiClient from "./apiclient";
+import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
 
 interface IProjectService {
   getProjects: () => Promise<Project[]>;

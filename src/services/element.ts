@@ -1,6 +1,6 @@
 import { EditorElement } from "@/types/global.type";
-import GetUrl, { GetNextJSURL } from "@/utils/geturl";
 import apiClient from "./apiclient";
+import GetUrl, { GetNextJSURL } from "@/lib/utils/geturl";
 
 interface IElementService {
   getElements: (projectId: string) => Promise<EditorElement[]>;
