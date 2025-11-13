@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface EventModeState {
   // Event mode state
@@ -15,6 +15,37 @@ interface EventModeState {
   isElementEventsDisabled: (elementId: string) => boolean;
   clearDisabledElements: () => void;
 }
+
+const customStorage = {
+  getItem: (name: string) => {
+    const item = localStorage.getItem(name);
+    if (!item) return null;
+
+    try {
+      const parsed = JSON.parse(item);
+      return {
+        state: {
+          isEventModeEnabled: parsed.state.isEventModeEnabled,
+          disabledElementEvents: new Set(parsed.state.disabledElementEvents),
+        },
+        version: parsed.version,
+      };
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: any) => {
+    const serialized = JSON.stringify({
+      state: {
+        isEventModeEnabled: value.state.isEventModeEnabled,
+        disabledElementEvents: Array.from(value.state.disabledElementEvents),
+      },
+      version: value.version,
+    });
+    localStorage.setItem(name, serialized);
+  },
+  removeItem: (name: string) => localStorage.removeItem(name),
+};
 
 export const useEventModeStore = create<EventModeState>()(
   persist(
@@ -71,28 +102,7 @@ export const useEventModeStore = create<EventModeState>()(
     }),
     {
       name: "event-mode-store",
-      // Custom serialization for Set
-      serialize: (state) => {
-        return JSON.stringify({
-          state: {
-            isEventModeEnabled: state.state.isEventModeEnabled,
-            disabledElementEvents: Array.from(
-              state.state.disabledElementEvents
-            ),
-          },
-          version: state.version,
-        });
-      },
-      deserialize: (str) => {
-        const parsed = JSON.parse(str);
-        return {
-          state: {
-            ...parsed.state,
-            disabledElementEvents: new Set(parsed.state.disabledElementEvents),
-          },
-          version: parsed.version,
-        };
-      },
-    }
-  )
+      storage: customStorage as any,
+    },
+  ),
 );
