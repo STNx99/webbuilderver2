@@ -5,3 +5,9 @@
 
 export { useMarketplaceItem } from "./useMarketplace";
 export { useProject } from "./useProjects";
+export { 
+  useNotifications, 
+  useUpdateNotification, 
+  useMarkAllAsRead,
+  useCreateProfileUpdateNotification
+} from "./useNotifications";

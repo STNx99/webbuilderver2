@@ -141,6 +141,7 @@ model User {
   Subscriptions    Subscription[]
   Comments         Comment[]
   CommentReactions CommentReaction[]
+  Notifications    Notification[]
 }
 
 model Subscription {
@@ -371,6 +372,22 @@ model CommentReaction {
 
   @@index([CommentId])
   @@index([UserId])
+}
+
+model Notification {
+  Id          String   @id @default(cuid())
+  UserId      String
+  Type        String
+  Title       String
+  Description String
+  Read        Boolean  @default(false)
+  CreatedAt   DateTime @default(now()) @db.Timestamp(6)
+  UpdatedAt   DateTime @updatedAt @db.Timestamp(6)
+  User        User     @relation(fields: [UserId], references: [Id], onDelete: Cascade)
+
+  @@index([UserId])
+  @@index([Read])
+  @@index([CreatedAt])
 }
 
 enum SnapshotType {
