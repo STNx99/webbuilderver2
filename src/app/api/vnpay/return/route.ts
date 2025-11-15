@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyReturnUrl } from '@/lib/vnpay-utils';
 import vnpayConfig from '@/lib/vnpay-config';
 import { subscriptionDAL } from '@/data/subscription';
+import prisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
@@ -85,6 +86,21 @@ export async function GET(request: NextRequest) {
       });
 
       console.log('[VNPay Return] Subscription updated successfully:', updatedSubscription);
+      
+      // Create notification for successful payment
+      try {
+        await prisma.notification.create({
+          data: {
+            UserId: subscription.UserId,
+            Type: 'alert',
+            Title: 'Payment Successful',
+            Description: `Your ${subscription.PlanId} plan subscription (${subscription.BillingPeriod}) has been activated successfully. Amount: ${(subscription.Amount).toLocaleString()} ${subscription.Currency}. Valid until ${endDate.toLocaleDateString('vi-VN')}.`,
+          },
+        });
+        console.log('[VNPay Return] Payment success notification created');
+      } catch (notifError) {
+        console.error('[VNPay Return] Error creating notification:', notifError);
+      }
 
       // Redirect to success page
       return NextResponse.redirect(
@@ -92,7 +108,23 @@ export async function GET(request: NextRequest) {
       );
     } else {
       // Payment failed
+      console.log('[VNPay Return] Payment failed for transaction:', transactionId);
       await subscriptionDAL.updateSubscription(transactionId, { status: 'cancelled' });
+      
+      // Create notification for failed payment
+      try {
+        await prisma.notification.create({
+          data: {
+            UserId: subscription.UserId,
+            Type: 'alert',
+            Title: 'Payment Failed',
+            Description: `Your ${subscription.PlanId} plan subscription payment (${subscription.BillingPeriod}) failed. Please try again or contact support if the issue persists.`,
+          },
+        });
+        console.log('[VNPay Return] Payment failed notification created');
+      } catch (notifError) {
+        console.error('[VNPay Return] Error creating notification:', notifError);
+      }
 
       // Redirect to checkout with error
       return NextResponse.redirect(

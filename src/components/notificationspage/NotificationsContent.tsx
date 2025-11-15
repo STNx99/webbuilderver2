@@ -1,15 +1,20 @@
-import { motion } from "framer-motion"
+'use client'
+
+import { useState } from "react"
 import { NotificationStats } from "@/components/notificationspage/NotificationStats"
 import { NotificationFilters } from "@/components/notificationspage/NotificationFilters"
 import { NotificationList } from "@/components/notificationspage/NotificationList"
-import { Bell, Download } from "lucide-react"
+import { Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function NotificationsContent() {
+    const [filter, setFilter] = useState('all')
+    const [search, setSearch] = useState('')
+
     const handleDownload = () => {
         // TODO: Implement export functionality
         console.log('Exporting notifications...');
-    };
+    }
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
@@ -32,13 +37,21 @@ export function NotificationsContent() {
             {/* Content */}
             <div className="space-y-6 sm:space-y-8">
                 {/* Stats Section */}
-                <NotificationStats />
+                <NotificationStats filter={filter} search={search} />
 
                 {/* Filters Section */}
-                <NotificationFilters />
+                <NotificationFilters 
+                    filter={filter}
+                    setFilter={setFilter}
+                    search={search}
+                    setSearch={setSearch}
+                />
 
                 {/* Notifications List */}
-                <NotificationList />
+                <NotificationList 
+                    filter={filter}
+                    search={search}
+                />
             </div>
         </div>
     )

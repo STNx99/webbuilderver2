@@ -3,38 +3,53 @@
 import { motion } from "framer-motion"
 import { Bell, CheckCheck, Clock, TrendingUp } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useNotifications } from "@/hooks/features/useNotifications"
+import type { NotificationFilters } from "@/interfaces/notification.interface"
 
-const stats = [
-    {
-        label: "Total Notifications",
-        value: "150",
-        icon: Bell,
-        iconBg: "bg-blue-500/10",
-        iconColor: "text-blue-500",
-        change: "+12.3%",
-        changeType: "positive"
-    },
-    {
-        label: "Unread",
-        value: "23",
-        icon: Clock,
-        iconBg: "bg-orange-500/10",
-        iconColor: "text-orange-500",
-        change: "+5",
-        changeType: "neutral"
-    },
-    {
-        label: "Read Today",
-        value: "18",
-        icon: CheckCheck,
-        iconBg: "bg-green-500/10",
-        iconColor: "text-green-500",
-        change: "+8.1%",
-        changeType: "positive"
-    },
-]
+interface NotificationStatsProps {
+    filter?: string
+    search?: string
+}
 
-export function NotificationStats() {
+export function NotificationStats({ filter, search }: NotificationStatsProps) {
+    const filters: NotificationFilters = { filter, search }
+    const { data, isLoading } = useNotifications(filters)
+
+    const stats = data?.stats || {
+        total: 0,
+        unread: 0,
+        readToday: 0
+    }
+
+    const statsConfig = [
+        {
+            label: "Total Notifications",
+            value: stats.total.toString(),
+            icon: Bell,
+            iconBg: "bg-blue-500/10",
+            iconColor: "text-blue-500",
+            change: "+12.3%",
+            changeType: "positive"
+        },
+        {
+            label: "Unread",
+            value: stats.unread.toString(),
+            icon: Clock,
+            iconBg: "bg-orange-500/10",
+            iconColor: "text-orange-500",
+            change: `+${stats.unread}`,
+            changeType: "neutral"
+        },
+        {
+            label: "Read Today",
+            value: stats.readToday.toString(),
+            icon: CheckCheck,
+            iconBg: "bg-green-500/10",
+            iconColor: "text-green-500",
+            change: "+8.1%",
+            changeType: "positive"
+        },
+    ]
     return (
         <div className="w-full h-full flex justify-center items-stretch px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             <motion.div
@@ -59,8 +74,13 @@ export function NotificationStats() {
                         </motion.div>
                     </CardHeader>
                     <CardContent className="px-4 sm:px-6 lg:px-8 flex-1">
-                        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3 h-full">
-                            {stats.map((stat, index) => {
+                        {isLoading ? (
+                            <div className="flex items-center justify-center h-32">
+                                <p className="text-muted-foreground">Loading stats...</p>
+                            </div>
+                        ) : (
+                            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3 h-full">
+                                {statsConfig.map((stat, index) => {
                                 const Icon = stat.icon;
                                 return (
                                     <motion.div
@@ -101,7 +121,8 @@ export function NotificationStats() {
                                     </motion.div>
                                 );
                             })}
-                        </div>
+                            </div>
+                        )}
                     </CardContent>
                 </Card>
             </motion.div>
