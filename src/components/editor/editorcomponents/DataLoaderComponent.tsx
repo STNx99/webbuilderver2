@@ -12,6 +12,7 @@ const DataLoaderComponent = ({ element }: EditorComponentProps) => {
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
+      projectId: element.projectId,
     });
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);

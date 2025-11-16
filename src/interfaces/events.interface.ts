@@ -201,6 +201,8 @@ export interface EventHandler {
   stopPropagation?: boolean;
   conditions?: EventCondition[];
   nextHandlers?: EventHandler[];
+  trueHandlers?: EventHandler[];
+  falseHandlers?: EventHandler[];
 }
 
 // ============================================

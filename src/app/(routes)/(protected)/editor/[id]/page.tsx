@@ -3,17 +3,9 @@ import { projectService } from "@/services/project";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import Editor from "./editor";
 
-export default async function EditorPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ page: string }>;
-}) {
-  const [id, page] = await Promise.all([params, searchParams]).then(
-    ([p, s]) => [p.id, s.page],
-  );
-
+export default async function EditorPage(props: PageProps<"/editor/[id]">) {
+  const { id } = await props.params;
+  const { pageId } = await props.searchParams;
   const queryClient = getQueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["fonts"],
@@ -22,7 +14,7 @@ export default async function EditorPage({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Editor id={id} pageId={page} />
+      <Editor id={id} pageId={pageId as string} />
     </HydrationBoundary>
   );
 }

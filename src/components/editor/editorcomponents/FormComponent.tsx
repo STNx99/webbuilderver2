@@ -18,6 +18,7 @@ export default function FormComponent({ element, data }: EditorComponentProps) {
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
+      projectId: element.projectId,
     });
   const { addElement, updateElement } = useElementStore<EditorElement>();
   const formElement = element as FormElement;

@@ -1,4 +1,3 @@
-import Get, { GetNextJSURL } from "@/lib/utils/geturl";
 import apiClient from "./apiclient";
 import { API_ENDPOINTS } from "@/constants/endpoints";
 import {
@@ -6,40 +5,37 @@ import {
   CreateEventWorkflowInput,
   UpdateEventWorkflowInput,
 } from "@/interfaces/eventWorkflow.interface";
+import GetUrl from "@/lib/utils/geturl";
 
 interface IEventWorkflowService {
   getEventWorkflows(projectId: string): Promise<EventWorkflow[]>;
-  getEventWorkflowById(
-    projectId: string,
-    workflowId: string,
-  ): Promise<EventWorkflow>;
+  getEventWorkflowById(workflowId: string): Promise<EventWorkflow>;
   createEventWorkflow(
     projectId: string,
     data: CreateEventWorkflowInput,
   ): Promise<EventWorkflow>;
   updateEventWorkflow(
-    projectId: string,
     workflowId: string,
     data: UpdateEventWorkflowInput,
   ): Promise<EventWorkflow>;
-  deleteEventWorkflow(projectId: string, workflowId: string): Promise<boolean>;
+  updateEventWorkflowEnabled(
+    workflowId: string,
+    enabled: boolean,
+  ): Promise<EventWorkflow>;
+  deleteEventWorkflow(workflowId: string): Promise<boolean>;
 }
 
 export const eventWorkflowService: IEventWorkflowService = {
   getEventWorkflows: async (projectId: string): Promise<EventWorkflow[]> => {
-    return apiClient.get(
-      GetNextJSURL(API_ENDPOINTS.EVENT_WORKFLOWS.GET_BY_PROJECT(projectId)),
-    );
+    const response = await apiClient.get<
+      { data: EventWorkflow[] } | EventWorkflow[]
+    >(GetUrl(API_ENDPOINTS.EVENT_WORKFLOWS.GET_BY_PROJECT(projectId)));
+    return Array.isArray(response) ? response : response?.data || [];
   },
 
-  getEventWorkflowById: async (
-    projectId: string,
-    workflowId: string,
-  ): Promise<EventWorkflow> => {
+  getEventWorkflowById: async (workflowId: string): Promise<EventWorkflow> => {
     return apiClient.get(
-      GetNextJSURL(
-        API_ENDPOINTS.EVENT_WORKFLOWS.GET_BY_ID(projectId, workflowId),
-      ),
+      GetUrl(API_ENDPOINTS.EVENT_WORKFLOWS.GET_BY_ID(workflowId)),
     );
   },
 
@@ -47,39 +43,42 @@ export const eventWorkflowService: IEventWorkflowService = {
     projectId: string,
     data: CreateEventWorkflowInput,
   ): Promise<EventWorkflow> => {
-    return apiClient.post(
-      GetNextJSURL(API_ENDPOINTS.EVENT_WORKFLOWS.CREATE(projectId)),
-      data,
-    );
+    return apiClient.post(GetUrl(API_ENDPOINTS.EVENT_WORKFLOWS.CREATE), {
+      ...data,
+      projectId,
+    });
   },
 
   updateEventWorkflow: async (
-    projectId: string,
     workflowId: string,
     data: UpdateEventWorkflowInput,
   ): Promise<EventWorkflow> => {
-    // Log the data being sent for debugging
     console.log("Updating workflow with data:", {
       name: data.name,
-      hasHandlers: !!data.handlers,
-      handlerCount: data.handlers?.length || 0,
       hasCanvasData: !!data.canvasData,
       canvasNodeCount: data.canvasData?.nodes?.length || 0,
       canvasConnectionCount: data.canvasData?.connections?.length || 0,
     });
-
-    return apiClient.put(
-      GetNextJSURL(API_ENDPOINTS.EVENT_WORKFLOWS.UPDATE(projectId, workflowId)),
+    console.log(data);
+    return apiClient.patch(
+      GetUrl(API_ENDPOINTS.EVENT_WORKFLOWS.UPDATE(workflowId)),
       data as any,
     );
   },
 
-  deleteEventWorkflow: async (
-    projectId: string,
+  updateEventWorkflowEnabled: async (
     workflowId: string,
-  ): Promise<boolean> => {
+    enabled: boolean,
+  ): Promise<EventWorkflow> => {
+    return apiClient.patch(
+      GetUrl(API_ENDPOINTS.EVENT_WORKFLOWS.UPDATE_ENABLED(workflowId)),
+      { enabled } as any,
+    );
+  },
+
+  deleteEventWorkflow: async (workflowId: string): Promise<boolean> => {
     return apiClient.delete(
-      GetNextJSURL(API_ENDPOINTS.EVENT_WORKFLOWS.DELETE(projectId, workflowId)),
+      GetUrl(API_ENDPOINTS.EVENT_WORKFLOWS.DELETE(workflowId)),
     );
   },
 };

@@ -7,20 +7,13 @@ import { WorkflowList } from "./WorkflowList";
 import { WorkflowCreator } from "./WorkflowCreator";
 import { WorkflowConnector } from "./WorkflowConnector";
 import { WorkflowEditor } from "./WorkflowEditor";
-import {
-  WorkflowData,
-  WorkflowNode,
-  NodeType,
-  Connection,
-} from "./types/workflow.types";
+import { WorkflowData } from "./types/workflow.types";
 import {
   useUpdateEventWorkflow,
   useEventWorkflow,
 } from "@/hooks/editor/eventworkflow/useEventWorkflows";
 import { toast } from "sonner";
-import type { EventHandler } from "@/schema/eventSchemas";
-import { WorkflowTransformService } from "@/services/workflow/WorkflowTransformService";
-import { WorkflowValidationService } from "@/services/workflow/WorkflowValidationService";
+import { validateWorkflow } from "@/lib/utils/workflow/workflowTransformer";
 
 interface EventWorkflowManagerDialogProps {
   projectId: string;
@@ -54,7 +47,6 @@ export const EventWorkflowManagerDialog = ({
 
   // Query for loading workflow data when editing
   const workflowQuery = useEventWorkflow(
-    projectId,
     viewState.type === "edit" ? viewState.workflowId : "",
     viewState.type === "edit",
   );
@@ -116,65 +108,33 @@ export const EventWorkflowManagerDialog = ({
   const handleSaveWorkflow = (workflow: WorkflowData) => {
     if (viewState.type !== "edit") return;
 
-    console.log("Saving workflow:", {
-      projectId,
-      workflowId: viewState.workflowId,
-      nodeCount: workflow.nodes.length,
-      connectionCount: workflow.connections.length,
-    });
-
-    // Validate workflow structure before saving
-    const validation = WorkflowValidationService.validateWorkflow(workflow);
-    if (!validation.valid) {
-      const errorMsg = WorkflowValidationService.formatErrorsForDisplay(
-        validation.errors,
-      );
-      toast.error(`Workflow validation failed:\n${errorMsg}`);
+    const validation = validateWorkflow(workflow);
+    if (!validation.isValid) {
+      const errorMsg = validation.errors.join("\n• ");
+      toast.error(`Workflow validation failed:\n• ${errorMsg}`);
       console.error("Validation errors:", validation.errors);
       return;
     }
 
-    if (validation.warnings.length > 0) {
-      const warningMsg = WorkflowValidationService.formatWarningsForDisplay(
-        validation.warnings,
-      );
-      toast.warning(`Workflow warnings:\n${warningMsg}`);
-    }
-
-    // Transform workflow to handlers for execution
-    const transformResult = WorkflowTransformService.transform(workflow);
-
-    if (transformResult.errors.length > 0) {
-      const errorMsg = WorkflowValidationService.formatErrorsForDisplay(
-        transformResult.errors,
-      );
-      toast.error(`Failed to transform workflow:\n${errorMsg}`);
-      console.error("Transform errors:", transformResult.errors);
-      return;
-    }
-
-    console.log("Transformation successful:", {
-      handlerCount: transformResult.handlers.length,
-      warnings: transformResult.warnings,
+    console.log("Validation successful:", {
+      nodeCount: workflow.nodes.length,
     });
 
-    // Save both canvas data and transformed handlers
+    // Save canvas data only
     updateMutation.mutate(
       {
-        projectId,
         workflowId: viewState.workflowId,
         input: {
           name: workflow.metadata?.name,
           description: workflow.metadata?.description,
           canvasData: workflow, // Save the complete canvas state
-          handlers: transformResult.handlers, // Save transformed handlers
           enabled: true,
         },
       },
       {
         onSuccess: () => {
           toast.success("Workflow saved successfully!");
-          console.log("Workflow saved with canvas data and handlers");
+          console.log("Workflow saved with canvas data");
         },
         onError: (error: any) => {
           console.error("Workflow update error:", error);

@@ -26,6 +26,7 @@ const ImageComponent: React.FC<Props> = ({ element, data }) => {
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
+      projectId: element.projectId,
     });
   const safeStyles = elementHelper.getSafeStyles(element);
 

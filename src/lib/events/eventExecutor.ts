@@ -52,8 +52,24 @@ class EventExecutor {
       // Execute the action
       const result = await this.executeAction(handler.config, context);
 
-      // Execute next handlers if chained
-      if (handler.nextHandlers && handler.nextHandlers.length > 0) {
+      // Handle conditional branching (for condition nodes)
+      if (handler.trueHandlers || handler.falseHandlers) {
+        // Evaluate the result as a boolean condition
+        const conditionMet = this.evaluateConditionResult(result);
+
+        if (conditionMet && handler.trueHandlers) {
+          // Execute true branch
+          for (const trueHandler of handler.trueHandlers) {
+            await this.execute(trueHandler, context);
+          }
+        } else if (!conditionMet && handler.falseHandlers) {
+          // Execute false branch
+          for (const falseHandler of handler.falseHandlers) {
+            await this.execute(falseHandler, context);
+          }
+        }
+      } else if (handler.nextHandlers && handler.nextHandlers.length > 0) {
+        // Execute next handlers in sequence (standard chaining)
         for (const nextHandler of handler.nextHandlers) {
           await this.execute(nextHandler, context);
         }
@@ -64,6 +80,24 @@ class EventExecutor {
       console.error("Error executing event handler:", error);
       throw error;
     }
+  }
+
+  /**
+   * Evaluate condition result as boolean
+   */
+  private evaluateConditionResult(result: any): boolean {
+    // Handle various truthy/falsy values
+    if (typeof result === "boolean") {
+      return result;
+    }
+    if (typeof result === "number") {
+      return result !== 0;
+    }
+    if (typeof result === "string") {
+      return result.toLowerCase() === "true" || result === "1";
+    }
+    // Default to truthy check
+    return !!result;
   }
 
   /**
@@ -302,10 +336,19 @@ class EventExecutor {
         "context",
         config.code,
       );
-      return fn(context.element, context.event, context.elementState, context);
+      const result = fn(
+        context.element,
+        context.event,
+        context.elementState,
+        context,
+      );
+
+      // Return the result (important for condition evaluation)
+      return result;
     } catch (error) {
       console.error("Error executing custom code:", error);
-      throw error;
+      // Return false on error for condition safety
+      return false;
     }
   }
 

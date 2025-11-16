@@ -10,7 +10,6 @@ export interface EventWorkflow {
   projectId: string;
   name: string;
   description?: string;
-  handlers: EventHandler[];
   canvasData?: WorkflowData; // Stores nodes, connections, and metadata
   enabled: boolean;
   createdAt: Date;
@@ -24,14 +23,12 @@ export interface ElementEventWorkflowReference {
 export interface CreateEventWorkflowInput {
   name: string;
   description?: string;
-  handlers?: EventHandler[];
   canvasData?: WorkflowData;
 }
 
 export interface UpdateEventWorkflowInput {
   name?: string;
   description?: string;
-  handlers?: EventHandler[];
   canvasData?: WorkflowData;
   enabled?: boolean;
 }

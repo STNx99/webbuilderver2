@@ -25,7 +25,8 @@ model Element {
   Elements       Element[] @relation("ElementChildren")
   Project        Project   @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
   Settings       Setting?  @relation("ElementSettings")
-  EventWorkflows Json?     @default("{}")
+  EventWorkflows ElementEventWorkflow[]
+  Comments       ElementComment[]
 
   @@index([ParentId])
   @@index([PageId])
@@ -90,12 +91,12 @@ model EventWorkflow {
   ProjectId   String
   Name        String
   Description String?
-  Handlers    Json     @default("[]")
   CanvasData  Json?
   Enabled     Boolean  @default(true)
   CreatedAt   DateTime @default(now()) @db.Timestamp(6)
   UpdatedAt   DateTime @updatedAt @db.Timestamp(6)
   Project     Project  @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+  ElementEventWorkflows ElementEventWorkflow[] @relation("ElementEventWorkflows")
 
   @@unique([ProjectId, Name])
   @@index([ProjectId])
@@ -141,8 +142,11 @@ model User {
   Subscriptions    Subscription[]
   Comments         Comment[]
   CommentReactions CommentReaction[]
+  ElementComments  ElementComment[]
   Notifications    Notification[]
 }
+
+
 
 model Subscription {
   Id            String    @id @default(cuid())
@@ -372,6 +376,36 @@ model CommentReaction {
 
   @@index([CommentId])
   @@index([UserId])
+}
+model ElementComment {
+  Id        String    @id @map("Id")
+  Content   String
+  AuthorId  String
+  ElementId String
+  CreatedAt DateTime  @default(now()) @db.Timestamp(6)
+  UpdatedAt DateTime  @updatedAt @db.Timestamp(6)
+  DeletedAt DateTime? @db.Timestamp(6)
+  Resolved  Boolean   @default(false)
+  Author    User      @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
+  Element   Element   @relation(fields: [ElementId], references: [Id], onDelete: Cascade)
+
+  @@index([AuthorId])
+  @@index([ElementId])
+}
+
+model ElementEventWorkflow {
+  Id         String        @id @default(cuid())
+  ElementId  String
+  WorkflowId String
+  EventName  String
+  CreatedAt  DateTime      @default(now()) @db.Timestamp(6)
+  Element    Element       @relation(fields: [ElementId], references: [Id], onDelete: Cascade)
+  Workflow   EventWorkflow @relation("ElementEventWorkflows", fields: [WorkflowId], references: [Id], onDelete: Cascade)
+
+  @@unique([ElementId, WorkflowId, EventName])
+  @@index([ElementId])
+  @@index([WorkflowId])
+  @@index([EventName])
 }
 
 model Notification {

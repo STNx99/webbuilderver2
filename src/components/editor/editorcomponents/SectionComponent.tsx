@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useElementHandler } from "@/hooks";
 import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
@@ -17,17 +17,34 @@ const SectionComponent = ({ element, data }: EditorComponentProps) => {
   const { selectedElement } = useSelectionStore();
   const { id } = useParams();
   const searchParams = useSearchParams();
+  const previousEventsRef = useRef<any>(null);
 
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
+      projectId: element.projectId,
     });
 
   const safeStyles = elementHelper.getSafeStyles(sectionElement);
 
-  // Register events when element events change
   useEffect(() => {
+    // Only log if element events have actually changed
+    const eventsChanged =
+      JSON.stringify(element.events) !==
+      JSON.stringify(previousEventsRef.current);
+
+    if (eventsChanged) {
+      console.log(
+        "Manual element events for SectionComponent:",
+        element.events || "No manual events",
+      );
+      console.log(
+        "Note: Workflow events are fetched dynamically and registered separately",
+      );
+      previousEventsRef.current = element.events;
+    }
+
     if (element.events) {
       registerEvents(element.events);
     }

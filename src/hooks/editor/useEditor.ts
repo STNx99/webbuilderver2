@@ -171,7 +171,6 @@ export const useEditor = (
   };
 
   const addNewSection = () => {
-    // Check permissions before adding new section
     if (isReadOnly || isLocked || !permissions.canCreateElements) {
       toast.error("Cannot add elements - editor is in read-only mode", {
         duration: 2000,

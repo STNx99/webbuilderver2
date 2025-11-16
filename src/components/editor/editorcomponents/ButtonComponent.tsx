@@ -14,6 +14,7 @@ const ButtonComponent = ({ element }: EditorComponentProps) => {
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
+      projectId: element.projectId,
     });
 
   const safeStyles = elementHelper.getSafeStyles(buttonElement);
