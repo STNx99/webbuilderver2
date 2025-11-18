@@ -9,11 +9,9 @@ export { WorkflowConnector } from "./WorkflowConnector";
 
 // Canvas components
 export { WorkflowCanvas } from "./canvas/WorkflowCanvas";
-export { ConnectionRenderer } from "./canvas/ConnectionRenderer";
 export { NodePalette } from "./canvas/NodePalette";
 
 // Node components
-export { WorkflowNodeComponent } from "./nodes/WorkflowNode";
 
 // Hooks
 export { useWorkflowCanvas } from "../../../../hooks/editor/eventworkflow/useWorkflowCanvas";

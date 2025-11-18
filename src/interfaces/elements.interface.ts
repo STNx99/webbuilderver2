@@ -1,6 +1,7 @@
 import { EditorElement, ElementType } from "@/types/global.type";
 import { ValidationRule } from "./validate.interface";
 import { EmblaOptionsType } from "embla-carousel";
+import { ElementEvents } from "./events.interface";
 
 type CSSStyles = React.CSSProperties;
 
@@ -28,8 +29,8 @@ interface Element<Settings = undefined> {
   projectId: string;
   settings?: Settings | null;
   order?: number;
-  events?: Record<string, any[]>;
-  eventWorkflows?: Record<string, string[]>;
+  events?: ElementEvents; // Direct event handlers for actions
+  eventWorkflowConnections?: string[]; // Connection IDs linking to backend ElementEventWorkflow records
 }
 
 interface BaseElement extends Element {}

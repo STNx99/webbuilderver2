@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { WorkflowCanvas } from "./canvas/WorkflowCanvas";
+import { WorkflowCanvasWrapper } from "./canvas/WorkflowCanvasWrapper";
 import { NodePalette } from "./canvas/NodePalette";
 import { NodeConfigPanel } from "./nodes/NodeConfigPanel";
 import { WorkflowData, NodeType, WorkflowNode } from "./types/workflow.types";
@@ -29,6 +29,7 @@ import { Save, RotateCcw, Zap, Code2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import clsx from "clsx";
 import { useWorkflowCanvas } from "@/hooks/editor";
+import { validateWorkflow } from "@/lib/utils/workflow/workflowTransformer";
 
 interface WorkflowEditorProps {
   workflowName?: string;
@@ -72,6 +73,14 @@ export const WorkflowEditor = ({
 
   const handleSave = () => {
     const currentWorkflow = getWorkflow();
+
+    const validation = validateWorkflow(currentWorkflow);
+    if (!validation.isValid) {
+      const errors = validation.errors.join("\n");
+      toast.error(`Workflow validation failed:\n${errors}`);
+      return;
+    }
+
     onSave?.(currentWorkflow);
     toast.success("Workflow saved!");
   };
@@ -205,7 +214,7 @@ export const WorkflowEditor = ({
             className="flex-1 overflow-hidden flex gap-4 p-4"
           >
             <div className="flex-1 rounded-lg border border-border overflow-hidden">
-              <WorkflowCanvas
+              <WorkflowCanvasWrapper
                 readOnly={readOnly}
                 onNodeConfigure={handleNodeConfigure}
               />

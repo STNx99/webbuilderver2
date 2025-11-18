@@ -35,9 +35,9 @@ import {
   Workflow,
   Link as LinkIcon,
   Info,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import clsx from "clsx";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -59,18 +59,25 @@ export const WorkflowList = ({
   onConnect,
   onCreate,
 }: WorkflowListProps) => {
-  const { data: workflows = [], isLoading } = useEventWorkflows(projectId);
+  const {
+    data: workflows = [],
+    isLoading,
+    error,
+  } = useEventWorkflows(projectId);
   const deleteMutation = useDeleteEventWorkflow();
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  const filteredWorkflows = workflows.filter((workflow) =>
+  // Ensure workflows is always an array
+  const workflowsArray = Array.isArray(workflows) ? workflows : [];
+
+  const filteredWorkflows = workflowsArray.filter((workflow) =>
     workflow.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDelete = (workflowId: string) => {
     deleteMutation.mutate(
-      { projectId, workflowId },
+      { workflowId },
       {
         onSuccess: () => {
           toast.success("Workflow deleted successfully");
@@ -87,6 +94,43 @@ export const WorkflowList = ({
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Event Workflows</h2>
+            <p className="text-sm text-muted-foreground">
+              Create visual workflows to handle element events
+            </p>
+          </div>
+          <Button onClick={onCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Workflow
+          </Button>
+        </div>
+
+        <Card className="border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/20">
+          <CardContent className="pt-6">
+            <div className="flex gap-3">
+              <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-red-900 dark:text-red-100">
+                  Error Loading Workflows
+                </p>
+                <p className="text-sm text-red-700 dark:text-red-300">
+                  {error instanceof Error
+                    ? error.message
+                    : "Failed to load workflows"}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -130,7 +174,7 @@ export const WorkflowList = ({
       </Card>
 
       {/* Search */}
-      {workflows.length > 0 && (
+      {workflowsArray.length > 0 && (
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -200,7 +244,7 @@ export const WorkflowList = ({
                       <div className="flex items-center gap-4 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Workflow className="h-3 w-3" />
-                          {workflow.handlers?.length || 0} nodes
+                          {workflow.canvasData?.nodes?.length || 0} nodes
                         </span>
                         <span>
                           Created{" "}

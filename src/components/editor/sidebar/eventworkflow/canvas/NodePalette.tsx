@@ -11,50 +11,50 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
+import {
+  NODE_TYPE_LABELS,
+  NODE_TYPE_DESCRIPTIONS,
+  NODE_TYPE_COLORS,
+  ANIMATION_DURATIONS,
+} from "@/constants/eventWorkflows";
 
 interface NodePaletteProps {
   onNodeDragStart?: (e: React.DragEvent, nodeType: NodeType) => void;
   className?: string;
 }
 
-interface NodePaletteItem {
-  type: NodeType;
-  label: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-}
+const NodeIcon = ({ type }: { type: NodeType }) => {
+  switch (type) {
+    case NodeType.TRIGGER:
+      return <Zap className="h-4 w-4" />;
+    case NodeType.ACTION:
+      return <ArrowRight className="h-4 w-4" />;
+    case NodeType.CONDITION:
+      return <GitBranch className="h-4 w-4" />;
+    case NodeType.OUTPUT:
+      return <CheckCircle className="h-4 w-4" />;
+    default:
+      return <Zap className="h-4 w-4" />;
+  }
+};
 
-const NODE_PALETTE_ITEMS: NodePaletteItem[] = [
-  {
-    type: NodeType.TRIGGER,
-    label: "Trigger",
-    description: "Start your workflow",
-    icon: <Zap className="h-4 w-4" />,
-    color: "bg-yellow-50 dark:bg-yellow-950/30 border-yellow-300 dark:border-yellow-700 hover:border-yellow-400",
-  },
-  {
-    type: NodeType.ACTION,
-    label: "Action",
-    description: "Perform an action",
-    icon: <ArrowRight className="h-4 w-4" />,
-    color: "bg-blue-50 dark:bg-blue-950/30 border-blue-300 dark:border-blue-700 hover:border-blue-400",
-  },
-  {
-    type: NodeType.CONDITION,
-    label: "Condition",
-    description: "Branch your workflow",
-    icon: <GitBranch className="h-4 w-4" />,
-    color: "bg-purple-50 dark:bg-purple-950/30 border-purple-300 dark:border-purple-700 hover:border-purple-400",
-  },
-  {
-    type: NodeType.OUTPUT,
-    label: "Output",
-    description: "End your workflow",
-    icon: <CheckCircle className="h-4 w-4" />,
-    color: "bg-green-50 dark:bg-green-950/30 border-green-300 dark:border-green-700 hover:border-green-400",
-  },
+const getNodePaletteColor = (type: NodeType) => {
+  const colorMap: Record<NodeType, keyof typeof NODE_TYPE_COLORS> = {
+    [NodeType.TRIGGER]: "trigger",
+    [NodeType.ACTION]: "action",
+    [NodeType.CONDITION]: "condition",
+    [NodeType.OUTPUT]: "output",
+  };
+  const colors = NODE_TYPE_COLORS[colorMap[type]];
+  return cn(colors.bg, colors.border, "hover:" + colors.border);
+};
+
+const NODE_TYPES_ORDER: NodeType[] = [
+  NodeType.TRIGGER,
+  NodeType.ACTION,
+  NodeType.CONDITION,
+  NodeType.OUTPUT,
 ];
 
 export const NodePalette = ({
@@ -71,9 +71,9 @@ export const NodePalette = ({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         "bg-card border border-border rounded-lg shadow-lg",
-        className
+        className,
       )}
     >
       <button
@@ -94,21 +94,28 @@ export const NodePalette = ({
             Drag nodes onto the canvas to build your workflow
           </p>
 
-          {NODE_PALETTE_ITEMS.map((item) => (
+          {NODE_TYPES_ORDER.map((nodeType) => (
             <div
-              key={item.type}
+              key={nodeType}
               draggable
-              onDragStart={(e) => handleDragStart(e, item.type)}
-              className={clsx(
+              onDragStart={(e) => handleDragStart(e, nodeType)}
+              className={cn(
                 "p-3 border-2 rounded-lg cursor-move transition-all hover:shadow-md active:opacity-50",
-                item.color
+                getNodePaletteColor(nodeType),
               )}
+              style={{ transitionDuration: `${ANIMATION_DURATIONS.normal}ms` }}
             >
               <div className="flex items-center gap-2 mb-1">
-                <div>{item.icon}</div>
-                <span className="font-medium text-sm">{item.label}</span>
+                <div>
+                  <NodeIcon type={nodeType} />
+                </div>
+                <span className="font-medium text-sm">
+                  {NODE_TYPE_LABELS[nodeType]}
+                </span>
               </div>
-              <p className="text-xs text-muted-foreground">{item.description}</p>
+              <p className="text-xs text-muted-foreground">
+                {NODE_TYPE_DESCRIPTIONS[nodeType]}
+              </p>
             </div>
           ))}
 

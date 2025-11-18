@@ -174,14 +174,26 @@ export const API_ENDPOINTS = {
   },
   EVENT_WORKFLOWS: {
     GET_BY_PROJECT: (projectId: string) =>
-      `/api/projects/${projectId}/eventworkflows`,
-    CREATE: (projectId: string) => `/api/projects/${projectId}/eventworkflows`,
-    GET_BY_ID: (projectId: string, workflowId: string) =>
-      `/api/projects/${projectId}/eventworkflows/${workflowId}`,
-    UPDATE: (projectId: string, workflowId: string) =>
-      `/api/projects/${projectId}/eventworkflows/${workflowId}`,
-    DELETE: (projectId: string, workflowId: string) =>
-      `/api/projects/${projectId}/eventworkflows/${workflowId}`,
+      `/api/v1/projects/${projectId}/event-workflows`,
+    CREATE: "/api/v1/event-workflows",
+    GET_BY_ID: (workflowId: string) => `/api/v1/event-workflows/${workflowId}`,
+    UPDATE: (workflowId: string) => `/api/v1/event-workflows/${workflowId}`,
+    UPDATE_ENABLED: (workflowId: string) =>
+      `/api/v1/event-workflows/${workflowId}/enabled`,
+    DELETE: (workflowId: string) => `/api/v1/event-workflows/${workflowId}`,
+    GET_ELEMENTS: (workflowId: string) =>
+      `/api/v1/event-workflows/${workflowId}/elements`,
+  },
+  ELEMENT_EVENT_WORKFLOWS: {
+    CREATE: "/api/v1/element-event-workflows",
+    GET_ALL: "/api/v1/element-event-workflows",
+    GET_BY_ID: (id: string) => `/api/v1/element-event-workflows/${id}`,
+    UPDATE: (id: string) => `/api/v1/element-event-workflows/${id}`,
+    DELETE: (id: string) => `/api/v1/element-event-workflows/${id}`,
+    DELETE_BY_ELEMENT: (elementId: string) =>
+      `/api/v1/element-event-workflows?elementId=${elementId}`,
+    DELETE_BY_WORKFLOW: (workflowId: string) =>
+      `/api/v1/element-event-workflows?workflowId=${workflowId}`,
   },
 };
 export const NEXT_API_ENDPOINTS = {

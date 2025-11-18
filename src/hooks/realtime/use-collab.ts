@@ -150,14 +150,11 @@ export function useCollab({
         }
         case "update": {
           const remoteHash = computeElementsHash(message.elements);
-
           if (remoteHash !== lastLocalStateHash.current) {
             isUpdatingFromRemote.current = true;
-
             if (remoteUpdateTimeoutRef.current) {
               clearTimeout(remoteUpdateTimeoutRef.current);
             }
-
             remoteUpdateTimeoutRef.current = setTimeout(() => {
               if (isUpdatingFromRemote.current) {
                 console.warn(

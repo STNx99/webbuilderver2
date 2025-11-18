@@ -383,7 +383,7 @@ useDeleteEventWorkflow()              // Delete workflow
 
 ### buildActionConfig
 
-**Location:** `src/lib/utils/workflowUtils.ts`
+**Location:** `src/components/editor/sidebar/eventworkflow/workflowUtils.ts`
 
 **Purpose:** Build schema-compliant action configurations with defaults
 

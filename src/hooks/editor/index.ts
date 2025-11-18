@@ -27,6 +27,7 @@ export {
   useEventWorkflow,
   useEventWorkflows,
   useUpdateEventWorkflow,
+  useUpdateEventWorkflowEnabled,
 } from "./eventworkflow/useEventWorkflows";
 
 export { useWorkflowCanvas } from "./eventworkflow/useWorkflowCanvas";

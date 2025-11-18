@@ -99,7 +99,7 @@ export const NodeConfigPanel = ({
     }
   };
 
-  const updateConfig = (key: string, value: any) => {
+  const updateConfig = (key: string, value: unknown) => {
     setConfig((prev) => ({
       ...prev,
       [key]: value,

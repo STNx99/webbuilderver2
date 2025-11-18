@@ -23,6 +23,7 @@ const CarouselComponent = ({ element, data }: EditorComponentProps) => {
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
+      projectId: element.projectId,
     });
 
   element = element as CarouselElement;

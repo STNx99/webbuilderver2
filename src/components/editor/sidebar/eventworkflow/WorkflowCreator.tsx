@@ -1,10 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useCreateEventWorkflow } from "@/hooks/editor/eventworkflow/useEventWorkflows";
+import {
+  CreateEventWorkflowSchema,
+  type CreateEventWorkflowFormData,
+} from "@/schema/zod/eventWorkflow";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
@@ -27,38 +41,44 @@ export const WorkflowCreator = ({
   onSuccess,
   onCancel,
 }: WorkflowCreatorProps) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const createMutation = useCreateEventWorkflow();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<CreateEventWorkflowFormData>({
+    resolver: zodResolver(CreateEventWorkflowSchema),
+    defaultValues: {
+      name: "",
+      description: undefined,
+    },
+    mode: "onBlur",
+  });
 
-    if (!name.trim()) {
-      toast.error("Please enter a workflow name");
-      return;
-    }
-
+  const onSubmit = (data: CreateEventWorkflowFormData) => {
+    console.log(projectId);
     createMutation.mutate(
       {
         projectId,
         input: {
-          name: name.trim(),
-          description: description.trim() || undefined,
-          handlers: [],
+          name: data.name,
+          description: data.description,
+          canvasData: undefined,
         },
       },
       {
-        onSuccess: (data: any) => {
+        onSuccess: (response: any) => {
           toast.success("Workflow created! Now design your workflow visually.");
-          onSuccess(data.id);
+          form.reset();
+          onSuccess(response.id);
         },
-        onError: () => {
-          toast.error("Failed to create workflow");
+        onError: (error: any) => {
+          const message =
+            error?.message || "Failed to create workflow. Please try again.";
+          toast.error(message);
         },
       },
     );
   };
+
+  const isLoading = createMutation.isPending;
 
   return (
     <div className="space-y-4">
@@ -67,6 +87,7 @@ export const WorkflowCreator = ({
         size="sm"
         onClick={onCancel}
         className="gap-2 mb-2"
+        disabled={isLoading}
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Workflows
@@ -86,76 +107,103 @@ export const WorkflowCreator = ({
             </div>
           </div>
         </CardHeader>
+
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="workflow-name">
-                Workflow Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="workflow-name"
-                placeholder="e.g., Send Welcome Email"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={createMutation.isPending}
-                autoFocus
-                maxLength={100}
-              />
-              <p className="text-xs text-muted-foreground">
-                Choose a descriptive name for your workflow
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="workflow-description">
-                Description{" "}
-                <span className="text-muted-foreground">(Optional)</span>
-              </Label>
-              <Textarea
-                id="workflow-description"
-                placeholder="Describe what this workflow does..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                disabled={createMutation.isPending}
-                rows={4}
-                maxLength={500}
-              />
-              <p className="text-xs text-muted-foreground">
-                Help others understand the purpose of this workflow
-              </p>
-            </div>
-
-            <div className="flex gap-2 pt-4">
-              <Button
-                type="submit"
-                disabled={!name.trim() || createMutation.isPending}
-                className="flex-1 gap-2"
-              >
-                {createMutation.isPending ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="h-4 w-4" />
-                    Create & Design Workflow
-                  </>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Workflow Name Field */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Workflow Name
+                      <span className="text-destructive ml-1">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., Send Welcome Email"
+                        disabled={isLoading}
+                        autoFocus
+                        maxLength={100}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Choose a descriptive name for your workflow (3-100
+                      characters)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
                 )}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={createMutation.isPending}
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+              />
+
+              {/* Workflow Description Field */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Description
+                      <span className="text-muted-foreground ml-1">
+                        (Optional)
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe what this workflow does..."
+                        disabled={isLoading}
+                        rows={4}
+                        maxLength={500}
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Help others understand the purpose of this workflow (max
+                      500 characters)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Form Actions */}
+              <div className="flex gap-2 pt-4">
+                <Button
+                  type="submit"
+                  disabled={isLoading || !form.formState.isValid}
+                  className="flex-1 gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="h-4 w-4" />
+                      Create & Design Workflow
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancel}
+                  disabled={isLoading}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
 
+      {/* Info Card */}
       <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/20">
         <CardContent className="pt-6">
           <h4 className="font-semibold text-sm mb-2 text-blue-900 dark:text-blue-100">
