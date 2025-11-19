@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useElementHandler } from "@/hooks";
 import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
@@ -6,17 +7,17 @@ import { CMSContentListElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
 import ElementLoader from "../ElementLoader";
 import { Database } from "lucide-react";
-import { useCMSContent } from "@/hooks";
+import { useCMSContent, getFieldValue } from "@/hooks";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-import { getFieldValue } from "@/hooks";
 
 const CMSContentListComponent = ({ element, data }: EditorComponentProps) => {
   const cmsElement = element as CMSContentListElement;
+  const { id } = useParams();
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   const safeStyles = elementHelper.getSafeStyles(cmsElement);

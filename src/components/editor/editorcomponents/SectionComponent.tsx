@@ -6,25 +6,26 @@ import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents"
 import { SectionElement } from "@/interfaces/elements.interface";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { Button } from "@/components/ui/button";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import ElementLoader from "../ElementLoader";
+import { usePageStore } from "@/globalstore/pagestore";
 
 const SectionComponent = ({ element, data }: EditorComponentProps) => {
   const sectionElement = element as SectionElement;
   const { insertElement } = useElementStore();
   const { selectedElement } = useSelectionStore();
   const { id } = useParams();
-  const searchParams = useSearchParams();
   const previousEventsRef = useRef<any>(null);
 
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
+  const { currentPage } = usePageStore();
 
   const safeStyles = elementHelper.getSafeStyles(sectionElement);
 
@@ -35,13 +36,6 @@ const SectionComponent = ({ element, data }: EditorComponentProps) => {
       JSON.stringify(previousEventsRef.current);
 
     if (eventsChanged) {
-      console.log(
-        "Manual element events for SectionComponent:",
-        element.events || "No manual events",
-      );
-      console.log(
-        "Note: Workflow events are fetched dynamically and registered separately",
-      );
       previousEventsRef.current = element.events;
     }
 
@@ -55,9 +49,8 @@ const SectionComponent = ({ element, data }: EditorComponentProps) => {
   const handleCreateSeciont = () => {
     const newElement = elementHelper.createElement.create<SectionElement>(
       "Section",
-      id as string,
+      currentPage?.Id || "",
       undefined,
-      searchParams.get("page") || undefined,
     );
     console.log("New Section Element:", newElement);
     if (newElement) insertElement(element, newElement);

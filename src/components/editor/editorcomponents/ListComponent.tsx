@@ -6,15 +6,17 @@ import { ListElement } from "@/interfaces/elements.interface";
 import { LayoutGroup } from "framer-motion";
 import ElementLoader from "../ElementLoader";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useParams } from "next/navigation";
 
 const ListComponent = ({ element, data }: EditorComponentProps) => {
   const listElement = element as ListElement;
+  const { id } = useParams();
 
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
   const safeStyles = elementHelper.getSafeStyles(listElement);
 

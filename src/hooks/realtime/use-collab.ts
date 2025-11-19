@@ -21,7 +21,8 @@ import {
 } from "@/interfaces/realtime.interface";
 
 export interface UseCollabOptions {
-  roomId: string;
+  roomId: string; // Project ID - used as fallback if pageId not provided
+  projectId?: string; // Project ID
   wsUrl?: string;
   enabled?: boolean;
   onSync?: () => void;
@@ -44,6 +45,7 @@ export interface UseCollabReturn {
 
 export function useCollab({
   roomId,
+  projectId,
   wsUrl = "ws://localhost:8082",
   enabled = true,
   onSync,
@@ -89,18 +91,70 @@ export function useCollab({
     }
   }, [elements, computeElementsHash]);
 
-  const handleMessage = useCallback(
-    (message: WebSocketMessage) => {
-      switch (message.type) {
-        case "sync": {
-          isUpdatingFromRemote.current = true;
+  const handleMessage = (message: WebSocketMessage) => {
+    switch (message.type) {
+      case "sync": {
+        isUpdatingFromRemote.current = true;
 
-          // Clear any existing safety timeout
+        // Clear any existing safety timeout
+        if (remoteUpdateTimeoutRef.current) {
+          clearTimeout(remoteUpdateTimeoutRef.current);
+        }
+
+        remoteUpdateTimeoutRef.current = setTimeout(() => {
+          if (isUpdatingFromRemote.current) {
+            console.warn(
+              "[Collab] Safety reset: isUpdatingFromRemote was stuck",
+            );
+            isUpdatingFromRemote.current = false;
+          }
+        }, 1000);
+
+        const remoteHash = computeElementsHash(message.elements);
+        lastLocalStateHash.current = remoteHash;
+        lastSentStateHash.current = remoteHash;
+
+        loadElements(message.elements, true);
+
+        // Set users if provided in sync message
+        if (message.users) {
+          mouseStore.setUsers(message.users);
+        }
+
+        // Set mouse positions if provided
+        if (message.mousePositions) {
+          const convertedPositions: Record<string, { x: number; y: number }> =
+            {};
+          Object.entries(message.mousePositions).forEach(([userId, pos]) => {
+            convertedPositions[userId] = { x: pos.X, y: pos.Y };
+          });
+          mouseStore.setMousePositions(convertedPositions);
+        }
+
+        // Set selected elements if provided
+        if (message.selectedElements) {
+          mouseStore.setSelectedElements(message.selectedElements);
+        }
+
+        setTimeout(() => {
+          isUpdatingFromRemote.current = false;
+          if (remoteUpdateTimeoutRef.current) {
+            clearTimeout(remoteUpdateTimeoutRef.current);
+            remoteUpdateTimeoutRef.current = null;
+          }
+          setIsSynced(true);
+
+          onSync?.();
+        }, 50);
+        break;
+      }
+      case "update": {
+        const remoteHash = computeElementsHash(message.elements);
+        if (remoteHash !== lastLocalStateHash.current) {
+          isUpdatingFromRemote.current = true;
           if (remoteUpdateTimeoutRef.current) {
             clearTimeout(remoteUpdateTimeoutRef.current);
           }
-
-          // Safety timeout to prevent flag from getting stuck
           remoteUpdateTimeoutRef.current = setTimeout(() => {
             if (isUpdatingFromRemote.current) {
               console.warn(
@@ -110,31 +164,9 @@ export function useCollab({
             }
           }, 1000);
 
-          const remoteHash = computeElementsHash(message.elements);
           lastLocalStateHash.current = remoteHash;
-          lastSentStateHash.current = remoteHash;
 
           loadElements(message.elements, true);
-
-          // Set users if provided in sync message
-          if (message.users) {
-            mouseStore.setUsers(message.users);
-          }
-
-          // Set mouse positions if provided
-          if (message.mousePositions) {
-            const convertedPositions: Record<string, { x: number; y: number }> =
-              {};
-            Object.entries(message.mousePositions).forEach(([userId, pos]) => {
-              convertedPositions[userId] = { x: pos.X, y: pos.Y };
-            });
-            mouseStore.setMousePositions(convertedPositions);
-          }
-
-          // Set selected elements if provided
-          if (message.selectedElements) {
-            mouseStore.setSelectedElements(message.selectedElements);
-          }
 
           setTimeout(() => {
             isUpdatingFromRemote.current = false;
@@ -142,82 +174,47 @@ export function useCollab({
               clearTimeout(remoteUpdateTimeoutRef.current);
               remoteUpdateTimeoutRef.current = null;
             }
-            setIsSynced(true);
-
-            onSync?.();
           }, 50);
-          break;
         }
-        case "update": {
-          const remoteHash = computeElementsHash(message.elements);
-          if (remoteHash !== lastLocalStateHash.current) {
-            isUpdatingFromRemote.current = true;
-            if (remoteUpdateTimeoutRef.current) {
-              clearTimeout(remoteUpdateTimeoutRef.current);
-            }
-            remoteUpdateTimeoutRef.current = setTimeout(() => {
-              if (isUpdatingFromRemote.current) {
-                console.warn(
-                  "[Collab] Safety reset: isUpdatingFromRemote was stuck",
-                );
-                isUpdatingFromRemote.current = false;
-              }
-            }, 1000);
-
-            lastLocalStateHash.current = remoteHash;
-
-            loadElements(message.elements, true);
-
-            setTimeout(() => {
-              isUpdatingFromRemote.current = false;
-              if (remoteUpdateTimeoutRef.current) {
-                clearTimeout(remoteUpdateTimeoutRef.current);
-                remoteUpdateTimeoutRef.current = null;
-              }
-            }, 50);
-          }
-          break;
-        }
-        case "error": {
-          const error = new Error(message.error);
-          onError?.(error);
-          break;
-        }
-        case "mouseMove": {
-          mouseStore.updateMousePosition(message.userId, {
-            x: message.x,
-            y: message.y,
-          });
-          break;
-        }
-        case "currentState": {
-          const convertedPositions: Record<string, { x: number; y: number }> =
-            {};
-          if (message.mousePositions) {
-            Object.entries(message.mousePositions).forEach(([userId, pos]) => {
-              convertedPositions[userId] = { x: pos.X, y: pos.Y };
-            });
-          }
-          mouseStore.setMousePositions(convertedPositions);
-          mouseStore.setSelectedElements(message.selectedElements || {});
-
-          // Set users from message or add current user if empty
-          if (message.users && Object.keys(message.users).length > 0) {
-            mouseStore.setUsers(message.users);
-          }
-          break;
-        }
-        case "userDisconnect": {
-          mouseStore.removeMousePosition(message.userId);
-          mouseStore.removeUser(message.userId);
-          break;
-        }
-        default:
-          break;
+        break;
       }
-    },
-    [computeElementsHash, loadElements, onSync, onError, mouseStore],
-  );
+      case "error": {
+        const error = new Error(message.error);
+        onError?.(error);
+        break;
+      }
+      case "mouseMove": {
+        mouseStore.updateMousePosition(message.userId, {
+          x: message.x,
+          y: message.y,
+        });
+        break;
+      }
+      case "currentState": {
+        const convertedPositions: Record<string, { x: number; y: number }> = {};
+        if (message.mousePositions) {
+          Object.entries(message.mousePositions).forEach(([userId, pos]) => {
+            convertedPositions[userId] = { x: pos.X, y: pos.Y };
+          });
+        }
+        mouseStore.setMousePositions(convertedPositions);
+        mouseStore.setSelectedElements(message.selectedElements || {});
+
+        // Set users from message or add current user if empty
+        if (message.users && Object.keys(message.users).length > 0) {
+          mouseStore.setUsers(message.users);
+        }
+        break;
+      }
+      case "userDisconnect": {
+        mouseStore.removeMousePosition(message.userId);
+        mouseStore.removeUser(message.userId);
+        break;
+      }
+      default:
+        break;
+    }
+  };
 
   const isWebSocketEnabled = enabled && isLoaded && !!userId;
 
@@ -230,8 +227,9 @@ export function useCollab({
     error,
   } = useWebSocket({
     url: wsUrl,
-    roomId,
+    roomId: roomId,
     userId: userId || "",
+    projectId,
     getToken,
     autoConnect: false,
     reconnectInterval: 1000,
@@ -290,7 +288,6 @@ export function useCollab({
       lastLocalStateHash.current = currentHash;
       lastSendTime.current = now;
       updateCountRef.current++;
-
       const success = sendMessage({
         type: "update",
         elements,

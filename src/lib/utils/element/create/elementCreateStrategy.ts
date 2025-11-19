@@ -14,10 +14,9 @@ import { EditorElement, ElementType } from "@/types/global.type";
 export type BuilderState = {
   id: string;
   type: ElementType;
-  projectId: string;
   src?: string;
   parentId?: string;
-  pageId?: string;
+  pageId: string;
   styles?: CSSStyles;
   tailwindStyles?: string;
   href?: string;
@@ -35,7 +34,6 @@ function createBaseElement(
   return {
     id: state.id,
     type: state.type,
-    projectId: state.projectId,
     src: state.src,
     parentId:
       state.parentId && state.parentId !== "" ? state.parentId : undefined,
@@ -261,28 +259,6 @@ export class CarouselElementCreateStrategy implements ElementCreateStrategy {
   }
 }
 
-export class DataLoaderElementCreateStrategy implements ElementCreateStrategy {
-  buildElement(state: BuilderState): DataLoaderElement {
-    return createBaseElement(state, {
-      settings: {
-        apiUrl: "",
-        method: "GET",
-      },
-      styles: {
-        default: {
-          width: "100%",
-          minHeight: "160px",
-          backgroundColor: "var(--bg-surface, #ffffff)",
-          border: "1px solid rgba(15,23,42,0.06)",
-          borderRadius: "8px",
-          padding: "16px",
-        },
-      },
-      tailwindStyles:
-        "w-full min-h-[160px] rounded-lg p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-sm",
-    }) as DataLoaderElement;
-  }
-}
 
 export class CMSContentListElementCreateStrategy
   implements ElementCreateStrategy

@@ -83,6 +83,7 @@ export {
   projectKeys,
   useUserProjects,
   useProject,
+  useProjectPages,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,

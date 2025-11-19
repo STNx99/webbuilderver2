@@ -14,6 +14,7 @@ import {
   Permission,
 } from "@/hooks/useProjectPermissions";
 import { CollaboratorRole } from "@/interfaces/collaboration.interface";
+import { useParams } from "next/navigation";
 
 /**
  * Editor-specific permission result
@@ -111,10 +112,15 @@ export type EditorResource =
  * ```
  */
 export function useEditorPermissions(
-  projectId: string | null,
+  projectId?: string | null,
   enabled = true,
 ): EditorPermissions {
-  const perms = useProjectPermissions(projectId, enabled);
+  const { id } = useParams();
+  const effectiveProjectId = projectId || id;
+  const perms = useProjectPermissions(
+    effectiveProjectId as string | null,
+    enabled,
+  );
 
   // Generic permission checker
   const hasPermission = useCallback(

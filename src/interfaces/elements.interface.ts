@@ -25,8 +25,7 @@ interface Element<Settings = undefined> {
   src?: string;
   href?: string;
   parentId?: string;
-  pageId?: string;
-  projectId: string;
+  pageId: string;
   settings?: Settings | null;
   order?: number;
   events?: ElementEvents; // Direct event handlers for actions

@@ -5,14 +5,16 @@ import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { FrameElement } from "@/interfaces/elements.interface";
 import ElementLoader from "../ElementLoader";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useParams } from "next/navigation";
 
 const FrameComponent = ({ element, data }: EditorComponentProps) => {
   const frameElement = element as FrameElement;
   const { getCommonProps } = useElementHandler();
+  const { id } = useParams();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   const safeStyles = elementHelper.getSafeStyles(frameElement);
