@@ -1,8 +1,9 @@
 "use client";
 
-import { Sparkles, Menu, X } from "lucide-react";
+import { Sparkles, Menu, X, User, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/ThemeSwticher";
@@ -19,6 +20,7 @@ import LandingPageFooter from "@/components/landingpage/LandingPageFooter";
 export default function WebBuilderLanding() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user, isLoaded } = useUser();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,10 +43,10 @@ export default function WebBuilderLanding() {
       >
         <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3 group">
-            <div className="w-9 h-9 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+            <div className="w-9 h-9 bg-linear-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
+            <span className="text-xl font-bold bg-linear-to-r from-foreground to-foreground/80 bg-clip-text">
               WebBuilder
             </span>
           </div>
@@ -58,7 +60,7 @@ export default function WebBuilderLanding() {
                 className="text-muted-foreground hover:text-foreground transition-all duration-300 relative group"
               >
                 {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-linear-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
           </nav>
@@ -66,19 +68,47 @@ export default function WebBuilderLanding() {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeSwitcher />
-            <Button
-              variant="ghost"
-              className="text-muted-foreground hover:text-foreground transition-all duration-300"
-              asChild
-            >
-              <Link href="/sign-in">Sign In</Link>
-            </Button>
-            <Button 
-              className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
-              asChild
-            >
-              <Link href="/sign-up">Start Free Trial</Link>
-            </Button>
+            {isLoaded && user ? (
+              // Authenticated user - show Dashboard and Profile
+              <>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground hover:text-foreground transition-all duration-300"
+                  asChild
+                >
+                  <Link href="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </Button>
+                <Button 
+                  className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
+                  asChild
+                >
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              // Not authenticated - show Sign In and Start Free Trial
+              <>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground hover:text-foreground transition-all duration-300"
+                  asChild
+                >
+                  <Link href="/sign-in">Sign In</Link>
+                </Button>
+                <Button 
+                  className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
+                  asChild
+                >
+                  <Link href="/sign-up">Start Free Trial</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -124,12 +154,33 @@ export default function WebBuilderLanding() {
               </Link>
             ))}
             <div className="flex flex-col space-y-3 pt-4 border-t border-border/50">
-              <Button variant="ghost" className="justify-start" asChild>
-                <Link href="/sign-in">Sign In</Link>
-              </Button>
-              <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
-                <Link href="/sign-up">Start Free Trial</Link>
-              </Button>
+              {isLoaded && user ? (
+                // Authenticated user - show Dashboard and Profile
+                <>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </Button>
+                  <Button className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
+                    <Link href="/dashboard">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                </>
+              ) : (
+                // Not authenticated - show Sign In and Start Free Trial
+                <>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link href="/sign-in">Sign In</Link>
+                  </Button>
+                  <Button className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
+                    <Link href="/sign-up">Start Free Trial</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
