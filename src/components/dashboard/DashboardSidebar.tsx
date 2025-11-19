@@ -14,7 +14,7 @@ import {
   ChevronUp,
   Store,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "@clerk/nextjs";
 
 import {
   Sidebar,
@@ -272,10 +272,14 @@ export function DashboardSidebar({ ...props }: DashboardSidebarProps) {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href="/logout">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </Link>
+                    <div className="w-full">
+                      <SignOutButton redirectUrl="/">
+                        <button className="flex items-center">
+                          <LogOut className="mr-2 h-4 w-4" />
+                          <span className="ml-2">Log out</span>
+                        </button>
+                      </SignOutButton>
+                    </div>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
