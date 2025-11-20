@@ -15,11 +15,13 @@ export interface OnlineUser {
   username: string;
   email?: string;
   imageUrl?: string;
+  isOnline?: boolean;
 }
 
 export interface ChatState {
   messages: Message[];
   onlineUsers: OnlineUser[];
+  allUsers: OnlineUser[];
   selectedUser: OnlineUser | null;
   isConnected: boolean;
   activeTab: string;

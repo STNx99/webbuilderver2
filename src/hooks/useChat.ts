@@ -10,6 +10,7 @@ export function useChat(): ChatState & ChatActions {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([]);
+  const [allUsers, setAllUsers] = useState<OnlineUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<OnlineUser | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
@@ -80,6 +81,23 @@ export function useChat(): ChatState & ChatActions {
           index === self.findIndex(u => u.userId === user.userId)
         );
         setOnlineUsers(uniqueUsers);
+        
+        setAllUsers(prevAllUsers => {
+          const updatedUsers = [...prevAllUsers];
+          const onlineUserIds = new Set(uniqueUsers.map(u => u.userId));
+          
+          updatedUsers.forEach(user => {
+            user.isOnline = onlineUserIds.has(user.userId);
+          });
+          
+          uniqueUsers.forEach(onlineUser => {
+            if (!updatedUsers.find(u => u.userId === onlineUser.userId)) {
+              updatedUsers.push({ ...onlineUser, isOnline: true });
+            }
+          });
+          
+          return updatedUsers;
+        });
       });
 
       newSocket.on("disconnect", () => {
@@ -141,6 +159,7 @@ export function useChat(): ChatState & ChatActions {
     // State
     messages,
     onlineUsers,
+    allUsers,
     selectedUser,
     isConnected,
     activeTab,
