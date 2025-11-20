@@ -25,6 +25,7 @@ export default function RealtimeChat() {
   const {
     messages,
     onlineUsers,
+    allUsers,
     selectedUser,
     isConnected,
     activeTab,
@@ -72,7 +73,7 @@ export default function RealtimeChat() {
     }
   };
 
-  const filteredUsers = onlineUsers.filter((user) => {
+  const filteredUsers = allUsers.filter((user) => {
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -153,7 +154,7 @@ export default function RealtimeChat() {
             </TabsTrigger>
             <TabsTrigger value="users" className="gap-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
               <Users className="h-4 w-4" />
-              Users ({onlineUsers.length})
+              Users ({allUsers.length})
             </TabsTrigger>
           </TabsList>
 
@@ -324,10 +325,12 @@ export default function RealtimeChat() {
                               {user.username?.charAt(0).toUpperCase() || "?"}
                             </AvatarFallback>
                           </Avatar>
-                          <div className={cn(
-                            "absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500",
-                            theme === "dark" ? "border-2 border-gray-800" : "border-2 border-white"
-                          )} />
+                          {user.isOnline && (
+                            <div className={cn(
+                              "absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-green-500",
+                              theme === "dark" ? "border-2 border-gray-800" : "border-2 border-white"
+                            )} />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className={cn(
