@@ -17,16 +17,18 @@ import { ImageDragDataSchema } from "@/schema/zod/imageupload";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ImageSettings } from "@/interfaces/elements.interface";
+import { useParams } from "next/navigation";
 
 type Props = EditorComponentProps;
 
 const ImageComponent: React.FC<Props> = ({ element, data }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const { updateElement } = useElementStore();
+  const { id } = useParams();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
   const safeStyles = elementHelper.getSafeStyles(element);
 

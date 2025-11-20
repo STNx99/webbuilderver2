@@ -12,25 +12,25 @@ import { useSelectionStore } from "@/globalstore/selectionstore";
 import { FormElement, InputElement } from "@/interfaces/elements.interface";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import ElementLoader from "../ElementLoader";
+import { usePageStore } from "@/globalstore/pagestore";
 
 export default function FormComponent({ element, data }: EditorComponentProps) {
+  const { id } = useParams();
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
   const { addElement, updateElement } = useElementStore<EditorElement>();
   const formElement = element as FormElement;
-  const searhParams = useSearchParams();
-  const { id } = useParams();
+  const { currentPage } = usePageStore();
 
   const handleAddField = () => {
     const newField = elementHelper.createElement.create<InputElement>(
       "Input",
-      id as string,
+      currentPage?.Id || "",
       formElement.id,
-      searhParams.get("page") || undefined,
     );
     if (!newField) return;
     addElement(newField);

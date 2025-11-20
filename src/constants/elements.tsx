@@ -25,7 +25,6 @@ import {
   ListComponent,
   SectionComponent,
   SelectComponent,
-  DataLoaderComponent,
   CMSContentListComponent,
   CMSContentItemComponent,
   CMSContentGridComponent,
@@ -101,10 +100,6 @@ export const elementHolders: ElementHolder[] = [
     type: "List",
     icon: <List className="w-4 h-4" />,
   },
-  // {
-  //   type: "DataLoader",
-  //   icon: <Database className="w-4 h-4" />,
-  // },
   {
     type: "CMSContentList",
     icon: <List className="w-4 h-4" />,

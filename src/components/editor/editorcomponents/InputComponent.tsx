@@ -6,14 +6,16 @@ import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { InputElement } from "@/interfaces/elements.interface";
 import React, { useEffect } from "react";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useParams } from "next/navigation";
 
 const InputComponent = ({ element }: EditorComponentProps) => {
   const inputElement = element as InputElement;
   const { getCommonProps } = useElementHandler();
+  const { id } = useParams();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   const safeStyles = elementHelper.getSafeStyles(inputElement);

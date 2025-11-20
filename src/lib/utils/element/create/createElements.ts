@@ -10,6 +10,7 @@ import { getElementStrategy } from "./elementStrategyMap";
 import { BuilderState } from "./elementCreateStrategy";
 import { SelectionStore } from "@/globalstore/selectionstore";
 import { ResponsiveStyles } from "@/interfaces/elements.interface";
+import { useSearchParams } from "next/navigation";
 
 /**
  * Lightweight utilities and improved typings for creating elements.
@@ -61,7 +62,6 @@ function buildWithStrategy(options: BuilderState): EditorElement {
 function baseElementFactory({
   id,
   type,
-  projectId,
   pageId,
   parentId,
   styles,
@@ -72,8 +72,7 @@ function baseElementFactory({
 }: {
   id: string;
   type: ElementType;
-  projectId: string;
-  pageId?: string;
+  pageId: string;
   parentId?: string;
   styles?: ResponsiveStyles;
   tailwindStyles?: string;
@@ -84,8 +83,7 @@ function baseElementFactory({
   return {
     id,
     type,
-    projectId,
-    pageId: pageId ?? undefined,
+    pageId,
     src: src ?? undefined,
     parentId: parentId && parentId !== "" ? parentId : undefined,
     styles: styles ?? {},
@@ -107,25 +105,26 @@ function baseElementFactory({
  * @param type Element type to create
  * @param projectId Project id to attach to the element
  * @param parentId Optional parent id
- * @param pageId Optional page id
  * @returns created element T or undefined on error
  */
 export function createElement<T extends EditorElement>(
   type: ElementType,
-  projectId: string,
+  pageId: string,
   parentId?: string,
-  pageId?: string,
 ): T | undefined {
   const id = makeId();
+  if(!pageId) {
+    console.error(`[createElement] pageId is required to create element of type="${type}"`);
+    return undefined;
+  }
 
   try {
     const state: BuilderState = {
       id,
       type,
-      projectId,
+      pageId,
       src: undefined,
       parentId,
-      pageId,
       styles: {},
       tailwindStyles: undefined,
       href: undefined,
@@ -139,7 +138,7 @@ export function createElement<T extends EditorElement>(
     return newElement as T;
   } catch (err) {
     console.error(
-      `[createElement] failed to create type="${type}" projectId="${projectId}" parentId="${parentId}" pageId="${pageId}":`,
+      `[createElement] failed to create type="${type}" pageId="${pageId}" parentId="${parentId}":`,
       err,
     );
     return undefined;
@@ -159,8 +158,7 @@ export function createElement<T extends EditorElement>(
  */
 export function createElementFromTemplate<T extends EditorElement>(
   element: ElementTemplate,
-  projectId: string,
-  pageId?: string,
+  pageId: string,
 ): T | undefined {
   try {
     const recursivelyCreate = (
@@ -171,7 +169,6 @@ export function createElementFromTemplate<T extends EditorElement>(
       const base = baseElementFactory({
         id,
         type: tmpl.type,
-        projectId,
         pageId,
         parentId,
         styles: tmpl.styles ?? {},

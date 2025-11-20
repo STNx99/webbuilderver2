@@ -3,13 +3,15 @@ import { SelectElement } from "@/interfaces/elements.interface";
 import React, { useEffect } from "react";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
+import { useParams } from "next/navigation";
 
 const SelectComponent = ({ element }: EditorComponentProps) => {
   const selectElement = element as SelectElement;
+  const { id } = useParams();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   const safeStyles = elementHelper.getSafeStyles(selectElement);

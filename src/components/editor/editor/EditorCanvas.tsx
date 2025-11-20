@@ -49,7 +49,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     userId,
     enabled: true,
   });
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

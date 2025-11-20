@@ -13,17 +13,19 @@ import {
   CarouselSettings,
 } from "@/interfaces/elements.interface";
 import { cn } from "@/lib/utils";
-import { EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import ElementLoader from "../ElementLoader";
+import { useParams } from "next/navigation";
 
 const CarouselComponent = ({ element, data }: EditorComponentProps) => {
+  const carouselElement = element as CarouselElement;
+  const { id } = useParams();
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   element = element as CarouselElement;

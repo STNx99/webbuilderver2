@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useElementHandler } from "@/hooks";
 import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
@@ -11,11 +12,12 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
   const cmsElement = element as CMSContentGridElement;
+  const { id } = useParams();
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   const safeStyles = elementHelper.getSafeStyles(cmsElement);

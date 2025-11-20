@@ -1,5 +1,6 @@
 import { EditorElement, ElementType } from "@/types/global.type";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { getComponentMap } from "@/constants/elements";
 import ResizeHandler from "./resizehandler/ResizeHandler";
 import EditorContextMenu from "./EditorContextMenu";
@@ -27,7 +28,7 @@ export default function ElementLoader({
   isReadOnly = false,
   isLocked = false,
 }: ElementLoaderProps = {}) {
-  const { currentPage } = usePageStore();
+  const { id } = useParams();
   const {
     draggedOverElement,
     draggingElement,
@@ -35,20 +36,13 @@ export default function ElementLoader({
     setDraggedOverElement,
   } = useSelectionStore();
   const { elements: allElements, insertElement } = useElementStore();
-
+  elements = elements ? elements : allElements;
   // Get permissions
-  const permissions = useEditorPermissions(allElements?.[0]?.projectId || null);
+  const permissions = useEditorPermissions((id as string) || null);
 
   // Determine if operations are allowed
   const canDrag = !isReadOnly && !isLocked && permissions.canEditElements;
   const canCreate = !isReadOnly && !isLocked && permissions.canCreateElements;
-
-  const filteredElements =
-    elements ||
-    elementHelper.filterElementByPageId(
-      allElements,
-      currentPage?.Id || undefined,
-    );
 
   const renderElement = (element: EditorElement) => {
     const commonProps: EditorComponentProps = {
@@ -111,16 +105,14 @@ export default function ElementLoader({
 
         const newElement = elementHelper.createElement.create(
           elementType as ElementType,
-          element.projectId,
-          undefined,
           element.pageId,
+          undefined,
         );
         if (newElement) insertElement(element, newElement);
       }
 
       if (customElement) {
         try {
-          // Creating custom component
           if (!canCreate) {
             toast.error("Cannot add elements - editor is in read-only mode", {
               duration: 2000,
@@ -133,7 +125,6 @@ export default function ElementLoader({
           const customComp = customComps[parseInt(customElement)];
           const newElement = elementHelper.createElement.createFromTemplate(
             customComp,
-            element.projectId,
             element.pageId,
           );
           if (newElement) insertElement(element, newElement);
@@ -156,7 +147,7 @@ export default function ElementLoader({
 
   return (
     <LayoutGroup>
-      {filteredElements.map((element) => (
+      {elements?.map((element) => (
         <ResizeHandler
           element={element}
           key={element.id}

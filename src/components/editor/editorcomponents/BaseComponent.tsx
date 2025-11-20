@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useParams } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
 import { useElementHandler } from "@/hooks";
 import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
@@ -8,12 +9,13 @@ import { elementHelper } from "@/lib/utils/element/elementhelper";
 
 const BaseComponent = ({ element, data }: EditorComponentProps) => {
   const baseElement = element as TextElement;
+  const { id } = useParams();
 
   const { getCommonProps } = useElementHandler();
   const { elementRef, registerEvents, createEventHandlers, eventsActive } =
     useElementEvents({
       elementId: element.id,
-      projectId: element.projectId,
+      projectId: id as string,
     });
 
   const safeStyles = elementHelper.getSafeStyles(baseElement);
@@ -35,7 +37,6 @@ const BaseComponent = ({ element, data }: EditorComponentProps) => {
 
   const displayContent = isEditing ? element.content : content;
 
-  // Register events when element events change
   useEffect(() => {
     if (element.events) {
       registerEvents(element.events);

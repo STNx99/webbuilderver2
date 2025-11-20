@@ -63,7 +63,7 @@ type ElementType =
   | "CMSContentItem"
   | "CMSContentGrid";
 
-type ExcludeType = "id" | "pageId" | "projectId" | "parentId";
+type ExcludeType = "id" | "pageId" | "parentId";
 
 type ContainerElementTemplate = Partial<Omit<EditorElement, ExcludeType>> & {
   type: ContainerElementType;
