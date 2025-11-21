@@ -8,6 +8,7 @@ type ElementStore<TElement extends EditorElement> = {
   elements: TElement[];
   past: TElement[][];
   future: TElement[][];
+  yjsUpdateCallback: ((elements: EditorElement[]) => void) | null;
   loadElements: (
     elements: TElement[],
     skipSave?: boolean,
@@ -27,6 +28,7 @@ type ElementStore<TElement extends EditorElement> = {
   undo: () => ElementStore<TElement>;
   redo: () => ElementStore<TElement>;
   clearHistory: () => ElementStore<TElement>;
+  setYjsUpdateCallback: (callback: ((elements: EditorElement[]) => void) | null) => void;
 };
 
 const createElementStore = <TElement extends EditorElement>() => {
@@ -40,13 +42,24 @@ const createElementStore = <TElement extends EditorElement>() => {
       });
     };
 
+    const triggerYjsCallback = () => {
+      const { elements, yjsUpdateCallback } = get();
+      if (yjsUpdateCallback && typeof yjsUpdateCallback === "function") {
+        yjsUpdateCallback(elements as EditorElement[]);
+      }
+    };
+
     return {
       elements: [],
       past: [],
       future: [],
+      yjsUpdateCallback: null,
 
-      loadElements: (elements: TElement[]) => {
+      loadElements: (elements: TElement[], skipSave?: boolean) => {
         set({ elements });
+        if (!skipSave) {
+          triggerYjsCallback();
+        }
         return get();
       },
 
@@ -77,6 +90,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           }
         }
 
+        triggerYjsCallback();
         return get();
       },
 
@@ -90,6 +104,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({
           elements: updatedTree,
         });
+        triggerYjsCallback();
         return get();
       },
 
@@ -106,6 +121,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         ) as TElement[];
 
         set({ elements: updated });
+        triggerYjsCallback();
         return get();
       },
 
@@ -153,6 +169,7 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({
           elements: updatedTree,
         });
+        triggerYjsCallback();
         return get();
       },
 
@@ -183,6 +200,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           (e: TElement) => recursivelyUpdate(e) as TElement,
         );
         set({ elements: updated });
+        triggerYjsCallback();
         return get();
       },
 
@@ -196,6 +214,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements: previous,
           future: [elements, ...future],
         });
+        triggerYjsCallback();
         return get();
       },
 
@@ -209,6 +228,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           elements: next,
           future: newFuture,
         });
+        triggerYjsCallback();
         return get();
       },
 
@@ -276,9 +296,14 @@ const createElementStore = <TElement extends EditorElement>() => {
         set({ past: [], future: [] });
         return get();
       },
+
+      setYjsUpdateCallback: (callback: ((elements: EditorElement[]) => void) | null) => {
+        set({ yjsUpdateCallback: callback });
+      },
     };
   });
 };
+
 
 const elementStoreInstance = createElementStore();
 
