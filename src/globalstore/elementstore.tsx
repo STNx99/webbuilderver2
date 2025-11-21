@@ -8,7 +8,6 @@ type ElementStore<TElement extends EditorElement> = {
   elements: TElement[];
   past: TElement[][];
   future: TElement[][];
-  setElements: (elements: TElement[]) => ElementStore<TElement>;
   loadElements: (
     elements: TElement[],
     skipSave?: boolean,
@@ -31,7 +30,6 @@ type ElementStore<TElement extends EditorElement> = {
 };
 
 const createElementStore = <TElement extends EditorElement>() => {
-  let cachedProjectId: string | undefined;
 
   return create<ElementStore<TElement>>((set, get) => {
     const takeSnapshot = () => {
@@ -47,19 +45,7 @@ const createElementStore = <TElement extends EditorElement>() => {
       past: [],
       future: [],
 
-      setElements: (elements: TElement[]) => {
-        takeSnapshot();
-        if (elements.length > 0 && elements[0].projectId) {
-          cachedProjectId = elements[0].projectId;
-        }
-        set({ elements });
-
-        return get();
-      },
-      loadElements: (elements: TElement[], skipSave = false) => {
-        if (elements.length > 0 && elements[0].projectId) {
-          cachedProjectId = elements[0].projectId;
-        }
+      loadElements: (elements: TElement[]) => {
         set({ elements });
         return get();
       },

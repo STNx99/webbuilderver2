@@ -14,6 +14,8 @@ export const projectKeys = {
   details: () => [...projectKeys.all, "detail"] as const,
   detail: (id: string) => [...projectKeys.details(), id] as const,
   userProjects: () => [...projectKeys.all, "user"] as const,
+  pages: (projectId: string) =>
+    [...projectKeys.detail(projectId), "pages"] as const,
 };
 
 // Hook to get all user projects
@@ -37,6 +39,19 @@ export function useProject(projectId: string | null) {
   });
 }
 
+// Hook to get project pages
+export function useProjectPages(projectId: string | null) {
+  return useQuery({
+    queryKey: projectKeys.pages(projectId || ""),
+    queryFn: async () => {
+      if (!projectId) throw new Error("Project ID is required");
+      return await projectService.getProjectPages(projectId);
+    },
+    enabled: !!projectId,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
 // Hook to create a new project
 export function useCreateProject() {
   const queryClient = useQueryClient();
@@ -50,18 +65,15 @@ export function useCreateProject() {
       queryClient.invalidateQueries({ queryKey: projectKeys.userProjects() });
 
       // Optimistically add to cache
-      queryClient.setQueryData<Project[]>(
-        projectKeys.userProjects(),
-        (old) => {
-          return old ? [data, ...old] : [data];
-        }
-      );
+      queryClient.setQueryData<Project[]>(projectKeys.userProjects(), (old) => {
+        return old ? [data, ...old] : [data];
+      });
 
       toast.success("Project created successfully!");
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create project"
+        error instanceof Error ? error.message : "Failed to create project",
       );
     },
   });
@@ -92,10 +104,10 @@ export function useUpdateProject() {
 
       // Snapshot the previous values
       const previousProject = queryClient.getQueryData<Project>(
-        projectKeys.detail(projectId)
+        projectKeys.detail(projectId),
       );
       const previousProjects = queryClient.getQueryData<Project[]>(
-        projectKeys.userProjects()
+        projectKeys.userProjects(),
       );
 
       // Optimistically update the project
@@ -111,8 +123,8 @@ export function useUpdateProject() {
         queryClient.setQueryData<Project[]>(
           projectKeys.userProjects(),
           previousProjects.map((p) =>
-            p.id === projectId ? { ...p, ...updates } : p
-          )
+            p.id === projectId ? { ...p, ...updates } : p,
+          ),
         );
       }
 
@@ -130,22 +142,24 @@ export function useUpdateProject() {
       if (context?.previousProject) {
         queryClient.setQueryData(
           projectKeys.detail(projectId),
-          context.previousProject
+          context.previousProject,
         );
       }
       if (context?.previousProjects) {
         queryClient.setQueryData(
           projectKeys.userProjects(),
-          context.previousProjects
+          context.previousProjects,
         );
       }
 
       toast.error(
-        error instanceof Error ? error.message : "Failed to update project"
+        error instanceof Error ? error.message : "Failed to update project",
       );
     },
     onSettled: (_, __, { projectId }) => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+      queryClient.invalidateQueries({
+        queryKey: projectKeys.detail(projectId),
+      });
       queryClient.invalidateQueries({ queryKey: projectKeys.userProjects() });
     },
   });
@@ -166,13 +180,12 @@ export function useDeleteProject() {
 
       // Snapshot the previous value
       const previousProjects = queryClient.getQueryData<Project[]>(
-        projectKeys.userProjects()
+        projectKeys.userProjects(),
       );
 
       // Optimistically remove the project
-      queryClient.setQueryData<Project[]>(
-        projectKeys.userProjects(),
-        (old) => (old ? old.filter((p) => p.id !== projectId) : [])
+      queryClient.setQueryData<Project[]>(projectKeys.userProjects(), (old) =>
+        old ? old.filter((p) => p.id !== projectId) : [],
       );
 
       return { previousProjects };
@@ -185,12 +198,12 @@ export function useDeleteProject() {
       if (context?.previousProjects) {
         queryClient.setQueryData(
           projectKeys.userProjects(),
-          context.previousProjects
+          context.previousProjects,
         );
       }
 
       toast.error(
-        error instanceof Error ? error.message : "Failed to delete project"
+        error instanceof Error ? error.message : "Failed to delete project",
       );
     },
     onSettled: () => {
@@ -227,10 +240,10 @@ export function usePublishProject() {
 
       // Snapshot the previous values
       const previousProject = queryClient.getQueryData<Project>(
-        projectKeys.detail(projectId)
+        projectKeys.detail(projectId),
       );
       const previousProjects = queryClient.getQueryData<Project[]>(
-        projectKeys.userProjects()
+        projectKeys.userProjects(),
       );
 
       // Optimistically update
@@ -245,8 +258,8 @@ export function usePublishProject() {
         queryClient.setQueryData<Project[]>(
           projectKeys.userProjects(),
           previousProjects.map((p) =>
-            p.id === projectId ? { ...p, published: publish } : p
-          )
+            p.id === projectId ? { ...p, published: publish } : p,
+          ),
         );
       }
 
@@ -260,7 +273,7 @@ export function usePublishProject() {
       toast.success(
         publish
           ? "Project published successfully!"
-          : "Project unpublished successfully!"
+          : "Project unpublished successfully!",
       );
     },
     onError: (error, { projectId }, context) => {
@@ -268,22 +281,24 @@ export function usePublishProject() {
       if (context?.previousProject) {
         queryClient.setQueryData(
           projectKeys.detail(projectId),
-          context.previousProject
+          context.previousProject,
         );
       }
       if (context?.previousProjects) {
         queryClient.setQueryData(
           projectKeys.userProjects(),
-          context.previousProjects
+          context.previousProjects,
         );
       }
 
       toast.error(
-        error instanceof Error ? error.message : "Failed to update project"
+        error instanceof Error ? error.message : "Failed to update project",
       );
     },
     onSettled: (_, __, { projectId }) => {
-      queryClient.invalidateQueries({ queryKey: projectKeys.detail(projectId) });
+      queryClient.invalidateQueries({
+        queryKey: projectKeys.detail(projectId),
+      });
       queryClient.invalidateQueries({ queryKey: projectKeys.userProjects() });
     },
   });

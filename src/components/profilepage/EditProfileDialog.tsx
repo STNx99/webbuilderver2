@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
+import { useCreateProfileUpdateNotification } from "@/hooks/features/useNotifications";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -27,6 +28,7 @@ export function EditProfileDialog({
   onOpenChange,
 }: EditProfileDialogProps) {
   const { user, isLoaded } = useUser();
+  const createProfileNotification = useCreateProfileUpdateNotification();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
@@ -113,6 +115,19 @@ export function EditProfileDialog({
       });
 
       await user.reload();
+
+      // Create notification for profile update
+      const updates = [];
+      if (formData.firstName) updates.push(`first name`);
+      if (formData.lastName) updates.push(`last name`);
+      if (formData.username) updates.push(`username`);
+      if (imageFile) updates.push(`profile picture`);
+
+      const description = updates.length > 0
+        ? `You updated your ${updates.join(', ')}.`
+        : 'You updated your profile information.';
+
+      await createProfileNotification.mutateAsync({ description });
 
       toast.success("Profile updated successfully!");
       onOpenChange(false);

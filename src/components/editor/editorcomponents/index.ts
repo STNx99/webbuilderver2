@@ -4,7 +4,6 @@ export { default as CMSContentGridComponent } from './CMSContentGridComponent';
 export { default as CMSContentItemComponent } from './CMSContentItemComponent';
 export { default as CMSContentListComponent } from './CMSContentListComponent';
 export { default as CarouselComponent } from './CarouselComponent';
-export { default as DataLoaderComponent } from './DataLoaderComponent';
 export { default as FormComponent } from './FormComponent';
 export { default as FrameComponent } from './FrameComponent';
 export { default as ImageComponent } from './ImageComponent';

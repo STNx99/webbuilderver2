@@ -111,9 +111,9 @@ export function TagSelector({
                 <Loader2 className="h-3 w-3 animate-spin" />
               </div>
             ) : filteredExistingTags.length > 0 ? (
-              filteredExistingTags.slice(0, 5).map((tag) => (
+              filteredExistingTags.slice(0, 5).map((tag, index) => (
                 <div
-                  key={tag.id}
+                  key={`tag-${tag.id || index}`}
                   className="flex items-center space-x-2 hover:bg-muted/50 rounded px-2 py-1"
                 >
                   <Checkbox

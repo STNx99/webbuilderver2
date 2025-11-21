@@ -207,9 +207,9 @@ export function MarketplaceItemDetail({ item }: MarketplaceItemDetailProps) {
                         Tags
                       </h4>
                       <div className="flex flex-wrap gap-2">
-                        {item.tags.map((tag: string, index: number) => (
-                          <Badge key={`${tag}-${index}`} variant="outline" className="text-xs font-medium">
-                            {tag}
+                        {item.tags.map((tag: any, index: number) => (
+                          <Badge key={`tag-${typeof tag === 'string' ? tag : tag?.name || tag?.id || index}`} variant="outline" className="text-xs font-medium">
+                            {typeof tag === 'string' ? tag : tag?.name || tag?.id || 'Unknown'}
                           </Badge>
                         ))}
                       </div>

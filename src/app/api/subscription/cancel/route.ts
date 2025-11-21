@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { subscriptionDAL } from '@/data/subscription'
+import prisma from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
@@ -48,6 +49,16 @@ export async function POST(request: NextRequest) {
 
     // Cancel the subscription using DAL
     await subscriptionDAL.cancelSubscription(subscriptionId)
+    
+    // Create notification for subscription cancellation
+    await prisma?.notification.create({
+      data: {
+        UserId: userId,
+        Type: 'alert',
+        Title: 'Subscription Cancelled',
+        Description: `Your ${subscription.PlanId} plan subscription (${subscription.BillingPeriod}) has been cancelled. You can re-subscribe anytime from our pricing page.`,
+      },
+    })
 
     return NextResponse.json({
       success: true,

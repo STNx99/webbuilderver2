@@ -1,12 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { usePageStore } from "@/globalstore/pagestore";
 import { useProjectStore } from "@/globalstore/projectstore";
-import { projectService } from "@/services/project";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
@@ -14,6 +12,7 @@ import { SectionElement } from "@/interfaces/elements.interface";
 import type { Project } from "@/interfaces/project.interface";
 import { useCollab } from "@/hooks/realtime/use-collab";
 import { useEditorPermissions } from "./useEditorPermissions";
+import { useProject, useProjectPages } from "@/hooks";
 import { toast } from "sonner";
 
 export type Viewport = "mobile" | "tablet" | "desktop";
@@ -42,25 +41,17 @@ export const useEditor = (
   const isReadOnly = options?.isReadOnly ?? !permissions.canEditElements;
   const isLocked = options?.isLocked ?? false;
 
-  const { addElement, elements } = useElementStore();
+  const { addElement } = useElementStore();
   const { selectedElement } = useSelectionStore();
   const { pages, loadPages, setCurrentPage } = usePageStore();
   const { loadProject } = useProjectStore();
 
-  const { data: projectPages, isLoading: isLoadingPages } = useQuery({
-    queryKey: ["pages", id],
-    queryFn: async () => projectService.getProjectPages(id),
-  });
-
-  const { data: project, isLoading: isLoadingProject } =
-    useQuery<Project | null>({
-      queryKey: ["project", id],
-      queryFn: async () => projectService.getProjectById(id),
-      enabled: Boolean(id),
-    });
+  const { data: projectPages, isLoading: isLoadingPages } = useProjectPages(id);
+  const { data: project, isLoading: isLoadingProject } = useProject(id);
 
   const collab = useCollab({
-    roomId: id,
+    roomId: pageId,
+    projectId: id,
     wsUrl:
       options?.collabWsUrl ||
       process.env.NEXT_PUBLIC_COLLAB_WS_URL ||
@@ -84,8 +75,27 @@ export const useEditor = (
   useEffect(() => {
     if (projectPages && projectPages.length > 0) {
       loadPages(projectPages);
+      if (pageId) {
+        const page = projectPages.find((p) => p.Id === pageId);
+        if (page) {
+          setCurrentPage(page);
+        } else {
+          const defaultPage = projectPages.find((p) => p.Name === "");
+          if (defaultPage) {
+            router.push(`/editor/${id}?page=${defaultPage.Id}`);
+          } else {
+            router.push(`/editor/${id}`);
+          }
+        }
+      } else {
+        // No pageId provided, redirect to default page
+        const defaultPage = projectPages.find((p) => p.Name === "");
+        if (defaultPage) {
+          router.push(`/editor/${id}?page=${defaultPage.Id}`);
+        }
+      }
     }
-  }, [projectPages, loadPages]);
+  }, [projectPages, loadPages, pageId, setCurrentPage, router, id]);
 
   useEffect(() => {
     if (project) {
@@ -97,13 +107,7 @@ export const useEditor = (
     }
   }, [project, loadProject]);
 
-  const filteredElements = elementHelper.filterElementByPageId(
-    elements,
-    pageId,
-  );
-
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    // Prevent drop if read-only or locked or no permission
     if (isReadOnly || isLocked || !permissions.canCreateElements) {
       e.preventDefault();
       e.stopPropagation();
@@ -125,16 +129,14 @@ export const useEditor = (
     if (elementType) {
       newElement = elementHelper.createElement.create(
         elementType as ElementType,
-        id,
-        "",
         pageId,
+        "",
       );
     } else if (customElement) {
       const customComp = customComps[parseInt(customElement)];
       if (customComp) {
         newElement = elementHelper.createElement.createFromTemplate(
           customComp,
-          id,
           pageId,
         );
       }
@@ -171,7 +173,6 @@ export const useEditor = (
   };
 
   const addNewSection = () => {
-    // Check permissions before adding new section
     if (isReadOnly || isLocked || !permissions.canCreateElements) {
       toast.error("Cannot add elements - editor is in read-only mode", {
         duration: 2000,
@@ -181,9 +182,8 @@ export const useEditor = (
 
     const newElement = elementHelper.createElement.create<SectionElement>(
       "Section",
-      id,
-      "",
       pageId,
+      "",
     );
     if (newElement) addElement(newElement);
   };
@@ -195,7 +195,6 @@ export const useEditor = (
     setCurrentView,
     isDraggingOver,
     isLoading,
-    filteredElements,
     selectedElement,
     handleDrop,
     handlePageNavigation,

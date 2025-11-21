@@ -143,23 +143,21 @@ export const mapInsertAfterId = (
   });
 };
 
-interface ICreateElment {
+interface ICreateElement {
   create: <T extends EditorElement>(
     type: ElementType,
-    projectId: string,
+    pageId: string,
     parentId?: string,
-    pageId?: string,
   ) => T | undefined;
 
   createFromTemplate: <T extends EditorElement>(
     element: ElementTemplate,
-    projectId: string,
-    pageId?: string,
+    pageId: string,
   ) => T | undefined;
 }
 
 interface ElementHelper {
-  createElement: ICreateElment;
+  createElement: ICreateElement;
 
   handleSwap: (
     draggingElement: EditorElement,
@@ -167,11 +165,6 @@ interface ElementHelper {
     elements: EditorElement[],
     setElements: (elements: EditorElement[]) => void,
   ) => void;
-
-  filterElementByPageId: (
-    elements: EditorElement[],
-    id?: string,
-  ) => EditorElement[];
 
   findElement: (
     elements: EditorElement[],
@@ -218,15 +211,6 @@ export const isContainerElement = (
   element: EditorElement,
 ): element is ContainerElement => {
   return CONTAINER_ELEMENT_TYPES.includes(element.type as ContainerElementType);
-};
-
-const filterElementByPageId = (
-  elements: EditorElement[],
-  id?: string,
-): EditorElement[] => {
-  return id
-    ? elements.filter((element) => element.pageId === id)
-    : elements.filter((element) => !element.pageId);
 };
 
 const findElement = (
@@ -276,7 +260,6 @@ export const elementHelper: ElementHelper = {
   findElement: findElement,
   getElementSettings: getElementSettings,
   isContainerElement: isContainerElement,
-  filterElementByPageId: filterElementByPageId,
   isEditableElement: (element: EditorElement): boolean => {
     return EDITABLE_ELEMENT_TYPES.includes(element.type as EditableElementType);
   },

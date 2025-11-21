@@ -83,12 +83,14 @@ export {
   projectKeys,
   useUserProjects,
   useProject,
+  useProjectPages,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
   usePublishProject,
 } from "./features/useProjects";
 export { useDashboard } from "./features/useDashboard";
+export { useAnalytics } from "./features/useAnalytics";
 
 // =============================================================================
 // COLLABORATION HOOKS

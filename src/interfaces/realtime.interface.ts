@@ -43,6 +43,7 @@ export interface UseWebSocketOptions {
   url: string;
   roomId: string;
   userId: string;
+  projectId?: string;
   getToken?: () => Promise<string | null>;
   autoConnect?: boolean;
   reconnectInterval?: number;

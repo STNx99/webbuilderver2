@@ -14,8 +14,9 @@ export function prepareElements(
 
   if (has(element, "elements") && isArray(element.elements)) {
     const containerElement = preparedElement as ContainerElement;
-    containerElement.elements = map(element.elements, (childElement) =>
-      prepareElements(childElement, preparedElement.id),
+    containerElement.elements = map(
+      element.elements as EditorElement[],
+      (childElement) => prepareElements(childElement, preparedElement.id),
     );
   }
 

@@ -188,7 +188,7 @@ export default function ResizeHandler({
   const { draggedOverElement, selectedElement, hoveredElement } =
     useSelectionStore();
   const { handleDoubleClick } = useElementHandler();
-  const permissions = useEditorPermissions(element.projectId);
+  const permissions = useEditorPermissions();
   const canResize = !isReadOnly && !isLocked && permissions.canEditElements;
 
   const { handleResizeStart, isResizing, currentResizeDirection } =

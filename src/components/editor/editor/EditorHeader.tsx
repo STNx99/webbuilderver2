@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import ExportDialog from "../ExportDialog";
 import CollaborationButton from "./CollaborationButton";
 import CollaboratorIndicator from "./CollaboratorIndicator";
+import EventModeToggle from "../eventmode/EventModeToggle";
 
 type EditorHeaderProps = {
   handlePageNavigation: (e: React.FocusEvent<HTMLInputElement>) => void;
@@ -37,6 +38,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
         <div className="flex gap-4">
           <CollaboratorIndicator projectId={projectId} />
           <CollaborationButton projectId={projectId} />
+          <EventModeToggle />
           <ExportDialog />
           {(["mobile", "tablet", "desktop"] as const).map((view) => (
             <Button

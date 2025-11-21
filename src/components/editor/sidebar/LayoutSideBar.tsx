@@ -23,9 +23,8 @@ import Configurations from "./configurations/Configurations";
 import ElementTreeItem from "./ElementTreeItem";
 import { Square } from "lucide-react";
 import { useAiChat } from "@/providers/aiprovider";
-import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
-import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useElementStore } from "@/globalstore/elementstore";
 
 function LayoutSideBar() {
   const params = useParams();
@@ -34,13 +33,8 @@ function LayoutSideBar() {
   const visitProjectSubdomain = (projectId: string) => {
     window.open(`http://localhost:3000/preview/${projectId}`);
   };
-  const { elements } = useElementStore();
   const { selectedElement } = useSelectionStore();
-  const searchParams = useSearchParams();
-  const filteredElements = elementHelper.filterElementByPageId(
-    elements,
-    searchParams.get("page") || undefined,
-  );
+  const { elements } = useElementStore();
   return (
     <Sidebar side="right">
       <SidebarContent>
@@ -59,8 +53,8 @@ function LayoutSideBar() {
               <AccordionContent>
                 <SidebarGroupContent>
                   <div className="max-h-60 overflow-y-auto overflow-x-hidden">
-                    {filteredElements.length > 0 ? (
-                      filteredElements.map((element) => (
+                    {elements.length > 0 ? (
+                      elements.map((element) => (
                         <ElementTreeItem
                           key={element.id || Math.random()}
                           element={element}

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +19,6 @@ import {
   FrameComponent,
   CarouselComponent,
   ListComponent,
-  DataLoaderComponent,
   CMSContentListComponent,
   CMSContentItemComponent,
   CMSContentGridComponent,
@@ -364,7 +363,6 @@ const componentMap: Partial<Record<ElementType, React.ComponentType<any>>> = {
   Frame: FrameComponent,
   Carousel: CarouselComponent,
   List: ListComponent,
-  DataLoader: DataLoaderComponent,
   CMSContentList: CMSContentListComponent,
   CMSContentItem: CMSContentItemComponent,
   CMSContentGrid: CMSContentGridComponent,
@@ -527,17 +525,19 @@ export function ComponentTooltip({
   side = "right",
   sideOffset = 10,
 }: ComponentTooltipProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const info = componentInfo[componentType];
   if (!info) return <>{children}</>;
 
   return (
-    <TooltipProvider delayDuration={300}>
-      <Tooltip>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip open={isOpen} onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent
           side={side}
           sideOffset={sideOffset}
           className="max-w-[280px] p-0 overflow-hidden"
+          onMouseLeave={() => setIsOpen(false)}
         >
           <div className="px-3 py-2 bg-linear-to-r from-gray-50 to-gray-100 border-b">
             <h4 className="font-semibold text-sm text-gray-900">{info.title}</h4>

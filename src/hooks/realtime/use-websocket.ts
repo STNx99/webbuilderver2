@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ConnectionState,
   WebSocketMessage,
@@ -31,6 +31,7 @@ export function useWebSocket({
   url,
   roomId,
   userId,
+  projectId,
   getToken,
   autoConnect = true,
   reconnectInterval = 1000,
@@ -69,15 +70,15 @@ export function useWebSocket({
     };
   }, [onMessage, onConnect, onDisconnect, onError]);
 
-  const clearReconnectTimeout = useCallback(() => {
+  const clearReconnectTimeout = () => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
       reconnectTimeoutRef.current = null;
     }
-  }, []);
+  };
 
   // Disconnect function
-  const disconnect = useCallback(() => {
+  const disconnect = () => {
     const connectionKey = `${roomId}:${userId}`;
     activeConnections.delete(connectionKey);
     isManualDisconnectRef.current = true;
@@ -91,10 +92,10 @@ export function useWebSocket({
 
     setConnectionState("disconnected");
     messageQueueRef.current = [];
-  }, [clearReconnectTimeout, roomId, userId]);
+  };
 
   // Connect function
-  const connect = useCallback(async () => {
+  const connect = async () => {
     const connectionKey = `${roomId}:${userId}`;
     if (
       wsRef.current?.readyState === WebSocket.OPEN ||
@@ -122,7 +123,7 @@ export function useWebSocket({
       return;
     }
 
-    const wsUrl = `${url}/ws/${roomId}?token=${encodeURIComponent(token)}`;
+    const wsUrl = `${url}/ws/${roomId}?token=${encodeURIComponent(token)}${projectId ? `&projectId=${encodeURIComponent(projectId)}` : ""}`;
     try {
       const ws = new WebSocket(wsUrl);
 
@@ -217,19 +218,10 @@ export function useWebSocket({
       setConnectionState("error");
       setError("CONNECTION_FAILED");
     }
-  }, [
-    url,
-    roomId,
-    userId,
-    getToken,
-    reconnectInterval,
-    maxReconnectAttempts,
-    clearReconnectTimeout,
-    error,
-  ]);
+  };
 
   // Send message function
-  const sendMessage = useCallback((message: SendMessagePayload): boolean => {
+  const sendMessage = (message: SendMessagePayload): boolean => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       try {
         wsRef.current.send(JSON.stringify(message));
@@ -241,15 +233,15 @@ export function useWebSocket({
       messageQueueRef.current.push(message);
       return false;
     }
-  }, []);
+  };
 
   // Reconnect function (resets attempt counter)
-  const reconnect = useCallback(() => {
+  const reconnect = () => {
     disconnect();
     shouldReconnectRef.current = true;
     reconnectAttemptsRef.current = 0;
     setTimeout(() => connect(), 100);
-  }, [connect, disconnect]);
+  };
 
   // Handle room changes - disconnect from old room and prepare for reconnection
   useEffect(() => {

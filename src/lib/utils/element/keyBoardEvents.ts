@@ -116,7 +116,7 @@ export class KeyboardEvent implements IKeyboardEvent {
     const newElements = [...elements];
     const [removed] = newElements.splice(idx, 1);
     newElements.push(removed);
-    elementState.setElements(newElements);
+    elementState.loadElements(newElements);
   };
 
   public sendToBack = () => {
@@ -141,7 +141,7 @@ export class KeyboardEvent implements IKeyboardEvent {
     const newElements = [...elements];
     const [removed] = newElements.splice(idx, 1);
     newElements.unshift(removed);
-    elementState.setElements(newElements);
+    elementState.loadElements(newElements);
   };
 
   public deleteElement = () => {

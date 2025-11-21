@@ -7,6 +7,7 @@ import {
   ButtonElement,
   FormElement,
   FrameElement,
+  ImageElement,
   InputElement,
   ListElement,
   SectionElement,
@@ -31,6 +32,7 @@ type EditorElement =
   | BaseElement
   | FrameElement
   | ButtonElement
+  | ImageElement
   | ListElement
   | InputElement
   | SelectElement
@@ -61,7 +63,7 @@ type ElementType =
   | "CMSContentItem"
   | "CMSContentGrid";
 
-type ExcludeType = "id" | "pageId" | "projectId" | "parentId";
+type ExcludeType = "id" | "pageId" | "parentId";
 
 type ContainerElementTemplate = Partial<Omit<EditorElement, ExcludeType>> & {
   type: ContainerElementType;
