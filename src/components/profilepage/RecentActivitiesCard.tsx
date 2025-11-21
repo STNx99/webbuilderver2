@@ -12,31 +12,7 @@ import {
 } from "../ui/card";
 import { Button } from "../ui/button";
 import { useMemo } from "react";
-
-interface ActivityItem {
-  action: string;
-  time: string;
-  icon: any;
-}
-
-interface Project {
-  id: string;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-}
-
-interface Template {
-  id: string;
-  title: string;
-  updatedAt?: Date | string;
-  createdAt?: Date | string;
-}
-
-interface RecentActivitiesCardProps {
-  projects?: Project[];
-  templates?: Template[];
-}
+import { ActivityItem, RecentActivitiesCardProps } from "@/interfaces/profile.interface";
 
 export default function RecentActivitiesCard({ projects = [], templates = [] }: RecentActivitiesCardProps) {
   const recentActivities: ActivityItem[] = useMemo(() => {
@@ -98,7 +74,6 @@ export default function RecentActivitiesCard({ projects = [], templates = [] }: 
       });
     });
     
-    // Sort by most recent and limit to 4
     return activities.slice(0, 4);
   }, [projects, templates]);
 
