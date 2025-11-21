@@ -11,6 +11,7 @@ import NumberFlow from '@number-flow/react';
 import { cn } from '@/lib/utils';
 import { pricingPlans, requiresAuthentication } from '@/constants/pricing';
 import { useAuth } from '@clerk/nextjs';
+import type { PlanId } from '@/interfaces/subscription.interface';
 
 export default function LandingPagePricing() {
   const [frequency, setFrequency] = React.useState<'monthly' | 'yearly'>('monthly');
@@ -22,7 +23,7 @@ export default function LandingPagePricing() {
   }, []);
 
   const handlePlanSelect = (planId: string) => {
-    if (requiresAuthentication(planId) && !isSignedIn) {
+    if (requiresAuthentication(planId as PlanId) && !isSignedIn) {
       window.location.href = `/sign-in?redirect_url=${encodeURIComponent('/checkout?plan=' + planId + '&frequency=' + frequency)}`;
       return;
     }

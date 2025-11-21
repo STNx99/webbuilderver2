@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Check, Tag, Shield, Sparkles, Wallet } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { Plan, BillingPeriod } from "./SubscriptionCheckout"
+import type { Plan } from "./SubscriptionCheckout"
+import type { BillingPeriod } from "@/interfaces/subscription.interface"
 import type { PaymentMethod } from "./PaymentMethod"
 
 interface OrderSummaryProps {

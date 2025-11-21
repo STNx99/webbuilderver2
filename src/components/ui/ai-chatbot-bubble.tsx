@@ -181,7 +181,7 @@ export function AIChatbotBubble({ onContentGenerated, fieldName, currentContent 
                             <Input
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                onKeyPress={handleKeyPress}
+                                onKeyDown={handleKeyPress}
                                 placeholder="Nhập yêu cầu của bạn..."
                                 disabled={isLoading}
                                 className="flex-1"

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useAuth, useUser } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs"
 import { useSearchParams, useRouter } from "next/navigation"
 import LandingPagePricing from "../landingpage/LandingPagePricing"
 import { PaymentMethodSelector, type PaymentMethod } from "./PaymentMethod"
@@ -12,12 +12,13 @@ import { CheckoutForm } from "./CheckoutForm"
 import { OrderSummary } from "./OrderSummary"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ArrowLeft, Check, Loader2, Sparkles, Menu, X } from "lucide-react"
+import { ArrowLeft, Check, Loader2, Sparkles, Menu, X, AlertCircle, User, LayoutDashboard} from "lucide-react"
 import { pricingPlans, getNumericPrice, requiresAuthentication, type PricingPlan } from "@/constants/pricing"
+import type { BillingPeriod, PlanId } from "@/interfaces/subscription.interface"
 import Link from "next/link"
 import ThemeSwitcher from "@/components/ThemeSwticher"
-
-export type BillingPeriod = "monthly" | "yearly"
+import { useSubscriptionStatus, useCreatePayment, useCancelSubscription } from "@/hooks/subscription/useSubscription"
+import { toast } from "sonner"
 
 // Use the same interface as pricing plans for consistency
 export interface Plan extends PricingPlan {
@@ -37,8 +38,7 @@ function convertToCheckoutPlan(pricingPlan: PricingPlan): Plan {
 }
 
 export function SubscriptionCheckout() {
-  const { isSignedIn, isLoaded } = useAuth()
-  const { user } = useUser()
+  const { user, isLoaded } = useUser()
   const router = useRouter()
   const searchParams = useSearchParams()
   
@@ -53,6 +53,12 @@ export function SubscriptionCheckout() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [showCancelDialog, setShowCancelDialog] = useState(false)
+
+  // Fetch subscription status
+  const { data: subscriptionStatus, isLoading: isLoadingSubscription } = useSubscriptionStatus()
+  const createPayment = useCreatePayment()
+  const cancelSubscription = useCancelSubscription()
 
   useEffect(() => {
     if (!isLoaded) return
@@ -68,14 +74,14 @@ export function SubscriptionCheckout() {
         return
       }
 
-      if (requiresAuthentication(planId) && !isSignedIn) {
+      if (requiresAuthentication(planId as PlanId) && !user) {
         setShowAuthPrompt(true)
         setIsInitializing(false)
         return
       }
 
       if (planId === 'hobby') {
-        if (!isSignedIn) {
+        if (!user) {
           router.push('/sign-up')
           return
         }
@@ -88,7 +94,7 @@ export function SubscriptionCheckout() {
         return
       }
 
-      if (isSignedIn) {
+      if (user) {
         setSelectedPlan(convertToCheckoutPlan(pricingPlan))
         setBillingPeriod(frequency)
         setStep("payment-method")
@@ -96,7 +102,7 @@ export function SubscriptionCheckout() {
     }
 
     setIsInitializing(false)
-  }, [isLoaded, isSignedIn, searchParams, router])
+  }, [isLoaded, user, searchParams, router])
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -131,48 +137,12 @@ export function SubscriptionCheckout() {
   const handleCompleteCheckout = async (formData: any) => {
     if (!selectedPlan) return;
 
-    setIsProcessing(true);
-
-    try {
-      console.log("[Checkout] Creating VNPay payment...", {
-        planId: selectedPlan.id,
-        planName: selectedPlan.name,
-        billingPeriod,
-        amount: total,
-        paymentMethod,
-        formData
-      });
-
-      // Create VNPay payment URL
-      const response = await fetch('/api/vnpay/create-payment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          planId: selectedPlan.id,
-          billingPeriod,
-          amount: total,
-          email: formData.email,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create VNPay payment');
-      }
-
-      const data = await response.json();
-      console.log("[Checkout] VNPay payment URL created:", data);
-
-      // Redirect to VNPay payment page
-      window.location.href = data.paymentUrl;
-
-    } catch (error) {
-      console.error("[Checkout] Error:", error);
-      alert('Không thể tạo thanh toán. Vui lòng thử lại.');
-    } finally {
-      setIsProcessing(false);
-    }
+    createPayment.mutate({
+      planId: selectedPlan.id,
+      billingPeriod,
+      amount: total,
+      email: formData.email,
+    });
   }
 
   const currentPrice = selectedPlan
@@ -192,7 +162,7 @@ export function SubscriptionCheckout() {
   ]
 
   // Show loading screen while initializing
-  if (isInitializing) {
+  if (isInitializing || isLoadingSubscription) {
     return (
       <div className="min-h-screen min-w-screen bg-background flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -215,10 +185,10 @@ export function SubscriptionCheckout() {
       >
         <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-3 group">
-            <div className="w-9 h-9 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+            <div className="w-9 h-9 bg-linear-to-br from-primary to-accent rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
               <Sparkles className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text">
+            <span className="text-xl font-bold bg-linear-to-r from-foreground to-foreground/80 bg-clip-text">
               WebBuilder
             </span>
           </div>
@@ -232,7 +202,7 @@ export function SubscriptionCheckout() {
                 className="text-muted-foreground hover:text-foreground transition-all duration-300 relative group"
               >
                 {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-linear-to-r from-primary to-accent group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
           </nav>
@@ -240,16 +210,31 @@ export function SubscriptionCheckout() {
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
             <ThemeSwitcher />
-            {isSignedIn ? (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-muted-foreground">
-                  Welcome, {user?.firstName || user?.emailAddresses[0]?.emailAddress}
-                </span>
-                <Button variant="outline" size="sm" onClick={() => router.push('/dashboard')}>
-                  Dashboard
+            {isLoaded && user ? (
+              // Authenticated user - show Dashboard and Profile
+              <>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground hover:text-foreground transition-all duration-300"
+                  asChild
+                >
+                  <Link href="/profile">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
                 </Button>
-              </div>
+                <Button 
+                  className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
+                  asChild
+                >
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    Dashboard
+                  </Link>
+                </Button>
+              </>
             ) : (
+              // Not authenticated - show Sign In and Start Free Trial
               <>
                 <Button
                   variant="ghost"
@@ -258,8 +243,8 @@ export function SubscriptionCheckout() {
                 >
                   <Link href="/sign-in">Sign In</Link>
                 </Button>
-                <Button
-                  className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
+                <Button 
+                  className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-105"
                   asChild
                 >
                   <Link href="/sign-up">Start Free Trial</Link>
@@ -311,21 +296,29 @@ export function SubscriptionCheckout() {
               </Link>
             ))}
             <div className="flex flex-col space-y-3 pt-4 border-t border-border/50">
-              {isSignedIn ? (
-                <div className="flex flex-col space-y-3">
-                  <span className="text-sm text-muted-foreground px-3">
-                    Welcome, {user?.firstName || user?.emailAddresses[0]?.emailAddress}
-                  </span>
-                  <Button variant="outline" className="justify-start" onClick={() => router.push('/dashboard')}>
-                    Dashboard
+              {isLoaded && user ? (
+                // Authenticated user - show Dashboard and Profile
+                <>
+                  <Button variant="ghost" className="justify-start" asChild>
+                    <Link href="/profile">
+                      <User className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
                   </Button>
-                </div>
+                  <Button className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
+                    <Link href="/dashboard">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                </>
               ) : (
+                // Not authenticated - show Sign In and Start Free Trial
                 <>
                   <Button variant="ghost" className="justify-start" asChild>
                     <Link href="/sign-in">Sign In</Link>
                   </Button>
-                  <Button className="bg-gradient-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
+                  <Button className="bg-linear-to-r from-primary to-accent text-primary-foreground font-semibold" asChild>
                     <Link href="/sign-up">Start Free Trial</Link>
                   </Button>
                 </>
@@ -337,6 +330,40 @@ export function SubscriptionCheckout() {
 
       {/* Main Content */}
       <main className="container px-3 sm:px-4 py-6 sm:py-8 md:py-12 max-w-screen-2xl mx-auto">
+        {/* Show subscription status if user has active subscription */}
+        {subscriptionStatus?.hasActiveSubscription && step !== "plans" && (
+          <div className="max-w-3xl mx-auto mb-6">
+            <div className="flex flex-col gap-3 p-4 rounded-lg border border-primary/50 bg-primary/5">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm mb-1">Gói đăng ký hiện tại</h3>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Bạn đang có gói <strong className="text-foreground">{subscriptionStatus.subscription?.planId}</strong> đang hoạt động 
+                    (còn <strong className="text-foreground">{subscriptionStatus.subscription?.daysUntilExpiry}</strong> ngày). 
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {selectedPlan?.id === subscriptionStatus.subscription?.planId 
+                      ? 'Bạn đang chọn cùng gói hiện tại. Chọn gói khác hoặc hủy gói hiện tại để đăng ký lại.'
+                      : 'Việc thanh toán gói mới sẽ tự động hủy và thay thế gói hiện tại.'}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowCancelDialog(true)}
+                  disabled={cancelSubscription.isPending}
+                  className="text-xs"
+                >
+                  {cancelSubscription.isPending ? 'Đang hủy...' : 'Hủy gói hiện tại'}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {step !== "plans" && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -371,7 +398,7 @@ export function SubscriptionCheckout() {
                   {index < steps.length - 1 && (
                     <div
                       className={cn(
-                        "h-px flex-1 mx-2 sm:mx-4 min-w-[20px] transition-all duration-300",
+                        "h-px flex-1 mx-2 sm:mx-4 min-w-5 transition-all duration-300",
                         s.completed ? "bg-primary" : "bg-border",
                       )}
                     />
@@ -467,7 +494,7 @@ export function SubscriptionCheckout() {
                     onDiscountApply={setDiscount}
                     paymentMethod={paymentMethod}
                     onComplete={handleCompleteCheckout}
-                    isProcessing={isProcessing}
+                    isProcessing={createPayment.isPending}
                   />
                 </div>
               </div>
@@ -502,6 +529,54 @@ export function SubscriptionCheckout() {
             >
               Continue browsing plans
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Cancel Subscription Dialog */}
+      <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="w-5 h-5" />
+              Hủy gói đăng ký
+            </DialogTitle>
+            <DialogDescription>
+              Bạn có chắc muốn hủy gói <strong>{subscriptionStatus?.subscription?.planId?.toUpperCase()}</strong>?
+              Hành động này không thể hoàn tác.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <h4 className="font-medium text-destructive mb-2">Điều gì sẽ xảy ra:</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Bạn sẽ mất quyền truy cập các tính năng premium ngay lập tức</li>
+                <li>• Tài khoản sẽ chuyển về gói miễn phí (Hobby)</li>
+                <li>• Bạn có thể đăng ký lại bất cứ lúc nào</li>
+              </ul>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowCancelDialog(false)}
+                className="flex-1"
+              >
+                Giữ nguyên
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (subscriptionStatus?.subscription?.id) {
+                    cancelSubscription.mutate(subscriptionStatus.subscription.id)
+                    setShowCancelDialog(false)
+                  }
+                }}
+                disabled={cancelSubscription.isPending}
+                className="flex-1"
+              >
+                {cancelSubscription.isPending ? 'Đang hủy...' : 'Xác nhận hủy'}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

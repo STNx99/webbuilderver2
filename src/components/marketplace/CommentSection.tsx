@@ -120,7 +120,7 @@ function CommentItem({ comment, onReply }: CommentItemProps) {
 
   return (
     <div className="flex gap-3">
-      <Avatar className="h-9 w-9 flex-shrink-0">
+      <Avatar className="h-9 w-9 shrink-0">
         <AvatarImage src={comment.author?.imageUrl || undefined} />
         <AvatarFallback className="text-xs">{getAuthorInitials()}</AvatarFallback>
       </Avatar>
@@ -165,7 +165,7 @@ function CommentItem({ comment, onReply }: CommentItemProps) {
             <Textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="min-h-[80px]"
+              className="min-h-20"
               placeholder="Edit your comment..."
             />
             <div className="flex gap-2">

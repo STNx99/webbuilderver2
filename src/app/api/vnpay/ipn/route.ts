@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyReturnUrl } from '@/lib/vnpay-utils';
 import vnpayConfig from '@/lib/vnpay-config';
+import { subscriptionDAL } from '@/data/subscription';
 import prisma from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
@@ -12,8 +13,6 @@ export async function GET(request: NextRequest) {
     searchParams.forEach((value, key) => {
       vnp_Params[key] = value;
     });
-
-
 
     const transactionId = vnp_Params['vnp_TxnRef'];
     const responseCode = vnp_Params['vnp_ResponseCode'];
@@ -28,10 +27,8 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Find the subscription
-    const subscription = await prisma.subscription.findUnique({
-      where: { Id: transactionId },
-    });
+    // Find the subscription using DAL
+    const subscription = await subscriptionDAL.getSubscriptionById(transactionId);
 
     if (!subscription) {
       return NextResponse.json({
@@ -56,13 +53,15 @@ export async function GET(request: NextRequest) {
 
     // Update subscription based on response code
     if (responseCode === '00') {
+      console.log('[VNPay IPN] Payment successful for transaction:', transactionId);
+      
       const startDate = new Date();
       const endDate = subscription.BillingPeriod === 'yearly'
         ? new Date(startDate.getFullYear() + 1, startDate.getMonth(), startDate.getDate())
         : new Date(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate());
 
       // Parse pay date
-      let payDateTime = null;
+      let payDateTime: Date | undefined = undefined;
       if (payDate) {
         const year = parseInt(payDate.substring(0, 4));
         const month = parseInt(payDate.substring(4, 6)) - 1;
@@ -73,25 +72,52 @@ export async function GET(request: NextRequest) {
         payDateTime = new Date(year, month, day, hour, minute, second);
       }
 
-      await prisma.subscription.update({
-        where: { Id: transactionId },
-        data: {
-          Status: 'active',
-          StartDate: startDate,
-          EndDate: endDate,
-          TransactionNo: transactionNo || null,
-          BankCode: bankCode || null,
-          CardType: cardType || null,
-          PayDate: payDateTime,
-        },
+      // Cancel all other active subscriptions for this user using DAL
+      await subscriptionDAL.cancelAllActiveSubscriptions(subscription.UserId, transactionId);
+
+      console.log('[VNPay IPN] Updating subscription to active');
+      await subscriptionDAL.updateSubscription(transactionId, {
+        status: 'active',
+        startDate,
+        endDate,
+        transactionNo,
+        bankCode,
+        cardType,
+        payDate: payDateTime || undefined,
       });
+           
+      try {
+        await prisma.notification.create({
+          data: {
+            UserId: subscription.UserId,
+            Type: 'alert',
+            Title: 'Payment Successful',
+            Description: `Your ${subscription.PlanId} plan subscription (${subscription.BillingPeriod}) has been activated successfully. Amount: ${subscription.Amount.toLocaleString()} ${subscription.Currency}. Valid until ${endDate.toLocaleDateString('vi-VN')}.`,
+          },
+        });
+        console.log('[VNPay IPN] Payment success notification created');
+      } catch (notifError) {
+        console.error('[VNPay IPN] Error creating notification:', notifError);
+      }
+      
+      console.log('[VNPay IPN] Subscription updated successfully');
     } else {
-      await prisma.subscription.update({
-        where: { Id: transactionId },
-        data: {
-          Status: 'failed',
-        },
-      });
+      console.log('[VNPay IPN] Payment failed for transaction:', transactionId);
+      await subscriptionDAL.updateSubscription(transactionId, { status: 'cancelled' });
+      
+      try {
+        await prisma.notification.create({
+          data: {
+            UserId: subscription.UserId,
+            Type: 'alert',
+            Title: 'Payment Failed',
+            Description: `Your ${subscription.PlanId} plan subscription payment (${subscription.BillingPeriod}) failed. Please try again or contact support if the issue persists.`,
+          },
+        });
+        console.log('[VNPay IPN] Payment failed notification created');
+      } catch (notifError) {
+        console.error('[VNPay IPN] Error creating notification:', notifError);
+      }
     }
 
     return NextResponse.json({

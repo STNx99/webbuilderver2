@@ -1,5 +1,6 @@
 import { Project } from "@/interfaces/project.interface";
 import prisma from "@/lib/prisma";
+import { getUserProjectAccess, Permission, hasPermission } from "@/lib/rbac";
 
 export const projectDAL = {
   createProject: async (project: Project, userId: string) => {
@@ -73,6 +74,78 @@ export const projectDAL = {
   },
 
   /**
+   * Get a project by ID with role-based access control
+   * Allows both owners and collaborators with view permission to access
+   */
+  getProjectWithAccess: async (projectId: string, userId: string) => {
+    if (!projectId) {
+      throw new Error("Project Id is required");
+    }
+    try {
+      // Check user's access level
+      const access = await getUserProjectAccess(userId, projectId);
+
+      if (!access) {
+        return null;
+      }
+
+      // User has access, fetch the project
+      const project = await prisma?.project.findUnique({
+        where: { Id: projectId },
+      });
+
+      if (!project || project.DeletedAt !== null) {
+        return null;
+      }
+
+      return project;
+    } catch (err) {
+      console.error("projectDAL.getProjectWithAccess error:", err);
+      return null;
+    }
+  },
+
+  /**
+   * Get all projects where user has access (owned + collaborated)
+   */
+  getAllUserProjects: async (userId: string) => {
+    try {
+      // Get owned projects
+      const ownedProjects = await prisma?.project.findMany({
+        where: {
+          OwnerId: userId,
+          DeletedAt: null,
+        },
+      });
+
+      // Get collaborated projects
+      const collaborations = await prisma?.collaborator.findMany({
+        where: {
+          UserId: userId,
+        },
+        include: {
+          Project: true,
+        },
+      });
+
+      const collaboratedProjects = collaborations
+        .filter((collab) => collab.Project.DeletedAt === null)
+        .map((collab) => collab.Project);
+
+      // Combine and deduplicate
+      const allProjects = [...(ownedProjects || []), ...collaboratedProjects];
+      const uniqueProjects = Array.from(
+        new Map(allProjects.map((p) => [p.Id, p])).values(),
+      );
+
+      return uniqueProjects;
+    } catch (err) {
+      console.error("projectDAL.getAllUserProjects error:", err);
+      return [];
+    }
+  },
+
+  /**
    * Update a project.
    *
    * Performs an ownership check and ensures the project is not soft-deleted.
@@ -118,6 +191,82 @@ export const projectDAL = {
       return updated || null;
     } catch (err) {
       console.error("projectDAL.updateProject error:", err);
+      return null;
+    }
+  },
+
+  /**
+   * Update a project with role-based access control
+   * Allows editors and owners to update based on their permissions
+   */
+  updateProjectWithAccess: async (
+    projectId: string,
+    userId: string,
+    updates: Partial<Project>,
+  ) => {
+    if (!projectId) {
+      throw new Error("Project Id is required");
+    }
+    try {
+      // Check user's access level
+      const access = await getUserProjectAccess(userId, projectId);
+
+      if (!access) {
+        return null;
+      }
+
+      // Check if user has edit permission
+      const canEdit = hasPermission(access.role, Permission.PROJECT_EDIT);
+      if (!canEdit) {
+        return null;
+      }
+
+      const existing = await prisma?.project.findUnique({
+        where: { Id: projectId },
+      });
+
+      if (!existing || existing.DeletedAt !== null) {
+        return null;
+      }
+
+      // Restrict certain fields to owners only
+      const isOwner = access.isOwner;
+      const allowedUpdates: any = {
+        UpdatedAt: new Date(),
+      };
+
+      // Everyone with edit permission can update these
+      if (updates.styles !== undefined) {
+        allowedUpdates.Styles = JSON.stringify(updates.styles);
+      }
+      if (updates.header !== undefined) {
+        allowedUpdates.Header = JSON.stringify(updates.header);
+      }
+
+      // Only owners can update these
+      if (isOwner) {
+        if (updates.name !== undefined) {
+          allowedUpdates.Name = updates.name;
+        }
+        if (updates.description !== undefined) {
+          allowedUpdates.Description = updates.description;
+        }
+        if (updates.published !== undefined) {
+          allowedUpdates.Published = updates.published;
+        }
+        if (updates.subdomain !== undefined) {
+          allowedUpdates.Subdomain = updates.subdomain;
+        }
+      }
+
+      const updated = await prisma?.project.update({
+        where: { Id: projectId },
+        data: allowedUpdates,
+      });
+
+      return updated || null;
+    } catch (err) {
+      console.error("projectDAL.updateProjectWithAccess error:", err);
       return null;
     }
   },

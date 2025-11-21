@@ -11,6 +11,7 @@ import { useProjectStore } from "@/globalstore/projectstore";
 import { useElementStore } from "@/globalstore/elementstore";
 import { History, Save, RotateCcw } from "lucide-react";
 import { useSnapshots, useSaveSnapshot, useLoadSnapshot } from "@/hooks/editor/useSnapshot";
+import { EditorElement } from "@/types/global.type";
 
 const SnapshotManager = () => {
   const [open, setOpen] = useState(false);
@@ -47,7 +48,7 @@ const SnapshotManager = () => {
       { projectId: project.id, snapshotId },
       {
         onSuccess: (elements) => {
-          loadElements(elements);
+          loadElements(elements as EditorElement[]);
           setOpen(false);
         },
       }
@@ -62,7 +63,7 @@ const SnapshotManager = () => {
           Manage Snapshots
         </Button>
       </DialogTrigger>
-      <DialogContent className="!max-w-[75vw] max-h-[95vh] h-[75vw] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-[75vw] max-h-[95vh] h-[75vw] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <History className="h-5 w-5" />

@@ -15,10 +15,14 @@ import {
   hasGap,
 } from "@/constants/direciton";
 import ResizeTooltip from "./ResizeTooltip";
+import { ElementCommentButton } from "@/components/editor/comments/ElementCommentButton";
+import { useEditorPermissions } from "@/hooks/editor/useEditorPermissions";
 
 interface ResizeHandlerProps {
   element: EditorElement;
   children: ReactNode;
+  isReadOnly?: boolean;
+  isLocked?: boolean;
 }
 
 interface ResizeHandleProps {
@@ -176,17 +180,23 @@ const ElementLabel = memo(function ElementLabel({
 export default function ResizeHandler({
   element,
   children,
+  isReadOnly = false,
+  isLocked = false,
 }: ResizeHandlerProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const { updateElement } = useElementStore();
   const { draggedOverElement, selectedElement, hoveredElement } =
     useSelectionStore();
   const { handleDoubleClick } = useElementHandler();
+  const permissions = useEditorPermissions();
+  const canResize = !isReadOnly && !isLocked && permissions.canEditElements;
+
   const { handleResizeStart, isResizing, currentResizeDirection } =
     useResizeHandler({
       element,
       updateElement,
       targetRef,
+      enabled: canResize,
     });
 
   // Determine selection states
@@ -236,11 +246,14 @@ export default function ResizeHandler({
       {/* Element label (shown when selected) */}
       {isSelected && <ElementLabel element={element} />}
 
+      {/* Comment button (shown when selected) */}
+      {isSelected && <ElementCommentButton element={element} />}
+
       {/* Children content */}
       {children}
 
-      {/* Resize handles (shown when selected) */}
-      {isSelected && (
+      {/* Resize handles (shown when selected and editable) */}
+      {isSelected && canResize && (
         <>
           {resizeHandles.map((dir) => (
             <ResizeHandle

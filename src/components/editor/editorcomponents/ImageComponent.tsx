@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { EditorComponentProps } from "@/interfaces/editor.interface";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useElementEvents } from "@/hooks/editor/eventworkflow/useElementEvents";
 import {
   Empty,
   EmptyHeader,
@@ -15,18 +16,32 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { ImageDragDataSchema } from "@/schema/zod/imageupload";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ImageSettings } from "@/interfaces/elements.interface";
+import { useParams } from "next/navigation";
 
 type Props = EditorComponentProps;
 
 const ImageComponent: React.FC<Props> = ({ element, data }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const { updateElement } = useElementStore();
+  const { id } = useParams();
+  const { elementRef, registerEvents, createEventHandlers, eventsActive } =
+    useElementEvents({
+      elementId: element.id,
+      projectId: id as string,
+    });
   const safeStyles = elementHelper.getSafeStyles(element);
 
-  const { objectFit: rawObjectFit } = safeStyles;
+  // Get image settings with type assertion
+  const imageSettings = (
+    element.type === "Image" ? element.settings : null
+  ) as ImageSettings | null;
+  const objectFit = imageSettings?.objectFit ?? "cover";
+  const loading = imageSettings?.loading ?? "lazy";
+  const decoding = imageSettings?.decoding ?? "async";
 
   const imageStyle: React.CSSProperties = {
-    objectFit: (rawObjectFit as React.CSSProperties["objectFit"]) ?? "cover",
+    objectFit: objectFit as React.CSSProperties["objectFit"],
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -74,22 +89,37 @@ const ImageComponent: React.FC<Props> = ({ element, data }) => {
     }
   };
 
+  // Register events when element events change
+  useEffect(() => {
+    if (element.events) {
+      registerEvents(element.events);
+    }
+  }, [element.events, registerEvents]);
+
+  const eventHandlers = createEventHandlers();
+
   return element.src ? (
     <div
+      ref={elementRef as React.RefObject<HTMLDivElement>}
       className={cn(
         "relative w-full h-full",
         isDragOver && "ring-2 ring-primary ring-offset-2",
       )}
+      {...eventHandlers}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      style={{
+        cursor: eventsActive ? "pointer" : "inherit",
+        userSelect: eventsActive ? "none" : "auto",
+      }}
     >
       <img
         src={element.src}
         alt={element.name || "Image"}
         style={imageStyle}
-        loading="lazy"
-        decoding="async"
+        loading={loading}
+        decoding={decoding}
         role="img"
         className="w-full h-full"
       />
@@ -104,13 +134,19 @@ const ImageComponent: React.FC<Props> = ({ element, data }) => {
     </div>
   ) : (
     <div
+      ref={elementRef as React.RefObject<HTMLDivElement>}
       className={cn(
         "w-full h-full",
         isDragOver && "ring-2 ring-primary ring-offset-2",
       )}
+      {...eventHandlers}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
+      style={{
+        cursor: eventsActive ? "pointer" : "inherit",
+        userSelect: eventsActive ? "none" : "auto",
+      }}
     >
       <Empty className="w-full h-full">
         <EmptyHeader>

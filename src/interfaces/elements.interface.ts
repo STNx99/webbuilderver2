@@ -1,6 +1,7 @@
 import { EditorElement, ElementType } from "@/types/global.type";
 import { ValidationRule } from "./validate.interface";
 import { EmblaOptionsType } from "embla-carousel";
+import { ElementEvents } from "./events.interface";
 
 type CSSStyles = React.CSSProperties;
 
@@ -24,10 +25,11 @@ interface Element<Settings = undefined> {
   src?: string;
   href?: string;
   parentId?: string;
-  pageId?: string;
-  projectId: string;
+  pageId: string;
   settings?: Settings | null;
   order?: number;
+  events?: ElementEvents; // Direct event handlers for actions
+  eventWorkflowConnections?: string[]; // Connection IDs linking to backend ElementEventWorkflow records
 }
 
 interface BaseElement extends Element {}
@@ -59,6 +61,18 @@ interface CarouselElement extends Element<CarouselSettings> {
 
 interface ButtonElement extends Element<void> {
   element?: FrameElement;
+}
+
+interface ImageSettings {
+  objectFit?: "cover" | "contain" | "fill" | "none" | "scale-down";
+  loading?: "lazy" | "eager";
+  decoding?: "async" | "sync" | "auto";
+  sizes?: string;
+  srcset?: string;
+}
+
+interface ImageElement extends Element<ImageSettings> {
+  type: "Image";
 }
 
 interface InputSettings {
@@ -145,6 +159,7 @@ export type {
   SectionElement,
   FrameElement,
   ButtonElement,
+  ImageElement,
   InputElement,
   ListElement,
   SelectElement,
@@ -158,6 +173,7 @@ export type {
 //Export settings
 export type {
   CarouselSettings,
+  ImageSettings,
   FormSettings,
   InputSettings,
   DataLoaderSettings,

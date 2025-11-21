@@ -99,8 +99,8 @@ export function MarketplaceFilters() {
             </div>
           ) : categories && categories.length > 0 ? (
             <div className="space-y-3 pl-1">
-              {categories.map((category) => (
-                <div key={category.id} className="flex items-center space-x-2">
+              {categories.map((category, index) => (
+                <div key={`category-${category.id || index}`} className="flex items-center space-x-2">
                   <Checkbox
                     id={`category-${category.id}`}
                     checked={currentCategoryId === category.id}
@@ -128,8 +128,8 @@ export function MarketplaceFilters() {
         {/* Template Type Filter */}
         <FilterSection title="Template Type" defaultOpen={true}>
           <div className="space-y-3 pl-1">
-            {TEMPLATE_TYPES.map((type) => (
-              <div key={type.id} className="flex items-center space-x-2">
+            {TEMPLATE_TYPES.map((type, index) => (
+              <div key={`type-${type.id || index}`} className="flex items-center space-x-2">
                 <Checkbox
                   id={`type-${type.id}`}
                   checked={currentTemplateType === type.id}

@@ -33,7 +33,6 @@ export function useProjectCollaborators(
       if (!projectId) throw new Error("Project ID is required");
       const collaborators =
         await collaboratorService.getProjectCollaborators(projectId);
-      // Ensure we always return an array, never undefined
       return collaborators || [];
     },
     enabled: !!projectId && enabled,

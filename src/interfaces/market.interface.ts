@@ -20,6 +20,7 @@ export interface MarketplaceItem {
   tags: string[];
   downloads?: number;
   likes?: number;
+  views?: number;
   author: {
     name: string;
     verified?: boolean;

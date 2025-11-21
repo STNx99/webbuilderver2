@@ -97,16 +97,21 @@ export const API_ENDPOINTS = {
       CREATE: "/api/v1/comments",
       GET_ALL: "/api/v1/comments",
       GET_BY_ID: (commentId: string) => `/api/v1/comments/${commentId}`,
-      GET_BY_ITEM: (itemId: string) => `/api/v1/marketplace/items/${itemId}/comments`,
+      GET_BY_ITEM: (itemId: string) =>
+        `/api/v1/marketplace/items/${itemId}/comments`,
       UPDATE: (commentId: string) => `/api/v1/comments/${commentId}`,
       DELETE: (commentId: string) => `/api/v1/comments/${commentId}`,
       MODERATE: (commentId: string) => `/api/v1/comments/${commentId}/moderate`,
-      GET_COUNT: (itemId: string) => `/api/v1/marketplace/items/${itemId}/comments/count`,
-      // Reactions
-      CREATE_REACTION: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
-      DELETE_REACTION: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
-      GET_REACTIONS: (commentId: string) => `/api/v1/comments/${commentId}/reactions`,
-      GET_REACTION_SUMMARY: (commentId: string) => `/api/v1/comments/${commentId}/reactions/summary`,
+      GET_COUNT: (itemId: string) =>
+        `/api/v1/marketplace/items/${itemId}/comments/count`,
+      CREATE_REACTION: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions`,
+      DELETE_REACTION: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions`,
+      GET_REACTIONS: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions`,
+      GET_REACTION_SUMMARY: (commentId: string) =>
+        `/api/v1/comments/${commentId}/reactions/summary`,
     },
   },
   INVITATIONS: {
@@ -141,6 +146,54 @@ export const API_ENDPOINTS = {
     SEARCH: "/api/v1/users/search",
     GET_BY_EMAIL: (email: string) => `/api/v1/users/email/${email}`,
     GET_BY_USERNAME: (username: string) => `/api/v1/users/username/${username}`,
+  },
+  SUBSCRIPTION: {
+    STATUS: "/api/subscription/status",
+    CANCEL: "/api/subscription/cancel",
+    CREATE: "/api/subscription",
+    GET: "/api/subscription",
+  },
+  VNPAY: {
+    CREATE_PAYMENT: "/api/vnpay/create-payment",
+    RETURN: "/api/vnpay/return",
+    IPN: "/api/vnpay/ipn",
+  },
+  ELEMENT_COMMENTS: {
+    CREATE: "/api/v1/element-comments",
+    GET_BY_ID: (id: string) => `/api/v1/element-comments/${id}`,
+    GET_BY_ELEMENT: (elementId: string) =>
+      `/api/v1/elements/${elementId}/comments`,
+    UPDATE: (id: string) => `/api/v1/element-comments/${id}`,
+    DELETE: (id: string) => `/api/v1/element-comments/${id}`,
+    TOGGLE_RESOLVED: (id: string) =>
+      `/api/v1/element-comments/${id}/toggle-resolved`,
+    GET_BY_AUTHOR: (authorId: string) =>
+      `/api/v1/element-comments/author/${authorId}`,
+    GET_BY_PROJECT: (projectId: string) =>
+      `/api/v1/projects/${projectId}/comments`,
+  },
+  EVENT_WORKFLOWS: {
+    GET_BY_PROJECT: (projectId: string) =>
+      `/api/v1/projects/${projectId}/event-workflows`,
+    CREATE: "/api/v1/event-workflows",
+    GET_BY_ID: (workflowId: string) => `/api/v1/event-workflows/${workflowId}`,
+    UPDATE: (workflowId: string) => `/api/v1/event-workflows/${workflowId}`,
+    UPDATE_ENABLED: (workflowId: string) =>
+      `/api/v1/event-workflows/${workflowId}/enabled`,
+    DELETE: (workflowId: string) => `/api/v1/event-workflows/${workflowId}`,
+    GET_ELEMENTS: (workflowId: string) =>
+      `/api/v1/event-workflows/${workflowId}/elements`,
+  },
+  ELEMENT_EVENT_WORKFLOWS: {
+    CREATE: "/api/v1/element-event-workflows",
+    GET_ALL: "/api/v1/element-event-workflows",
+    GET_BY_ID: (id: string) => `/api/v1/element-event-workflows/${id}`,
+    UPDATE: (id: string) => `/api/v1/element-event-workflows/${id}`,
+    DELETE: (id: string) => `/api/v1/element-event-workflows/${id}`,
+    DELETE_BY_ELEMENT: (elementId: string) =>
+      `/api/v1/element-event-workflows?elementId=${elementId}`,
+    DELETE_BY_WORKFLOW: (workflowId: string) =>
+      `/api/v1/element-event-workflows?workflowId=${workflowId}`,
   },
 };
 export const NEXT_API_ENDPOINTS = {

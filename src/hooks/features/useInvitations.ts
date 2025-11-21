@@ -146,11 +146,15 @@ export function useUpdateInvitationStatus(projectId?: string) {
       }
 
       // Invalidate to ensure consistency
-      queryClient.invalidateQueries({
-        queryKey: projectId
-          ? invitationKeys.byProject(projectId)
-          : invitationKeys.all,
-      });
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: invitationKeys.byProject(projectId),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: invitationKeys.all,
+        });
+      }
     },
     onError: (error) => {
       toast.error(
@@ -187,11 +191,15 @@ export function useCancelInvitation(projectId?: string) {
       }
 
       // Invalidate to ensure consistency
-      queryClient.invalidateQueries({
-        queryKey: projectId
-          ? invitationKeys.byProject(projectId)
-          : invitationKeys.all,
-      });
+      if (projectId) {
+        queryClient.invalidateQueries({
+          queryKey: invitationKeys.byProject(projectId),
+        });
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: invitationKeys.all,
+        });
+      }
     },
     onError: (error) => {
       toast.error(

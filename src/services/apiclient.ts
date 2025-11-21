@@ -15,6 +15,8 @@ class ApiClient {
   async get<T>(url: string, options: RequestInit = {}): Promise<T> {
     const token = await getToken();
 
+    console.debug("[API] GET request:", { url, hasToken: !!token });
+
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -23,10 +25,20 @@ class ApiClient {
         ...(options.headers || {}),
       },
     });
+
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error("[API] GET failed:", {
+        url,
+        status: response.status,
+        error: errorText,
+      });
       throw new Error(`Failed to fetch: ${url} (${response.status})`);
     }
-    return response.json();
+
+    const data = await response.json();
+    console.debug("[API] GET success:", { url, dataType: typeof data });
+    return data;
   }
 
   async post<T = unknown>(

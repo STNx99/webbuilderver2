@@ -31,6 +31,15 @@ export { useGridEditor } from "./editor/useGridEditor";
 export { useResizeHandler } from "./editor/useResizeHandler";
 
 // =============================================================================
+// ELEMENT COMMENTS HOOKS
+// =============================================================================
+export {
+  elementCommentKeys,
+  useElementComments,
+  useProjectComments,
+} from "./useElementComments";
+
+// =============================================================================
 // UI HOOKS
 // =============================================================================
 export { useInView } from "./ui/useInView";
@@ -74,12 +83,14 @@ export {
   projectKeys,
   useUserProjects,
   useProject,
+  useProjectPages,
   useCreateProject,
   useUpdateProject,
   useDeleteProject,
   usePublishProject,
 } from "./features/useProjects";
 export { useDashboard } from "./features/useDashboard";
+export { useAnalytics } from "./features/useAnalytics";
 
 // =============================================================================
 // COLLABORATION HOOKS
@@ -103,10 +114,23 @@ export {
   useCollaboratorManager,
 } from "./features/useCollaborators";
 
+// =============================================================================
 // USER HOOKS
+// =============================================================================
 export {
   userKeys,
   useSearchUsers,
   useUserByEmail,
   useUserByUsername,
 } from "./features/useUsers";
+
+// =============================================================================
+// RBAC & PERMISSIONS HOOKS
+// =============================================================================
+export {
+  useProjectPermissions,
+  useCanEditOwnResource,
+  useCanDeleteOwnResource,
+  useRoleDescription,
+  Permission,
+} from "./useProjectPermissions";

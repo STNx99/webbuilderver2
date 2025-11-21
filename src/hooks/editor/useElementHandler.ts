@@ -1,11 +1,14 @@
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { cn } from "@/lib/utils";
-import { EditorElement, ElementType } from "@/types/global.type";
+import { EditorElement } from "@/types/global.type";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
+import { useEditorPermissions } from "./useEditorPermissions";
+import { useElementCreator } from "./useElementCreator";
+import { toast } from "sonner";
 
-export function useElementHandler() {
-  const { addElement, updateElement, swapElement } = useElementStore();
+export function useElementHandler(isReadOnly?: boolean, isLocked?: boolean) {
+  const { updateElement, swapElement } = useElementStore();
   const {
     hoveredElement,
     selectedElement,
@@ -17,46 +20,23 @@ export function useElementHandler() {
     setHoveredElement,
   } = useSelectionStore();
 
-  const createElementFromType = (
-    type: ElementType,
-    projectId: string,
-    parentId: string,
-    pageId: string,
-  ) => {
-    return elementHelper.createElement.create(
-      type,
-      projectId,
-      parentId,
-      pageId!,
-    );
-  };
+  const permissions = useEditorPermissions(null);
+  const elementCreator = useElementCreator();
 
-  const handleImageDrop = (
-    parsed: any,
-    projectId: string,
-    parentElement: EditorElement,
-  ) => {
-    const isContainer = elementHelper.isContainerElement(parentElement);
-    if (!isContainer) {
-      return null;
-    }
-    const newElement = createElementFromType(
-      "Image",
-      projectId,
-      parentElement.id,
-      parentElement.pageId!,
-    );
-    if (newElement) {
-      newElement.src = parsed.imageLink;
-      newElement.name = parsed.imageName || "Image";
-    }
-    setDraggedOverElement(undefined);
-    return newElement;
-  };
+  const canDrag = !isReadOnly && !isLocked && permissions.canEditElements;
+  const canDelete = !isReadOnly && !isLocked && permissions.canDeleteElements;
+  const canReorder = !isReadOnly && !isLocked && permissions.canReorderElements;
 
   const handleDoubleClick = (e: React.MouseEvent, element: EditorElement) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!permissions.canEditElements) {
+      toast.error("Cannot edit elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
 
     if (selectedElement && selectedElement.id === element.id) {
       setSelectedElement(undefined);
@@ -66,71 +46,61 @@ export function useElementHandler() {
     setSelectedElement(element);
   };
 
-  const handleDrop = (
-    e: React.DragEvent,
-    projectId: string,
-    parentElement: EditorElement,
-  ) => {
+  const handleDrop = (e: React.DragEvent, parentElement: EditorElement) => {
     e.stopPropagation();
     e.preventDefault();
+
+    // Prevent drop if read-only, locked, or no permission
+    if (!canDrag && !elementCreator.canCreate && !canReorder) {
+      toast.error("Cannot perform this action - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     setSelectedElement(undefined);
-    const data = e.dataTransfer.getData("elementType");
 
-    if (data) {
-      const isContainer = elementHelper.isContainerElement(parentElement);
-      if (!isContainer) {
+    if (draggingElement) {
+      // Moving existing element
+      if (!canReorder) {
+        toast.error("Cannot reorder elements - editor is in read-only mode", {
+          duration: 2000,
+        });
         return;
       }
 
-      const newElement = createElementFromType(
-        data as ElementType,
-        projectId,
-        parentElement.id,
-        parentElement.pageId!,
-      );
-
-      if (!newElement) {
-        return;
-      }
-      addElement(newElement as EditorElement);
-      setSelectedElement(newElement);
-      setDraggedOverElement(undefined);
-    } else if (draggingElement) {
       swapElement(draggingElement.id, parentElement.id);
       setDraggedOverElement(undefined);
     } else {
-      const imageData = e.dataTransfer.getData("application/json");
-      if (imageData) {
-        try {
-          const parsed = JSON.parse(imageData);
-          if (parsed.type === "image") {
-            const newElement = handleImageDrop(
-              parsed,
-              projectId,
-              parentElement,
-            );
-            if (newElement) {
-              addElement(newElement);
-              setSelectedElement(newElement);
-            }
-          }
-        } catch (error) {
-          // ignore
-        }
+      const newElement = elementCreator.createElementFromDrop(e, parentElement);
+      if (newElement) {
+        elementCreator.completeElementCreation(newElement);
       }
     }
+
     setHoveredElement(undefined);
     setDraggingElement(undefined);
   };
 
   const handleDragStart = (e: React.DragEvent, element: EditorElement) => {
     e.stopPropagation();
+
+    if (!canDrag) {
+      e.preventDefault();
+      return;
+    }
+
     setDraggingElement(element);
   };
 
   const handleDragOver = (e: React.DragEvent, element: EditorElement) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (!canDrag) {
+      return;
+    }
+
     if (
       draggingElement?.id === element.id ||
       draggingElement?.parentId === element.id
@@ -147,7 +117,7 @@ export function useElementHandler() {
     }
   };
 
-  const handleDragEnd = (e: React.DragEvent, hoveredElement: EditorElement) => {
+  const handleDragEnd = (e: React.DragEvent) => {
     e.stopPropagation();
     setDraggingElement(undefined);
     setDraggedOverElement(undefined);
@@ -203,6 +173,14 @@ export function useElementHandler() {
     if (!elementHelper.isEditableElement(element)) {
       return;
     }
+
+    if (!permissions.canEditElements) {
+      toast.error("Cannot edit elements - editor is in read-only mode", {
+        duration: 2000,
+      });
+      return;
+    }
+
     updateElement(element.id, {
       content: e.currentTarget.textContent || "",
     });
@@ -239,11 +217,11 @@ export function useElementHandler() {
     return {
       onDragStart: (e: React.DragEvent) => handleDragStart(e, element),
       onDragLeave: (e: React.DragEvent) => handleDragLeave(e, element),
-      onDragEnd: (e: React.DragEvent) => handleDragEnd(e, element),
+      onDragEnd: (e: React.DragEvent) => handleDragEnd(e),
       onDragOver: (e: React.DragEvent) => handleDragOver(e, element),
       onDrop: isEditableElement
         ? undefined
-        : (e: React.DragEvent) => handleDrop(e, element.projectId, element),
+        : (e: React.DragEvent) => handleDrop(e, element),
       onDoubleClick: (e: React.MouseEvent) => handleDoubleClick(e, element),
       onMouseEnter: (e: React.MouseEvent) => handleMouseEnter(e, element),
       onMouseLeave: (e: React.MouseEvent) => handleMouseLeave(e, element),
@@ -258,11 +236,12 @@ export function useElementHandler() {
 
     return {
       style: mergedStyles,
-      draggable: true,
+      draggable: canDrag,
       className: tailwindStyles,
       contentEditable:
         elementHelper.isEditableElement(element) &&
-        selectedElement?.id === element.id,
+        selectedElement?.id === element.id &&
+        permissions.canEditElements,
       suppressContentEditableWarning: true,
       ...eventHandlers,
     };
@@ -280,5 +259,10 @@ export function useElementHandler() {
     getTailwindStyles,
     getCommonProps,
     getStyles,
+    // Export permission states for UI purposes
+    canDrag,
+    canDelete,
+    canReorder,
+    canCreate: elementCreator.canCreate,
   };
 }

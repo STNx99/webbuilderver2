@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 export interface GridEditorOptions<T> {
   onSave?: (id: string, data: Partial<T>) => Promise<void> | void;
@@ -29,57 +29,65 @@ export function useGridEditor<T extends { id: string }>({
   onCreate,
 }: GridEditorOptions<T> = {}): GridEditorState<T> & GridEditorActions<T> {
   const [editingRows, setEditingRows] = useState<Set<string>>(new Set());
-  const [editedValues, setEditedValues] = useState<Record<string, Partial<T>>>({});
+  const [editedValues, setEditedValues] = useState<Record<string, Partial<T>>>(
+    {},
+  );
   const [newRow, setNewRow] = useState<Partial<T> | null>(null);
 
   const startEditing = useCallback((id: string, currentData?: T) => {
     if (currentData) {
-      setEditedValues(prev => ({
+      setEditedValues((prev) => ({
         ...prev,
         [id]: { ...currentData },
       }));
     }
-    setEditingRows(prev => new Set([...prev, id]));
+    setEditingRows((prev) => new Set([...prev, id]));
   }, []);
 
   const stopEditing = useCallback((id: string) => {
-    setEditingRows(prev => {
+    setEditingRows((prev) => {
       const newSet = new Set(prev);
       newSet.delete(id);
       return newSet;
     });
-    setEditedValues(prev => {
+    setEditedValues((prev) => {
       const newValues = { ...prev };
       delete newValues[id];
       return newValues;
     });
   }, []);
 
-  const updateValue = useCallback((id: string, field: keyof T, value: any) => {
-    if (newRow && 'isNew' in newRow && newRow.isNew) {
-      setNewRow(prev => ({ ...prev!, [field]: value }));
-    } else {
-      setEditedValues(prev => ({
-        ...prev,
-        [id]: { ...prev[id], [field]: value },
-      }));
-    }
-  }, [newRow]);
+  const updateValue = useCallback(
+    (id: string, field: keyof T, value: any) => {
+      if (newRow && "isNew" in newRow && newRow.isNew) {
+        setNewRow((prev) => ({ ...prev!, [field]: value }));
+      } else {
+        setEditedValues((prev) => ({
+          ...prev,
+          [id]: { ...prev[id], [field]: value },
+        }));
+      }
+    },
+    [newRow],
+  );
 
-  const saveChanges = useCallback(async (id: string) => {
-    if (!onSave) return;
+  const saveChanges = useCallback(
+    async (id: string) => {
+      if (!onSave) return;
 
-    const editedData = editedValues[id];
-    if (!editedData) return;
+      const editedData = editedValues[id];
+      if (!editedData) return;
 
-    try {
-      await onSave(id, editedData);
-      stopEditing(id);
-    } catch (error) {
-      console.error('Failed to save changes:', error);
-      throw error;
-    }
-  }, [editedValues, onSave, stopEditing]);
+      try {
+        await onSave(id, editedData);
+        stopEditing(id);
+      } catch (error) {
+        console.error("Failed to save changes:", error);
+        throw error;
+      }
+    },
+    [editedValues, onSave, stopEditing],
+  );
 
   const addNewRow = useCallback((initialData: Partial<T> = {}) => {
     setNewRow({ ...initialData, isNew: true, isEditing: true } as Partial<T>);
@@ -96,17 +104,23 @@ export function useGridEditor<T extends { id: string }>({
       await onCreate(newRow);
       setNewRow(null);
     } catch (error) {
-      console.error('Failed to create new item:', error);
+      console.error("Failed to create new item:", error);
       throw error;
     }
   }, [newRow, onCreate]);
 
-  const isEditing = useCallback((id: string) => editingRows.has(id), [editingRows]);
+  const isEditing = useCallback(
+    (id: string) => editingRows.has(id),
+    [editingRows],
+  );
 
-  const getEditedValue = useCallback((id: string, field: keyof T, defaultValue?: any) => {
-    const edited = editedValues[id];
-    return edited?.[field] ?? defaultValue;
-  }, [editedValues]);
+  const getEditedValue = useCallback(
+    (id: string, field: keyof T, defaultValue?: any) => {
+      const edited = editedValues[id];
+      return edited?.[field] ?? defaultValue;
+    },
+    [editedValues],
+  );
 
   return {
     // State

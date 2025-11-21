@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Lock, Mail, Wallet, ShieldCheck } from "lucide-react"
-import type { Plan, BillingPeriod } from "./SubscriptionCheckout"
+import type { Plan } from "./SubscriptionCheckout"
+import type { BillingPeriod } from "@/interfaces/subscription.interface"
 import type { PaymentMethod } from "./PaymentMethod"
 
 interface CheckoutFormProps {

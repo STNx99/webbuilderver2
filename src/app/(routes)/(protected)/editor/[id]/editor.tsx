@@ -31,6 +31,8 @@ export default function Editor({ id, pageId }: EditorProps) {
     handleDragOver,
     handleDragLeave,
     addNewSection,
+    isReadOnly,
+    isLocked,
     collab,
   } = useEditor(id, pageId, {
     enableCollab: isMounted && !!effectiveUserId,
@@ -56,6 +58,8 @@ export default function Editor({ id, pageId }: EditorProps) {
           addNewSection={addNewSection}
           userId={effectiveUserId}
           sendMessage={collab.sendMessage}
+          isReadOnly={isReadOnly}
+          isLocked={isLocked}
         />
       </PreviewContainer>
     </div>

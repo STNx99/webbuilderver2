@@ -1,5 +1,6 @@
 import { EditorElement, ElementType } from "@/types/global.type";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
+import { useParams } from "next/navigation";
 import { getComponentMap } from "@/constants/elements";
 import ResizeHandler from "./resizehandler/ResizeHandler";
 import EditorContextMenu from "./EditorContextMenu";
@@ -10,17 +11,24 @@ import { useElementStore } from "@/globalstore/elementstore";
 import { elementHelper } from "@/lib/utils/element/elementhelper";
 import { LayoutGroup } from "framer-motion";
 import { customComps } from "@/lib/customcomponents/customComponents";
+import { useEditorPermissions } from "@/hooks/editor/useEditorPermissions";
+import { CollaboratorRole } from "@/interfaces/collaboration.interface";
+import { toast } from "sonner";
 
 interface ElementLoaderProps {
   elements?: EditorElement[];
   data?: any;
+  isReadOnly?: boolean;
+  isLocked?: boolean;
 }
 
 export default function ElementLoader({
   elements,
   data,
+  isReadOnly = false,
+  isLocked = false,
 }: ElementLoaderProps = {}) {
-  const { currentPage } = usePageStore();
+  const { id } = useParams();
   const {
     draggedOverElement,
     draggingElement,
@@ -28,13 +36,13 @@ export default function ElementLoader({
     setDraggedOverElement,
   } = useSelectionStore();
   const { elements: allElements, insertElement } = useElementStore();
+  elements = elements ? elements : allElements;
+  // Get permissions
+  const permissions = useEditorPermissions((id as string) || null);
 
-  const filteredElements =
-    elements ||
-    elementHelper.filterElementByPageId(
-      allElements,
-      currentPage?.Id || undefined,
-    );
+  // Determine if operations are allowed
+  const canDrag = !isReadOnly && !isLocked && permissions.canEditElements;
+  const canCreate = !isReadOnly && !isLocked && permissions.canCreateElements;
 
   const renderElement = (element: EditorElement) => {
     const commonProps: EditorComponentProps = {
@@ -51,11 +59,16 @@ export default function ElementLoader({
       e.preventDefault();
       e.stopPropagation();
 
+      // Prevent hover effects in read-only mode
+      if (!canDrag) {
+        return;
+      }
+
       if (draggedOverElement?.id !== element.id) {
         setDraggedOverElement(element);
       }
     },
-    [draggedOverElement, setDraggedOverElement],
+    [draggedOverElement, setDraggedOverElement, canDrag],
   );
 
   const handleDrop = useCallback(
@@ -63,25 +76,55 @@ export default function ElementLoader({
       e.preventDefault();
       e.stopPropagation();
 
+      // Prevent drop if read-only, locked, or no permissions
+      if (!canDrag && !canCreate) {
+        toast.error(
+          "Cannot perform this action - editor is in read-only mode",
+          {
+            duration: 2000,
+          },
+        );
+        setDraggedOverElement(undefined);
+        setDraggingElement(undefined);
+        return;
+      }
+
       const elementType = e.dataTransfer.getData("elementType");
       const customElement = e.dataTransfer.getData("customComponentName");
 
       if (elementType) {
+        // Creating new element from element type
+        if (!canCreate) {
+          toast.error("Cannot add elements - editor is in read-only mode", {
+            duration: 2000,
+          });
+          setDraggedOverElement(undefined);
+          setDraggingElement(undefined);
+          return;
+        }
+
         const newElement = elementHelper.createElement.create(
           elementType as ElementType,
-          element.projectId,
-          undefined,
           element.pageId,
+          undefined,
         );
         if (newElement) insertElement(element, newElement);
       }
 
       if (customElement) {
         try {
+          if (!canCreate) {
+            toast.error("Cannot add elements - editor is in read-only mode", {
+              duration: 2000,
+            });
+            setDraggedOverElement(undefined);
+            setDraggingElement(undefined);
+            return;
+          }
+
           const customComp = customComps[parseInt(customElement)];
           const newElement = elementHelper.createElement.createFromTemplate(
             customComp,
-            element.projectId,
             element.pageId,
           );
           if (newElement) insertElement(element, newElement);
@@ -93,16 +136,35 @@ export default function ElementLoader({
       setDraggedOverElement(undefined);
       setDraggingElement(undefined);
     },
-    [insertElement, setDraggedOverElement, setDraggingElement],
+    [
+      insertElement,
+      setDraggedOverElement,
+      setDraggingElement,
+      canDrag,
+      canCreate,
+    ],
   );
 
   return (
     <LayoutGroup>
-      {filteredElements.map((element) => (
-        <ResizeHandler element={element} key={element.id}>
-          <EditorContextMenu element={element}>
-            {renderElement(element)}
-          </EditorContextMenu>
+      {elements?.map((element) => (
+        <ResizeHandler
+          element={element}
+          key={element.id}
+          isReadOnly={isReadOnly}
+          isLocked={isLocked}
+        >
+          {permissions.role === CollaboratorRole.VIEWER ? (
+            renderElement(element)
+          ) : (
+            <EditorContextMenu
+              element={element}
+              isReadOnly={isReadOnly}
+              isLocked={isLocked}
+            >
+              {renderElement(element)}
+            </EditorContextMenu>
+          )}
           <div
             onDragOver={(e) => handleHover(e, element)}
             onDrop={(e) => handleDrop(e, element)}

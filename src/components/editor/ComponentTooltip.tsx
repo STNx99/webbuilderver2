@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -19,7 +19,6 @@ import {
   FrameComponent,
   CarouselComponent,
   ListComponent,
-  DataLoaderComponent,
   CMSContentListComponent,
   CMSContentItemComponent,
   CMSContentGridComponent,
@@ -364,7 +363,6 @@ const componentMap: Partial<Record<ElementType, React.ComponentType<any>>> = {
   Frame: FrameComponent,
   Carousel: CarouselComponent,
   List: ListComponent,
-  DataLoader: DataLoaderComponent,
   CMSContentList: CMSContentListComponent,
   CMSContentItem: CMSContentItemComponent,
   CMSContentGrid: CMSContentGridComponent,
@@ -398,7 +396,7 @@ const customPreviews: Partial<Record<ElementType, React.ReactElement>> = {
     </div>
   ),
   Carousel: (
-    <div className="w-full h-20 bg-gradient-to-r from-blue-400 to-purple-500 rounded-lg relative flex items-center justify-center">
+    <div className="w-full h-20 bg-linear-to-r from-blue-400 to-purple-500 rounded-lg relative flex items-center justify-center">
       <div className="flex items-center gap-2">
         <ChevronLeft className="w-4 h-4 text-white/70" />
         <div className="w-16 h-12 bg-white/20 rounded flex items-center justify-center">
@@ -463,7 +461,7 @@ const customPreviews: Partial<Record<ElementType, React.ReactElement>> = {
           key={i}
           className="flex gap-2 p-2 border border-purple-300 rounded bg-purple-50"
         >
-          <div className="w-10 h-10 bg-purple-200 rounded flex-shrink-0"></div>
+          <div className="w-10 h-10 bg-purple-200 rounded shrink-0"></div>
           <div className="flex-1 space-y-1">
             <div className="h-2 bg-purple-300 rounded w-3/4"></div>
             <div className="h-1.5 bg-purple-200 rounded w-1/2"></div>
@@ -513,7 +511,7 @@ function ComponentPreview({ type }: { type: ElementType }) {
     return <div className="text-xs text-gray-500 p-4">No preview</div>;
 
   return customPreviews[type] || (
-    <div className="w-full min-h-[40px] flex items-center justify-center">
+    <div className="w-full min-h-10 flex items-center justify-center">
       <div style={{ transform: "scale(0.95)", width: "100%" }}>
         <Component element={mockElement} />
       </div>
@@ -527,19 +525,21 @@ export function ComponentTooltip({
   side = "right",
   sideOffset = 10,
 }: ComponentTooltipProps) {
+  const [isOpen, setIsOpen] = useState(false);
   const info = componentInfo[componentType];
   if (!info) return <>{children}</>;
 
   return (
-    <TooltipProvider delayDuration={300}>
-      <Tooltip>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip open={isOpen} onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>{children}</TooltipTrigger>
         <TooltipContent
           side={side}
           sideOffset={sideOffset}
           className="max-w-[280px] p-0 overflow-hidden"
+          onMouseLeave={() => setIsOpen(false)}
         >
-          <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-gray-100 border-b">
+          <div className="px-3 py-2 bg-linear-to-r from-gray-50 to-gray-100 border-b">
             <h4 className="font-semibold text-sm text-gray-900">{info.title}</h4>
             <p className="text-xs text-gray-600 mt-0.5">{info.description}</p>
           </div>
