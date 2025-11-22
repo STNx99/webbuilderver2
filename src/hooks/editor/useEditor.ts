@@ -66,7 +66,6 @@ export const useEditor = (
       });
     },
     onError: (error) => {
-      console.error("[useEditor] Yjs collaboration error:", error);
       toast.info("Working in offline mode", {
         description:
           "Collaboration server unavailable. Changes will be saved locally.",

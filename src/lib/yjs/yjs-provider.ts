@@ -38,7 +38,7 @@ export class CustomYjsProvider {
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private reconnectInterval = 3000;
 
-  private statusListeners: Set<(status: string) => void> = new Set();
+  private statusListeners: Set<(data: any) => void> = new Set();
   private syncedListeners: Set<(synced: boolean) => void> = new Set();
 
   private docUpdateHandler: ((update: Uint8Array, origin: any) => void) | null =
@@ -52,6 +52,8 @@ export class CustomYjsProvider {
   private initialSyncReceived = false;
   private isDestroying = false;
   private syncTimeoutId: NodeJS.Timeout | null = null;
+  private lastAwarenessChangeTime = 0;
+  private awarenessThrottleMs = 100;
 
   constructor({
     url,
@@ -73,7 +75,6 @@ export class CustomYjsProvider {
     // Get or create awareness instance
     this.awareness = (doc as any).awareness;
     if (!this.awareness) {
-      console.log("[YjsProvider] Creating new Awareness instance");
       this.awareness = new Awareness(doc);
       (doc as any).awareness = this.awareness;
     }
@@ -129,7 +130,6 @@ export class CustomYjsProvider {
         this.projectId ? `&projectId=${encodeURIComponent(this.projectId)}` : ""
       }`;
 
-      console.log("[YjsProvider] Attempting connection to:", this.url);
       this.ws = new WebSocket(wsUrl);
 
       this.ws.onopen = () => {
@@ -138,10 +138,10 @@ export class CustomYjsProvider {
           return;
         }
 
-        console.log("[YjsProvider] ✅ WebSocket opened.");
         this.connected = true;
         this.lastTokenRefreshTime = Date.now();
         this.initialSyncReceived = false;
+
         this.emitStatus("connected");
 
         if (this.syncTimeoutId) clearTimeout(this.syncTimeoutId);
@@ -161,7 +161,7 @@ export class CustomYjsProvider {
         this.setupTokenRefresh();
 
         // Request initial sync from server
-        console.log("[YjsProvider] Requesting initial sync from server...");
+
         this.send({ type: "sync", elements: [] });
 
         // Send queued messages
@@ -169,10 +169,6 @@ export class CustomYjsProvider {
           const message = this.messageQueue.shift();
           if (message) this.send(message);
         }
-
-        console.log(
-          "[YjsProvider] ✅ WebSocket connection established successfully",
-        );
       };
 
       this.ws.onmessage = (event) => {
@@ -194,6 +190,7 @@ export class CustomYjsProvider {
 
         this.connected = false;
         this.synched = false;
+
         this.emitStatus("disconnected");
 
         if (this.syncTimeoutId) clearTimeout(this.syncTimeoutId);
@@ -208,6 +205,7 @@ export class CustomYjsProvider {
         const errorMsg =
           error instanceof Event ? "WebSocket connection error" : String(error);
         console.error("[YjsProvider] ❌ WebSocket error:", errorMsg);
+
         this.emitStatus("error");
 
         if (this.tokenRefreshInterval) clearInterval(this.tokenRefreshInterval);
@@ -227,7 +225,6 @@ export class CustomYjsProvider {
 
       const timeSinceLastRefresh = Date.now() - this.lastTokenRefreshTime;
       if (timeSinceLastRefresh > this.tokenRefreshIntervalMs) {
-        console.log("[YjsProvider] Token refresh needed, reconnecting...");
         this.disconnect(true);
         this.connect();
       }
@@ -239,25 +236,20 @@ export class CustomYjsProvider {
 
     if (this.reconnectTimeout) clearTimeout(this.reconnectTimeout);
 
-    console.log(`[YjsProvider] Scheduling reconnect in ${delay}ms`);
-
     this.reconnectTimeout = setTimeout(() => {
       if (!this.isDestroying) {
-        console.log(`[YjsProvider] Attempting reconnect...`);
         this.connect();
       }
     }, delay);
   }
 
   private handleMessage(message: WebSocketMessage) {
-    console.log("[YjsProvider] Received message type:", message.type);
-
     if (message.type === "sync") {
       this.handleSyncMessage(message);
     } else if (message.type === "update") {
+      console.log("[YjsProvider] 📨 Routing update message to handler");
       this.handleUpdateMessage(message);
     } else if (message.type === "currentState") {
-      console.log(JSON.stringify(message));
       this.handleCurrentStateMessage(message);
     } else if (message.type === "mouseMove") {
       this.handleMouseMoveMessage(message);
@@ -279,17 +271,9 @@ export class CustomYjsProvider {
 
   private handleSyncMessage(message: WebSocketMessage) {
     const syncMessage = message as any;
-    console.log(
-      "[YjsProvider] ✅ Received SYNC message with",
-      syncMessage.elements?.length || 0,
-      "elements",
-    );
 
     // Only process the first sync message
     if (this.initialSyncReceived) {
-      console.log(
-        "[YjsProvider] ℹ️ Ignoring additional sync message (already synced)",
-      );
       return;
     }
 
@@ -304,11 +288,6 @@ export class CustomYjsProvider {
       syncMessage.elements.length > 0
     ) {
       try {
-        console.log(
-          "[YjsProvider] Applying",
-          syncMessage.elements.length,
-          "elements from sync",
-        );
         Y.transact(
           this.doc,
           () => {
@@ -317,9 +296,6 @@ export class CustomYjsProvider {
             yElementsText.insert(0, JSON.stringify(syncMessage.elements));
           },
           "sync",
-        );
-        console.log(
-          "[YjsProvider] Successfully applied sync elements to Yjs document",
         );
       } catch (err) {
         console.error("[YjsProvider] Error applying sync elements:", err);
@@ -331,15 +307,15 @@ export class CustomYjsProvider {
     this.initialSyncReceived = true;
     this.synched = true;
     this.emitSynced(true);
-    console.log(
-      "[YjsProvider] ✅ Initial sync completed and synced=true emitted",
-    );
   }
 
   private handleUpdateMessage(message: WebSocketMessage) {
-    console.log("[YjsProvider] 📥 Processing update from other client");
-
     if ("elements" in message && message.elements) {
+      console.log(
+        "[YjsProvider] 📥 Received update message with",
+        message.elements.length,
+        "elements from remote user",
+      );
       try {
         Y.transact(
           this.doc,
@@ -362,8 +338,6 @@ export class CustomYjsProvider {
   }
 
   private handleCurrentStateMessage(message: WebSocketMessage) {
-    console.log("[YjsProvider] 📡 Processing currentState message from server");
-
     if (!this.awareness) {
       console.warn(
         "[YjsProvider] ⚠️ Awareness not available, cannot update currentState",
@@ -398,11 +372,6 @@ export class CustomYjsProvider {
 
       // Update mouse positions from current state
       if ("mousePositions" in message && message.mousePositions) {
-        console.log(
-          "[YjsProvider] Updating mouse positions:",
-          Object.keys(message.mousePositions).length,
-          "users",
-        );
         const remoteUsers: any = {};
         Object.entries(message.mousePositions).forEach(
           ([userId, pos]: [string, any]) => {
@@ -422,11 +391,6 @@ export class CustomYjsProvider {
 
       // Update selected elements
       if ("selectedElements" in message && message.selectedElements) {
-        console.log(
-          "[YjsProvider] Updating selected elements:",
-          Object.keys(message.selectedElements).length,
-          "users",
-        );
         const selectedByUser: any = {};
         Object.entries(message.selectedElements).forEach(
           ([userId, elementId]: [string, any]) => {
@@ -442,11 +406,6 @@ export class CustomYjsProvider {
 
       // Update users info
       if ("users" in message && message.users) {
-        console.log(
-          "[YjsProvider] Updating users info:",
-          Object.keys(message.users).length,
-          "users",
-        );
         this.awareness.setLocalStateField("users", message.users);
 
         // Explicitly sync to mousestore after updating users
@@ -461,11 +420,6 @@ export class CustomYjsProvider {
   }
 
   private handleMouseMoveMessage(message: WebSocketMessage) {
-    console.log(
-      "[YjsProvider] 🖱️ Processing mouseMove message from",
-      (message as any).userId?.slice(0, 8),
-    );
-
     if (!this.awareness) {
       console.warn(
         "[YjsProvider] ⚠️ Awareness not available, cannot update mouse position",
@@ -490,11 +444,6 @@ export class CustomYjsProvider {
         remoteUsers[userId] = { x, y };
 
         this.awareness.setLocalStateField("remoteUsers", remoteUsers);
-        console.log(
-          "[YjsProvider] Updated remote user cursor:",
-          userId.slice(0, 8),
-          { x, y },
-        );
       }
     } catch (err) {
       console.error("[YjsProvider] Error handling mouseMove message:", err);
@@ -502,11 +451,6 @@ export class CustomYjsProvider {
   }
 
   private handleElementSelectedMessage(message: WebSocketMessage) {
-    console.log(
-      "[YjsProvider] 📌 Processing elementSelected message from",
-      (message as any).userId?.slice(0, 8),
-    );
-
     if (!this.awareness) {
       console.warn(
         "[YjsProvider] ⚠️ Awareness not available, cannot update selection",
@@ -525,12 +469,6 @@ export class CustomYjsProvider {
         selectedByUser[userId] = elementId;
 
         this.awareness.setLocalStateField("selectedByUser", selectedByUser);
-        console.log(
-          "[YjsProvider] Updated selected element for user:",
-          userId.slice(0, 8),
-          "element:",
-          elementId.slice(0, 8),
-        );
       }
     } catch (err) {
       console.error(
@@ -541,11 +479,6 @@ export class CustomYjsProvider {
   }
 
   private handleUserDisconnectMessage(message: WebSocketMessage) {
-    console.log(
-      "[YjsProvider] 👋 Processing userDisconnect message for",
-      (message as any).userId?.slice(0, 8),
-    );
-
     if (!this.awareness) {
       console.warn(
         "[YjsProvider] ⚠️ Awareness not available, cannot handle disconnect",
@@ -569,11 +502,6 @@ export class CustomYjsProvider {
 
         this.awareness.setLocalStateField("remoteUsers", remoteUsers);
         this.awareness.setLocalStateField("selectedByUser", selectedByUser);
-
-        console.log(
-          "[YjsProvider] Removed user from remote state:",
-          userId.slice(0, 8),
-        );
       }
     } catch (err) {
       console.error(
@@ -584,12 +512,7 @@ export class CustomYjsProvider {
   }
 
   private handleDocUpdate(update: Uint8Array, origin: any) {
-    // Skip updates that originated from remote sources (server sync/updates)
     if (origin === this || origin === "sync" || origin === "remote-update") {
-      console.log(
-        "[YjsProvider] Skipping update - originated from remote source:",
-        origin === this ? "this provider" : origin,
-      );
       return;
     }
 
@@ -606,6 +529,10 @@ export class CustomYjsProvider {
       const elements: EditorElement[] = elementsJson
         ? JSON.parse(elementsJson)
         : [];
+      console.log(
+        "[YjsProvider] Local doc update, elements length:",
+        elements.length,
+      );
 
       if (!elements || elements.length === 0) {
         console.log(
@@ -614,13 +541,6 @@ export class CustomYjsProvider {
         return;
       }
 
-      console.log(
-        "[YjsProvider] 📤 Sending update with",
-        elements.length,
-        "elements to server (origin:",
-        origin || "unknown",
-        ")",
-      );
       this.send({ type: "update", elements: elements });
     } catch (err) {
       console.error("[YjsProvider] Error sending doc update:", err);
@@ -630,21 +550,20 @@ export class CustomYjsProvider {
   private handleAwarenessChange({ added, updated, removed }: any) {
     if (!this.awareness || this.isDestroying) return;
 
+    // Throttle awareness updates for performance
+    const now = Date.now();
+    if (now - this.lastAwarenessChangeTime < this.awarenessThrottleMs) {
+      return;
+    }
+    this.lastAwarenessChangeTime = now;
+
     try {
       const localState = this.awareness.getLocalState();
       if (!localState) return;
 
-      if (localState.cursor) {
-        console.log("[YjsProvider] Sending mouse position update");
-        this.send({
-          type: "mouseMove",
-          userId: this.userId,
-          x: localState.cursor.x,
-          y: localState.cursor.y,
-        });
-      }
+      // Mouse movement tracking removed
     } catch (err) {
-      console.error("[YjsProvider] Error handling awareness change:", err);
+      // Removed error logging for awareness changes
     }
   }
 
@@ -674,11 +593,6 @@ export class CustomYjsProvider {
       return;
     }
 
-    console.log(
-      "[YjsProvider] 📤 Explicitly sending element update with",
-      elements.length,
-      "elements",
-    );
     this.send({ type: "update", elements: elements });
   }
 
@@ -689,7 +603,7 @@ export class CustomYjsProvider {
   }
 
   private emitStatus(status: string) {
-    this.statusListeners.forEach((listener) => listener(status));
+    this.statusListeners.forEach((listener) => listener({ status }));
   }
 
   private emitSynced(synced: boolean) {
@@ -699,9 +613,12 @@ export class CustomYjsProvider {
   public on(event: string, listener: (data: any) => void) {
     if (event === "status") {
       this.statusListeners.add(listener);
-      listener({ status: this.connected ? "connected" : "disconnected" });
+      const initialStatus = this.connected ? "connected" : "disconnected";
+
+      listener({ status: initialStatus });
     } else if (event === "synced") {
       this.syncedListeners.add(listener);
+
       listener(this.synched);
     }
   }
@@ -720,7 +637,6 @@ export class CustomYjsProvider {
     if (this.syncTimeoutId) clearTimeout(this.syncTimeoutId);
 
     if (this.ws) {
-      console.log("[YjsProvider] Closing WebSocket connection");
       this.ws.close();
       this.ws = null;
     }
@@ -728,7 +644,6 @@ export class CustomYjsProvider {
     this.connected = false;
     this.synched = false;
     this.initialSyncReceived = false;
-    console.log("[YjsProvider] Disconnected");
   }
 
   public destroy() {
@@ -746,6 +661,5 @@ export class CustomYjsProvider {
 
     this.statusListeners.clear();
     this.syncedListeners.clear();
-    console.log("[YjsProvider] Destroyed");
   }
 }

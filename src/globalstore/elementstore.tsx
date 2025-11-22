@@ -28,11 +28,12 @@ type ElementStore<TElement extends EditorElement> = {
   undo: () => ElementStore<TElement>;
   redo: () => ElementStore<TElement>;
   clearHistory: () => ElementStore<TElement>;
-  setYjsUpdateCallback: (callback: ((elements: EditorElement[]) => void) | null) => void;
+  setYjsUpdateCallback: (
+    callback: ((elements: EditorElement[]) => void) | null,
+  ) => void;
 };
 
 const createElementStore = <TElement extends EditorElement>() => {
-
   return create<ElementStore<TElement>>((set, get) => {
     const takeSnapshot = () => {
       const { elements, past } = get();
@@ -64,6 +65,7 @@ const createElementStore = <TElement extends EditorElement>() => {
       },
 
       updateElement: (id: string, updatedElement: Partial<TElement>) => {
+        console.log("Updating element:", id, updatedElement);
         takeSnapshot();
         const { elements } = get();
         const updatedTree = elementHelper.mapUpdateById(
@@ -289,6 +291,7 @@ const createElementStore = <TElement extends EditorElement>() => {
           set({ elements: newElements });
         }
 
+        triggerYjsCallback();
         return get();
       },
 
@@ -297,13 +300,14 @@ const createElementStore = <TElement extends EditorElement>() => {
         return get();
       },
 
-      setYjsUpdateCallback: (callback: ((elements: EditorElement[]) => void) | null) => {
+      setYjsUpdateCallback: (
+        callback: ((elements: EditorElement[]) => void) | null,
+      ) => {
         set({ yjsUpdateCallback: callback });
       },
     };
   });
 };
-
 
 const elementStoreInstance = createElementStore();
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useElementStore, ElementStore } from "@/globalstore/elementstore";
 import { useMouseStore } from "@/globalstore/mousestore";
@@ -8,13 +8,11 @@ import { EditorElement } from "@/types/global.type";
 import * as Y from "yjs";
 import { CustomYjsProvider } from "@/lib/yjs/yjs-provider";
 import { IndexeddbPersistence } from "y-indexeddb";
-import { debounce } from "lodash";
-import type { DebouncedFunc } from "lodash";
 import {
-  safeValidateElementTree,
-  validateContainerElementTree,
-} from "@/lib/utils/element/containerElementValidator";
-import { attachYjsDebugger } from "@/lib/yjs/yjs-debug-utils";
+  createSyncAwarenessToStore,
+  createAwarenessChangeObserver,
+} from "@/lib/utils/use-yjs-collab-utils";
+import { useYjsElements } from "./use-yjs-elements";
 
 type RoomState = "idle" | "connecting" | "connected" | "error";
 
@@ -73,44 +71,42 @@ export function useYjsCollab({
     lastSendTime: 0,
     updateCount: 0,
     remoteUpdateTimeout: null as NodeJS.Timeout | null,
+    lastAwarenessHash: "",
+    pendingElementUpdate: null as EditorElement[] | null,
   });
 
   const { userId, getToken, isLoaded } = useAuth();
   const { elements, loadElements } = useElementStore();
-
-  // We access the store here, but we will NOT add it to the connection useEffect dependency array
   const mouseStore = useMouseStore();
-  const { syncFromAwareness } = useMouseStore();
 
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<CustomYjsProvider | null>(null);
   const persistenceRef = useRef<IndexeddbPersistence | null>(null);
 
-  // Utility functions
-  const sanitizeElements = (elements: EditorElement[]): EditorElement[] => {
-    const sanitize = (el: EditorElement): EditorElement => {
-      const sanitized = { ...el };
-      if (sanitized.settings === null || sanitized.settings === undefined) {
-        (sanitized as any).settings = {};
-      }
-      if (sanitized.styles === null || sanitized.styles === undefined) {
-        (sanitized as any).styles = {};
-      }
-      if (Array.isArray((sanitized as any).elements)) {
-        (sanitized as any).elements = (sanitized as any).elements.map(sanitize);
-      }
-      return sanitized;
-    };
-    return elements.map(sanitize);
+  const getProvider = () => providerRef.current;
+  const getYdoc = () => ydocRef.current;
+
+  const handleSyncCallback = () => {
+    setState((prev) => ({
+      ...prev,
+      isSynced: true,
+    }));
+    onSync?.();
   };
 
-  const computeHash = (elements: EditorElement[]): string => {
-    try {
-      return JSON.stringify(elements);
-    } catch {
-      return "[]";
-    }
-  };
+  const {
+    handleSync,
+    handleUpdate,
+    setupElementsObserver,
+    setupElementsCallback,
+  } = useYjsElements({
+    ydoc: ydocRef.current,
+    provider: providerRef.current,
+    loadElements,
+    onSync: handleSyncCallback,
+    getProvider,
+    getYdoc,
+  });
 
   const clearRemoteTimeout = () => {
     if (internalStateRef.current.remoteUpdateTimeout) {
@@ -119,114 +115,10 @@ export function useYjsCollab({
     }
   };
 
-  // Handler: Process sync message
-  const handleSync = useCallback(
-    (elements: EditorElement[]) => {
-      console.log(
-        "[useYjsCollab] handleSync received",
-        elements.length,
-        "elements",
-      );
-
-      const sanitizedElements = sanitizeElements(elements);
-
-      const validationResult = safeValidateElementTree(sanitizedElements);
-      if (!validationResult.success) {
-        console.error(
-          "[useYjsCollab] Failed to validate elements during sync:",
-          validationResult.error,
-        );
-        return;
-      }
-
-      const normalizedElements = validationResult.data || sanitizedElements;
-      const validation = validateContainerElementTree(normalizedElements);
-      if (!validation.valid) {
-        console.warn(
-          "[useYjsCollab] Container validation issues:",
-          validation.issues,
-        );
-      }
-
-      const hash = computeHash(normalizedElements);
-      internalStateRef.current.lastLocalHash = hash;
-      internalStateRef.current.lastSentHash = hash;
-
-      console.log(
-        "[useYjsCollab] handleSync: loading",
-        normalizedElements.length,
-        "sanitized elements",
-      );
-      loadElements(normalizedElements, true);
-
-      setTimeout(() => {
-        setState((prev) => ({
-          ...prev,
-          isSynced: true,
-        }));
-
-        onSync?.();
-      }, 100);
-    },
-    [loadElements, onSync],
-  );
-
-  // Handler: Process update message
-  const handleUpdate = useCallback(
-    (elements: EditorElement[]) => {
-      console.log(
-        "[useYjsCollab] handleUpdate received",
-        elements.length,
-        "elements",
-      );
-
-      // Don't skip on isUpdatingFromRemote flag anymore - let the observer check transaction origin
-
-      // Sanitize elements to convert null settings/styles to empty objects
-      const sanitizedElements = sanitizeElements(elements);
-
-      const validationResult = safeValidateElementTree(sanitizedElements);
-      if (!validationResult.success) {
-        console.error(
-          "[useYjsCollab] Failed to validate elements during update:",
-          validationResult.error,
-        );
-        return;
-      }
-
-      const normalizedElements = validationResult.data || sanitizedElements;
-      const validation = validateContainerElementTree(normalizedElements);
-      if (!validation.valid) {
-        console.warn(
-          "[useYjsCollab] Container validation issues:",
-          validation.issues,
-        );
-      }
-
-      const hash = computeHash(normalizedElements);
-      if (hash !== internalStateRef.current.lastLocalHash) {
-        internalStateRef.current.lastLocalHash = hash;
-        console.log(
-          "[useYjsCollab] handleUpdate: loading",
-          normalizedElements.length,
-          "sanitized elements",
-        );
-        loadElements(normalizedElements, true);
-      }
-    },
-    [loadElements],
-  );
-
-  // ---------------------------------------------------------------------------
-  // REF PATTERN FIX:
-  // Keep a reference to the latest versions of callbacks and stores.
-  // This allows the connection effect to use them without needing them as dependencies.
-  // ---------------------------------------------------------------------------
   const latestHandlers = useRef({
     handleSync,
     handleUpdate,
     mouseStore,
-    syncFromAwareness,
     onSync,
     getToken,
   });
@@ -236,77 +128,43 @@ export function useYjsCollab({
       handleSync,
       handleUpdate,
       mouseStore,
-      syncFromAwareness,
       onSync,
       getToken,
     };
-  }, [
-    handleSync,
-    handleUpdate,
-    mouseStore,
-    syncFromAwareness,
-    onSync,
-    getToken,
-  ]);
+  }, [handleSync, handleUpdate, mouseStore, onSync, getToken]);
 
-  // ---------------------------------------------------------------------------
-  // CONNECTION EFFECT
-  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (ydocRef.current) {
+      ydocRef.current = ydocRef.current;
+    }
+  }, []);
+
   useEffect(() => {
     if (!enabled || !isLoaded || !userId) {
       return;
     }
-
     if (!roomId || roomId === "undefined" || roomId === "") {
-      console.error("[useYjsCollab] Invalid roomId:", roomId);
       setState((p) => ({ ...p, roomState: "error", error: "Invalid room ID" }));
       return;
     }
-
-    console.log("[useYjsCollab] Initializing for room:", roomId);
-
-    // 2. Create Y.Doc
     const ydoc = new Y.Doc();
     ydocRef.current = ydoc;
-
-    // 3. Set up IndexedDB persistence
     const persistence = new IndexeddbPersistence(roomId, ydoc);
     persistenceRef.current = persistence;
-
-    persistence.whenSynced.then(() => {
-      console.log("[useYjsCollab] IndexedDB synced");
-    });
-
-    // 4. Create Provider
+    persistence.whenSynced.then(() => {});
     const provider = new CustomYjsProvider({
       url: wsUrl,
       roomId,
       userId,
       projectId,
-      // Use the Ref to get the token so we don't need 'getToken' in deps
       getToken: () => latestHandlers.current.getToken(),
       doc: ydoc,
       onSyncUsers: (users) => {
-        console.log(
-          "[useYjsCollab] Provider syncing users:",
-          Object.keys(users).length,
-          "users",
-        );
-        // Sync users directly to store immediately
         mouseStore.setUsers(users);
       },
     });
     providerRef.current = provider;
-
-    // 4b. Attach debugger if enabled
-    if (enableDebug) {
-      console.log("[useYjsCollab] 🔍 Debug mode enabled");
-      attachYjsDebugger(ydoc, provider, "yjsDebug");
-    }
-
-    // 5. Listeners
     provider.on("status", ({ status }) => {
-      console.log("[useYjsCollab] Provider status:", status);
       setState((p) => ({
         ...p,
         roomState:
@@ -318,365 +176,72 @@ export function useYjsCollab({
         error: status === "error" ? "Connection failed" : null,
       }));
     });
-
     provider.on("synced", (synced) => {
-      console.log("[useYjsCollab] Provider synced:", synced);
       if (synced) {
         setState((p) => ({ ...p, isSynced: synced }));
-        // Use Ref
         latestHandlers.current.onSync?.();
       }
     });
-
-    // 6. Data Observers
     const yElementsText = ydoc.getText("elementsJson");
-    const yMousePositions = ydoc.getMap("mousePositions");
-    const ySelections = ydoc.getMap("selections");
-
-    const elementsObserver = (event: any, transaction: any) => {
-      try {
-        // Skip observer if we just updated from ElementStore
-        // The callback already handles sending the update
-        if (internalStateRef.current.isUpdatingFromElementStore) {
-          console.log(
-            "[useYjsCollab] Skipping observer - update came from ElementStore",
-          );
-          return;
-        }
-
-        const elementsJson = yElementsText.toString();
-        const parsed = elementsJson ? JSON.parse(elementsJson) : [];
-
-        // Check transaction origin to determine if this is a remote update
-        // Provider sends updates with origin "remote-update"
-        const isRemoteUpdate =
-          transaction && transaction.origin === "remote-update";
-
-        console.log(
-          "[useYjsCollab] Elements observer fired - isRemoteUpdate:",
-          isRemoteUpdate,
-          "transaction.origin:",
-          transaction?.origin,
-        );
-
-        if (isRemoteUpdate) {
-          // Use Ref
-          latestHandlers.current.handleUpdate(parsed);
-        } else {
-          // Use Ref
-          latestHandlers.current.handleSync(parsed);
-        }
-      } catch (err) {
-        console.warn("[useYjsCollab] Elements parse failed:", err);
-      }
-    };
-
-    const mouseObserver = (event: any, transaction: any) => {
-      const positions = yMousePositions.toJSON();
-      const converted: Record<string, { x: number; y: number }> = {};
-      Object.entries(positions).forEach(([uid, pos]: [string, any]) => {
-        converted[uid] = { x: pos.x || pos.X, y: pos.y || pos.Y };
-      });
-      // Use Ref
-      latestHandlers.current.mouseStore.setMousePositions(converted);
-    };
-
-    const selectionsObserver = (event: any, transaction: any) => {
-      const selections = ySelections.toJSON();
-      // Use Ref
-      latestHandlers.current.mouseStore.setSelectedElements(selections);
-    };
-
-    // 6b. Awareness change observer - sync ALL remote awareness states to mousestore
-    const syncAwarenessToStore = () => {
-      if (!provider.awareness) return;
-
-      try {
-        // Get all awareness states (local + remote)
-        const allStates = provider.awareness.getStates();
-        if (!allStates) return;
-
-        // Aggregate remote users (everyone except ourselves)
-        const remoteUsers: Record<string, any> = {};
-        const selectedByUser: Record<string, any> = {};
-        let users: Record<string, any> = {};
-
-        const localClientId = provider.awareness?.clientID?.toString();
-        let usersMapFound = false;
-
-        allStates.forEach((state: any, clientId: any) => {
-          if (!state) return;
-
-          const clientIdStr = clientId.toString();
-
-          // Get the users map from OUR local state (set by currentState message)
-          // This is a map of ALL online users, not per-client
-          if (clientIdStr === localClientId) {
-            if (
-              state.users &&
-              typeof state.users === "object" &&
-              Object.keys(state.users).length > 0
-            ) {
-              users = { ...state.users };
-              usersMapFound = true;
-              console.log(
-                "[useYjsCollab] Got users map from local state:",
-                Object.keys(users).length,
-                "users",
-                "clientId:",
-                clientIdStr,
-              );
-            }
-            // Extract remoteUsers from local state (populated by handleMouseMoveMessage)
-            if (state.remoteUsers && typeof state.remoteUsers === "object") {
-              // Ensure coordinates are numbers
-              Object.entries(state.remoteUsers).forEach(
-                ([userId, pos]: [string, any]) => {
-                  if (
-                    pos &&
-                    typeof pos.x === "number" &&
-                    typeof pos.y === "number"
-                  ) {
-                    remoteUsers[userId] = { x: pos.x, y: pos.y };
-                  }
-                },
-              );
-              console.log(
-                "[useYjsCollab] Got remoteUsers from local state:",
-                Object.keys(remoteUsers).length,
-                "remote users",
-              );
-            }
-            // Extract selectedByUser from local state
-            if (
-              state.selectedByUser &&
-              typeof state.selectedByUser === "object"
-            ) {
-              Object.assign(selectedByUser, state.selectedByUser);
-              console.log(
-                "[useYjsCollab] Got selectedByUser from local state:",
-                Object.keys(state.selectedByUser).length,
-                "selections",
-              );
-            }
-            // Skip processing local user's cursor for remoteUsers (don't include self)
-            return; // Skip rest of local state processing
-          }
-
-          // Collect remote user cursors (only from other clients)
-          if (state.cursor && typeof state.cursor === "object") {
-            const x = state.cursor.x;
-            const y = state.cursor.y;
-            if (typeof x === "number" && typeof y === "number") {
-              remoteUsers[clientIdStr] = { x, y };
-            }
-          }
-
-          // Collect selected elements by user
-          if (state.selectedElement) {
-            selectedByUser[clientIdStr] = state.selectedElement;
-          }
-
-          // Collect user info (individual user's own info) - only if we haven't found the users map
-          if (!usersMapFound && state.user && typeof state.user === "object") {
-            users[clientIdStr] = state.user;
-          }
-        });
-
-        console.log(
-          "[useYjsCollab] Awareness sync: found",
-          Object.keys(remoteUsers).length,
-          "remote users with cursors,",
-          Object.keys(users).length,
-          "total users",
-          "usersMapFound:",
-          usersMapFound,
-        );
-
-        // Sync all aggregated state to mousestore
-        console.log(
-          "[useYjsCollab] Setting remoteUsers to store:",
-          Object.keys(remoteUsers).length,
-          "users with positions:",
-          Object.entries(remoteUsers).map(([id, pos]: [string, any]) => ({
-            id: id.slice(0, 8),
-            x: pos.x,
-            y: pos.y,
-          })),
-        );
-        latestHandlers.current.mouseStore.setRemoteUsers(remoteUsers);
-        latestHandlers.current.mouseStore.setSelectedByUser(selectedByUser);
-        latestHandlers.current.mouseStore.setUsers(users);
-      } catch (err) {
-        console.error("[useYjsCollab] Error syncing awareness to store:", err);
-      }
-    };
-
-    const awarenessChangeObserver = ({ added, updated, removed }: any) => {
-      // Call sync function when awareness changes
-      syncAwarenessToStore();
-    };
-
-    // Attach observers
+    const elementsObserver = setupElementsObserver(
+      yElementsText,
+      internalStateRef,
+    );
+    const syncAwarenessToStore = createSyncAwarenessToStore(
+      provider,
+      mouseStore,
+      internalStateRef,
+    );
+    const awarenessChangeObserver =
+      createAwarenessChangeObserver(syncAwarenessToStore);
     yElementsText.observe(elementsObserver);
-    yMousePositions.observe(mouseObserver);
-    ySelections.observe(selectionsObserver);
-
-    // Attach awareness observer for remote user tracking
+    try {
+      const initialElementsJson = yElementsText.toString();
+      const initialElements = initialElementsJson
+        ? JSON.parse(initialElementsJson)
+        : [];
+      latestHandlers.current.handleSync(initialElements);
+    } catch (err) {
+      console.warn("[useYjsCollab] Initial elements parse failed:", err);
+      latestHandlers.current.handleSync([]);
+    }
     if (provider.awareness) {
       provider.awareness.on("change", awarenessChangeObserver);
-
-      // Also trigger initial awareness state sync
-      console.log("[useYjsCollab] Triggering initial awareness state check");
       syncAwarenessToStore();
-
-      // Set up continuous polling for smooth mouse movement tracking
-      // This ensures mouse updates are synced on every awareness update
-      let pollCount = 0;
       const awarenessPollingInterval = setInterval(() => {
         if (!provider || !provider.awareness) {
           clearInterval(awarenessPollingInterval);
           return;
         }
-        pollCount++;
-        if (pollCount % 20 === 0) {
-          // Log every 1 second (20 polls * 50ms)
-          const allStates = provider.awareness.getStates();
-          console.log(
-            "[useYjsCollab] Polling awareness - total states:",
-            allStates?.size,
-          );
-          allStates?.forEach((state: any, clientId: any) => {
-            if (state && state.cursor) {
-              console.log(
-                "[useYjsCollab] Client",
-                clientId.toString().slice(0, 8),
-                "cursor:",
-                state.cursor,
-              );
-            }
-          });
-        }
         syncAwarenessToStore();
-      }, 50); // Poll every 50ms for smooth cursor tracking
-
-      // Store interval ID for cleanup
+      }, 150);
       internalStateRef.current.remoteUpdateTimeout =
-        awarenessPollingInterval as any;
-      console.log("[useYjsCollab] Started awareness polling interval");
+        awarenessPollingInterval as NodeJS.Timeout;
     }
-
-    // When elements change in the store (via user actions), update Yjs doc AND notify provider
-    console.log("[useYjsCollab] Setting up ElementStore -> Yjs callback");
-    ElementStore.getState().setYjsUpdateCallback(
-      (elements: EditorElement[]) => {
-        if (!provider.synched) {
-          console.log(
-            "[useYjsCollab] Skipping element update - not synced yet",
-          );
-          return;
-        }
-
-        if (!elements || elements.length === 0) {
-          console.log(
-            "[useYjsCollab] Skipping element update - empty elements",
-          );
-          return;
-        }
-
-        console.log(
-          "[useYjsCollab] ElementStore callback: updating Yjs doc with",
-          elements.length,
-          "elements",
-        );
-
-        try {
-          // Mark that we're updating from ElementStore to prevent observer re-triggering
-          internalStateRef.current.isUpdatingFromElementStore = true;
-
-          Y.transact(
-            ydoc,
-            () => {
-              const yElementsText = ydoc.getText("elementsJson");
-              yElementsText.delete(0, yElementsText.length);
-              yElementsText.insert(0, JSON.stringify(elements));
-            },
-            "local-element-store",
-          );
-
-          console.log(
-            "[useYjsCollab] Y.Doc updated, now explicitly sending update to provider",
-          );
-
-          // After updating Y.Doc, explicitly notify the provider to send the update
-          // This ensures the update reaches the server even if the Y.Doc observer
-          // encounters any race conditions or timing issues
-          provider.sendUpdate(elements);
-
-          // Clear flag after a short delay to allow observer to run if needed
-          setTimeout(() => {
-            internalStateRef.current.isUpdatingFromElementStore = false;
-          }, 50);
-        } catch (err) {
-          console.error(
-            "[useYjsCollab] Error updating Yjs doc from ElementStore:",
-            err,
-          );
-          internalStateRef.current.isUpdatingFromElementStore = false;
-        }
-      },
-    );
-
-    // 8. Cleanup
+    setupElementsCallback(internalStateRef, ElementStore, getProvider, getYdoc);
     return () => {
-      console.log("[useYjsCollab] Cleaning up");
-
-      // Clear polling interval
       if (internalStateRef.current.remoteUpdateTimeout) {
-        clearInterval(internalStateRef.current.remoteUpdateTimeout as any);
+        clearInterval(
+          internalStateRef.current.remoteUpdateTimeout as NodeJS.Timeout,
+        );
         internalStateRef.current.remoteUpdateTimeout = null;
       }
-
-      // Disconnect ElementStore callback
       ElementStore.getState().setYjsUpdateCallback(null);
-
-      // Unobserve all listeners
       yElementsText.unobserve(elementsObserver);
-      yMousePositions.unobserve(mouseObserver);
-      ySelections.unobserve(selectionsObserver);
-
-      // Unobserve awareness changes
       if (provider.awareness) {
         try {
           provider.awareness.off("change", awarenessChangeObserver);
-        } catch (err) {
-          console.warn(
-            "[useYjsCollab] Error removing awareness observer:",
-            err,
-          );
-        }
+        } catch (err) {}
       }
-
       provider.destroy();
       persistence.destroy();
       ydoc.destroy();
-
       ydocRef.current = null;
       providerRef.current = null;
       persistenceRef.current = null;
     };
-  }, [
-    // 8. MINIMAL DEPENDENCIES to prevent loop
-    enabled,
-    isLoaded,
-    userId,
-    roomId,
-    wsUrl,
-    projectId,
-    // IMPORTANT: do NOT add mouseStore, handleSync, handleUpdate, or onSync here
-  ]);
+  }, [enabled, isLoaded, userId, roomId, wsUrl, projectId]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       clearRemoteTimeout();

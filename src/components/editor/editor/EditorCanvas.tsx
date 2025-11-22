@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useMemo,
+  useState,
+  useCallback,
+} from "react";
 import { MousePointer } from "lucide-react";
 import { EditorElement } from "@/types/global.type";
 import ElementLoader from "@/components/editor/ElementLoader";
@@ -85,19 +91,24 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     let logCount = 0;
     let lastX = -1;
     let lastY = -1;
+    let lastUpdateTime = 0;
+    const THROTTLE_MS = 50; // Throttle to max 20 updates per second
 
     // Determine if we're tracking mouse in an iframe or regular canvas
     const isIframe = iframeRef && iframeRef.current;
     const targetDoc = isIframe ? iframeRef.current?.contentDocument : document;
 
     if (!targetDoc) {
-      console.warn(
-        "[EditorCanvas] No target document available for mouse tracking",
-      );
       return;
     }
 
     const handleMouseMove = (e: MouseEvent) => {
+      // Throttle updates for performance
+      const now = Date.now();
+      if (now - lastUpdateTime < THROTTLE_MS) {
+        return;
+      }
+      lastUpdateTime = now;
       // For iframe: coordinates are already relative to iframe content
       // For canvas: need to calculate relative to canvas bounds
       let x: number;
@@ -110,12 +121,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         logCount++;
 
         if (logCount % 10 === 0) {
-          console.log(
-            "[EditorCanvas] 🖱️ Iframe mouse move - clientX:",
-            e.clientX,
-            "clientY:",
-            e.clientY,
-          );
+          // Logging removed
         }
       } else {
         // Regular canvas tracking
@@ -134,28 +140,12 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
           e.clientY <= canvasRect.bottom;
 
         if (logCount % 10 === 0) {
-          console.log(
-            "[EditorCanvas] Mouse move event - clientX:",
-            e.clientX,
-            "clientY:",
-            e.clientY,
-            "canvasRect:",
-            {
-              left: canvasRect.left,
-              right: canvasRect.right,
-              top: canvasRect.top,
-              bottom: canvasRect.bottom,
-            },
-            "isInsideCanvas:",
-            isInsideCanvas,
-          );
+          // Logging removed
         }
 
         if (!isInsideCanvas) {
           if (logCount % 10 === 0) {
-            console.log(
-              "[EditorCanvas] ⚠️ Mouse outside canvas bounds, skipping update",
-            );
+            // Logging removed
           }
           return;
         }
@@ -165,55 +155,44 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       }
 
       if (logCount % 10 === 0) {
-        console.log(
-          "[EditorCanvas] ✅ Calculated position:",
-          { x, y },
-          "lastPosition:",
-          { lastX, lastY },
-        );
+        // Logging removed
       }
 
-      // Only update if position actually changed
-      if (lastX === x && lastY === y) {
+      // Only update if position changed significantly (> 3px)
+      const deltaX = Math.abs(x - lastX);
+      const deltaY = Math.abs(y - lastY);
+      if (lastX !== -1 && deltaX < 3 && deltaY < 3) {
         return;
       }
       lastX = x;
       lastY = y;
 
-      if (logCount % 10 === 0) {
-        console.log("[EditorCanvas] 📤 Sending cursor to awareness:", { x, y });
-      }
-
       try {
         provider.awareness.setLocalStateField("cursor", { x, y });
       } catch (err) {
-        console.warn("[EditorCanvas] Error updating awareness cursor:", err);
+        // Error handling without logging
       }
     };
 
     const handleMouseLeave = () => {
-      console.log("[EditorCanvas] Mouse left canvas");
       try {
         provider.awareness.setLocalStateField("cursor", null);
       } catch (err) {
-        console.warn("[EditorCanvas] Error clearing cursor on leave:", err);
+        // Error handling without logging
       }
     };
 
     const trackingTarget = isIframe ? iframeRef.current : canvasRef.current;
     if (!trackingTarget) return;
 
-    const targetName = isIframe ? "iframe" : "canvas";
-    console.log(`[EditorCanvas] Attaching mouse listeners to ${targetName}`);
-
-    targetDoc.addEventListener("mousemove", handleMouseMove);
+    // Use passive listener for better scroll performance
+    targetDoc.addEventListener("mousemove", handleMouseMove, { passive: true });
     if (!isIframe) {
       // Only attach mouseleave to regular canvas
       trackingTarget.addEventListener("mouseleave", handleMouseLeave);
     }
 
     return () => {
-      console.log(`[EditorCanvas] Removing mouse listeners from ${targetName}`);
       targetDoc.removeEventListener("mousemove", handleMouseMove);
       if (!isIframe) {
         trackingTarget.removeEventListener("mouseleave", handleMouseLeave);
@@ -230,45 +209,17 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
           const x = typeof pos.x === "number" ? pos.x : 0;
           const y = typeof pos.y === "number" ? pos.y : 0;
 
-          const cursor = {
+          return {
             uid,
             // Adjust for scroll position of inner container
             x: x - scrollOffset.x,
             y: y - scrollOffset.y,
             userName: users[uid]?.userName || `User ${uid.slice(0, 8)}`,
           };
-
-          console.log(
-            "[EditorCanvas] Remote cursor for",
-            uid.slice(0, 8),
-            "- original:",
-            { x, y },
-            "after scroll adjustment:",
-            { x: cursor.x, y: cursor.y },
-            "scrollOffset:",
-            scrollOffset,
-          );
-
-          return cursor;
         });
-
-      if (cursors.length > 0) {
-        console.log(
-          "[EditorCanvas] Rendering",
-          cursors.length,
-          "remote cursors from remoteUsers:",
-          Object.keys(remoteUsers),
-        );
-      }
 
       return cursors;
     }
-    console.log(
-      "[EditorCanvas] Not rendering remote cursors - ydoc:",
-      !!ydoc,
-      "remoteUsers:",
-      remoteUsers ? Object.keys(remoteUsers) : "null",
-    );
     return [];
   }, [ydoc, remoteUsers, userId, users, scrollOffset]);
 
