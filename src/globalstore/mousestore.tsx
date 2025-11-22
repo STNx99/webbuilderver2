@@ -93,6 +93,19 @@ export const useMouseStore = create<MouseStore>((set, get) => ({
   },
 
   setRemoteUsers: (remoteUsers: Record<string, MousePosition>) => {
+    const count = Object.keys(remoteUsers).length;
+    if (count > 0) {
+      console.log(
+        "[MouseStore] 📍 setRemoteUsers called with",
+        count,
+        "users:",
+        Object.entries(remoteUsers).map(([id, pos]) => ({
+          id: id.slice(0, 8),
+          x: pos.x,
+          y: pos.y,
+        })),
+      );
+    }
     set({ remoteUsers });
   },
 

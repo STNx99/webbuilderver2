@@ -261,7 +261,7 @@ export class CustomYjsProvider {
       this.handleCurrentStateMessage(message);
     } else if (message.type === "mouseMove") {
       this.handleMouseMoveMessage(message);
-    }  else if (message.type === "userDisconnect") {
+    } else if (message.type === "userDisconnect") {
       this.handleUserDisconnectMessage(message);
     } else if (message.type === "error") {
       console.error(
@@ -366,10 +366,10 @@ export class CustomYjsProvider {
 
     if (!this.awareness) {
       console.warn(
-        "[YjsProvider] ⚠️ Awareness not available, cannot update currentState"
+        "[YjsProvider] ⚠️ Awareness not available, cannot update currentState",
       );
       console.warn(
-        "[YjsProvider] Attempting to create awareness and sync users directly"
+        "[YjsProvider] Attempting to create awareness and sync users directly",
       );
 
       // Try to sync users directly even if awareness isn't available
@@ -377,7 +377,7 @@ export class CustomYjsProvider {
         console.log(
           "[YjsProvider] Syncing users via callback:",
           Object.keys(message.users).length,
-          "users"
+          "users",
         );
         this.onSyncUsers(message.users);
       }
@@ -487,11 +487,7 @@ export class CustomYjsProvider {
         const currentState = this.awareness.getLocalState() || {};
         const remoteUsers = currentState.remoteUsers || {};
 
-        remoteUsers[userId] = {
-          x,
-          y,
-          cursor: { x, y },
-        };
+        remoteUsers[userId] = { x, y };
 
         this.awareness.setLocalStateField("remoteUsers", remoteUsers);
         console.log(
@@ -647,8 +643,6 @@ export class CustomYjsProvider {
           y: localState.cursor.y,
         });
       }
-
-      
     } catch (err) {
       console.error("[YjsProvider] Error handling awareness change:", err);
     }

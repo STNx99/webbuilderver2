@@ -16,11 +16,6 @@ import {
 } from "@/lib/utils/element/containerElementValidator";
 import { attachYjsDebugger } from "@/lib/yjs/yjs-debug-utils";
 
-// Track document mouse moves for local cursor position
-let documentMouseTrackingAttached = false;
-let lastDocumentMousePosition = { x: 0, y: 0 };
-let documentMouseMoveHandler: ((e: MouseEvent) => void) | null = null;
-
 type RoomState = "idle" | "connecting" | "connected" | "error";
 
 interface CollabState {
@@ -133,13 +128,6 @@ export function useYjsCollab({
         "elements",
       );
 
-      internalStateRef.current.isUpdatingFromRemote = true;
-      clearRemoteTimeout();
-
-      internalStateRef.current.remoteUpdateTimeout = setTimeout(() => {
-        internalStateRef.current.isUpdatingFromRemote = false;
-      }, 2000);
-
       const sanitizedElements = sanitizeElements(elements);
 
       const validationResult = safeValidateElementTree(sanitizedElements);
@@ -172,9 +160,6 @@ export function useYjsCollab({
       loadElements(normalizedElements, true);
 
       setTimeout(() => {
-        internalStateRef.current.isUpdatingFromRemote = false;
-        clearRemoteTimeout();
-
         setState((prev) => ({
           ...prev,
           isSynced: true,
@@ -195,9 +180,7 @@ export function useYjsCollab({
         "elements",
       );
 
-      if (internalStateRef.current.isUpdatingFromRemote) {
-        return;
-      }
+      // Don't skip on isUpdatingFromRemote flag anymore - let the observer check transaction origin
 
       // Sanitize elements to convert null settings/styles to empty objects
       const sanitizedElements = sanitizeElements(elements);
@@ -222,13 +205,6 @@ export function useYjsCollab({
 
       const hash = computeHash(normalizedElements);
       if (hash !== internalStateRef.current.lastLocalHash) {
-        internalStateRef.current.isUpdatingFromRemote = true;
-        clearRemoteTimeout();
-
-        internalStateRef.current.remoteUpdateTimeout = setTimeout(() => {
-          internalStateRef.current.isUpdatingFromRemote = false;
-        }, 2000);
-
         internalStateRef.current.lastLocalHash = hash;
         console.log(
           "[useYjsCollab] handleUpdate: loading",
@@ -236,11 +212,6 @@ export function useYjsCollab({
           "sanitized elements",
         );
         loadElements(normalizedElements, true);
-
-        setTimeout(() => {
-          internalStateRef.current.isUpdatingFromRemote = false;
-          clearRemoteTimeout();
-        }, 100);
       }
     },
     [loadElements],
@@ -362,7 +333,7 @@ export function useYjsCollab({
     const yMousePositions = ydoc.getMap("mousePositions");
     const ySelections = ydoc.getMap("selections");
 
-    const elementsObserver = () => {
+    const elementsObserver = (event: any, transaction: any) => {
       try {
         // Skip observer if we just updated from ElementStore
         // The callback already handles sending the update
@@ -376,7 +347,19 @@ export function useYjsCollab({
         const elementsJson = yElementsText.toString();
         const parsed = elementsJson ? JSON.parse(elementsJson) : [];
 
-        if (internalStateRef.current.isUpdatingFromRemote) {
+        // Check transaction origin to determine if this is a remote update
+        // Provider sends updates with origin "remote-update"
+        const isRemoteUpdate =
+          transaction && transaction.origin === "remote-update";
+
+        console.log(
+          "[useYjsCollab] Elements observer fired - isRemoteUpdate:",
+          isRemoteUpdate,
+          "transaction.origin:",
+          transaction?.origin,
+        );
+
+        if (isRemoteUpdate) {
           // Use Ref
           latestHandlers.current.handleUpdate(parsed);
         } else {
@@ -388,7 +371,7 @@ export function useYjsCollab({
       }
     };
 
-    const mouseObserver = () => {
+    const mouseObserver = (event: any, transaction: any) => {
       const positions = yMousePositions.toJSON();
       const converted: Record<string, { x: number; y: number }> = {};
       Object.entries(positions).forEach(([uid, pos]: [string, any]) => {
@@ -398,7 +381,7 @@ export function useYjsCollab({
       latestHandlers.current.mouseStore.setMousePositions(converted);
     };
 
-    const selectionsObserver = () => {
+    const selectionsObserver = (event: any, transaction: any) => {
       const selections = ySelections.toJSON();
       // Use Ref
       latestHandlers.current.mouseStore.setSelectedElements(selections);
@@ -446,13 +429,22 @@ export function useYjsCollab({
             }
             // Extract remoteUsers from local state (populated by handleMouseMoveMessage)
             if (state.remoteUsers && typeof state.remoteUsers === "object") {
-              Object.assign(remoteUsers, state.remoteUsers);
+              // Ensure coordinates are numbers
+              Object.entries(state.remoteUsers).forEach(
+                ([userId, pos]: [string, any]) => {
+                  if (
+                    pos &&
+                    typeof pos.x === "number" &&
+                    typeof pos.y === "number"
+                  ) {
+                    remoteUsers[userId] = { x: pos.x, y: pos.y };
+                  }
+                },
+              );
               console.log(
                 "[useYjsCollab] Got remoteUsers from local state:",
-                Object.keys(state.remoteUsers).length,
+                Object.keys(remoteUsers).length,
                 "remote users",
-                "data:",
-                JSON.stringify(state.remoteUsers, null, 2),
               );
             }
             // Extract selectedByUser from local state
@@ -471,13 +463,13 @@ export function useYjsCollab({
             return; // Skip rest of local state processing
           }
 
-          // Collect remote user cursors
+          // Collect remote user cursors (only from other clients)
           if (state.cursor && typeof state.cursor === "object") {
-            remoteUsers[clientIdStr] = {
-              x: state.cursor.x || 0,
-              y: state.cursor.y || 0,
-              cursor: { x: state.cursor.x || 0, y: state.cursor.y || 0 },
-            };
+            const x = state.cursor.x;
+            const y = state.cursor.y;
+            if (typeof x === "number" && typeof y === "number") {
+              remoteUsers[clientIdStr] = { x, y };
+            }
           }
 
           // Collect selected elements by user
@@ -504,7 +496,13 @@ export function useYjsCollab({
         // Sync all aggregated state to mousestore
         console.log(
           "[useYjsCollab] Setting remoteUsers to store:",
-          JSON.stringify(remoteUsers, null, 2),
+          Object.keys(remoteUsers).length,
+          "users with positions:",
+          Object.entries(remoteUsers).map(([id, pos]: [string, any]) => ({
+            id: id.slice(0, 8),
+            x: pos.x,
+            y: pos.y,
+          })),
         );
         latestHandlers.current.mouseStore.setRemoteUsers(remoteUsers);
         latestHandlers.current.mouseStore.setSelectedByUser(selectedByUser);
@@ -568,41 +566,6 @@ export function useYjsCollab({
       console.log("[useYjsCollab] Started awareness polling interval");
     }
 
-    // 6c. Track document-level mouse moves to update local cursor awareness
-    const handleDocumentMouseMove = (e: MouseEvent) => {
-      if (!provider.awareness) return;
-
-      const x = e.clientX;
-      const y = e.clientY;
-
-      // Only send if position changed significantly (> 5px)
-      if (
-        lastDocumentMousePosition.x !== 0 &&
-        Math.abs(lastDocumentMousePosition.x - x) < 5 &&
-        Math.abs(lastDocumentMousePosition.y - y) < 5
-      ) {
-        return;
-      }
-
-      lastDocumentMousePosition = { x, y };
-
-      try {
-        provider.awareness.setLocalStateField("cursor", { x, y });
-      } catch (err) {
-        console.warn("[useYjsCollab] Error updating awareness cursor:", err);
-      }
-    };
-
-    if (!documentMouseTrackingAttached) {
-      console.log("[useYjsCollab] Attaching document-level mouse tracking");
-      document.addEventListener("mousemove", handleDocumentMouseMove, {
-        passive: true,
-      });
-      documentMouseTrackingAttached = true;
-      documentMouseMoveHandler = handleDocumentMouseMove;
-    }
-
-    // 7. Connect ElementStore to Yjs - THIS IS THE CRITICAL FIX
     // When elements change in the store (via user actions), update Yjs doc AND notify provider
     console.log("[useYjsCollab] Setting up ElementStore -> Yjs callback");
     ElementStore.getState().setYjsUpdateCallback(
@@ -610,13 +573,6 @@ export function useYjsCollab({
         if (!provider.synched) {
           console.log(
             "[useYjsCollab] Skipping element update - not synced yet",
-          );
-          return;
-        }
-
-        if (internalStateRef.current.isUpdatingFromRemote) {
-          console.log(
-            "[useYjsCollab] Skipping element update - remote update in progress",
           );
           return;
         }
@@ -645,7 +601,7 @@ export function useYjsCollab({
               yElementsText.delete(0, yElementsText.length);
               yElementsText.insert(0, JSON.stringify(elements));
             },
-            "elementStore",
+            "local-element-store",
           );
 
           console.log(
@@ -724,18 +680,6 @@ export function useYjsCollab({
   useEffect(() => {
     return () => {
       clearRemoteTimeout();
-
-      // Remove document mouse tracking listener
-      if (documentMouseTrackingAttached && documentMouseMoveHandler) {
-        try {
-          document.removeEventListener("mousemove", documentMouseMoveHandler);
-          documentMouseTrackingAttached = false;
-          documentMouseMoveHandler = null;
-          console.log("[useYjsCollab] Removed document mouse tracking");
-        } catch (err) {
-          console.warn("[useYjsCollab] Error removing mouse tracking:", err);
-        }
-      }
     };
   }, []);
 

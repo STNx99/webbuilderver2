@@ -37,15 +37,12 @@ export default function Editor({ id, pageId }: EditorProps) {
     collab,
   } = useEditor(id, pageId, {
     enableCollab: isMounted && !!effectiveUserId,
-    enableYjsCollab: true,
     userId: effectiveUserId,
   });
 
-  // Extract Yjs-specific properties if available
-  const ydoc = collab.type === "yjs" ? (collab.ydoc as Y.Doc | null) : null;
-  const provider = collab.type === "yjs" ? collab.provider : null;
-  const sendMessage =
-    collab.type === "websocket" ? collab.sendMessage : undefined;
+  // Extract Yjs-specific properties
+  const ydoc = collab.ydoc as Y.Doc | null;
+  const provider = collab.provider;
 
   return (
     <div className="flex-1 w-full h-full flex flex-col bg-background text-foreground relative">
@@ -69,7 +66,6 @@ export default function Editor({ id, pageId }: EditorProps) {
           selectedElement={selectedElement || null}
           addNewSection={addNewSection}
           userId={effectiveUserId}
-          sendMessage={sendMessage}
           isReadOnly={isReadOnly}
           isLocked={isLocked}
           ydoc={ydoc}

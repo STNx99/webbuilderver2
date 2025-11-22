@@ -11,7 +11,6 @@ import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";
 import type { Project } from "@/interfaces/project.interface";
-import { useCollab } from "@/hooks/realtime/use-collab";
 import { useYjsCollab } from "@/hooks/realtime/use-yjs-collab";
 import { useEditorPermissions } from "./useEditorPermissions";
 import { useProject, useProjectPages } from "@/hooks";
@@ -21,7 +20,6 @@ export type Viewport = "mobile" | "tablet" | "desktop";
 
 export interface UseEditorOptions {
   enableCollab?: boolean;
-  enableYjsCollab?: boolean;
   collabWsUrl?: string;
   userId?: string;
   isReadOnly?: boolean;
@@ -53,9 +51,7 @@ export const useEditor = (
   const { data: projectPages, isLoading: isLoadingPages } = useProjectPages(id);
   const { data: project, isLoading: isLoadingProject } = useProject(id);
 
-  // Use Yjs collaboration if enabled, otherwise fall back to WebSocket
-  const useYjs = options?.enableYjsCollab !== false;
-
+  // Use Yjs collaboration
   const yjsCollab = useYjsCollab({
     roomId: pageId,
     projectId: id,
@@ -63,7 +59,7 @@ export const useEditor = (
       options?.collabWsUrl ||
       process.env.NEXT_PUBLIC_COLLAB_WS_URL ||
       "ws://localhost:8082",
-    enabled: useYjs && options?.enableCollab !== false,
+    enabled: options?.enableCollab !== false,
     onSync: () => {
       toast.success("Live collaboration connected", {
         duration: 3000,
@@ -71,29 +67,6 @@ export const useEditor = (
     },
     onError: (error) => {
       console.error("[useEditor] Yjs collaboration error:", error);
-      toast.info("Working in offline mode", {
-        description:
-          "Collaboration server unavailable. Changes will be saved locally.",
-        duration: 5000,
-      });
-    },
-  });
-
-  const collab = useCollab({
-    roomId: pageId,
-    projectId: id,
-    wsUrl:
-      options?.collabWsUrl ||
-      process.env.NEXT_PUBLIC_COLLAB_WS_URL ||
-      "ws://localhost:8082",
-    enabled: !useYjs && options?.enableCollab !== false,
-    onSync: () => {
-      toast.success("Live collaboration connected", {
-        duration: 3000,
-      });
-    },
-    onError: (error) => {
-      console.error("[useEditor] Collaboration error:", error);
       toast.info("Working in offline mode", {
         description:
           "Collaboration server unavailable. Changes will be saved locally.",
@@ -239,26 +212,15 @@ export const useEditor = (
       canDeleteElements: permissions.canDeleteElements,
       canReorderElements: permissions.canReorderElements,
     },
-    collab: useYjs
-      ? {
-          isConnected: yjsCollab.isConnected,
-          connectionState: yjsCollab.roomState,
-          isSynced: yjsCollab.isSynced,
-          error: yjsCollab.error,
-          ydoc: yjsCollab.ydoc,
-          provider: yjsCollab.provider,
-          type: "yjs" as const,
-        }
-      : {
-          isConnected: collab.isConnected,
-          connectionState: collab.connectionState,
-          isSynced: collab.isSynced,
-          error: collab.error,
-          connect: collab.connect,
-          disconnect: collab.disconnect,
-          sendMessage: collab.sendMessage,
-          type: "websocket" as const,
-        },
+    collab: {
+      isConnected: yjsCollab.isConnected,
+      connectionState: yjsCollab.roomState,
+      isSynced: yjsCollab.isSynced,
+      error: yjsCollab.error,
+      ydoc: yjsCollab.ydoc,
+      provider: yjsCollab.provider,
+      type: "yjs" as const,
+    },
     userId,
   };
 };
