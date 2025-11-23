@@ -15,6 +15,7 @@ import { useYjsCollab } from "@/hooks/realtime/use-yjs-collab";
 import { useEditorPermissions } from "./useEditorPermissions";
 import { useProject, useProjectPages } from "@/hooks";
 import { toast } from "sonner";
+import { useYjsCollabV2 } from "../realtime/use-yjs-collab-v2";
 
 export type Viewport = "mobile" | "tablet" | "desktop";
 
@@ -52,8 +53,8 @@ export const useEditor = (
   const { data: project, isLoading: isLoadingProject } = useProject(id);
 
   // Use Yjs collaboration
-  const yjsCollab = useYjsCollab({
-    roomId: pageId,
+  const yjsCollab = useYjsCollabV2({
+    pageId: pageId,
     projectId: id,
     wsUrl:
       options?.collabWsUrl ||
