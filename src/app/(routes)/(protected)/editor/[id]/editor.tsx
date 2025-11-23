@@ -5,6 +5,7 @@ import PreviewContainer from "@/components/editor/editor/PreviewContainer";
 import EditorCanvas from "@/components/editor/editor/EditorCanvas";
 import { useEditor } from "@/hooks";
 import { useAuth } from "@clerk/nextjs";
+import * as Y from "yjs";
 
 type EditorProps = {
   id: string;
@@ -39,6 +40,10 @@ export default function Editor({ id, pageId }: EditorProps) {
     userId: effectiveUserId,
   });
 
+  // Extract Yjs-specific properties
+  const ydoc = collab.ydoc as Y.Doc | null;
+  const provider = collab.provider;
+
   return (
     <div className="flex-1 w-full h-full flex flex-col bg-background text-foreground relative">
       <EditorHeader
@@ -46,6 +51,10 @@ export default function Editor({ id, pageId }: EditorProps) {
         currentView={currentView}
         setCurrentView={setCurrentView}
         projectId={id}
+        isConnected={collab.isConnected}
+        isSynced={collab.isSynced}
+        ydoc={ydoc}
+        collabType={collab.type}
       />
       <PreviewContainer currentView={currentView} isLoading={isLoading}>
         <EditorCanvas
@@ -57,9 +66,10 @@ export default function Editor({ id, pageId }: EditorProps) {
           selectedElement={selectedElement || null}
           addNewSection={addNewSection}
           userId={effectiveUserId}
-          sendMessage={collab.sendMessage}
           isReadOnly={isReadOnly}
           isLocked={isLocked}
+          ydoc={ydoc}
+          provider={provider}
         />
       </PreviewContainer>
     </div>

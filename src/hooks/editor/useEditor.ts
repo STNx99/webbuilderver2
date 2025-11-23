@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 import { useElementStore } from "@/globalstore/elementstore";
 import { useSelectionStore } from "@/globalstore/selectionstore";
 import { usePageStore } from "@/globalstore/pagestore";
@@ -10,10 +11,11 @@ import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";
 import type { Project } from "@/interfaces/project.interface";
-import { useCollab } from "@/hooks/realtime/use-collab";
+import { useYjsCollab } from "@/hooks/realtime/use-yjs-collab";
 import { useEditorPermissions } from "./useEditorPermissions";
 import { useProject, useProjectPages } from "@/hooks";
 import { toast } from "sonner";
+import { useYjsCollabV2 } from "../realtime/use-yjs-collab-v2";
 
 export type Viewport = "mobile" | "tablet" | "desktop";
 
@@ -33,6 +35,7 @@ export const useEditor = (
   const [currentView, setCurrentView] = useState<Viewport>("desktop");
   const [isDraggingOver, setIsDraggingOver] = useState(false);
   const router = useRouter();
+  const { userId } = useAuth();
 
   // Get permissions from the hook
   const permissions = useEditorPermissions(id);
@@ -49,8 +52,9 @@ export const useEditor = (
   const { data: projectPages, isLoading: isLoadingPages } = useProjectPages(id);
   const { data: project, isLoading: isLoadingProject } = useProject(id);
 
-  const collab = useCollab({
-    roomId: pageId,
+  // Use Yjs collaboration
+  const yjsCollab = useYjsCollabV2({
+    pageId: pageId,
     projectId: id,
     wsUrl:
       options?.collabWsUrl ||
@@ -63,7 +67,6 @@ export const useEditor = (
       });
     },
     onError: (error) => {
-      console.error("[useEditor] Collaboration error:", error);
       toast.info("Working in offline mode", {
         description:
           "Collaboration server unavailable. Changes will be saved locally.",
@@ -210,13 +213,14 @@ export const useEditor = (
       canReorderElements: permissions.canReorderElements,
     },
     collab: {
-      isConnected: collab.isConnected,
-      connectionState: collab.connectionState,
-      isSynced: collab.isSynced,
-      error: collab.error,
-      connect: collab.connect,
-      disconnect: collab.disconnect,
-      sendMessage: collab.sendMessage,
+      isConnected: yjsCollab.isConnected,
+      connectionState: yjsCollab.roomState,
+      isSynced: yjsCollab.isSynced,
+      error: yjsCollab.error,
+      ydoc: yjsCollab.ydoc,
+      provider: yjsCollab.provider,
+      type: "yjs" as const,
     },
+    userId,
   };
 };
