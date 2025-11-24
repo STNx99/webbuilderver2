@@ -72,6 +72,7 @@ export async function GET() {
     }
 
     // Cache the token for 45 seconds
+    console.log("Caching token for session:", sessionId);
     
     setCachedToken(sessionId, token.jwt);
     console.log("Token retrieved and cached for session:", token.jwt);
