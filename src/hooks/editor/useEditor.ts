@@ -149,18 +149,6 @@ export const useEditor = (
     addElement(newElement);
   };
 
-  const handlePageNavigation = (e: React.FocusEvent<HTMLInputElement>) => {
-    const pageName = e.currentTarget.value.slice(1);
-    const page = pages.find((p) => p.Name === pageName);
-
-    new Promise(() => setCurrentPage(page || null));
-    if (page) {
-      router.push(`/editor/${id}?page=${page.Id}`);
-    } else {
-      router.push(`/editor/${id}`);
-    }
-  };
-
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     // Prevent drag over if read-only
     if (isReadOnly || isLocked || !permissions.canCreateElements) {
@@ -200,7 +188,6 @@ export const useEditor = (
     isLoading,
     selectedElement,
     handleDrop,
-    handlePageNavigation,
     handleDragOver,
     handleDragLeave,
     addNewSection,

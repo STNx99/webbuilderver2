@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Zap,
   Check,
+  Search,
 } from "lucide-react";
 import { Viewport } from "@/hooks";
 import CssTextareaImporter from "./CssTextareaImporter";
@@ -18,6 +19,7 @@ import ExportDialog from "../ExportDialog";
 import CollaborationButton from "./CollaborationButton";
 import CollaboratorIndicator from "./CollaboratorIndicator";
 import EventModeToggle from "../eventmode/EventModeToggle";
+import { PageNavigationCommand } from "./PageNavigationCommand";
 import {
   Command,
   CommandEmpty,
@@ -33,7 +35,6 @@ import {
 import * as Y from "yjs";
 
 type EditorHeaderProps = {
-  handlePageNavigation: (e: React.FocusEvent<HTMLInputElement>) => void;
   currentView: Viewport;
   setCurrentView: (view: Viewport) => void;
   projectId: string;
@@ -54,6 +55,7 @@ function CollaborationStatus({
   isSynced,
   collabType,
 }: Pick<EditorHeaderProps, "isConnected" | "isSynced" | "collabType">) {
+  const [navigationCommandOpen, setNavigationCommandOpen] = useState(false);
   const status =
     isConnected && isSynced
       ? {
@@ -121,7 +123,7 @@ function ViewportSelector({
         <Button
           variant="ghost"
           size="sm"
-          className="gap-2 h-8 px-2 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+          className="gap-2 h-8 px-2 hover:bg-muted transition-colors"
           aria-label="Select viewport size"
           aria-expanded={open}
         >
@@ -154,13 +156,13 @@ function ViewportSelector({
                     setOpen(false);
                   }}
                   className={`cursor-pointer ${
-                    currentView === view ? "bg-slate-100 dark:bg-slate-800" : ""
+                    currentView === view ? "bg-muted" : ""
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
                   <span className="text-sm">{label}</span>
                   {currentView === view && (
-                    <Check className="w-4 h-4 ml-auto text-green-600 dark:text-green-400" />
+                    <Check className="w-4 h-4 ml-auto text-accent-foreground" />
                   )}
                 </CommandItem>
               ))}
@@ -172,61 +174,13 @@ function ViewportSelector({
   );
 }
 
-function NavigationInput({
-  handlePageNavigation,
-}: Pick<EditorHeaderProps, "handlePageNavigation">) {
-  const [value, setValue] = useState("/");
-  const [open, setOpen] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-  };
-
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    handlePageNavigation(e);
-    setOpen(false);
-  };
-
-  return (
-    <div className="relative group">
-      <input
-        type="text"
-        placeholder="Navigate... (e.g., /about)"
-        value={value}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onFocus={() => setOpen(true)}
-        className="h-8 w-32 sm:w-40 px-3 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-slate-400 dark:placeholder-slate-500 transition-all"
-        aria-label="Page path navigation"
-      />
-      {open && (
-        <div className="absolute top-full left-0 mt-1 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg z-50 hidden sm:block">
-          <div className="p-2 text-xs text-slate-500 dark:text-slate-400">
-            <p className="font-semibold mb-1">Navigation tips:</p>
-            <ul className="space-y-0.5">
-              <li>• Use "/" for home</li>
-              <li>• Type any path to navigate</li>
-            </ul>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 function ControlsGroup({ projectId }: Pick<EditorHeaderProps, "projectId">) {
   return (
     <div className="flex items-center gap-2.5">
-      <div
-        className="h-6 w-px bg-slate-200 dark:bg-slate-700"
-        aria-hidden="true"
-      />
+      <div className="h-6 w-px bg-border" aria-hidden="true" />
       <CollaboratorIndicator projectId={projectId} />
       <CollaborationButton projectId={projectId} />
-      <div
-        className="h-6 w-px bg-slate-200 dark:bg-slate-700"
-        aria-hidden="true"
-      />
+      <div className="h-6 w-px bg-border" aria-hidden="true" />
       <EventModeToggle />
       <ExportDialog />
     </div>
@@ -234,7 +188,6 @@ function ControlsGroup({ projectId }: Pick<EditorHeaderProps, "projectId">) {
 }
 
 export default function EditorHeader({
-  handlePageNavigation,
   currentView,
   setCurrentView,
   projectId,
@@ -243,50 +196,74 @@ export default function EditorHeader({
   ydoc,
   collabType = "websocket",
 }: EditorHeaderProps) {
+  const [navigationCommandOpen, setNavigationCommandOpen] = useState(false);
+
+  React.useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setNavigationCommandOpen((open) => !open);
+      }
+    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
+
   return (
-    <header className="relative z-40 flex items-center justify-between gap-3 sm:gap-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm px-3 sm:px-4 py-2.5 transition-colors duration-200">
-      {/* Left Section: Logo/Branding + Navigation */}
-      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 sm:flex-none">
-        <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-gradient-to-r from-blue-500/10 to-purple-500/10 hidden sm:flex">
-          <Zap className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-          <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
-            Builder
-          </span>
+    <>
+      <header className="relative z-40 flex items-center justify-between gap-3 sm:gap-4 border-b border-border bg-background shadow-sm px-3 sm:px-4 py-2.5 transition-colors duration-200">
+        {/* Left Section: Logo/Branding + Navigation */}
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 sm:flex-none">
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-primary/10 hidden sm:flex">
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold text-primary">Builder</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setNavigationCommandOpen(true)}
+            className="h-8 w-32 sm:w-40 px-3 py-1.5 text-xs rounded-lg bg-input border border-border hover:bg-muted transition-all"
+            aria-label="Open navigation command"
+          >
+            <Search className="w-4 h-4 mr-2" />
+            Navigate... (Cmd+K)
+          </Button>
+          <CssTextareaImporter />
         </div>
-        <NavigationInput handlePageNavigation={handlePageNavigation} />
-        <CssTextareaImporter />
-      </div>
 
-      {/* Center Section: Collaboration Status */}
-      <div className="hidden md:flex items-center">
-        <CollaborationStatus
-          isConnected={isConnected}
-          isSynced={isSynced}
-          collabType={collabType}
-        />
-      </div>
+        {/* Center Section: Collaboration Status */}
+        <div className="hidden md:flex items-center">
+          <CollaborationStatus
+            isConnected={isConnected}
+            isSynced={isSynced}
+            collabType={collabType}
+          />
+        </div>
 
-      {/* Right Section: Controls, Viewport Selector */}
-      <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-        <ControlsGroup projectId={projectId} />
-        <div
-          className="h-6 w-px bg-slate-200 dark:bg-slate-700"
-          aria-hidden="true"
-        />
-        <ViewportSelector
-          currentView={currentView}
-          setCurrentView={setCurrentView}
-        />
-      </div>
+        {/* Right Section: Controls, Viewport Selector */}
+        <div className="flex items-center gap-2 sm:gap-3 ml-auto">
+          <ControlsGroup projectId={projectId} />
+          <div className="h-6 w-px bg-border" aria-hidden="true" />
+          <ViewportSelector
+            currentView={currentView}
+            setCurrentView={setCurrentView}
+          />
+        </div>
 
-      {/* Mobile Collaboration Status */}
-      <div className="md:hidden">
-        <CollaborationStatus
-          isConnected={isConnected}
-          isSynced={isSynced}
-          collabType={collabType}
-        />
-      </div>
-    </header>
+        {/* Mobile Collaboration Status */}
+        <div className="md:hidden">
+          <CollaborationStatus
+            isConnected={isConnected}
+            isSynced={isSynced}
+            collabType={collabType}
+          />
+        </div>
+      </header>
+
+      <PageNavigationCommand
+        open={navigationCommandOpen}
+        setOpen={setNavigationCommandOpen}
+      />
+    </>
   );
 }

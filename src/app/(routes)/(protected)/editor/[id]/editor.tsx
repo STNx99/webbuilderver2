@@ -28,7 +28,6 @@ export default function Editor({ id, pageId }: EditorProps) {
     isLoading,
     selectedElement,
     handleDrop,
-    handlePageNavigation,
     handleDragOver,
     handleDragLeave,
     addNewSection,
@@ -47,7 +46,6 @@ export default function Editor({ id, pageId }: EditorProps) {
   return (
     <div className="flex-1 w-full h-full flex flex-col bg-background text-foreground relative">
       <EditorHeader
-        handlePageNavigation={handlePageNavigation}
         currentView={currentView}
         setCurrentView={setCurrentView}
         projectId={id}
