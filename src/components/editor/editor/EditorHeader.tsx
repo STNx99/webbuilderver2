@@ -5,21 +5,17 @@ import {
   Monitor,
   Smartphone,
   Tablet,
-  Wifi,
-  WifiOff,
   ChevronDown,
-  Zap,
   Check,
   Search,
 } from "lucide-react";
+
+// Types
 import { Viewport } from "@/hooks";
-import CssTextareaImporter from "./CssTextareaImporter";
+import * as Y from "yjs";
+
+// Components
 import { Button } from "@/components/ui/button";
-import ExportDialog from "../ExportDialog";
-import CollaborationButton from "./CollaborationButton";
-import CollaboratorIndicator from "./CollaboratorIndicator";
-import EventModeToggle from "../eventmode/EventModeToggle";
-import { PageNavigationCommand } from "./PageNavigationCommand";
 import {
   Command,
   CommandEmpty,
@@ -32,7 +28,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import * as Y from "yjs";
+
+import ExportDialog from "../ExportDialog";
+import CollaborationButton from "./CollaborationButton";
+import CollaboratorIndicator from "./CollaboratorIndicator";
+import EventModeToggle from "../eventmode/EventModeToggle";
+import { PageNavigationCommand } from "./PageNavigationCommand";
+import CollaborationStatus from "./CollaborationStatus";
 
 type EditorHeaderProps = {
   currentView: Viewport;
@@ -50,72 +52,14 @@ const VIEWPORT_OPTIONS = [
   { view: "desktop" as const, icon: Monitor, label: "Desktop" },
 ] as const;
 
-function CollaborationStatus({
-  isConnected,
-  isSynced,
-  collabType,
-}: Pick<EditorHeaderProps, "isConnected" | "isSynced" | "collabType">) {
-  const [navigationCommandOpen, setNavigationCommandOpen] = useState(false);
-  const status =
-    isConnected && isSynced
-      ? {
-          icon: Wifi,
-          label: collabType === "yjs" ? "Synced" : "Synced",
-          color: "text-emerald-500",
-          bgColor: "bg-emerald-500/10",
-          dotColor: "bg-emerald-500",
-          pulse: false,
-        }
-      : isConnected
-        ? {
-            icon: Wifi,
-            label: "Syncing...",
-            color: "text-amber-500",
-            bgColor: "bg-amber-500/10",
-            dotColor: "bg-amber-500",
-            pulse: true,
-          }
-        : {
-            icon: WifiOff,
-            label: "Offline",
-            color: "text-slate-400",
-            bgColor: "bg-slate-500/10",
-            dotColor: "bg-slate-400",
-            pulse: false,
-          };
-
-  const StatusIcon = status.icon;
-
-  return (
-    <div
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${status.bgColor} backdrop-blur-sm transition-all duration-200`}
-      role="status"
-      aria-live="polite"
-      aria-label={`Collaboration status: ${status.label}`}
-    >
-      <div className="relative">
-        <div
-          className={`absolute inset-0 rounded-full ${status.dotColor} blur-sm ${
-            status.pulse ? "animate-pulse" : ""
-          }`}
-          aria-hidden="true"
-        />
-        <StatusIcon className={`w-3.5 h-3.5 ${status.color} relative z-10`} />
-      </div>
-      <span
-        className={`text-xs font-semibold ${status.color} whitespace-nowrap`}
-      >
-        {status.label}
-      </span>
-    </div>
-  );
-}
-
 function ViewportSelector({
   currentView,
   setCurrentView,
 }: Pick<EditorHeaderProps, "currentView" | "setCurrentView">) {
   const [open, setOpen] = useState(false);
+  const currentOption = VIEWPORT_OPTIONS.find(
+    (opt) => opt.view === currentView,
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -127,14 +71,7 @@ function ViewportSelector({
           aria-label="Select viewport size"
           aria-expanded={open}
         >
-          {VIEWPORT_OPTIONS.find((opt) => opt.view === currentView)?.icon &&
-            React.createElement(
-              VIEWPORT_OPTIONS.find((opt) => opt.view === currentView)!.icon,
-              { className: "w-4 h-4" },
-            )}
-          <span className="text-xs font-medium capitalize hidden sm:inline">
-            {currentView}
-          </span>
+          {currentOption && <currentOption.icon className="w-4 h-4" />}
           <ChevronDown
             className={`w-3.5 h-3.5 opacity-50 transition-transform ${
               open ? "rotate-180" : ""
@@ -160,7 +97,7 @@ function ViewportSelector({
                   }`}
                 >
                   <Icon className="w-4 h-4 mr-2" />
-                  <span className="text-sm">{label}</span>
+                  <span>{label}</span>
                   {currentView === view && (
                     <Check className="w-4 h-4 ml-auto text-accent-foreground" />
                   )}
@@ -174,13 +111,9 @@ function ViewportSelector({
   );
 }
 
-function ControlsGroup({ projectId }: Pick<EditorHeaderProps, "projectId">) {
+function ControlsGroup() {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="h-6 w-px bg-border" aria-hidden="true" />
-      <CollaboratorIndicator projectId={projectId} />
-      <CollaborationButton projectId={projectId} />
-      <div className="h-6 w-px bg-border" aria-hidden="true" />
       <EventModeToggle />
       <ExportDialog />
     </div>
@@ -193,31 +126,26 @@ export default function EditorHeader({
   projectId,
   isConnected = false,
   isSynced = false,
-  ydoc,
   collabType = "websocket",
 }: EditorHeaderProps) {
   const [navigationCommandOpen, setNavigationCommandOpen] = useState(false);
 
   React.useEffect(() => {
-    const down = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setNavigationCommandOpen((open) => !open);
       }
     };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
     <>
       <header className="relative z-40 flex items-center justify-between gap-3 sm:gap-4 border-b border-border bg-background shadow-sm px-3 sm:px-4 py-2.5 transition-colors duration-200">
-        {/* Left Section: Logo/Branding + Navigation */}
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 sm:flex-none">
-          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-primary/10 hidden sm:flex">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-xs font-bold text-primary">Builder</span>
-          </div>
           <Button
             variant="ghost"
             size="sm"
@@ -228,21 +156,19 @@ export default function EditorHeader({
             <Search className="w-4 h-4 mr-2" />
             Navigate... (Cmd+K)
           </Button>
-          <CssTextareaImporter />
-        </div>
-
-        {/* Center Section: Collaboration Status */}
-        <div className="hidden md:flex items-center">
-          <CollaborationStatus
+          <div className="h-6 w-px bg-border" aria-hidden="true" />
+          <CollaboratorIndicator
+            projectId={projectId}
             isConnected={isConnected}
             isSynced={isSynced}
             collabType={collabType}
           />
+          <CollaborationButton projectId={projectId} />
         </div>
 
-        {/* Right Section: Controls, Viewport Selector */}
+        {/* Right Section: Controls and Viewport Selector */}
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
-          <ControlsGroup projectId={projectId} />
+          <ControlsGroup />
           <div className="h-6 w-px bg-border" aria-hidden="true" />
           <ViewportSelector
             currentView={currentView}

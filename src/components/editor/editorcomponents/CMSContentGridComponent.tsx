@@ -61,6 +61,8 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
     return (
       <div
         ref={elementRef as React.RefObject<HTMLDivElement>}
+        data-element-id={element.id}
+        data-element-type={element.type}
         {...getCommonProps(cmsElement)}
         {...eventHandlers}
         style={{
@@ -84,6 +86,8 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
   return (
     <div
       ref={elementRef as React.RefObject<HTMLDivElement>}
+      data-element-id={element.id}
+      data-element-type={element.type}
       {...getCommonProps(cmsElement)}
       {...eventHandlers}
       style={{

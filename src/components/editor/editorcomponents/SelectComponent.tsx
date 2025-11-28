@@ -28,6 +28,8 @@ const SelectComponent = ({ element }: EditorComponentProps) => {
   return (
     <select
       ref={elementRef as React.RefObject<HTMLSelectElement>}
+      data-element-id={element.id}
+      data-element-type={element.type}
       {...eventHandlers}
       style={{
         ...safeStyles,
