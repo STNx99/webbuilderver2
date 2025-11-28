@@ -58,7 +58,6 @@ export const ModelName = {
   EventWorkflow: 'EventWorkflow',
   Setting: 'Setting',
   Snapshot: 'Snapshot',
-  User: 'User',
   Subscription: 'Subscription',
   ContentType: 'ContentType',
   ContentField: 'ContentField',
@@ -194,19 +193,6 @@ export const SnapshotScalarFieldEnum = {
 } as const
 
 export type SnapshotScalarFieldEnum = (typeof SnapshotScalarFieldEnum)[keyof typeof SnapshotScalarFieldEnum]
-
-
-export const UserScalarFieldEnum = {
-  CreatedAt: 'CreatedAt',
-  Email: 'Email',
-  FirstName: 'FirstName',
-  Id: 'Id',
-  ImageUrl: 'ImageUrl',
-  LastName: 'LastName',
-  UpdatedAt: 'UpdatedAt'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {

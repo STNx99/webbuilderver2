@@ -206,7 +206,6 @@ export type ElementCommentWhereInput = {
   UpdatedAt?: Prisma.DateTimeFilter<"ElementComment"> | Date | string
   DeletedAt?: Prisma.DateTimeNullableFilter<"ElementComment"> | Date | string | null
   Resolved?: Prisma.BoolFilter<"ElementComment"> | boolean
-  Author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   Element?: Prisma.XOR<Prisma.ElementScalarRelationFilter, Prisma.ElementWhereInput>
 }
 
@@ -219,7 +218,6 @@ export type ElementCommentOrderByWithRelationInput = {
   UpdatedAt?: Prisma.SortOrder
   DeletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   Resolved?: Prisma.SortOrder
-  Author?: Prisma.UserOrderByWithRelationInput
   Element?: Prisma.ElementOrderByWithRelationInput
 }
 
@@ -235,7 +233,6 @@ export type ElementCommentWhereUniqueInput = Prisma.AtLeast<{
   UpdatedAt?: Prisma.DateTimeFilter<"ElementComment"> | Date | string
   DeletedAt?: Prisma.DateTimeNullableFilter<"ElementComment"> | Date | string | null
   Resolved?: Prisma.BoolFilter<"ElementComment"> | boolean
-  Author?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   Element?: Prisma.XOR<Prisma.ElementScalarRelationFilter, Prisma.ElementWhereInput>
 }, "Id">
 
@@ -270,11 +267,11 @@ export type ElementCommentScalarWhereWithAggregatesInput = {
 export type ElementCommentCreateInput = {
   Id: string
   Content: string
+  AuthorId: string
   CreatedAt?: Date | string
   UpdatedAt?: Date | string
   DeletedAt?: Date | string | null
   Resolved?: boolean
-  Author: Prisma.UserCreateNestedOneWithoutElementCommentsInput
   Element: Prisma.ElementCreateNestedOneWithoutCommentsInput
 }
 
@@ -292,11 +289,11 @@ export type ElementCommentUncheckedCreateInput = {
 export type ElementCommentUpdateInput = {
   Id?: Prisma.StringFieldUpdateOperationsInput | string
   Content?: Prisma.StringFieldUpdateOperationsInput | string
+  AuthorId?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   Resolved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  Author?: Prisma.UserUpdateOneRequiredWithoutElementCommentsNestedInput
   Element?: Prisma.ElementUpdateOneRequiredWithoutCommentsNestedInput
 }
 
@@ -325,6 +322,7 @@ export type ElementCommentCreateManyInput = {
 export type ElementCommentUpdateManyMutationInput = {
   Id?: Prisma.StringFieldUpdateOperationsInput | string
   Content?: Prisma.StringFieldUpdateOperationsInput | string
+  AuthorId?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -427,56 +425,14 @@ export type ElementCommentUncheckedUpdateManyWithoutElementNestedInput = {
   deleteMany?: Prisma.ElementCommentScalarWhereInput | Prisma.ElementCommentScalarWhereInput[]
 }
 
-export type ElementCommentCreateNestedManyWithoutAuthorInput = {
-  create?: Prisma.XOR<Prisma.ElementCommentCreateWithoutAuthorInput, Prisma.ElementCommentUncheckedCreateWithoutAuthorInput> | Prisma.ElementCommentCreateWithoutAuthorInput[] | Prisma.ElementCommentUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.ElementCommentCreateOrConnectWithoutAuthorInput | Prisma.ElementCommentCreateOrConnectWithoutAuthorInput[]
-  createMany?: Prisma.ElementCommentCreateManyAuthorInputEnvelope
-  connect?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-}
-
-export type ElementCommentUncheckedCreateNestedManyWithoutAuthorInput = {
-  create?: Prisma.XOR<Prisma.ElementCommentCreateWithoutAuthorInput, Prisma.ElementCommentUncheckedCreateWithoutAuthorInput> | Prisma.ElementCommentCreateWithoutAuthorInput[] | Prisma.ElementCommentUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.ElementCommentCreateOrConnectWithoutAuthorInput | Prisma.ElementCommentCreateOrConnectWithoutAuthorInput[]
-  createMany?: Prisma.ElementCommentCreateManyAuthorInputEnvelope
-  connect?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-}
-
-export type ElementCommentUpdateManyWithoutAuthorNestedInput = {
-  create?: Prisma.XOR<Prisma.ElementCommentCreateWithoutAuthorInput, Prisma.ElementCommentUncheckedCreateWithoutAuthorInput> | Prisma.ElementCommentCreateWithoutAuthorInput[] | Prisma.ElementCommentUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.ElementCommentCreateOrConnectWithoutAuthorInput | Prisma.ElementCommentCreateOrConnectWithoutAuthorInput[]
-  upsert?: Prisma.ElementCommentUpsertWithWhereUniqueWithoutAuthorInput | Prisma.ElementCommentUpsertWithWhereUniqueWithoutAuthorInput[]
-  createMany?: Prisma.ElementCommentCreateManyAuthorInputEnvelope
-  set?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  disconnect?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  delete?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  connect?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  update?: Prisma.ElementCommentUpdateWithWhereUniqueWithoutAuthorInput | Prisma.ElementCommentUpdateWithWhereUniqueWithoutAuthorInput[]
-  updateMany?: Prisma.ElementCommentUpdateManyWithWhereWithoutAuthorInput | Prisma.ElementCommentUpdateManyWithWhereWithoutAuthorInput[]
-  deleteMany?: Prisma.ElementCommentScalarWhereInput | Prisma.ElementCommentScalarWhereInput[]
-}
-
-export type ElementCommentUncheckedUpdateManyWithoutAuthorNestedInput = {
-  create?: Prisma.XOR<Prisma.ElementCommentCreateWithoutAuthorInput, Prisma.ElementCommentUncheckedCreateWithoutAuthorInput> | Prisma.ElementCommentCreateWithoutAuthorInput[] | Prisma.ElementCommentUncheckedCreateWithoutAuthorInput[]
-  connectOrCreate?: Prisma.ElementCommentCreateOrConnectWithoutAuthorInput | Prisma.ElementCommentCreateOrConnectWithoutAuthorInput[]
-  upsert?: Prisma.ElementCommentUpsertWithWhereUniqueWithoutAuthorInput | Prisma.ElementCommentUpsertWithWhereUniqueWithoutAuthorInput[]
-  createMany?: Prisma.ElementCommentCreateManyAuthorInputEnvelope
-  set?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  disconnect?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  delete?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  connect?: Prisma.ElementCommentWhereUniqueInput | Prisma.ElementCommentWhereUniqueInput[]
-  update?: Prisma.ElementCommentUpdateWithWhereUniqueWithoutAuthorInput | Prisma.ElementCommentUpdateWithWhereUniqueWithoutAuthorInput[]
-  updateMany?: Prisma.ElementCommentUpdateManyWithWhereWithoutAuthorInput | Prisma.ElementCommentUpdateManyWithWhereWithoutAuthorInput[]
-  deleteMany?: Prisma.ElementCommentScalarWhereInput | Prisma.ElementCommentScalarWhereInput[]
-}
-
 export type ElementCommentCreateWithoutElementInput = {
   Id: string
   Content: string
+  AuthorId: string
   CreatedAt?: Date | string
   UpdatedAt?: Date | string
   DeletedAt?: Date | string | null
   Resolved?: boolean
-  Author: Prisma.UserCreateNestedOneWithoutElementCommentsInput
 }
 
 export type ElementCommentUncheckedCreateWithoutElementInput = {
@@ -529,52 +485,6 @@ export type ElementCommentScalarWhereInput = {
   Resolved?: Prisma.BoolFilter<"ElementComment"> | boolean
 }
 
-export type ElementCommentCreateWithoutAuthorInput = {
-  Id: string
-  Content: string
-  CreatedAt?: Date | string
-  UpdatedAt?: Date | string
-  DeletedAt?: Date | string | null
-  Resolved?: boolean
-  Element: Prisma.ElementCreateNestedOneWithoutCommentsInput
-}
-
-export type ElementCommentUncheckedCreateWithoutAuthorInput = {
-  Id: string
-  Content: string
-  ElementId: string
-  CreatedAt?: Date | string
-  UpdatedAt?: Date | string
-  DeletedAt?: Date | string | null
-  Resolved?: boolean
-}
-
-export type ElementCommentCreateOrConnectWithoutAuthorInput = {
-  where: Prisma.ElementCommentWhereUniqueInput
-  create: Prisma.XOR<Prisma.ElementCommentCreateWithoutAuthorInput, Prisma.ElementCommentUncheckedCreateWithoutAuthorInput>
-}
-
-export type ElementCommentCreateManyAuthorInputEnvelope = {
-  data: Prisma.ElementCommentCreateManyAuthorInput | Prisma.ElementCommentCreateManyAuthorInput[]
-  skipDuplicates?: boolean
-}
-
-export type ElementCommentUpsertWithWhereUniqueWithoutAuthorInput = {
-  where: Prisma.ElementCommentWhereUniqueInput
-  update: Prisma.XOR<Prisma.ElementCommentUpdateWithoutAuthorInput, Prisma.ElementCommentUncheckedUpdateWithoutAuthorInput>
-  create: Prisma.XOR<Prisma.ElementCommentCreateWithoutAuthorInput, Prisma.ElementCommentUncheckedCreateWithoutAuthorInput>
-}
-
-export type ElementCommentUpdateWithWhereUniqueWithoutAuthorInput = {
-  where: Prisma.ElementCommentWhereUniqueInput
-  data: Prisma.XOR<Prisma.ElementCommentUpdateWithoutAuthorInput, Prisma.ElementCommentUncheckedUpdateWithoutAuthorInput>
-}
-
-export type ElementCommentUpdateManyWithWhereWithoutAuthorInput = {
-  where: Prisma.ElementCommentScalarWhereInput
-  data: Prisma.XOR<Prisma.ElementCommentUpdateManyMutationInput, Prisma.ElementCommentUncheckedUpdateManyWithoutAuthorInput>
-}
-
 export type ElementCommentCreateManyElementInput = {
   Id: string
   Content: string
@@ -588,11 +498,11 @@ export type ElementCommentCreateManyElementInput = {
 export type ElementCommentUpdateWithoutElementInput = {
   Id?: Prisma.StringFieldUpdateOperationsInput | string
   Content?: Prisma.StringFieldUpdateOperationsInput | string
+  AuthorId?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   Resolved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  Author?: Prisma.UserUpdateOneRequiredWithoutElementCommentsNestedInput
 }
 
 export type ElementCommentUncheckedUpdateWithoutElementInput = {
@@ -615,46 +525,6 @@ export type ElementCommentUncheckedUpdateManyWithoutElementInput = {
   Resolved?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
-export type ElementCommentCreateManyAuthorInput = {
-  Id: string
-  Content: string
-  ElementId: string
-  CreatedAt?: Date | string
-  UpdatedAt?: Date | string
-  DeletedAt?: Date | string | null
-  Resolved?: boolean
-}
-
-export type ElementCommentUpdateWithoutAuthorInput = {
-  Id?: Prisma.StringFieldUpdateOperationsInput | string
-  Content?: Prisma.StringFieldUpdateOperationsInput | string
-  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  Resolved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  Element?: Prisma.ElementUpdateOneRequiredWithoutCommentsNestedInput
-}
-
-export type ElementCommentUncheckedUpdateWithoutAuthorInput = {
-  Id?: Prisma.StringFieldUpdateOperationsInput | string
-  Content?: Prisma.StringFieldUpdateOperationsInput | string
-  ElementId?: Prisma.StringFieldUpdateOperationsInput | string
-  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  Resolved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-}
-
-export type ElementCommentUncheckedUpdateManyWithoutAuthorInput = {
-  Id?: Prisma.StringFieldUpdateOperationsInput | string
-  Content?: Prisma.StringFieldUpdateOperationsInput | string
-  ElementId?: Prisma.StringFieldUpdateOperationsInput | string
-  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  Resolved?: Prisma.BoolFieldUpdateOperationsInput | boolean
-}
-
 
 
 export type ElementCommentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -666,7 +536,6 @@ export type ElementCommentSelect<ExtArgs extends runtime.Types.Extensions.Intern
   UpdatedAt?: boolean
   DeletedAt?: boolean
   Resolved?: boolean
-  Author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Element?: boolean | Prisma.ElementDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["elementComment"]>
 
@@ -679,7 +548,6 @@ export type ElementCommentSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   UpdatedAt?: boolean
   DeletedAt?: boolean
   Resolved?: boolean
-  Author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Element?: boolean | Prisma.ElementDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["elementComment"]>
 
@@ -692,7 +560,6 @@ export type ElementCommentSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   UpdatedAt?: boolean
   DeletedAt?: boolean
   Resolved?: boolean
-  Author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Element?: boolean | Prisma.ElementDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["elementComment"]>
 
@@ -709,22 +576,18 @@ export type ElementCommentSelectScalar = {
 
 export type ElementCommentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"Id" | "Content" | "AuthorId" | "ElementId" | "CreatedAt" | "UpdatedAt" | "DeletedAt" | "Resolved", ExtArgs["result"]["elementComment"]>
 export type ElementCommentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  Author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Element?: boolean | Prisma.ElementDefaultArgs<ExtArgs>
 }
 export type ElementCommentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  Author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Element?: boolean | Prisma.ElementDefaultArgs<ExtArgs>
 }
 export type ElementCommentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  Author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   Element?: boolean | Prisma.ElementDefaultArgs<ExtArgs>
 }
 
 export type $ElementCommentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ElementComment"
   objects: {
-    Author: Prisma.$UserPayload<ExtArgs>
     Element: Prisma.$ElementPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1130,7 +993,6 @@ readonly fields: ElementCommentFieldRefs;
  */
 export interface Prisma__ElementCommentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  Author<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   Element<T extends Prisma.ElementDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ElementDefaultArgs<ExtArgs>>): Prisma.Prisma__ElementClient<runtime.Types.Result.GetResult<Prisma.$ElementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

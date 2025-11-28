@@ -255,7 +255,6 @@ export type CustomElementWhereInput = {
   CreatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
   UpdatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
   CustomElementType?: Prisma.XOR<Prisma.CustomElementTypeNullableScalarRelationFilter, Prisma.CustomElementTypeWhereInput> | null
-  User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type CustomElementOrderByWithRelationInput = {
@@ -275,7 +274,6 @@ export type CustomElementOrderByWithRelationInput = {
   CreatedAt?: Prisma.SortOrder
   UpdatedAt?: Prisma.SortOrder
   CustomElementType?: Prisma.CustomElementTypeOrderByWithRelationInput
-  User?: Prisma.UserOrderByWithRelationInput
 }
 
 export type CustomElementWhereUniqueInput = Prisma.AtLeast<{
@@ -298,7 +296,6 @@ export type CustomElementWhereUniqueInput = Prisma.AtLeast<{
   CreatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
   UpdatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
   CustomElementType?: Prisma.XOR<Prisma.CustomElementTypeNullableScalarRelationFilter, Prisma.CustomElementTypeWhereInput> | null
-  User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "Id">
 
 export type CustomElementOrderByWithAggregationInput = {
@@ -353,12 +350,12 @@ export type CustomElementCreateInput = {
   Structure: Prisma.JsonNullValueInput | runtime.InputJsonValue
   DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   Tags?: string | null
+  UserId: string
   IsPublic?: boolean
   Version?: string
   CreatedAt?: Date | string
   UpdatedAt?: Date | string
   CustomElementType?: Prisma.CustomElementTypeCreateNestedOneWithoutCustomElementsInput
-  User: Prisma.UserCreateNestedOneWithoutCustomElementsInput
 }
 
 export type CustomElementUncheckedCreateInput = {
@@ -389,12 +386,12 @@ export type CustomElementUpdateInput = {
   Structure?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   Tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   IsPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   Version?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   CustomElementType?: Prisma.CustomElementTypeUpdateOneWithoutCustomElementsNestedInput
-  User?: Prisma.UserUpdateOneRequiredWithoutCustomElementsNestedInput
 }
 
 export type CustomElementUncheckedUpdateInput = {
@@ -443,6 +440,7 @@ export type CustomElementUpdateManyMutationInput = {
   Structure?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   Tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   IsPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   Version?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -527,48 +525,6 @@ export type CustomElementMinOrderByAggregateInput = {
   UpdatedAt?: Prisma.SortOrder
 }
 
-export type CustomElementCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.CustomElementCreateWithoutUserInput, Prisma.CustomElementUncheckedCreateWithoutUserInput> | Prisma.CustomElementCreateWithoutUserInput[] | Prisma.CustomElementUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.CustomElementCreateOrConnectWithoutUserInput | Prisma.CustomElementCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.CustomElementCreateManyUserInputEnvelope
-  connect?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-}
-
-export type CustomElementUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.CustomElementCreateWithoutUserInput, Prisma.CustomElementUncheckedCreateWithoutUserInput> | Prisma.CustomElementCreateWithoutUserInput[] | Prisma.CustomElementUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.CustomElementCreateOrConnectWithoutUserInput | Prisma.CustomElementCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.CustomElementCreateManyUserInputEnvelope
-  connect?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-}
-
-export type CustomElementUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.CustomElementCreateWithoutUserInput, Prisma.CustomElementUncheckedCreateWithoutUserInput> | Prisma.CustomElementCreateWithoutUserInput[] | Prisma.CustomElementUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.CustomElementCreateOrConnectWithoutUserInput | Prisma.CustomElementCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.CustomElementUpsertWithWhereUniqueWithoutUserInput | Prisma.CustomElementUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.CustomElementCreateManyUserInputEnvelope
-  set?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  disconnect?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  delete?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  connect?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  update?: Prisma.CustomElementUpdateWithWhereUniqueWithoutUserInput | Prisma.CustomElementUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.CustomElementUpdateManyWithWhereWithoutUserInput | Prisma.CustomElementUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
-}
-
-export type CustomElementUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.CustomElementCreateWithoutUserInput, Prisma.CustomElementUncheckedCreateWithoutUserInput> | Prisma.CustomElementCreateWithoutUserInput[] | Prisma.CustomElementUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.CustomElementCreateOrConnectWithoutUserInput | Prisma.CustomElementCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.CustomElementUpsertWithWhereUniqueWithoutUserInput | Prisma.CustomElementUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.CustomElementCreateManyUserInputEnvelope
-  set?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  disconnect?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  delete?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  connect?: Prisma.CustomElementWhereUniqueInput | Prisma.CustomElementWhereUniqueInput[]
-  update?: Prisma.CustomElementUpdateWithWhereUniqueWithoutUserInput | Prisma.CustomElementUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.CustomElementUpdateManyWithWhereWithoutUserInput | Prisma.CustomElementUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
-}
-
 export type CustomElementCreateNestedManyWithoutCustomElementTypeInput = {
   create?: Prisma.XOR<Prisma.CustomElementCreateWithoutCustomElementTypeInput, Prisma.CustomElementUncheckedCreateWithoutCustomElementTypeInput> | Prisma.CustomElementCreateWithoutCustomElementTypeInput[] | Prisma.CustomElementUncheckedCreateWithoutCustomElementTypeInput[]
   connectOrCreate?: Prisma.CustomElementCreateOrConnectWithoutCustomElementTypeInput | Prisma.CustomElementCreateOrConnectWithoutCustomElementTypeInput[]
@@ -611,87 +567,6 @@ export type CustomElementUncheckedUpdateManyWithoutCustomElementTypeNestedInput 
   deleteMany?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
 }
 
-export type CustomElementCreateWithoutUserInput = {
-  Id: string
-  Name: string
-  Description?: string | null
-  Category?: string | null
-  Icon?: string | null
-  Thumbnail?: string | null
-  Structure: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  Tags?: string | null
-  IsPublic?: boolean
-  Version?: string
-  CreatedAt?: Date | string
-  UpdatedAt?: Date | string
-  CustomElementType?: Prisma.CustomElementTypeCreateNestedOneWithoutCustomElementsInput
-}
-
-export type CustomElementUncheckedCreateWithoutUserInput = {
-  Id: string
-  Name: string
-  TypeId?: string | null
-  Description?: string | null
-  Category?: string | null
-  Icon?: string | null
-  Thumbnail?: string | null
-  Structure: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  Tags?: string | null
-  IsPublic?: boolean
-  Version?: string
-  CreatedAt?: Date | string
-  UpdatedAt?: Date | string
-}
-
-export type CustomElementCreateOrConnectWithoutUserInput = {
-  where: Prisma.CustomElementWhereUniqueInput
-  create: Prisma.XOR<Prisma.CustomElementCreateWithoutUserInput, Prisma.CustomElementUncheckedCreateWithoutUserInput>
-}
-
-export type CustomElementCreateManyUserInputEnvelope = {
-  data: Prisma.CustomElementCreateManyUserInput | Prisma.CustomElementCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type CustomElementUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.CustomElementWhereUniqueInput
-  update: Prisma.XOR<Prisma.CustomElementUpdateWithoutUserInput, Prisma.CustomElementUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.CustomElementCreateWithoutUserInput, Prisma.CustomElementUncheckedCreateWithoutUserInput>
-}
-
-export type CustomElementUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.CustomElementWhereUniqueInput
-  data: Prisma.XOR<Prisma.CustomElementUpdateWithoutUserInput, Prisma.CustomElementUncheckedUpdateWithoutUserInput>
-}
-
-export type CustomElementUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.CustomElementScalarWhereInput
-  data: Prisma.XOR<Prisma.CustomElementUpdateManyMutationInput, Prisma.CustomElementUncheckedUpdateManyWithoutUserInput>
-}
-
-export type CustomElementScalarWhereInput = {
-  AND?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
-  OR?: Prisma.CustomElementScalarWhereInput[]
-  NOT?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
-  Id?: Prisma.StringFilter<"CustomElement"> | string
-  Name?: Prisma.StringFilter<"CustomElement"> | string
-  TypeId?: Prisma.StringNullableFilter<"CustomElement"> | string | null
-  Description?: Prisma.StringNullableFilter<"CustomElement"> | string | null
-  Category?: Prisma.StringNullableFilter<"CustomElement"> | string | null
-  Icon?: Prisma.StringNullableFilter<"CustomElement"> | string | null
-  Thumbnail?: Prisma.StringNullableFilter<"CustomElement"> | string | null
-  Structure?: Prisma.JsonFilter<"CustomElement">
-  DefaultProps?: Prisma.JsonNullableFilter<"CustomElement">
-  Tags?: Prisma.StringNullableFilter<"CustomElement"> | string | null
-  UserId?: Prisma.StringFilter<"CustomElement"> | string
-  IsPublic?: Prisma.BoolFilter<"CustomElement"> | boolean
-  Version?: Prisma.StringFilter<"CustomElement"> | string
-  CreatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
-  UpdatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
-}
-
 export type CustomElementCreateWithoutCustomElementTypeInput = {
   Id: string
   Name: string
@@ -702,11 +577,11 @@ export type CustomElementCreateWithoutCustomElementTypeInput = {
   Structure: Prisma.JsonNullValueInput | runtime.InputJsonValue
   DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   Tags?: string | null
+  UserId: string
   IsPublic?: boolean
   Version?: string
   CreatedAt?: Date | string
   UpdatedAt?: Date | string
-  User: Prisma.UserCreateNestedOneWithoutCustomElementsInput
 }
 
 export type CustomElementUncheckedCreateWithoutCustomElementTypeInput = {
@@ -752,72 +627,25 @@ export type CustomElementUpdateManyWithWhereWithoutCustomElementTypeInput = {
   data: Prisma.XOR<Prisma.CustomElementUpdateManyMutationInput, Prisma.CustomElementUncheckedUpdateManyWithoutCustomElementTypeInput>
 }
 
-export type CustomElementCreateManyUserInput = {
-  Id: string
-  Name: string
-  TypeId?: string | null
-  Description?: string | null
-  Category?: string | null
-  Icon?: string | null
-  Thumbnail?: string | null
-  Structure: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  Tags?: string | null
-  IsPublic?: boolean
-  Version?: string
-  CreatedAt?: Date | string
-  UpdatedAt?: Date | string
-}
-
-export type CustomElementUpdateWithoutUserInput = {
-  Id?: Prisma.StringFieldUpdateOperationsInput | string
-  Name?: Prisma.StringFieldUpdateOperationsInput | string
-  Description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Structure?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  Tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  IsPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  Version?: Prisma.StringFieldUpdateOperationsInput | string
-  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  CustomElementType?: Prisma.CustomElementTypeUpdateOneWithoutCustomElementsNestedInput
-}
-
-export type CustomElementUncheckedUpdateWithoutUserInput = {
-  Id?: Prisma.StringFieldUpdateOperationsInput | string
-  Name?: Prisma.StringFieldUpdateOperationsInput | string
-  TypeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Structure?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  Tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  IsPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  Version?: Prisma.StringFieldUpdateOperationsInput | string
-  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type CustomElementUncheckedUpdateManyWithoutUserInput = {
-  Id?: Prisma.StringFieldUpdateOperationsInput | string
-  Name?: Prisma.StringFieldUpdateOperationsInput | string
-  TypeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  Structure?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  Tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  IsPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  Version?: Prisma.StringFieldUpdateOperationsInput | string
-  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type CustomElementScalarWhereInput = {
+  AND?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
+  OR?: Prisma.CustomElementScalarWhereInput[]
+  NOT?: Prisma.CustomElementScalarWhereInput | Prisma.CustomElementScalarWhereInput[]
+  Id?: Prisma.StringFilter<"CustomElement"> | string
+  Name?: Prisma.StringFilter<"CustomElement"> | string
+  TypeId?: Prisma.StringNullableFilter<"CustomElement"> | string | null
+  Description?: Prisma.StringNullableFilter<"CustomElement"> | string | null
+  Category?: Prisma.StringNullableFilter<"CustomElement"> | string | null
+  Icon?: Prisma.StringNullableFilter<"CustomElement"> | string | null
+  Thumbnail?: Prisma.StringNullableFilter<"CustomElement"> | string | null
+  Structure?: Prisma.JsonFilter<"CustomElement">
+  DefaultProps?: Prisma.JsonNullableFilter<"CustomElement">
+  Tags?: Prisma.StringNullableFilter<"CustomElement"> | string | null
+  UserId?: Prisma.StringFilter<"CustomElement"> | string
+  IsPublic?: Prisma.BoolFilter<"CustomElement"> | boolean
+  Version?: Prisma.StringFilter<"CustomElement"> | string
+  CreatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
+  UpdatedAt?: Prisma.DateTimeFilter<"CustomElement"> | Date | string
 }
 
 export type CustomElementCreateManyCustomElementTypeInput = {
@@ -847,11 +675,11 @@ export type CustomElementUpdateWithoutCustomElementTypeInput = {
   Structure?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   DefaultProps?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   Tags?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   IsPublic?: Prisma.BoolFieldUpdateOperationsInput | boolean
   Version?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  User?: Prisma.UserUpdateOneRequiredWithoutCustomElementsNestedInput
 }
 
 export type CustomElementUncheckedUpdateWithoutCustomElementTypeInput = {
@@ -907,7 +735,6 @@ export type CustomElementSelect<ExtArgs extends runtime.Types.Extensions.Interna
   CreatedAt?: boolean
   UpdatedAt?: boolean
   CustomElementType?: boolean | Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>
-  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customElement"]>
 
 export type CustomElementSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -927,7 +754,6 @@ export type CustomElementSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   CreatedAt?: boolean
   UpdatedAt?: boolean
   CustomElementType?: boolean | Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>
-  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customElement"]>
 
 export type CustomElementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -947,7 +773,6 @@ export type CustomElementSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   CreatedAt?: boolean
   UpdatedAt?: boolean
   CustomElementType?: boolean | Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>
-  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customElement"]>
 
 export type CustomElementSelectScalar = {
@@ -971,22 +796,18 @@ export type CustomElementSelectScalar = {
 export type CustomElementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"Id" | "Name" | "TypeId" | "Description" | "Category" | "Icon" | "Thumbnail" | "Structure" | "DefaultProps" | "Tags" | "UserId" | "IsPublic" | "Version" | "CreatedAt" | "UpdatedAt", ExtArgs["result"]["customElement"]>
 export type CustomElementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   CustomElementType?: boolean | Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>
-  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type CustomElementIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   CustomElementType?: boolean | Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>
-  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type CustomElementIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   CustomElementType?: boolean | Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>
-  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $CustomElementPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "CustomElement"
   objects: {
     CustomElementType: Prisma.$CustomElementTypePayload<ExtArgs> | null
-    User: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     Id: string
@@ -1399,7 +1220,6 @@ readonly fields: CustomElementFieldRefs;
 export interface Prisma__CustomElementClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   CustomElementType<T extends Prisma.CustomElement$CustomElementTypeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CustomElement$CustomElementTypeArgs<ExtArgs>>): Prisma.Prisma__CustomElementTypeClient<runtime.Types.Result.GetResult<Prisma.$CustomElementTypePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  User<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
