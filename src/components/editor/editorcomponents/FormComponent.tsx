@@ -59,6 +59,8 @@ export default function FormComponent({ element, data }: EditorComponentProps) {
   return (
     <form
       ref={elementRef as React.RefObject<HTMLFormElement>}
+      data-element-id={element.id}
+      data-element-type={element.type}
       {...getCommonProps(formElement)}
       {...eventHandlers}
       className="flex flex-col gap-4 p-4 border rounded-lg"

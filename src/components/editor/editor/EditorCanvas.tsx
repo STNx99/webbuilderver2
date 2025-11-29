@@ -247,18 +247,23 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "c":
+            e.preventDefault();
             keyboardEvent.copyElement();
             break;
           case "v":
+            e.preventDefault();
             keyboardEvent.pasteElement();
             break;
           case "x":
+            e.preventDefault();
             keyboardEvent.cutElement();
             break;
           case "z":
+            e.preventDefault();
             keyboardEvent.undo();
             break;
           case "y":
+            e.preventDefault();
             keyboardEvent.redo();
             break;
         }
