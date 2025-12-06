@@ -29,6 +29,6 @@ export function GetAIExportUrl(path: string): string {
   const baseUrl =
     process.env.AI_EXPORT_SERVER_URL ||
     process.env.NEXT_PUBLIC_AI_EXPORT_SERVER_URL ||
-    "http://localhost:5000";
+    "http://localhost:5001";
   return `${baseUrl}${path}`;
 }
