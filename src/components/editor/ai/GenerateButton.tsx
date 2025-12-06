@@ -4,11 +4,13 @@ import { EditorElement } from "@/types/global.type";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import React from "react";
 import { z } from "zod";
+import { API_ENDPOINTS } from "@/constants/endpoints";
+import { GetAIUrl } from "@/lib/utils/geturl";
 
 export default function GenerateButton() {
     const { addElement } = useElementStore();
     const { object, submit, isLoading, stop } = useObject({
-        api: "http://localhost:3001/api/1.0.0/ai/generate",
+        api: GetAIUrl(API_ENDPOINTS.AI.GENERATE_CONTENT),
         schema: z.unknown(),
     });
 

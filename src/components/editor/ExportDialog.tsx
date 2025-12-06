@@ -75,22 +75,13 @@ const ExportDialog: React.FC<ExportDialogProps> = ({ children }) => {
         page: currentPage || undefined,
       })
         .then(async (code) => {
-          console.log("✅ Generated code successfully");
           setGeneratedCode(code);
 
           // Convert code to file tree format
           const fileTree = convertCodeToFileTree(code, options.exportFormat);
-
-          console.log("Sending to AI server...");
-          console.log("=== INPUT DATA ===");
-          console.log(JSON.stringify(fileTree, null, 2));
-
           try {
             // Send to AI server for reconstruction
             const reconstructed = await aiExportService.reconstructProject(fileTree);
-
-            console.log("=== RECONSTRUCTED DATA ===");
-            console.log(JSON.stringify(reconstructed, null, 2));
 
             // Convert reconstructed data to FileNode structure for display
             const structure = convertToFileNodes(reconstructed);

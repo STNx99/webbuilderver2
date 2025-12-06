@@ -32,9 +32,6 @@ export const aiExportService = {
     async reconstructProject(fileTree: FileTreeNode[]): Promise<FileTreeNode[]> {
         try {
             const url = GetAIExportUrl(AI_EXPORT_ENDPOINTS.RECONSTRUCT);
-            console.log("🚀 AI Export URL:", url);
-            console.log("📦 INPUT DATA:", JSON.stringify(fileTree, null, 2));
-
             const response = await apiClient.post<ReconstructProjectResponse>(url, {
                 fileTreeData: fileTree
             });

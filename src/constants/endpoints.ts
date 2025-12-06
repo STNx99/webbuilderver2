@@ -25,6 +25,7 @@ export const API_ENDPOINTS = {
   AI: {
     GENERATE_CONTENT: "/api/v1/ai/generate-content",
     GENERATE_CONTENT_STREAM: "/api/v1/ai/generate-content-stream",
+    GENERATE: "/api/1.0.0/ai/generate",
   },
   CMS: {
     CONTENT_TYPES: {
