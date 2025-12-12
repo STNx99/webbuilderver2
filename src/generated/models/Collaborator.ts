@@ -191,6 +191,7 @@ export type CollaboratorWhereInput = {
   CreatedAt?: Prisma.DateTimeFilter<"Collaborator"> | Date | string
   UpdatedAt?: Prisma.DateTimeFilter<"Collaborator"> | Date | string
   Project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type CollaboratorOrderByWithRelationInput = {
@@ -201,6 +202,7 @@ export type CollaboratorOrderByWithRelationInput = {
   CreatedAt?: Prisma.SortOrder
   UpdatedAt?: Prisma.SortOrder
   Project?: Prisma.ProjectOrderByWithRelationInput
+  User?: Prisma.UserOrderByWithRelationInput
 }
 
 export type CollaboratorWhereUniqueInput = Prisma.AtLeast<{
@@ -215,6 +217,7 @@ export type CollaboratorWhereUniqueInput = Prisma.AtLeast<{
   CreatedAt?: Prisma.DateTimeFilter<"Collaborator"> | Date | string
   UpdatedAt?: Prisma.DateTimeFilter<"Collaborator"> | Date | string
   Project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "Id" | "UserId_ProjectId">
 
 export type CollaboratorOrderByWithAggregationInput = {
@@ -243,11 +246,11 @@ export type CollaboratorScalarWhereWithAggregatesInput = {
 
 export type CollaboratorCreateInput = {
   Id?: string
-  UserId: string
   Role?: $Enums.CollaboratorRole
   CreatedAt?: Date | string
   UpdatedAt?: Date | string
   Project: Prisma.ProjectCreateNestedOneWithoutCollaboratorsInput
+  User: Prisma.UserCreateNestedOneWithoutCollaboratorsInput
 }
 
 export type CollaboratorUncheckedCreateInput = {
@@ -261,11 +264,11 @@ export type CollaboratorUncheckedCreateInput = {
 
 export type CollaboratorUpdateInput = {
   Id?: Prisma.StringFieldUpdateOperationsInput | string
-  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   Role?: Prisma.EnumCollaboratorRoleFieldUpdateOperationsInput | $Enums.CollaboratorRole
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   Project?: Prisma.ProjectUpdateOneRequiredWithoutCollaboratorsNestedInput
+  User?: Prisma.UserUpdateOneRequiredWithoutCollaboratorsNestedInput
 }
 
 export type CollaboratorUncheckedUpdateInput = {
@@ -288,7 +291,6 @@ export type CollaboratorCreateManyInput = {
 
 export type CollaboratorUpdateManyMutationInput = {
   Id?: Prisma.StringFieldUpdateOperationsInput | string
-  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   Role?: Prisma.EnumCollaboratorRoleFieldUpdateOperationsInput | $Enums.CollaboratorRole
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -387,12 +389,54 @@ export type CollaboratorUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.CollaboratorScalarWhereInput | Prisma.CollaboratorScalarWhereInput[]
 }
 
+export type CollaboratorCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.CollaboratorCreateWithoutUserInput, Prisma.CollaboratorUncheckedCreateWithoutUserInput> | Prisma.CollaboratorCreateWithoutUserInput[] | Prisma.CollaboratorUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.CollaboratorCreateOrConnectWithoutUserInput | Prisma.CollaboratorCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.CollaboratorCreateManyUserInputEnvelope
+  connect?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+}
+
+export type CollaboratorUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.CollaboratorCreateWithoutUserInput, Prisma.CollaboratorUncheckedCreateWithoutUserInput> | Prisma.CollaboratorCreateWithoutUserInput[] | Prisma.CollaboratorUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.CollaboratorCreateOrConnectWithoutUserInput | Prisma.CollaboratorCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.CollaboratorCreateManyUserInputEnvelope
+  connect?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+}
+
+export type CollaboratorUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.CollaboratorCreateWithoutUserInput, Prisma.CollaboratorUncheckedCreateWithoutUserInput> | Prisma.CollaboratorCreateWithoutUserInput[] | Prisma.CollaboratorUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.CollaboratorCreateOrConnectWithoutUserInput | Prisma.CollaboratorCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.CollaboratorUpsertWithWhereUniqueWithoutUserInput | Prisma.CollaboratorUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.CollaboratorCreateManyUserInputEnvelope
+  set?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  disconnect?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  delete?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  connect?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  update?: Prisma.CollaboratorUpdateWithWhereUniqueWithoutUserInput | Prisma.CollaboratorUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.CollaboratorUpdateManyWithWhereWithoutUserInput | Prisma.CollaboratorUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.CollaboratorScalarWhereInput | Prisma.CollaboratorScalarWhereInput[]
+}
+
+export type CollaboratorUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.CollaboratorCreateWithoutUserInput, Prisma.CollaboratorUncheckedCreateWithoutUserInput> | Prisma.CollaboratorCreateWithoutUserInput[] | Prisma.CollaboratorUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.CollaboratorCreateOrConnectWithoutUserInput | Prisma.CollaboratorCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.CollaboratorUpsertWithWhereUniqueWithoutUserInput | Prisma.CollaboratorUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.CollaboratorCreateManyUserInputEnvelope
+  set?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  disconnect?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  delete?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  connect?: Prisma.CollaboratorWhereUniqueInput | Prisma.CollaboratorWhereUniqueInput[]
+  update?: Prisma.CollaboratorUpdateWithWhereUniqueWithoutUserInput | Prisma.CollaboratorUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.CollaboratorUpdateManyWithWhereWithoutUserInput | Prisma.CollaboratorUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.CollaboratorScalarWhereInput | Prisma.CollaboratorScalarWhereInput[]
+}
+
 export type CollaboratorCreateWithoutProjectInput = {
   Id?: string
-  UserId: string
   Role?: $Enums.CollaboratorRole
   CreatedAt?: Date | string
   UpdatedAt?: Date | string
+  User: Prisma.UserCreateNestedOneWithoutCollaboratorsInput
 }
 
 export type CollaboratorUncheckedCreateWithoutProjectInput = {
@@ -441,6 +485,48 @@ export type CollaboratorScalarWhereInput = {
   UpdatedAt?: Prisma.DateTimeFilter<"Collaborator"> | Date | string
 }
 
+export type CollaboratorCreateWithoutUserInput = {
+  Id?: string
+  Role?: $Enums.CollaboratorRole
+  CreatedAt?: Date | string
+  UpdatedAt?: Date | string
+  Project: Prisma.ProjectCreateNestedOneWithoutCollaboratorsInput
+}
+
+export type CollaboratorUncheckedCreateWithoutUserInput = {
+  Id?: string
+  ProjectId: string
+  Role?: $Enums.CollaboratorRole
+  CreatedAt?: Date | string
+  UpdatedAt?: Date | string
+}
+
+export type CollaboratorCreateOrConnectWithoutUserInput = {
+  where: Prisma.CollaboratorWhereUniqueInput
+  create: Prisma.XOR<Prisma.CollaboratorCreateWithoutUserInput, Prisma.CollaboratorUncheckedCreateWithoutUserInput>
+}
+
+export type CollaboratorCreateManyUserInputEnvelope = {
+  data: Prisma.CollaboratorCreateManyUserInput | Prisma.CollaboratorCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type CollaboratorUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.CollaboratorWhereUniqueInput
+  update: Prisma.XOR<Prisma.CollaboratorUpdateWithoutUserInput, Prisma.CollaboratorUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.CollaboratorCreateWithoutUserInput, Prisma.CollaboratorUncheckedCreateWithoutUserInput>
+}
+
+export type CollaboratorUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.CollaboratorWhereUniqueInput
+  data: Prisma.XOR<Prisma.CollaboratorUpdateWithoutUserInput, Prisma.CollaboratorUncheckedUpdateWithoutUserInput>
+}
+
+export type CollaboratorUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.CollaboratorScalarWhereInput
+  data: Prisma.XOR<Prisma.CollaboratorUpdateManyMutationInput, Prisma.CollaboratorUncheckedUpdateManyWithoutUserInput>
+}
+
 export type CollaboratorCreateManyProjectInput = {
   Id?: string
   UserId: string
@@ -451,10 +537,10 @@ export type CollaboratorCreateManyProjectInput = {
 
 export type CollaboratorUpdateWithoutProjectInput = {
   Id?: Prisma.StringFieldUpdateOperationsInput | string
-  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   Role?: Prisma.EnumCollaboratorRoleFieldUpdateOperationsInput | $Enums.CollaboratorRole
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  User?: Prisma.UserUpdateOneRequiredWithoutCollaboratorsNestedInput
 }
 
 export type CollaboratorUncheckedUpdateWithoutProjectInput = {
@@ -473,6 +559,38 @@ export type CollaboratorUncheckedUpdateManyWithoutProjectInput = {
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type CollaboratorCreateManyUserInput = {
+  Id?: string
+  ProjectId: string
+  Role?: $Enums.CollaboratorRole
+  CreatedAt?: Date | string
+  UpdatedAt?: Date | string
+}
+
+export type CollaboratorUpdateWithoutUserInput = {
+  Id?: Prisma.StringFieldUpdateOperationsInput | string
+  Role?: Prisma.EnumCollaboratorRoleFieldUpdateOperationsInput | $Enums.CollaboratorRole
+  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  Project?: Prisma.ProjectUpdateOneRequiredWithoutCollaboratorsNestedInput
+}
+
+export type CollaboratorUncheckedUpdateWithoutUserInput = {
+  Id?: Prisma.StringFieldUpdateOperationsInput | string
+  ProjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  Role?: Prisma.EnumCollaboratorRoleFieldUpdateOperationsInput | $Enums.CollaboratorRole
+  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CollaboratorUncheckedUpdateManyWithoutUserInput = {
+  Id?: Prisma.StringFieldUpdateOperationsInput | string
+  ProjectId?: Prisma.StringFieldUpdateOperationsInput | string
+  Role?: Prisma.EnumCollaboratorRoleFieldUpdateOperationsInput | $Enums.CollaboratorRole
+  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type CollaboratorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -483,6 +601,7 @@ export type CollaboratorSelect<ExtArgs extends runtime.Types.Extensions.Internal
   CreatedAt?: boolean
   UpdatedAt?: boolean
   Project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collaborator"]>
 
 export type CollaboratorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -493,6 +612,7 @@ export type CollaboratorSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   CreatedAt?: boolean
   UpdatedAt?: boolean
   Project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collaborator"]>
 
 export type CollaboratorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -503,6 +623,7 @@ export type CollaboratorSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   CreatedAt?: boolean
   UpdatedAt?: boolean
   Project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["collaborator"]>
 
 export type CollaboratorSelectScalar = {
@@ -517,18 +638,22 @@ export type CollaboratorSelectScalar = {
 export type CollaboratorOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"Id" | "UserId" | "ProjectId" | "Role" | "CreatedAt" | "UpdatedAt", ExtArgs["result"]["collaborator"]>
 export type CollaboratorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type CollaboratorIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type CollaboratorIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   Project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $CollaboratorPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Collaborator"
   objects: {
     Project: Prisma.$ProjectPayload<ExtArgs>
+    User: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     Id: string
@@ -932,6 +1057,7 @@ readonly fields: CollaboratorFieldRefs;
 export interface Prisma__CollaboratorClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   Project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  User<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

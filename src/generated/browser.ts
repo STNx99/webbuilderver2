@@ -53,6 +53,11 @@ export type Setting = Prisma.SettingModel
  */
 export type Snapshot = Prisma.SnapshotModel
 /**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
  * Model Subscription
  * 
  */

@@ -58,7 +58,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     keyboardEvent.setLocked(isLocked);
   }, [isReadOnly, isLocked, keyboardEvent]);
 
-  // Track scroll position of inner content container
   useEffect(() => {
     if (!innerContentRef.current) return;
 
@@ -76,7 +75,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     };
   }, []);
 
-  // Only use old mouse tracking if not using Yjs (sendMessage prop available)
   useMouseTracking({
     canvasRef,
     sendMessage: sendMessage || (() => false),
@@ -84,7 +82,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     enabled: !ydoc,
   });
 
-  // Sync awareness cursor position if using Yjs
   useEffect(() => {
     if (!provider || !provider.awareness) return;
 
@@ -92,9 +89,8 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     let lastX = -1;
     let lastY = -1;
     let lastUpdateTime = 0;
-    const THROTTLE_MS = 50; // Throttle to max 20 updates per second
+    const THROTTLE_MS = 50;
 
-    // Determine if we're tracking mouse in an iframe or regular canvas
     const isIframe = iframeRef && iframeRef.current;
     const targetDoc = isIframe ? iframeRef.current?.contentDocument : document;
 
@@ -103,28 +99,20 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     }
 
     const handleMouseMove = (e: MouseEvent) => {
-      // Throttle updates for performance
       const now = Date.now();
       if (now - lastUpdateTime < THROTTLE_MS) {
         return;
       }
       lastUpdateTime = now;
-      // For iframe: coordinates are already relative to iframe content
-      // For canvas: need to calculate relative to canvas bounds
+
       let x: number;
       let y: number;
 
       if (isIframe) {
-        // Inside iframe - coordinates are already relative to iframe document
         x = e.clientX;
         y = e.clientY;
         logCount++;
-
-        if (logCount % 10 === 0) {
-          // Logging removed
-        }
       } else {
-        // Regular canvas tracking
         if (!canvasRef.current) return;
 
         const canvasRect = canvasRef.current.getBoundingClientRect();
@@ -132,21 +120,13 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
 
         logCount++;
 
-        // Only send cursor if mouse is actually inside the canvas bounds
         const isInsideCanvas =
           e.clientX >= canvasRect.left &&
           e.clientX <= canvasRect.right &&
           e.clientY >= canvasRect.top &&
           e.clientY <= canvasRect.bottom;
 
-        if (logCount % 10 === 0) {
-          // Logging removed
-        }
-
         if (!isInsideCanvas) {
-          if (logCount % 10 === 0) {
-            // Logging removed
-          }
           return;
         }
 
@@ -154,11 +134,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         y = e.clientY - canvasRect.top;
       }
 
-      if (logCount % 10 === 0) {
-        // Logging removed
-      }
-
-      // Only update if position changed significantly (> 3px)
       const deltaX = Math.abs(x - lastX);
       const deltaY = Math.abs(y - lastY);
       if (lastX !== -1 && deltaX < 3 && deltaY < 3) {
@@ -170,7 +145,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       try {
         provider.awareness.setLocalStateField("cursor", { x, y });
       } catch (err) {
-        // Error handling without logging
+        // Silent error handling
       }
     };
 
@@ -178,17 +153,15 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       try {
         provider.awareness.setLocalStateField("cursor", null);
       } catch (err) {
-        // Error handling without logging
+        // Silent error handling
       }
     };
 
     const trackingTarget = isIframe ? iframeRef.current : canvasRef.current;
     if (!trackingTarget) return;
 
-    // Use passive listener for better scroll performance
     targetDoc.addEventListener("mousemove", handleMouseMove, { passive: true });
     if (!isIframe) {
-      // Only attach mouseleave to regular canvas
       trackingTarget.addEventListener("mouseleave", handleMouseLeave);
     }
 
@@ -200,7 +173,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     };
   }, [provider, iframeRef]);
 
-  // Memoize remote cursors for performance
   const remoteCursors = useMemo(() => {
     if (ydoc && remoteUsers) {
       const cursors = Object.entries(remoteUsers)
@@ -211,7 +183,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
 
           return {
             uid,
-            // Adjust for scroll position of inner container
             x: x - scrollOffset.x,
             y: y - scrollOffset.y,
             userName: users[uid]?.userName || `User ${uid.slice(0, 8)}`,
@@ -223,7 +194,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     return [];
   }, [ydoc, remoteUsers, userId, users, scrollOffset]);
 
-  // Memoize websocket cursors for performance
   const webSocketCursors = useMemo(() => {
     if (!ydoc && mousePositions) {
       return Object.entries(mousePositions)
@@ -243,7 +213,6 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     if (!canvas) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
       if (e.ctrlKey || e.metaKey) {
         switch (e.key) {
           case "c":
@@ -268,23 +237,34 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
             break;
         }
       } else if (e.key === "Delete") {
+        e.preventDefault();
         keyboardEvent.deleteElement();
       } else if (e.key === "Escape") {
+        e.preventDefault();
         keyboardEvent.deselectAll();
       }
     };
 
     canvas.addEventListener("keydown", handleKeyDown);
 
+    let iframeDoc: Document | null = null;
+    if (iframeRef?.current?.contentDocument) {
+      iframeDoc = iframeRef.current.contentDocument;
+      iframeDoc.addEventListener("keydown", handleKeyDown, true);
+    }
+
     return () => {
       canvas.removeEventListener("keydown", handleKeyDown);
+      if (iframeDoc) {
+        iframeDoc.removeEventListener("keydown", handleKeyDown, true);
+      }
     };
-  }, [keyboardEvent]);
+  }, [keyboardEvent, iframeRef]);
 
   return (
     <div
       ref={canvasRef}
-      className={`h-full relative flex flex-col bg-background  ${
+      className={`h-full relative flex flex-col bg-background ${
         isDraggingOver ? "bg-primary/10" : ""
       }`}
       onDrop={handleDrop}
@@ -316,7 +296,11 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
         className="overflow-x-hidden h-full w-full p-4"
       >
         {isLoading ? null : (
-          <ElementLoader isReadOnly={isReadOnly} isLocked={isLocked} />
+          <ElementLoader
+            isReadOnly={isReadOnly}
+            isLocked={isLocked}
+            iframeRef={iframeRef}
+          />
         )}
         {!selectedElement && (
           <Button

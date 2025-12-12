@@ -11,7 +11,6 @@ import { customComps } from "@/lib/customcomponents/customComponents";
 import { EditorElement, ElementType } from "@/types/global.type";
 import { SectionElement } from "@/interfaces/elements.interface";
 import type { Project } from "@/interfaces/project.interface";
-import { useYjsCollab } from "@/hooks/realtime/use-yjs-collab";
 import { useEditorPermissions } from "./useEditorPermissions";
 import { useProject, useProjectPages } from "@/hooks";
 import { toast } from "sonner";

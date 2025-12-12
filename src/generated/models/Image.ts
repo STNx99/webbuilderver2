@@ -198,6 +198,7 @@ export type ImageWhereInput = {
   CreatedAt?: Prisma.DateTimeFilter<"Image"> | Date | string
   DeletedAt?: Prisma.DateTimeNullableFilter<"Image"> | Date | string | null
   UpdatedAt?: Prisma.DateTimeFilter<"Image"> | Date | string
+  User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type ImageOrderByWithRelationInput = {
@@ -208,6 +209,7 @@ export type ImageOrderByWithRelationInput = {
   CreatedAt?: Prisma.SortOrder
   DeletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   UpdatedAt?: Prisma.SortOrder
+  User?: Prisma.UserOrderByWithRelationInput
 }
 
 export type ImageWhereUniqueInput = Prisma.AtLeast<{
@@ -221,6 +223,7 @@ export type ImageWhereUniqueInput = Prisma.AtLeast<{
   CreatedAt?: Prisma.DateTimeFilter<"Image"> | Date | string
   DeletedAt?: Prisma.DateTimeNullableFilter<"Image"> | Date | string | null
   UpdatedAt?: Prisma.DateTimeFilter<"Image"> | Date | string
+  User?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "ImageId">
 
 export type ImageOrderByWithAggregationInput = {
@@ -253,10 +256,10 @@ export type ImageCreateInput = {
   ImageId: string
   ImageLink?: string
   ImageName?: string | null
-  UserId: string
   CreatedAt: Date | string
   DeletedAt?: Date | string | null
   UpdatedAt: Date | string
+  User: Prisma.UserCreateNestedOneWithoutImagesInput
 }
 
 export type ImageUncheckedCreateInput = {
@@ -273,10 +276,10 @@ export type ImageUpdateInput = {
   ImageId?: Prisma.StringFieldUpdateOperationsInput | string
   ImageLink?: Prisma.StringFieldUpdateOperationsInput | string
   ImageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  User?: Prisma.UserUpdateOneRequiredWithoutImagesNestedInput
 }
 
 export type ImageUncheckedUpdateInput = {
@@ -303,7 +306,6 @@ export type ImageUpdateManyMutationInput = {
   ImageId?: Prisma.StringFieldUpdateOperationsInput | string
   ImageLink?: Prisma.StringFieldUpdateOperationsInput | string
   ImageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  UserId?: Prisma.StringFieldUpdateOperationsInput | string
   CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -349,12 +351,157 @@ export type ImageMinOrderByAggregateInput = {
   UpdatedAt?: Prisma.SortOrder
 }
 
+export type ImageListRelationFilter = {
+  every?: Prisma.ImageWhereInput
+  some?: Prisma.ImageWhereInput
+  none?: Prisma.ImageWhereInput
+}
+
+export type ImageOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type ImageCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.ImageCreateWithoutUserInput, Prisma.ImageUncheckedCreateWithoutUserInput> | Prisma.ImageCreateWithoutUserInput[] | Prisma.ImageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ImageCreateOrConnectWithoutUserInput | Prisma.ImageCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.ImageCreateManyUserInputEnvelope
+  connect?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+}
+
+export type ImageUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.ImageCreateWithoutUserInput, Prisma.ImageUncheckedCreateWithoutUserInput> | Prisma.ImageCreateWithoutUserInput[] | Prisma.ImageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ImageCreateOrConnectWithoutUserInput | Prisma.ImageCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.ImageCreateManyUserInputEnvelope
+  connect?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+}
+
+export type ImageUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.ImageCreateWithoutUserInput, Prisma.ImageUncheckedCreateWithoutUserInput> | Prisma.ImageCreateWithoutUserInput[] | Prisma.ImageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ImageCreateOrConnectWithoutUserInput | Prisma.ImageCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.ImageUpsertWithWhereUniqueWithoutUserInput | Prisma.ImageUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.ImageCreateManyUserInputEnvelope
+  set?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  disconnect?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  delete?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  connect?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  update?: Prisma.ImageUpdateWithWhereUniqueWithoutUserInput | Prisma.ImageUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.ImageUpdateManyWithWhereWithoutUserInput | Prisma.ImageUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.ImageScalarWhereInput | Prisma.ImageScalarWhereInput[]
+}
+
+export type ImageUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.ImageCreateWithoutUserInput, Prisma.ImageUncheckedCreateWithoutUserInput> | Prisma.ImageCreateWithoutUserInput[] | Prisma.ImageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.ImageCreateOrConnectWithoutUserInput | Prisma.ImageCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.ImageUpsertWithWhereUniqueWithoutUserInput | Prisma.ImageUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.ImageCreateManyUserInputEnvelope
+  set?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  disconnect?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  delete?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  connect?: Prisma.ImageWhereUniqueInput | Prisma.ImageWhereUniqueInput[]
+  update?: Prisma.ImageUpdateWithWhereUniqueWithoutUserInput | Prisma.ImageUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.ImageUpdateManyWithWhereWithoutUserInput | Prisma.ImageUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.ImageScalarWhereInput | Prisma.ImageScalarWhereInput[]
+}
+
+export type ImageCreateWithoutUserInput = {
+  ImageId: string
+  ImageLink?: string
+  ImageName?: string | null
+  CreatedAt: Date | string
+  DeletedAt?: Date | string | null
+  UpdatedAt: Date | string
+}
+
+export type ImageUncheckedCreateWithoutUserInput = {
+  ImageId: string
+  ImageLink?: string
+  ImageName?: string | null
+  CreatedAt: Date | string
+  DeletedAt?: Date | string | null
+  UpdatedAt: Date | string
+}
+
+export type ImageCreateOrConnectWithoutUserInput = {
+  where: Prisma.ImageWhereUniqueInput
+  create: Prisma.XOR<Prisma.ImageCreateWithoutUserInput, Prisma.ImageUncheckedCreateWithoutUserInput>
+}
+
+export type ImageCreateManyUserInputEnvelope = {
+  data: Prisma.ImageCreateManyUserInput | Prisma.ImageCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type ImageUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.ImageWhereUniqueInput
+  update: Prisma.XOR<Prisma.ImageUpdateWithoutUserInput, Prisma.ImageUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.ImageCreateWithoutUserInput, Prisma.ImageUncheckedCreateWithoutUserInput>
+}
+
+export type ImageUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.ImageWhereUniqueInput
+  data: Prisma.XOR<Prisma.ImageUpdateWithoutUserInput, Prisma.ImageUncheckedUpdateWithoutUserInput>
+}
+
+export type ImageUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.ImageScalarWhereInput
+  data: Prisma.XOR<Prisma.ImageUpdateManyMutationInput, Prisma.ImageUncheckedUpdateManyWithoutUserInput>
+}
+
+export type ImageScalarWhereInput = {
+  AND?: Prisma.ImageScalarWhereInput | Prisma.ImageScalarWhereInput[]
+  OR?: Prisma.ImageScalarWhereInput[]
+  NOT?: Prisma.ImageScalarWhereInput | Prisma.ImageScalarWhereInput[]
+  ImageId?: Prisma.StringFilter<"Image"> | string
+  ImageLink?: Prisma.StringFilter<"Image"> | string
+  ImageName?: Prisma.StringNullableFilter<"Image"> | string | null
+  UserId?: Prisma.StringFilter<"Image"> | string
+  CreatedAt?: Prisma.DateTimeFilter<"Image"> | Date | string
+  DeletedAt?: Prisma.DateTimeNullableFilter<"Image"> | Date | string | null
+  UpdatedAt?: Prisma.DateTimeFilter<"Image"> | Date | string
+}
+
+export type ImageCreateManyUserInput = {
+  ImageId: string
+  ImageLink?: string
+  ImageName?: string | null
+  CreatedAt: Date | string
+  DeletedAt?: Date | string | null
+  UpdatedAt: Date | string
+}
+
+export type ImageUpdateWithoutUserInput = {
+  ImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  ImageLink?: Prisma.StringFieldUpdateOperationsInput | string
+  ImageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ImageUncheckedUpdateWithoutUserInput = {
+  ImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  ImageLink?: Prisma.StringFieldUpdateOperationsInput | string
+  ImageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ImageUncheckedUpdateManyWithoutUserInput = {
+  ImageId?: Prisma.StringFieldUpdateOperationsInput | string
+  ImageLink?: Prisma.StringFieldUpdateOperationsInput | string
+  ImageName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  CreatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  DeletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  UpdatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -367,6 +514,7 @@ export type ImageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   CreatedAt?: boolean
   DeletedAt?: boolean
   UpdatedAt?: boolean
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
 export type ImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -377,6 +525,7 @@ export type ImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   CreatedAt?: boolean
   DeletedAt?: boolean
   UpdatedAt?: boolean
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
 export type ImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -387,6 +536,7 @@ export type ImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   CreatedAt?: boolean
   DeletedAt?: boolean
   UpdatedAt?: boolean
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["image"]>
 
 export type ImageSelectScalar = {
@@ -400,10 +550,21 @@ export type ImageSelectScalar = {
 }
 
 export type ImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"ImageId" | "ImageLink" | "ImageName" | "UserId" | "CreatedAt" | "DeletedAt" | "UpdatedAt", ExtArgs["result"]["image"]>
+export type ImageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type ImageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type ImageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  User?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $ImagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Image"
-  objects: {}
+  objects: {
+    User: Prisma.$UserPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     ImageId: string
     ImageLink: string
@@ -806,6 +967,7 @@ readonly fields: ImageFieldRefs;
  */
 export interface Prisma__ImageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  User<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -859,6 +1021,10 @@ export type ImageFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
+  /**
    * Filter, which Image to fetch.
    */
   where: Prisma.ImageWhereUniqueInput
@@ -877,6 +1043,10 @@ export type ImageFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
+  /**
    * Filter, which Image to fetch.
    */
   where: Prisma.ImageWhereUniqueInput
@@ -894,6 +1064,10 @@ export type ImageFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Image
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
   /**
    * Filter, which Image to fetch.
    */
@@ -943,6 +1117,10 @@ export type ImageFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
+  /**
    * Filter, which Image to fetch.
    */
   where?: Prisma.ImageWhereInput
@@ -991,6 +1169,10 @@ export type ImageFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
+  /**
    * Filter, which Images to fetch.
    */
   where?: Prisma.ImageWhereInput
@@ -1034,6 +1216,10 @@ export type ImageCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
+  /**
    * The data needed to create a Image.
    */
   data: Prisma.XOR<Prisma.ImageCreateInput, Prisma.ImageUncheckedCreateInput>
@@ -1067,6 +1253,10 @@ export type ImageCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.ImageCreateManyInput | Prisma.ImageCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1081,6 +1271,10 @@ export type ImageUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Image
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
   /**
    * The data needed to update a Image.
    */
@@ -1133,6 +1327,10 @@ export type ImageUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Images to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1147,6 +1345,10 @@ export type ImageUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Image
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
   /**
    * The filter to search for the Image to update in case it exists.
    */
@@ -1173,6 +1375,10 @@ export type ImageDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Image
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
   /**
    * Filter which Image to delete.
    */
@@ -1205,4 +1411,8 @@ export type ImageDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Image
    */
   omit?: Prisma.ImageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ImageInclude<ExtArgs> | null
 }
