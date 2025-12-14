@@ -10,7 +10,7 @@ datasource db {
 model Element {
   Content        String?   @db.Text
   Href           String?   @db.VarChar(2048)
-  Id             String    @id @map("Id") @db.VarChar(36)
+  Id             String    @id @map("Id")
   Name           String?   @db.VarChar(255)
   Order          Int       @default(0)
   IsLocked       Boolean   @default(false)
@@ -38,13 +38,14 @@ model Element {
 }
 
 model Image {
-  ImageId   String    @id(map: "PK_Images") @db.VarChar(36)
+  ImageId   String    @id(map: "PK_Images")
   ImageLink String    @default("") @db.VarChar(2048)
   ImageName String?   @db.VarChar(255)
   UserId    String
   CreatedAt DateTime  @db.Timestamp(6)
   DeletedAt DateTime? @db.Timestamp(6)
   UpdatedAt DateTime  @db.Timestamp(6)
+  User      User      @relation(fields: [UserId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Images_Users_UserId")
 
   @@index([UserId], map: "IX_Images_UserId")
   @@index([DeletedAt])
@@ -53,7 +54,7 @@ model Image {
 
 model Project {
   Description     String?          @db.Text
-  Id              String           @id(map: "PK_Projects") @db.VarChar(36)
+  Id              String           @id(map: "PK_Projects")
   Name            String           @db.VarChar(255)
   OwnerId         String
   Published       Boolean          @default(false)
@@ -69,6 +70,7 @@ model Project {
   Pages           Page[]
   Snapshots       Snapshot[]
   EventWorkflows  EventWorkflow[]
+  Owner           User             @relation(fields: [OwnerId], references: [Id], onDelete: Cascade, onUpdate: NoAction, map: "FK_Projects_Users_OwnerId")
 
   @@index([OwnerId], map: "IX_Projects_OwnerId")
   @@index([Published])
@@ -80,7 +82,7 @@ model Project {
 }
 
 model Page {
-  Id        String    @id @map("Id") @db.VarChar(36)
+  Id        String    @id @map("Id")
   Name      String    @db.VarChar(255)
   Type      String    @db.VarChar(50)
   Styles    Json      @db.JsonB
@@ -98,7 +100,7 @@ model Page {
 }
 
 model EventWorkflow {
-  Id                    String                 @id @default(cuid()) @db.VarChar(36)
+  Id                    String                 @id @default(cuid())
   ProjectId             String
   Name                  String                 @db.VarChar(255)
   Description           String?                @db.Text
@@ -117,7 +119,7 @@ model EventWorkflow {
 
 model Setting {
   ElementId   String  @unique
-  Id          String  @id(map: "PK_Settings") @db.VarChar(36)
+  Id          String  @id(map: "PK_Settings")
   Name        String  @db.VarChar(255)
   SettingType String  @db.VarChar(100)
   Settings    Json    @db.JsonB
@@ -125,7 +127,7 @@ model Setting {
 }
 
 model Snapshot {
-  Id        String       @id @map("Id") @db.VarChar(36)
+  Id        String       @id @map("Id")
   ProjectId String
   Elements  Json         @db.JsonB
   Timestamp BigInt
@@ -139,8 +141,28 @@ model Snapshot {
   @@index([CreatedAt])
 }
 
+model User {
+  CreatedAt        DateTime          @db.Timestamptz(6)
+  Email            String            @db.VarChar(255)
+  FirstName        String?           @db.VarChar(100)
+  Id               String            @id(map: "PK_Users")
+  ImageUrl         String?           @db.VarChar(2048)
+  LastName         String?           @db.VarChar(100)
+  UpdatedAt        DateTime          @db.Timestamptz(6)
+  Collaborators    Collaborator[]
+  Comments         Comment[]
+  CommentReactions CommentReaction[]
+  CustomElements   CustomElement[]
+  ElementComments  ElementComment[]
+  Images           Image[]
+  MarketplaceItems MarketplaceItem[]
+  Notifications    Notification[]
+  Projects         Project[]
+  Subscriptions    Subscription[]
+}
+
 model Subscription {
-  Id            String    @id @default(cuid()) @db.VarChar(36)
+  Id            String    @id @default(cuid())
   UserId        String
   PlanId        String    @db.VarChar(100)
   BillingPeriod String    @db.VarChar(50)
@@ -156,6 +178,7 @@ model Subscription {
   Email         String?   @db.VarChar(255)
   PayDate       DateTime?
   TransactionNo String?   @db.VarChar(100)
+  User          User      @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
   @@index([UserId])
   @@index([Status])
@@ -164,7 +187,7 @@ model Subscription {
 model ContentType {
   CreatedAt   DateTime       @default(now())
   Description String?        @db.Text
-  Id          String         @id @default(cuid()) @db.VarChar(36)
+  Id          String         @id @default(cuid())
   Name        String         @unique @db.VarChar(255)
   UpdatedAt   DateTime       @updatedAt
   Fields      ContentField[]
@@ -173,7 +196,7 @@ model ContentType {
 
 model ContentField {
   ContentTypeId String
-  Id            String              @id @default(cuid()) @db.VarChar(36)
+  Id            String              @id @default(cuid())
   Name          String              @db.VarChar(255)
   Required      Boolean             @default(false)
   Type          String              @db.VarChar(100)
@@ -186,7 +209,7 @@ model ContentField {
 model ContentFieldValue {
   ContentItemId String
   FieldId       String
-  Id            String       @id @default(cuid()) @db.VarChar(36)
+  Id            String       @id @default(cuid())
   Value         String?      @db.Text
   ContentItem   ContentItem  @relation(fields: [ContentItemId], references: [Id], onDelete: Cascade)
   Field         ContentField @relation(fields: [FieldId], references: [Id], onDelete: Cascade)
@@ -197,7 +220,7 @@ model ContentFieldValue {
 model ContentItem {
   ContentTypeId String
   CreatedAt     DateTime            @default(now())
-  Id            String              @id @default(cuid()) @db.VarChar(36)
+  Id            String              @id @default(cuid())
   Published     Boolean             @default(false)
   Slug          String              @unique @db.VarChar(255)
   Title         String              @db.VarChar(500)
@@ -207,7 +230,7 @@ model ContentItem {
 }
 
 model MarketplaceItem {
-  Id           String                    @id @default(cuid()) @db.VarChar(36)
+  Id           String                    @id @default(cuid())
   Title        String                    @db.VarChar(500)
   Description  String                    @db.Text
   Preview      String?                   @db.VarChar(2048)
@@ -224,6 +247,7 @@ model MarketplaceItem {
   UpdatedAt    DateTime                  @updatedAt @db.Timestamp(6)
   DeletedAt    DateTime?                 @db.Timestamp(6)
   ProjectId    String?                   @unique
+  Author       User                      @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
   Project      Project?                  @relation(fields: [ProjectId], references: [Id])
   Categories   MarketplaceItemCategory[]
   Tags         MarketplaceItemTag[]
@@ -242,13 +266,13 @@ model MarketplaceItem {
 }
 
 model Category {
-  Id    String                    @id @default(cuid()) @db.VarChar(36)
+  Id    String                    @id @default(cuid())
   Name  String                    @unique @db.VarChar(100)
   Items MarketplaceItemCategory[]
 }
 
 model Tag {
-  Id    String               @id @default(cuid()) @db.VarChar(36)
+  Id    String               @id @default(cuid())
   Name  String               @unique @db.VarChar(100)
   Items MarketplaceItemTag[]
 }
@@ -274,7 +298,7 @@ model MarketplaceItemCategory {
 }
 
 model CustomElementType {
-  Id             String          @id @default(cuid()) @db.VarChar(36)
+  Id             String          @id @default(cuid())
   Name           String          @unique @db.VarChar(255)
   Description    String?         @db.Text
   Category       String?         @db.VarChar(100)
@@ -285,7 +309,7 @@ model CustomElementType {
 }
 
 model CustomElement {
-  Id                String             @id @map("Id") @db.VarChar(36)
+  Id                String             @id @map("Id")
   Name              String             @db.VarChar(255)
   TypeId            String?
   Description       String?            @db.Text
@@ -301,13 +325,14 @@ model CustomElement {
   CreatedAt         DateTime           @default(now()) @db.Timestamp(6)
   UpdatedAt         DateTime           @default(now()) @updatedAt @db.Timestamp(6)
   CustomElementType CustomElementType? @relation(fields: [TypeId], references: [Id])
+  User              User               @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
   @@index([UserId])
   @@index([TypeId])
 }
 
 model Invitation {
-  Id         String           @id @default(cuid()) @db.VarChar(36)
+  Id         String           @id @default(cuid())
   Email      String           @db.VarChar(255)
   ProjectId  String
   Role       CollaboratorRole @default(editor)
@@ -327,13 +352,14 @@ model Invitation {
 }
 
 model Collaborator {
-  Id        String           @id @default(cuid()) @db.VarChar(36)
+  Id        String           @id @default(cuid())
   UserId    String
   ProjectId String
   Role      CollaboratorRole @default(editor)
   CreatedAt DateTime         @default(now()) @db.Timestamp(6)
   UpdatedAt DateTime         @updatedAt @db.Timestamp(6)
   Project   Project          @relation(fields: [ProjectId], references: [Id], onDelete: Cascade)
+  User      User             @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
   @@unique([UserId, ProjectId])
   @@index([UserId])
@@ -341,7 +367,7 @@ model Collaborator {
 }
 
 model Comment {
-  Id        String            @id @default(cuid()) @db.VarChar(36)
+  Id        String            @id @default(cuid())
   Content   String            @db.Text
   AuthorId  String
   ItemId    String
@@ -351,6 +377,7 @@ model Comment {
   CreatedAt DateTime          @default(now()) @db.Timestamp(6)
   UpdatedAt DateTime          @updatedAt @db.Timestamp(6)
   DeletedAt DateTime?         @db.Timestamp(6)
+  Author    User              @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
   Item      MarketplaceItem   @relation(fields: [ItemId], references: [Id], onDelete: Cascade)
   Parent    Comment?          @relation("CommentReplies", fields: [ParentId], references: [Id], onDelete: Cascade)
   Replies   Comment[]         @relation("CommentReplies")
@@ -366,19 +393,20 @@ model Comment {
 }
 
 model CommentReaction {
-  Id        String   @id @default(cuid()) @db.VarChar(36)
+  Id        String   @id @default(cuid())
   CommentId String
   UserId    String
   Type      String   @db.VarChar(50)
   CreatedAt DateTime @default(now()) @db.Timestamp(6)
   Comment   Comment  @relation(fields: [CommentId], references: [Id], onDelete: Cascade)
+  User      User     @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
   @@index([CommentId])
   @@index([UserId])
 }
 
 model ElementComment {
-  Id        String    @id @map("Id") @db.VarChar(36)
+  Id        String    @id @map("Id")
   Content   String    @db.Text
   AuthorId  String
   ElementId String
@@ -386,6 +414,7 @@ model ElementComment {
   UpdatedAt DateTime  @updatedAt @db.Timestamp(6)
   DeletedAt DateTime? @db.Timestamp(6)
   Resolved  Boolean   @default(false)
+  Author    User      @relation(fields: [AuthorId], references: [Id], onDelete: Cascade)
   Element   Element   @relation(fields: [ElementId], references: [Id], onDelete: Cascade)
 
   @@index([AuthorId])
@@ -395,7 +424,7 @@ model ElementComment {
 }
 
 model ElementEventWorkflow {
-  Id         String        @id @default(cuid()) @db.VarChar(36)
+  Id         String        @id @default(cuid())
   ElementId  String
   WorkflowId String
   EventName  String        @db.VarChar(100)
@@ -410,7 +439,7 @@ model ElementEventWorkflow {
 }
 
 model Notification {
-  Id          String   @id @default(cuid()) @db.VarChar(36)
+  Id          String   @id @default(cuid())
   UserId      String
   Type        String   @db.VarChar(100)
   Title       String   @db.VarChar(500)
@@ -418,6 +447,7 @@ model Notification {
   Read        Boolean  @default(false)
   CreatedAt   DateTime @default(now()) @db.Timestamp(6)
   UpdatedAt   DateTime @updatedAt @db.Timestamp(6)
+  User        User     @relation(fields: [UserId], references: [Id], onDelete: Cascade)
 
   @@index([UserId])
   @@index([Read])

