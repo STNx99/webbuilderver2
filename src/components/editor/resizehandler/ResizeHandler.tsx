@@ -15,6 +15,7 @@ import {
 } from "@/constants/direciton";
 import ResizeTooltip from "./ResizeTooltip";
 import { ElementCommentButton } from "@/components/editor/comments/ElementCommentButton";
+import { useElementCommentStore } from "@/globalstore/elementcommentstore";
 import { useEditorPermissions } from "@/hooks/editor/useEditorPermissions";
 
 interface ResizeHandlerProps {
@@ -71,7 +72,8 @@ const ResizeHandle = memo(function ResizeHandle({
   } else if (isMarginHandle) {
     handleColorClasses = "bg-orange-500 border-orange-200 hover:bg-orange-600";
   } else if (isPaddingHandle) {
-    handleColorClasses = "bg-emerald-500 border-emerald-200 hover:bg-emerald-600";
+    handleColorClasses =
+      "bg-emerald-500 border-emerald-200 hover:bg-emerald-600";
   } else {
     handleColorClasses = "bg-blue-500 border-blue-200 hover:bg-blue-600";
   }
@@ -114,12 +116,34 @@ const ResizeHandle = memo(function ResizeHandle({
         tabIndex={-1}
       >
         {isGapHandle && (
-          <div className={cn("pointer-events-none", isColumn ? "rotate-90" : "")}>
-             {/* Simple Gap Icon */}
-             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="2" y="1" width="2" height="8" rx="0.5" fill="currentColor"/>
-                <rect x="6" y="1" width="2" height="8" rx="0.5" fill="currentColor"/>
-             </svg>
+          <div
+            className={cn("pointer-events-none", isColumn ? "rotate-90" : "")}
+          >
+            {/* Simple Gap Icon */}
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 10 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect
+                x="2"
+                y="1"
+                width="2"
+                height="8"
+                rx="0.5"
+                fill="currentColor"
+              />
+              <rect
+                x="6"
+                y="1"
+                width="2"
+                height="8"
+                rx="0.5"
+                fill="currentColor"
+              />
+            </svg>
           </div>
         )}
       </div>
@@ -141,7 +165,9 @@ const SpacingValueLabel = ({
   if (isNaN(numValue) || numValue === 0) return null;
 
   const isMargin = type === "margin";
-  const colorClass = isMargin ? "text-orange-600 bg-orange-100/80" : "text-emerald-600 bg-emerald-100/80";
+  const colorClass = isMargin
+    ? "text-orange-600 bg-orange-100/80"
+    : "text-emerald-600 bg-emerald-100/80";
 
   const positionStyles: React.CSSProperties = {
     position: "absolute",
@@ -185,7 +211,10 @@ const SpacingValueLabel = ({
   }
 
   return (
-    <div style={positionStyles} className={cn("shadow-sm backdrop-blur-[1px]", colorClass)}>
+    <div
+      style={positionStyles}
+      className={cn("shadow-sm backdrop-blur-[1px]", colorClass)}
+    >
       {numValue}
     </div>
   );
@@ -225,14 +254,19 @@ const SpacingOverlay = memo(function SpacingOverlay({
             right: 0,
             height: marginTop,
             backgroundColor: "rgba(249, 115, 22, 0.15)",
-            backgroundImage: "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
+            backgroundImage:
+              "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
             backgroundSize: "8px 8px",
             borderLeft: "1px dashed rgba(249, 115, 22, 0.3)",
             borderRight: "1px dashed rgba(249, 115, 22, 0.3)",
             borderTop: "1px dashed rgba(249, 115, 22, 0.3)",
           }}
         >
-           <SpacingValueLabel value={String(marginTop)} type="margin" side="top" />
+          <SpacingValueLabel
+            value={String(marginTop)}
+            type="margin"
+            side="top"
+          />
         </div>
         {/* Bottom Margin */}
         <div
@@ -243,14 +277,19 @@ const SpacingOverlay = memo(function SpacingOverlay({
             right: 0,
             height: marginBottom,
             backgroundColor: "rgba(249, 115, 22, 0.15)",
-            backgroundImage: "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
+            backgroundImage:
+              "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
             backgroundSize: "8px 8px",
             borderLeft: "1px dashed rgba(249, 115, 22, 0.3)",
             borderRight: "1px dashed rgba(249, 115, 22, 0.3)",
             borderBottom: "1px dashed rgba(249, 115, 22, 0.3)",
           }}
         >
-          <SpacingValueLabel value={String(marginBottom)} type="margin" side="bottom" />
+          <SpacingValueLabel
+            value={String(marginBottom)}
+            type="margin"
+            side="bottom"
+          />
         </div>
         {/* Left Margin */}
         <div
@@ -261,14 +300,19 @@ const SpacingOverlay = memo(function SpacingOverlay({
             bottom: 0,
             width: marginLeft,
             backgroundColor: "rgba(249, 115, 22, 0.15)",
-            backgroundImage: "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
+            backgroundImage:
+              "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
             backgroundSize: "8px 8px",
             borderTop: "1px dashed rgba(249, 115, 22, 0.3)",
             borderBottom: "1px dashed rgba(249, 115, 22, 0.3)",
             borderLeft: "1px dashed rgba(249, 115, 22, 0.3)",
           }}
         >
-          <SpacingValueLabel value={String(marginLeft)} type="margin" side="left" />
+          <SpacingValueLabel
+            value={String(marginLeft)}
+            type="margin"
+            side="left"
+          />
         </div>
         {/* Right Margin */}
         <div
@@ -279,14 +323,19 @@ const SpacingOverlay = memo(function SpacingOverlay({
             bottom: 0,
             width: marginRight,
             backgroundColor: "rgba(249, 115, 22, 0.15)",
-            backgroundImage: "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
+            backgroundImage:
+              "linear-gradient(45deg, rgba(249, 115, 22, 0.1) 25%, transparent 25%, transparent 50%, rgba(249, 115, 22, 0.1) 50%, rgba(249, 115, 22, 0.1) 75%, transparent 75%, transparent)",
             backgroundSize: "8px 8px",
             borderTop: "1px dashed rgba(249, 115, 22, 0.3)",
             borderBottom: "1px dashed rgba(249, 115, 22, 0.3)",
             borderRight: "1px dashed rgba(249, 115, 22, 0.3)",
           }}
         >
-          <SpacingValueLabel value={String(marginRight)} type="margin" side="right" />
+          <SpacingValueLabel
+            value={String(marginRight)}
+            type="margin"
+            side="right"
+          />
         </div>
       </div>
 
@@ -304,10 +353,26 @@ const SpacingOverlay = memo(function SpacingOverlay({
         }}
       >
         <div className="w-full h-full border border-dashed border-emerald-500/30 relative">
-           <SpacingValueLabel value={String(paddingTop)} type="padding" side="top" />
-           <SpacingValueLabel value={String(paddingBottom)} type="padding" side="bottom" />
-           <SpacingValueLabel value={String(paddingLeft)} type="padding" side="left" />
-           <SpacingValueLabel value={String(paddingRight)} type="padding" side="right" />
+          <SpacingValueLabel
+            value={String(paddingTop)}
+            type="padding"
+            side="top"
+          />
+          <SpacingValueLabel
+            value={String(paddingBottom)}
+            type="padding"
+            side="bottom"
+          />
+          <SpacingValueLabel
+            value={String(paddingLeft)}
+            type="padding"
+            side="left"
+          />
+          <SpacingValueLabel
+            value={String(paddingRight)}
+            type="padding"
+            side="right"
+          />
         </div>
       </div>
     </>
@@ -424,6 +489,7 @@ export default function ResizeHandler({
     });
 
   const [manualSpacingMode, setManualSpacingMode] = useState(false);
+  const { showCommentButtons, toggleCommentButtons } = useElementCommentStore();
   const altKeyRef = useRef(false);
   const [altKeyPressed, setAltKeyPressed] = useState(false);
 
@@ -551,7 +617,9 @@ export default function ResizeHandler({
         />
       )}
 
-      {isSelected && <ElementCommentButton element={element} />}
+      {isSelected && showCommentButtons && (
+        <ElementCommentButton element={element} />
+      )}
 
       {children}
 

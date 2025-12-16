@@ -8,6 +8,8 @@ import {
   ChevronDown,
   Check,
   Search,
+  MessageSquare,
+  MessageSquareOff,
 } from "lucide-react";
 
 // Types
@@ -35,6 +37,7 @@ import CollaboratorIndicator from "./CollaboratorIndicator";
 import EventModeToggle from "../eventmode/EventModeToggle";
 import { PageNavigationCommand } from "./PageNavigationCommand";
 import CollaborationStatus from "./CollaborationStatus";
+import { useElementCommentStore } from "@/globalstore/elementcommentstore";
 
 type EditorHeaderProps = {
   currentView: Viewport;
@@ -129,6 +132,7 @@ export default function EditorHeader({
   collabType = "websocket",
 }: EditorHeaderProps) {
   const [navigationCommandOpen, setNavigationCommandOpen] = useState(false);
+  const { showCommentButtons, toggleCommentButtons } = useElementCommentStore();
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -169,6 +173,20 @@ export default function EditorHeader({
         {/* Right Section: Controls and Viewport Selector */}
         <div className="flex items-center gap-2 sm:gap-3 ml-auto">
           <ControlsGroup />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleCommentButtons}
+            aria-pressed={showCommentButtons}
+            aria-label="Toggle comment buttons"
+            className="h-8 px-2 gap-1"
+          >
+            {showCommentButtons ? (
+              <MessageSquare className="w-4 h-4" />
+            ) : (
+              <MessageSquareOff className="w-4 h-4" />
+            )}
+          </Button>
           <div className="h-6 w-px bg-border" aria-hidden="true" />
           <ViewportSelector
             currentView={currentView}

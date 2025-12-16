@@ -44,11 +44,11 @@ export default function Configurations() {
       case "DataLoader":
         return <DataLoaderConfiguration />;
       case "CMSContentList":
+        return selectedElement ? <CMSConfiguration /> : null;
       case "CMSContentItem":
+        return selectedElement ? <CMSConfiguration /> : null;
       case "CMSContentGrid":
-        return selectedElement ? (
-          <CMSConfiguration elementId={selectedElement.id} />
-        ) : null;
+        return selectedElement ? <CMSConfiguration /> : null;
       default:
         return null;
     }

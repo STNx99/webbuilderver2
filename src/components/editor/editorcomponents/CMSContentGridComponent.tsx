@@ -54,7 +54,9 @@ const CMSContentGridComponent = ({ element, data }: EditorComponentProps) => {
     : contentItems && contentItems.length > 0
       ? contentItems
       : [];
-
+  useEffect(()=>{
+    console.log("Content Items", contentItems)
+  },[])
   const limitedItems = itemsToRender.slice(0, limit);
 
   if (!contentTypeId) {
